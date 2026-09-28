@@ -79,8 +79,9 @@ Profile `image/1`, 11 nodes. Source: a CC0 image
 with deterministic Lanczos-3 preview/thumbnail and a labhog style embedding.
 The public-domain counterpart to the golden `ista-varun-v1.werk` (which is
 model-generated and carries a recipe; this one is not — `ai_generated=false`).
-Build: `python fixtures/build_image_cc0.py [--check-determinism]`. Gate:
-`tests/run_gate_cc0_image.py` — **8 PASS**.
+Build: `python fixtures/build_image_cc0.py [--check-determinism]` (byte-exact
+reproduction needs the pinned Pillow — see `fixtures/requirements-build.txt`).
+Gate: `tests/run_gate_cc0_image.py` — **9 PASS**.
 
 | fixture | bytes | sha256 |
 |---|---|---|

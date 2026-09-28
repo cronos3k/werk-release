@@ -414,25 +414,43 @@ def build(scratch_dir):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--out", default=HERE)
+    ap.add_argument("--out", default=None,
+                    help="output dir for the fixtures. Defaults to the fixtures "
+                         "tree on a normal build. Under --check-determinism the "
+                         "fixtures are NOT written unless --out is given "
+                         "explicitly, so verification never mutates its subject.")
     ap.add_argument("--scratch", default=os.path.join(ROOT, "data", "cc0-gsplat"))
     ap.add_argument("--check-determinism", action="store_true")
     args = ap.parse_args(argv)
 
     clean_blob, dmg_blob, nnodes, stats, pc_stats, target, off = build(args.scratch)
 
-    clean_path = os.path.join(args.out, "gsplat-cc0-v1.werk")
-    dmg_path = os.path.join(args.out, "gsplat-cc0-v1-damaged.werk")
-    with open(clean_path, "wb") as fh:
-        fh.write(clean_blob)
-    with open(dmg_path, "wb") as fh:
-        fh.write(dmg_blob)
-
     print("splat %d Gaussians, sh_degree %d, %d bytes WKGS; point cloud %d points"
           % (stats["count"], stats["sh_degree"], stats["bytes"], pc_stats["count"]))
     print("bounds min %s max %s (metres)"
           % ([round(v, 4) for v in stats["bounds_min_m"]],
              [round(v, 4) for v in stats["bounds_max_m"]]))
+
+    if args.check_determinism:
+        # A verification step must never overwrite the fixtures it verifies:
+        # a bare --check-determinism writes nothing into the source tree.
+        c2, d2, _n, _s, _p, _t, _o = build(args.scratch)
+        ok = (sha256(c2) == sha256(clean_blob) and sha256(d2) == sha256(dmg_blob))
+        print("determinism: %s (two builds, whole-file sha256 %s)"
+              % ("PASS" if ok else "FAIL", "identical" if ok else "DIFFER"))
+        if args.out is None:
+            return 0 if ok else 1
+        if not ok:
+            return 1
+
+    out_dir = args.out if args.out is not None else HERE
+    clean_path = os.path.join(out_dir, "gsplat-cc0-v1.werk")
+    dmg_path = os.path.join(out_dir, "gsplat-cc0-v1-damaged.werk")
+    with open(clean_path, "wb") as fh:
+        fh.write(clean_blob)
+    with open(dmg_path, "wb") as fh:
+        fh.write(dmg_blob)
+
     print("wrote %s" % clean_path)
     print("  %d bytes, sha256 %s" % (len(clean_blob), sha256(clean_blob)))
     print("  %d nodes" % nnodes)
@@ -440,14 +458,6 @@ def main(argv=None):
     print("  %d bytes, sha256 %s" % (len(dmg_blob), sha256(dmg_blob)))
     print("  damage: 1 flipped byte in %s (offset %d), plus x.werk-future.mystery"
           % (target, off))
-
-    if args.check_determinism:
-        c2, d2, _n, _s, _p, _t, _o = build(args.scratch)
-        ok = (sha256(c2) == sha256(clean_blob) and sha256(d2) == sha256(dmg_blob))
-        print("determinism: %s (two builds, whole-file sha256 %s)"
-              % ("PASS" if ok else "FAIL", "identical" if ok else "DIFFER"))
-        if not ok:
-            return 1
     return 0
 
 

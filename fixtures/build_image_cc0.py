@@ -47,9 +47,12 @@ This file reuses `build_image_fixture.py`'s zip framing, hashing, WKEM writer
 and helpers rather than re-deriving them, so the two image builders cannot
 disagree, exactly as `build_crate_cc0.py` reuses `build_golden.py`.
 
-DEPENDENCIES: Pillow (decode/resample) and numpy (the labhog descriptor).
-Neither travels inside the package — law 1's ban is about what ships in the
-file, and a builder is not a `core.loader`.
+DEPENDENCIES: Pillow==12.3.0 (decode/resample) and numpy (the labhog
+descriptor); pinned in fixtures/requirements-build.txt. Neither travels inside
+the package — law 1's ban is about what ships in the file, and a builder is not
+a `core.loader`. The preview PNG is Pillow-version-sensitive (a resample/encode
+byte difference across Pillow releases), so the version is pinned for byte-exact
+reproduction of the shipped fixture; a mismatch is warned, not silently drifted.
 """
 
 import argparse
@@ -219,8 +222,14 @@ def _facets_registry():
 def collect(src_dir):
     """Return (files, nodes, stats) for the CLEAN variant. No manifest yet."""
     from PIL import Image
+    import PIL
     import io
     import numpy as np
+
+    if PIL.__version__ != "12.3.0":
+        print("warning: Pillow %s != pinned 12.3.0 (fixtures/requirements-build.txt); "
+              "the preview PNG is version-sensitive, so the rebuilt fixture may "
+              "differ from the shipped bytes." % PIL.__version__, file=sys.stderr)
 
     files, nodes = {}, []
 
@@ -690,23 +699,42 @@ def build(src_dir):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--src", default=SRC_DEFAULT)
-    ap.add_argument("--out", default=HERE)
+    ap.add_argument("--out", default=None,
+                    help="output dir for the fixtures. Defaults to the fixtures "
+                         "tree on a normal build. Under --check-determinism the "
+                         "fixtures are NOT written unless --out is given "
+                         "explicitly, so verification never mutates its subject.")
     ap.add_argument("--check-determinism", action="store_true")
     args = ap.parse_args(argv)
 
     clean_blob, dmg_blob, nodes, stats, target, off = build(args.src)
 
-    clean_path = os.path.join(args.out, "image-cc0-v1.werk")
-    dmg_path = os.path.join(args.out, "image-cc0-v1-damaged.werk")
+    print("source image %dx%d, %d bytes; descriptor %s"
+          % (stats["src_w"], stats["src_h"], stats["src_bytes"],
+             stats["descriptor"]))
+    print("palette weights sum to %.6f (S-24)" % stats["weight_sum"])
+
+    if args.check_determinism:
+        # A verification step must never overwrite the fixtures it verifies:
+        # a bare --check-determinism writes nothing into the source tree. Pass
+        # an explicit --out to also (re)build the fixtures into that dir.
+        c2, d2, _n, _s2, _t, _o = build(args.src)
+        ok = (sha256(c2) == sha256(clean_blob) and sha256(d2) == sha256(dmg_blob))
+        print("determinism: %s (two builds, whole-file sha256 %s)"
+              % ("PASS" if ok else "FAIL", "identical" if ok else "DIFFER"))
+        if args.out is None:
+            return 0 if ok else 1
+        if not ok:
+            return 1
+
+    out_dir = args.out if args.out is not None else HERE
+    clean_path = os.path.join(out_dir, "image-cc0-v1.werk")
+    dmg_path = os.path.join(out_dir, "image-cc0-v1-damaged.werk")
     with open(clean_path, "wb") as fh:
         fh.write(clean_blob)
     with open(dmg_path, "wb") as fh:
         fh.write(dmg_blob)
 
-    print("source image %dx%d, %d bytes; descriptor %s"
-          % (stats["src_w"], stats["src_h"], stats["src_bytes"],
-             stats["descriptor"]))
-    print("palette weights sum to %.6f (S-24)" % stats["weight_sum"])
     print("wrote %s" % clean_path)
     print("  %d bytes, sha256 %s" % (len(clean_blob), sha256(clean_blob)))
     print("  %d nodes" % len(nodes))
@@ -714,14 +742,6 @@ def main(argv=None):
     print("  %d bytes, sha256 %s" % (len(dmg_blob), sha256(dmg_blob)))
     print("  damage: 1 flipped byte in %s (offset %d), plus x.werk-future.mystery"
           % (target, off))
-
-    if args.check_determinism:
-        c2, d2, _n, _s2, _t, _o = build(args.src)
-        ok = (sha256(c2) == sha256(clean_blob) and sha256(d2) == sha256(dmg_blob))
-        print("determinism: %s (two builds, whole-file sha256 %s)"
-              % ("PASS" if ok else "FAIL", "identical" if ok else "DIFFER"))
-        if not ok:
-            return 1
     return 0
 
 

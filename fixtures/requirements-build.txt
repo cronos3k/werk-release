@@ -1,0 +1,14 @@
+# Exact build-time dependencies for the CC0 fixture builders.
+#
+# The image preview PNG is Pillow-version-sensitive: a resample/encode byte
+# difference across Pillow releases changes image-cc0-v1.werk's bytes (e.g.
+# Pillow 11.3.0 and 12.3.0 produce different previews). The version below is
+# the one that reproduces the shipped fixture byte-for-byte, so it is pinned
+# for reproducible builds. build_image_cc0.py warns if a different version is
+# in use rather than drifting silently.
+#
+#   pip install -r fixtures/requirements-build.txt
+#
+# The crate and gsplat builders showed no such version sensitivity.
+Pillow==12.3.0
+numpy>=1.24

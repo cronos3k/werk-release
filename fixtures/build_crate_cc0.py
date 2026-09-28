@@ -919,23 +919,45 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--variant", choices=["lean", "full"], required=True)
     ap.add_argument("--src", default=SRC_DEFAULT)
-    ap.add_argument("--out", default=HERE)
+    ap.add_argument("--out", default=None,
+                    help="output dir for the fixtures. Defaults to the fixtures "
+                         "tree on a normal build. Under --check-determinism the "
+                         "fixtures are NOT written unless --out is given "
+                         "explicitly, so verification never mutates its subject.")
     ap.add_argument("--check-determinism", action="store_true")
     args = ap.parse_args(argv)
 
+    # build() only uses this for a self-cleaning temp subdir; the fixtures
+    # themselves are written (or not) below, guarded by --check-determinism.
+    scratch_base = args.out if args.out is not None else HERE
     clean_blob, dmg_blob, nodes, stats, target, off = build(
-        args.variant, args.src, args.out)
+        args.variant, args.src, scratch_base)
 
-    clean_path = os.path.join(args.out, "crate-cc0-%s-v1.werk" % args.variant)
-    dmg_path = os.path.join(args.out, "crate-cc0-%s-v1-damaged.werk" % args.variant)
+    print("variant: %s" % args.variant)
+    print("mesh %d verts / %d tris, longest axis %.4f m, sphere r=%.4f m"
+          % (stats["verts"], stats["tris"], stats["longest"], stats["radius"]))
+
+    if args.check_determinism:
+        # A verification step must never overwrite the fixtures it verifies:
+        # a bare --check-determinism writes nothing into the source tree.
+        c2, d2, _n, _s, _t, _o = build(args.variant, args.src, scratch_base)
+        ok = (sha256(c2) == sha256(clean_blob) and sha256(d2) == sha256(dmg_blob))
+        print("determinism: %s (two builds, whole-file sha256 %s)"
+              % ("PASS" if ok else "FAIL",
+                 "identical" if ok else "DIFFER"))
+        if args.out is None:
+            return 0 if ok else 1
+        if not ok:
+            return 1
+
+    out_dir = args.out if args.out is not None else HERE
+    clean_path = os.path.join(out_dir, "crate-cc0-%s-v1.werk" % args.variant)
+    dmg_path = os.path.join(out_dir, "crate-cc0-%s-v1-damaged.werk" % args.variant)
     with open(clean_path, "wb") as fh:
         fh.write(clean_blob)
     with open(dmg_path, "wb") as fh:
         fh.write(dmg_blob)
 
-    print("variant: %s" % args.variant)
-    print("mesh %d verts / %d tris, longest axis %.4f m, sphere r=%.4f m"
-          % (stats["verts"], stats["tris"], stats["longest"], stats["radius"]))
     print("wrote %s" % clean_path)
     print("  %d bytes, sha256 %s" % (len(clean_blob), sha256(clean_blob)))
     print("  %d nodes" % len(nodes))
@@ -943,15 +965,6 @@ def main(argv=None):
     print("  %d bytes, sha256 %s" % (len(dmg_blob), sha256(dmg_blob)))
     print("  damage: 1 flipped byte in %s (offset %d), plus x.werk-future.mystery"
           % (target, off))
-
-    if args.check_determinism:
-        c2, d2, _n, _s, _t, _o = build(args.variant, args.src, args.out)
-        ok = (sha256(c2) == sha256(clean_blob) and sha256(d2) == sha256(dmg_blob))
-        print("determinism: %s (two builds, whole-file sha256 %s)"
-              % ("PASS" if ok else "FAIL",
-                 "identical" if ok else "DIFFER"))
-        if not ok:
-            return 1
     return 0
 
 
