@@ -314,6 +314,7 @@ def welzl(points):
     it is allowed out of here — an approximate sphere labelled `welzl-exact`
     would be exactly the kind of quiet lie this format exists to prevent."""
     import random
+    import threading
 
     pts = [tuple(p) for p in points]
     random.Random(20260808).shuffle(pts)
@@ -328,7 +329,29 @@ def welzl(points):
             return s
         return rec(n - 1, bound + [p])
 
-    return rec(len(pts), [])
+    # rec's depth equals len(pts), and on CPython <= 3.10 every pure-Python
+    # frame also consumes C stack — a few thousand points overflow the default
+    # stack and the process dies with 0xC00000FD before any traceback. Run the
+    # SAME recursion in a worker thread with a roomier stack; the result and
+    # therefore the fixture bytes are unchanged.
+    box = {}
+
+    def _run():
+        try:
+            box["sphere"] = rec(len(pts), [])
+        except BaseException as e:  # noqa: BLE001 — re-raised in the caller
+            box["error"] = e
+
+    old_stack = threading.stack_size(64 * 1024 * 1024)
+    try:
+        worker = threading.Thread(target=_run)
+        worker.start()
+        worker.join()
+    finally:
+        threading.stack_size(old_stack)
+    if "error" in box:
+        raise box["error"]
+    return box["sphere"]
 
 
 # ---------------------------------------------------------------------------
