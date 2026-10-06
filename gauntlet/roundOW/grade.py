@@ -10,6 +10,13 @@ in a clean directory containing only the fixture.
 
   python grade.py --rundir <dir> --fixture <path to .werk>
   python grade.py --rerun  --rundir <dir> --fixture <path> --prog <script> --out <cleandir>
+                   [--prog-args "mini-v1.werk out"]
+
+--prog-args is split like a POSIX shell line (shlex) and passed to the
+program after its name. Paths in it are relative to the clean dir, which
+holds the fixture under its own basename. Without --prog-args the program
+runs with no arguments, as before. Write --prog-args="..." when the
+string starts with a dash.
 
 Standard library only.
 """
@@ -18,6 +25,7 @@ import argparse
 import hashlib
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -55,6 +63,8 @@ def main():
     ap.add_argument("--rerun", action="store_true")
     ap.add_argument("--prog", default="")
     ap.add_argument("--out", default="")
+    ap.add_argument("--prog-args", default=None,
+                    help="arguments for the re-run program, one shell-style string")
     args = ap.parse_args()
 
     dec, man = declared(args.fixture)
@@ -71,11 +81,13 @@ def main():
         src = os.path.join(args.rundir, args.prog)
         shutil.copy2(src, os.path.join(out, os.path.basename(args.prog)))
         t0 = time.monotonic()
-        p = subprocess.run([sys.executable, os.path.basename(args.prog)], cwd=out,
+        pargs = shlex.split(args.prog_args) if args.prog_args is not None else []
+        p = subprocess.run([sys.executable, os.path.basename(args.prog)] + pargs, cwd=out,
                            capture_output=True, timeout=1800)
         dt = time.monotonic() - t0
         print("\n=== RE-RUN in clean dir %s ===" % out)
-        print("argv: python %s" % os.path.basename(args.prog))
+        print("argv: python %s" % " ".join([os.path.basename(args.prog)] +
+                                           [shlex.quote(a) for a in pargs]))
         print("exit: %d  in %.1fs" % (p.returncode, dt))
         so = p.stdout.decode("utf-8", "replace")
         se = p.stderr.decode("utf-8", "replace")
