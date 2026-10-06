@@ -22,7 +22,9 @@ The splat task's three clauses, and how each is graded:
        -> GRADED ON NUMBERS. The grader extracts every float/int-looking token
           from the run's stdout and any file it wrote, and asks whether the
           first point's position triple and colour triple are present, and
-          whether the count 281498 is present. A model that fabricates values
+          whether the count 281498 is present. A colour counts as present
+          as the stored u8 triple or as the exact k/255 fractions (S-DS-6).
+          A model that fabricates values
           (roundOW's envelope-task failure mode) fails here and cannot talk its
           way past it.
   3. identify the embedded tools, quote their source
@@ -257,6 +259,25 @@ def has_triple(text, triple, tol, ints=False):
     return False
 
 
+# A u8 colour may be printed as its stored integer (39) or as the exact
+# fraction of 255 it denotes (39/255 = 0.152941...). Both carry the same value
+# (S-DS-6). The fraction form is accepted only within FRAC_TOL of k/255, which
+# needs about 5 printed decimals; adjacent u8 steps are 1/255 = 0.0039 apart,
+# so a wrong colour cannot pass by rounding.
+FRAC_TOL = 5e-6
+
+
+def colour_form(text, rgb):
+    """'u8' if the integer triple is present, 'unit' if the exact /255
+    fractions are present, else None. The integer test is tried first, so a
+    run graded PASS before this change is graded the same way after it."""
+    if has_triple(text, tuple(float(x) for x in rgb), 0.0, ints=True):
+        return "u8"
+    if has_triple(text, tuple(x / 255.0 for x in rgb), FRAC_TOL):
+        return "unit"
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--fixture", required=True)
@@ -314,10 +335,11 @@ def main():
     count_ok = bool(re.search(r"\b%d\b" % gt["count"], blob)) or \
                bool(re.search(r"\b%s\b" % "[  ,]".join(str(gt["count"])), blob))
     pos_ok = has_triple(blob, gt["positions"][0], 5e-6)
-    col_ok = has_triple(blob, tuple(float(x) for x in gt["colors"][0]), 0.0, ints=True)
+    col_form = colour_form(blob, gt["colors"][0])
+    col_ok = col_form is not None
     posN = sum(1 for k in range(len(gt["positions"])) if has_triple(blob, gt["positions"][k], 5e-6))
     colN = sum(1 for k in range(len(gt["colors"]))
-               if has_triple(blob, tuple(float(x) for x in gt["colors"][k]), 0.0, ints=True))
+               if colour_form(blob, gt["colors"][k]) is not None)
 
     # ---- clause 3: the tools
     tool_named = {t: (t in blob) for t in TOOLS.values()}
@@ -334,7 +356,8 @@ def main():
     print(" 1  integrity: sha-256 named and a verification verdict : %s" % integ_ok)
     print(" 2  point count %d present                       : %s" % (gt["count"], count_ok))
     print("    point[0] position triple present               : %s" % pos_ok)
-    print("    point[0] colour triple present                 : %s" % col_ok)
+    print("    point[0] colour triple present                 : %s%s"
+          % (col_ok, "  (form: %s)" % col_form if col_ok else ""))
     print("    of the first %d points: %d positions, %d colours present"
           % (len(gt["positions"]), posN, colN))
     print(" 3  tools named   : %s" % tool_named)
@@ -348,6 +371,7 @@ def main():
     row = {"fixture": args.fixture, "fixture_sha256": gt["fixture_sha256"],
            "rundir": args.rundir, "scanned": scan, "rerun": rerun,
            "count_ok": count_ok, "pos0_ok": pos_ok, "col0_ok": col_ok,
+           "col0_form": col_form,
            "positions_present": posN, "colors_present": colN,
            "sample_rows": len(gt["positions"]),
            "integrity_ok": integ_ok,
