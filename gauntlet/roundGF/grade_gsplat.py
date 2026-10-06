@@ -30,7 +30,12 @@ The splat task's three clauses, and how each is graded:
   3. identify the embedded tools, quote their source
        -> the three tool node ids and their three paths must appear, and at
           least one verbatim line of >= 40 chars from each tool's real source
-          must appear in the run's output or report.
+          must appear in the run's output or report. Any such line counts if
+          it is unique to that tool; the count per tool is reported.
+
+The program's own source (--prog and its saved iterations) is not scanned:
+it is the model's code, not its output (--include-source restores the old
+behaviour).
 
   python grade_gsplat.py --fixture fixtures/gsplat-v1.werk --rundir <dir>
   python grade_gsplat.py --fixture ... --rundir <dir> --rerun --prog solution.py \
@@ -173,17 +178,29 @@ def ground_truth(fixture, nrows=8):
             ncol_ok += 1
 
     # tool source lines, for the "quote their source" clause
+    # Every line of >= 40 chars counts as a candidate quote, not only the
+    # longest one: a run that quotes ten real lines of a tool has quoted it.
+    # A line that also occurs in another tool's source is dropped, so that
+    # quoting shared boilerplate cannot credit a tool that was not quoted.
     quotes = {}
+    cand = {}
     for prefix, tid in TOOLS.items():
         best = None
+        lines = set()
         for n in z.namelist():
             if n.startswith(prefix + "/") and n.endswith(".py"):
                 for line in z.read(n).decode("utf-8", "replace").splitlines():
                     ls = line.strip()
                     if len(ls) >= 40 and not ls.startswith("#"):
+                        lines.add(ls)
                         if best is None or len(ls) > len(best[1]):
                             best = (n, ls)
         quotes[tid] = best
+        cand[tid] = lines
+    tool_lines = {}
+    for tid, lines in cand.items():
+        others = set().union(*(v for k, v in cand.items() if k != tid))
+        tool_lines[tid] = sorted(lines - others)
 
     return {
         "count": count,
@@ -195,6 +212,7 @@ def ground_truth(fixture, nrows=8):
         "declared_files": sum(len(v0.get("files", []))
                               for n in man.get("nodes", []) for v0 in n.get("versions", [])),
         "tool_quotes": quotes,
+        "tool_lines": tool_lines,
         "fixture_sha256": sha256_file(fixture),
     }
 
@@ -209,15 +227,36 @@ def sha256_file(p):
 
 # ---------------------------------------------------------------- run scanning
 
-def harvest(scan):
+def source_names(prog):
+    """Paths (relative to the scan dir) that hold the program's own source:
+    the --prog file and its saved iterations (solution.iter1.py, ...). The
+    source is the model's code, not its output: it names the tools and the
+    point count whether or not the program runs."""
+    rel = prog.replace("\\", "/")
+    if rel.startswith("./"):
+        rel = rel[2:]
+    base = os.path.basename(rel)
+    stem, ext = os.path.splitext(base)
+    pat = re.compile(r"(?:.*/)?%s\.iter\d+%s$" % (re.escape(stem), re.escape(ext)))
+    return {rel, base}, pat
+
+
+def harvest(scan, prog=None):
     """Everything textual the run produced: stdout log + every text file it
-    wrote, excluding the fixture and the harness's own copies of the prompt."""
+    wrote, excluding the fixture, the harness's own copies of the prompt,
+    and (when prog is given) the program's own source. Returns the texts and
+    the list of skipped source files."""
     texts = []
+    skipped = []
+    names, pat = source_names(prog) if prog else (set(), None)
     for root, dirs, files in os.walk(scan):
         for name in sorted(files):
             fp = os.path.join(root, name)
             rel = os.path.relpath(fp, scan).replace("\\", "/")
             if rel.endswith(".werk"):
+                continue
+            if prog and (rel in names or pat.match(rel)):
+                skipped.append(rel)
                 continue
             if rel.startswith("_harness/") and rel not in ("_harness/stdout.log",):
                 continue
@@ -228,7 +267,7 @@ def harvest(scan):
                     texts.append((rel, f.read()))
             except Exception:
                 pass
-    return texts
+    return texts, skipped
 
 
 NUM = re.compile(r"[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
@@ -286,6 +325,8 @@ def main():
     ap.add_argument("--prog", default="solution.py")
     ap.add_argument("--out", default="")
     ap.add_argument("--json-out", default="")
+    ap.add_argument("--include-source", action="store_true",
+                    help="also scan the program's own source (the pre-fix behaviour)")
     args = ap.parse_args()
 
     gt = ground_truth(args.fixture)
@@ -327,9 +368,11 @@ def main():
                  "stdout_bytes": len(so), "stderr_bytes": len(se)}
         scan = out
 
-    texts = harvest(scan)
+    texts, skipped = harvest(scan, None if args.include_source else args.prog)
     blob = "\n".join(t for _, t in texts)
     print("\nscanned %d text artifacts under %s (%d chars)" % (len(texts), scan, len(blob)))
+    if skipped:
+        print("not scanned (the program's own source): %s" % ", ".join(skipped))
 
     # ---- clause 2: the numbers
     count_ok = bool(re.search(r"\b%d\b" % gt["count"], blob)) or \
@@ -344,9 +387,9 @@ def main():
     # ---- clause 3: the tools
     tool_named = {t: (t in blob) for t in TOOLS.values()}
     tool_path = {t: (p in blob) for p, t in TOOLS.items()}
-    tool_quoted = {}
-    for t, best in gt["tool_quotes"].items():
-        tool_quoted[t] = bool(best) and (best[1] in blob)
+    tool_quote_lines = {t: sum(1 for ls in lines if ls in blob)
+                        for t, lines in gt["tool_lines"].items()}
+    tool_quoted = {t: n > 0 for t, n in tool_quote_lines.items()}
 
     # ---- clause 1: integrity
     integ_ok = bool(re.search(r"sha-?256", blob, re.I)) and \
@@ -363,6 +406,8 @@ def main():
     print(" 3  tools named   : %s" % tool_named)
     print("    tool paths    : %s" % tool_path)
     print("    source quoted : %s" % tool_quoted)
+    print("    quoted lines  : %s  (of %s candidate lines)"
+          % (tool_quote_lines, {t: len(v) for t, v in gt["tool_lines"].items()}))
 
     passed = count_ok and pos_ok and col_ok and all(tool_named.values())
     print("\nVERDICT (clauses 2 and 3, the spec-forcing ones): %s"
@@ -376,6 +421,7 @@ def main():
            "sample_rows": len(gt["positions"]),
            "integrity_ok": integ_ok,
            "tool_named": tool_named, "tool_path": tool_path, "tool_quoted": tool_quoted,
+           "tool_quote_lines": tool_quote_lines, "source_excluded": skipped,
            "verdict": "PASS" if passed else "FAIL",
            "artifacts": [n for n, _ in texts]}
     if args.json_out:
