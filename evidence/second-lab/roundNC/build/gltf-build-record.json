@@ -1,0 +1,635 @@
+{
+  "fixture_files": [
+    {
+      "name": "crate-nc-v1.gltf",
+      "sha256": "3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69",
+      "size": 4122
+    },
+    {
+      "name": "crate-nc-v1.bin",
+      "sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+      "size": 191040
+    },
+    {
+      "name": "crate_diffuse.png",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460
+    }
+  ],
+  "format": "gltf",
+  "build_dir": "D:\\build\\gltf",
+  "gltf": {
+    "asset": {
+      "generator": "Khronos glTF Blender I/O v4.2.60",
+      "version": "2.0"
+    },
+    "extensionsUsed": [],
+    "meshes": [
+      {
+        "name": "Cube.005",
+        "primitives": 1
+      },
+      {
+        "name": "Cube.020",
+        "primitives": 1
+      },
+      {
+        "name": "Cube.001",
+        "primitives": 1
+      }
+    ],
+    "nodes": [
+      "wooden_crate_01_lid",
+      "wooden_crate_01",
+      "wooden_crate_01_latch"
+    ],
+    "materials": [
+      "crate_wood"
+    ],
+    "images": [
+      {
+        "mimeType": "image/png",
+        "name": "crate_diffuse",
+        "uri": "crate_diffuse.png"
+      }
+    ],
+    "buffers": [
+      {
+        "byteLength": 191040,
+        "uri": "crate-nc-v1.bin"
+      }
+    ],
+    "primitives": [
+      {
+        "mesh_index": 0,
+        "mesh_name": "Cube.005",
+        "primitive_index": 0,
+        "triangle_count": 692,
+        "position_byte_offset": 0,
+        "vertex_count": 622
+      },
+      {
+        "mesh_index": 1,
+        "mesh_name": "Cube.020",
+        "primitive_index": 0,
+        "triangle_count": 5508,
+        "position_byte_offset": 24056,
+        "vertex_count": 3731
+      },
+      {
+        "mesh_index": 2,
+        "mesh_name": "Cube.001",
+        "primitive_index": 0,
+        "triangle_count": 376,
+        "position_byte_offset": 176496,
+        "vertex_count": 384
+      }
+    ],
+    "storage_order_equals_byte_order": true,
+    "vertex_split_vs_blender": [
+      {
+        "mesh": "Cube.005",
+        "gltf_vertices": 622,
+        "blender_vertices": 596,
+        "extra_vertices_from_split": 26,
+        "vertex_order_identical_to_blender": false
+      },
+      {
+        "mesh": "Cube.020",
+        "gltf_vertices": 3731,
+        "blender_vertices": 3706,
+        "extra_vertices_from_split": 25,
+        "vertex_order_identical_to_blender": false
+      },
+      {
+        "mesh": "Cube.001",
+        "gltf_vertices": 384,
+        "blender_vertices": 384,
+        "extra_vertices_from_split": 0,
+        "vertex_order_identical_to_blender": true
+      }
+    ]
+  },
+  "mesh_totals": {
+    "vertex_count": 4737,
+    "triangle_count": 6576,
+    "vs_fbx": "FBX stores 4686 vertices / 6576 triangles. glTF stores 4737 / 6576: the glTF exporter split 51 vertices (distinct normal/UV per loop). Ground truth describes the glTF as stored."
+  },
+  "leak_scan": {
+    "strings": [
+      "werk",
+      "roundnc",
+      "staging",
+      "yuvra",
+      "gauntlet",
+      "users",
+      "appdata",
+      "\\build",
+      "/build",
+      "d:\\",
+      "d:/",
+      "c:\\",
+      "c:/"
+    ],
+    "absolute_path_regex": "(?i)(?<![a-z0-9])[a-z]:[\\\\/]|\\\\\\\\[a-z0-9]|file://",
+    "scanned": [
+      "crate-nc-v1.gltf",
+      "crate-nc-v1.bin",
+      "crate_diffuse.png"
+    ],
+    "hits": []
+  },
+  "blender": {
+    "pin": "4.2.1 LTS",
+    "exe": "C:/Program Files/Blender Foundation/Blender 4.2/blender.exe",
+    "version_output": [
+      "Blender 4.2.1 LTS",
+      "\tbuild date: 2024-08-20",
+      "\tbuild time: 00:50:53",
+      "\tbuild commit date: 2024-08-19",
+      "\tbuild commit time: 11:21",
+      "\tbuild hash: 396f546c9d82",
+      "\tbuild branch: blender-v4.2-release",
+      "\tbuild platform: Windows",
+      "\tbuild type: Release",
+      "\tbuild c flags: /W3 /w34062 /w34100 /w34115 /w34189 /w35038 /wd4018 /wd4146 /wd4065 /wd4127 /wd4181 /wd4200 /wd4244 /wd4267 /wd4305 /wd4800 /wd4828 /wd4996 /wd4661 /wd4848 /we4013 /we4133 /we4431 /we4033 /DWIN32 /D_WINDOWS /W3 /nologo /J /Gd /MP /bigobj /Zc:inline  -openmp ",
+      "\tbuild c++ flags: /W3 /w34062 /w34100 /w34115 /w34189 /w35038 /wd4018 /wd4146 /wd4065 /wd4127 /wd4181 /wd4200 /wd4244 /wd4267 /wd4305 /wd4800 /wd4828 /wd4996 /wd4661 /wd4848 /we4013 /we4133 /we4431 /we4033 /DWIN32 /D_WINDOWS /W3  /EHsc /nologo /J /Gd /MP /EHsc /bigobj /permissive- /Zc:__cplusplus /Zc:inline  -openmp ",
+      "\tbuild link flags: /MACHINE:X64  /SUBSYSTEM:CONSOLE /STACK:2097152 /ignore:4049 /ignore:4217 /ignore:4221",
+      "\tbuild system: CMake"
+    ],
+    "bpy_version_string": "4.2.1 LTS",
+    "build_hash": "396f546c9d82",
+    "build_date": "2024-08-20",
+    "addons": {
+      "io_scene_gltf2": "4.2.60"
+    },
+    "pxr_usd_version": "0.24.5",
+    "argv": [
+      "--background",
+      "--factory-startup",
+      "--python-use-system-env",
+      "--python-exit-code",
+      "1",
+      "--python",
+      "blender_export_nc.py",
+      "--",
+      "<args.json>"
+    ],
+    "env_pins": {
+      "PYTHONHASHSEED": "0",
+      "PYTHONNOUSERSITE": "1",
+      "TEMP": "<build>/tmp",
+      "TMP": "<build>/tmp"
+    }
+  },
+  "inputs": {
+    "gltf": "fixtures/sources/crate-cc0/wooden_crate_01_2k.gltf",
+    "gltf_sha256": "747c26810ddcca99454ccd27fa0079b3718edda34c75d2a792b2c9bd28772a20",
+    "bin_sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e",
+    "texture": {
+      "package": "fixtures/crate-cc0-full-v1.werk",
+      "package_sha256": "32b1f4d5d0adbed82174b191005cd512d7f54af597b1e6f56f48a0c36f3e3d0b",
+      "entry": "textures/crate-cc0-albedo.png",
+      "manifest_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460,
+      "png_size": [
+        256,
+        256
+      ],
+      "written_as": "crate_diffuse.png"
+    }
+  },
+  "import_settings": {
+    "merge_vertices": false,
+    "import_shading": "NORMALS",
+    "bone_heuristic": "BLENDER",
+    "guess_original_bind_pose": true,
+    "import_pack_images": true
+  },
+  "export_settings": {
+    "check_existing": false,
+    "export_format": "GLTF_SEPARATE",
+    "export_texture_dir": "",
+    "export_image_format": "AUTO",
+    "export_keep_originals": false,
+    "export_copyright": "",
+    "export_texcoords": true,
+    "export_normals": true,
+    "export_tangents": false,
+    "export_materials": "EXPORT",
+    "export_vertex_color": "MATERIAL",
+    "export_attributes": false,
+    "use_mesh_edges": false,
+    "use_mesh_vertices": false,
+    "export_cameras": false,
+    "export_lights": false,
+    "use_selection": false,
+    "use_visible": false,
+    "use_renderable": false,
+    "use_active_collection": false,
+    "use_active_scene": false,
+    "export_extras": false,
+    "export_yup": true,
+    "export_apply": false,
+    "export_shared_accessors": false,
+    "export_animations": false,
+    "export_skins": false,
+    "export_morph": false,
+    "export_draco_mesh_compression_enable": false,
+    "export_use_gltfpack": false,
+    "export_gpu_instances": false,
+    "export_unused_images": false,
+    "export_unused_textures": false
+  },
+  "scene_edits": [
+    "read_factory_settings(use_empty=True)",
+    "all glTF-imported materials and images removed (the 3 JPEGs are not in the repo)",
+    "one material 'crate_wood': Principled BSDF Base Color <- Image Texture(crate_diffuse.png)",
+    "material assigned to all 3 mesh objects",
+    "identical to blender_export_fbx.py (the FBX control)"
+  ],
+  "blender_view_before_export": [
+    {
+      "object": "wooden_crate_01",
+      "mesh": "Cube.020",
+      "vertex_count": 3706,
+      "polygon_count": 5508,
+      "triangle_count": 5508,
+      "loop_count": 16524,
+      "positions_f32_sha256": "aeaacc6a48d9cc7153d6893b9e00d5be41aa0a5a7e4c7ca81cd358f7e5230914",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "wooden_crate_01_latch",
+      "mesh": "Cube.001",
+      "vertex_count": 384,
+      "polygon_count": 376,
+      "triangle_count": 376,
+      "loop_count": 1128,
+      "positions_f32_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "wooden_crate_01_lid",
+      "mesh": "Cube.005",
+      "vertex_count": 596,
+      "polygon_count": 692,
+      "triangle_count": 692,
+      "loop_count": 2076,
+      "positions_f32_sha256": "7e4ce6b6030fdf01aac85625a48ffcb96789e5168d107298464077e2d29350c0",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  ],
+  "blender_view_after_reimport": [
+    {
+      "object": "wooden_crate_01",
+      "mesh": "Cube.020",
+      "vertex_count": 3731,
+      "polygon_count": 5508,
+      "triangle_count": 5508,
+      "loop_count": 16524,
+      "positions_f32_sha256": "be0c78ff66b880ea82dc61fe54ac4cf48e43b0c2b2448a614059eca878181c8f",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "wooden_crate_01_latch",
+      "mesh": "Cube.001",
+      "vertex_count": 384,
+      "polygon_count": 376,
+      "triangle_count": 376,
+      "loop_count": 1128,
+      "positions_f32_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "wooden_crate_01_lid",
+      "mesh": "Cube.005",
+      "vertex_count": 622,
+      "polygon_count": 692,
+      "triangle_count": 692,
+      "loop_count": 2076,
+      "positions_f32_sha256": "e6157efd7a52a94e683ba06b595766a51206f1388cf2786e90a4c531d04bd720",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  ],
+  "reimported_images": [
+    {
+      "name": "crate_diffuse",
+      "filepath": "D:\\build\\gltf\\reimport-run1\\crate_diffuse.png",
+      "packed": true,
+      "packed_size": 9460,
+      "packed_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "has_data": false
+    }
+  ],
+  "determinism": {
+    "run1_files": [
+      "crate-nc-v1.bin",
+      "crate-nc-v1.gltf",
+      "crate_diffuse.png"
+    ],
+    "run2_files": [
+      "crate-nc-v1.bin",
+      "crate-nc-v1.gltf",
+      "crate_diffuse.png"
+    ],
+    "per_file": {
+      "crate-nc-v1.bin": {
+        "run1_sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+        "run2_sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+        "byte_identical": true
+      },
+      "crate-nc-v1.gltf": {
+        "run1_sha256": "3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69",
+        "run2_sha256": "3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69",
+        "byte_identical": true
+      },
+      "crate_diffuse.png": {
+        "run1_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+        "run2_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+        "byte_identical": true
+      }
+    },
+    "byte_identical": true
+  },
+  "checks": [
+    {
+      "check": "output files are exactly ['crate-nc-v1.gltf', 'crate-nc-v1.bin', 'crate_diffuse.png']",
+      "ok": true,
+      "detail": "['crate-nc-v1.bin', 'crate-nc-v1.gltf', 'crate_diffuse.png']"
+    },
+    {
+      "check": "buffers[].uri == ['crate-nc-v1.bin'] and images[].uri == ['crate_diffuse.png']",
+      "ok": true,
+      "detail": "['crate-nc-v1.bin', 'crate_diffuse.png']"
+    },
+    {
+      "check": "every URI is relative (no scheme, no drive, no leading slash, no '..')",
+      "ok": true,
+      "detail": "['crate-nc-v1.bin', 'crate_diffuse.png']"
+    },
+    {
+      "check": "sidecar PNG bytes == source PNG bytes (verbatim, not re-encoded)",
+      "ok": true,
+      "detail": "sha256 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f"
+    },
+    {
+      "check": "buffers[0].byteLength == size of crate-nc-v1.bin",
+      "ok": true,
+      "detail": "191040 vs 191040"
+    },
+    {
+      "check": "glTF mesh Cube.005 has a Blender mesh of the same name",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "glTF mesh Cube.005 triangles == Blender before export",
+      "ok": true,
+      "detail": "692 vs 692"
+    },
+    {
+      "check": "glTF mesh Cube.005 distinct positions == Blender's (axis converted, 1e-6)",
+      "ok": true,
+      "detail": "352 vs 352 distinct"
+    },
+    {
+      "check": "glTF mesh Cube.020 has a Blender mesh of the same name",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "glTF mesh Cube.020 triangles == Blender before export",
+      "ok": true,
+      "detail": "5508 vs 5508"
+    },
+    {
+      "check": "glTF mesh Cube.020 distinct positions == Blender's (axis converted, 1e-6)",
+      "ok": true,
+      "detail": "2808 vs 2808 distinct"
+    },
+    {
+      "check": "glTF mesh Cube.001 has a Blender mesh of the same name",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "glTF mesh Cube.001 triangles == Blender before export",
+      "ok": true,
+      "detail": "376 vs 376"
+    },
+    {
+      "check": "glTF mesh Cube.001 distinct positions == Blender's (axis converted, 1e-6)",
+      "ok": true,
+      "detail": "188 vs 188 distinct"
+    },
+    {
+      "check": "Blender re-import of the glTF (3 files alone in a dir): same totals",
+      "ok": true,
+      "detail": "4737v/6576t"
+    },
+    {
+      "check": "Blender re-import loads the PNG sidecar with the source bytes",
+      "ok": true,
+      "detail": "[{\"name\": \"crate_diffuse\", \"filepath\": \"D:\\\\build\\\\gltf\\\\reimport-run1\\\\crate_diffuse.png\", \"packed\": true, \"packed_size\": 9460, \"packed_sha256\": \"af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f\", \"has_data\": false}]"
+    },
+    {
+      "check": "triangle total equals the FBX control (6576)",
+      "ok": true,
+      "detail": "4737v/6576t"
+    },
+    {
+      "check": "leak scan: 0 hits in every output (and in the usda text form)",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "all_checks_ok": true
+}

@@ -1,0 +1,125 @@
+{
+  "format": "gltf",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\clean\\gltf-ref-texture",
+  "exit_code": 0,
+  "rows": [
+    {
+      "rel": "ref_extract_gltf.py",
+      "sha256": "c175d68585f07149e958b1c6d341613d9724b1168ad665d08e98237d7d7ef47e",
+      "size": 2367,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "out/crate-nc-v1.bin",
+      "sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+      "size": 191040,
+      "status": "OK",
+      "class": "mesh",
+      "payload": "mesh:crate-nc-v1.bin",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "out/crate.obj",
+      "sha256": "2a4243535e53ed51c7351daa686f0f1803954f19503789adea93e8ce0a5c8544",
+      "size": 193782,
+      "status": "OK",
+      "class": "mesh",
+      "payload": null,
+      "tier": "T2-VALUES",
+      "detail": "parsed 4737 positions (text)"
+    },
+    {
+      "rel": "out/crate_diffuse.png",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:crate_diffuse.png",
+      "tier": "T1",
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "PASS",
+      "why": "exit 0; stdout names 5 structure entries (Cube.001, Cube.005, Cube.020, crate-nc-v1.bin, crate_diffuse.png)"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": [
+          "   2: mesh 0 Cube.005: 622 vertices, 2076 indices",
+          "   3: mesh 1 Cube.020: 3731 vertices, 16524 indices",
+          "   4: mesh 2 Cube.001: 384 vertices, 1128 indices",
+          "   5: buffer crate-nc-v1.bin: declared byteLength 191040, actual 191040 -> consistent",
+          "   6: image crate_diffuse.png (image/png): present",
+          "   8: extracted mesh -> out/crate-nc-v1.bin and out/crate.obj; texture -> out/crate_diffuse.png"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": [
+          "   5: buffer crate-nc-v1.bin: declared byteLength 191040, actual 191040 -> consistent",
+          "   7: integrity: this file declares no checksums; only structural consistency was checkable"
+        ]
+      },
+      "file_declares": "none (byteLength/count consistency checks only, not cryptographic)"
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "out/crate-nc-v1.bin",
+          "out/crate.obj"
+        ],
+        "texture": [
+          "out/crate_diffuse.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "PASS",
+      "per_class": {
+        "mesh": "PASS via out/crate-nc-v1.bin[T1], out/crate.obj[T2-VALUES]",
+        "texture": "PASS via out/crate_diffuse.png[T1]"
+      }
+    }
+  },
+  "verdict": "PENDING",
+  "verdict_reason": "auto clauses pass; awaiting: C2,C3",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "mesh:crate-nc-v1.bin",
+      "texture:crate_diffuse.png"
+    ],
+    "bytes": 200500,
+    "any_declared": 0.0,
+    "cryptographic": 0.0,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [
+        "mesh:crate-nc-v1.bin",
+        "texture:crate_diffuse.png"
+      ],
+      "bytes": 200500,
+      "any_declared": 0.0,
+      "cryptographic": 0.0,
+      "kinds": []
+    }
+  }
+}

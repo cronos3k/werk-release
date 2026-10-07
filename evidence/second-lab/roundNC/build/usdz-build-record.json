@@ -1,0 +1,703 @@
+{
+  "fixture_files": [
+    {
+      "name": "crate-nc-v1.usdz",
+      "sha256": "14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7",
+      "size": 487957
+    }
+  ],
+  "format": "usdz",
+  "build_dir": "D:\\build\\usdz",
+  "usdz": {
+    "zip_entries": [
+      {
+        "name": "crate-nc-v1.usdc",
+        "compress_type": 0,
+        "stored": true,
+        "size": 478101,
+        "crc32": "11304224",
+        "crc32_recomputed": "11304224",
+        "data_offset": 64,
+        "aligned_64": true,
+        "sha256": "a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa",
+        "magic": "PXR-USDC"
+      },
+      {
+        "name": "textures/crate_diffuse.png",
+        "compress_type": 0,
+        "stored": true,
+        "size": 9460,
+        "crc32": "4bf30478",
+        "crc32_recomputed": "4bf30478",
+        "data_offset": 478272,
+        "aligned_64": true,
+        "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+        "magic": "\u0089PNG\r\n\u001a\n"
+      }
+    ],
+    "testzip": null,
+    "root_layer_entry": "crate-nc-v1.usdc",
+    "root_layer_encoding": "usdc (binary crate)",
+    "pxr_stage": {
+      "usd_version": "0.24.5",
+      "root_layer_identifier_basename": "crate-nc-v1.usdz",
+      "root_layer_file_format": "usdz",
+      "up_axis": "Z",
+      "meters_per_unit": 1.0,
+      "default_prim": "/root",
+      "traversal_order": [
+        "/root",
+        "/root/wooden_crate_01_lid",
+        "/root/wooden_crate_01_lid/Cube_005",
+        "/root/_materials",
+        "/root/_materials/crate_wood",
+        "/root/_materials/crate_wood/Principled_BSDF",
+        "/root/_materials/crate_wood/Image_Texture",
+        "/root/_materials/crate_wood/uvmap",
+        "/root/wooden_crate_01",
+        "/root/wooden_crate_01/Cube_020",
+        "/root/wooden_crate_01_latch",
+        "/root/wooden_crate_01_latch/Cube_001"
+      ],
+      "meshes": [
+        {
+          "prim_path": "/root/wooden_crate_01_lid/Cube_005",
+          "points_count": 596,
+          "points_type": "point3f[]",
+          "face_count": 692,
+          "triangle_count": 692,
+          "all_triangles": true,
+          "positions_f32_sha256": "7e4ce6b6030fdf01aac85625a48ffcb96789e5168d107298464077e2d29350c0"
+        },
+        {
+          "prim_path": "/root/wooden_crate_01/Cube_020",
+          "points_count": 3706,
+          "points_type": "point3f[]",
+          "face_count": 5508,
+          "triangle_count": 5508,
+          "all_triangles": true,
+          "positions_f32_sha256": "aeaacc6a48d9cc7153d6893b9e00d5be41aa0a5a7e4c7ca81cd358f7e5230914"
+        },
+        {
+          "prim_path": "/root/wooden_crate_01_latch/Cube_001",
+          "points_count": 384,
+          "points_type": "point3f[]",
+          "face_count": 376,
+          "triangle_count": 376,
+          "all_triangles": true,
+          "positions_f32_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21"
+        }
+      ],
+      "shaders": [
+        {
+          "prim_path": "/root/_materials/crate_wood/Principled_BSDF",
+          "id": "UsdPreviewSurface",
+          "inputs": {
+            "clearcoat": "0.0",
+            "clearcoatRoughness": "0.029999999329447746",
+            "diffuseColor": null,
+            "ior": "1.5",
+            "metallic": "0.0",
+            "opacity": "1.0",
+            "roughness": "0.5",
+            "specular": "0.5"
+          }
+        },
+        {
+          "prim_path": "/root/_materials/crate_wood/Image_Texture",
+          "id": "UsdUVTexture",
+          "inputs": {
+            "file": "@./textures/crate_diffuse.png@",
+            "sourceColorSpace": "sRGB",
+            "st": null,
+            "wrapS": "repeat",
+            "wrapT": "repeat"
+          }
+        },
+        {
+          "prim_path": "/root/_materials/crate_wood/uvmap",
+          "id": "UsdPrimvarReader_float2",
+          "inputs": {
+            "varname": "st"
+          }
+        }
+      ]
+    },
+    "pxr_mesh_dump": {
+      "file": "build/usdz-pxr-mesh-dump.f32",
+      "sha256": "d5a32ab5669b03cf9e08fe5cc592b18cff62fabdaf0b8e5bdeb108866438066e",
+      "size": 56232,
+      "order": [
+        "/root/wooden_crate_01_lid/Cube_005",
+        "/root/wooden_crate_01/Cube_020",
+        "/root/wooden_crate_01_latch/Cube_001"
+      ]
+    },
+    "root_layer_usda_excerpt": "#usda 1.0\n(\n    defaultPrim = \"root\"\n    doc = \"Blender v4.2.1 LTS\"\n    metersPerUnit = 1\n    upAxis = \"Z\"\n)\n\ndef Xform \"root\" (\n    customData = {\n        dictionary Blender = {\n            bool generated = 1\n        }\n    }\n)\n{\n    def Xform \"wooden_crate_01_lid\"\n    {\n        def Mesh \"Cube_005\" (\n            active = true\n            prepend apiSchemas = [\"MaterialBindingAPI\"]\n        )\n        {\n            uniform bool doubleSided = 1\n            float3[] extent = [(-0.35390967, -0.19613962, 0.29946235), (0.35390967, 0.19613962, 0.34168494)]\n            int[] faceVertexCounts = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]\n            int[] faceVertexIndices = [31, 12, 59, 31, 59, 67, 9, 31, 67, 9, 67, 53, 38, 48, 0, 38, 0, 25, 112, 370, 333, 112, 333, 75, 110, 116, 252, 110, 252, 223, 48, 41, 27, 48, 27, 0, 49, 35, 92, 49, 92, 86, 115, 15, 18, 115, 18, 106, 2, 260, 351, 2, 351, 93, 217, 129, 2, 217, 2, 23, 63, 45, 87, 63, 87, 80, 67, 59, 41, 67, 41, 48, 72, 3, 30, 72, 30, 8, 72, 330, 261, 72, 261, 3, 333, 265, 7, 333, 7, 75, 74, 332, 334, 74, 334, 76, 225, 125, 0, 225, 0, 27, 3, 74, 13, 3, 13, 30, 85, 94, 6, 85, 6, 79, 125, 215, 25, 125, 25, 0, 263, 5, 93, 263, 93, 351, 55, 64, 78, 55, 78, 4, 118, 124, 183, 118, 183, 165, 113, 22, 77, 113, 77, 112, 12, 20, 17, 12, 17, 14, 13, 21, 16, 13, 16, 19, 51, 45, 47, 64, 65, 68, 186, 168, 171, 186, 171, 189, 76, 21, 13, 76, 13, 74, 31, 9, 11, 31, 11, 33, 32, 10, 8, 32, 8, 30, 225, 27, 28, 225, 28, 227, 228, 29, 110, 228, 110, 223, 25, 215, 221, 25, 221, 26, 26, 221, 218, 26, 218, 24, 56, 97, 95, 56, 95, 58, 58, 95, 9, 58, 9, 53, 109, 110, 29, 109, 29, 44, 43, 28, 27, 43, 27, 41, 12, 31, 33, 12, 33, 20, 19, 32, 30, 19, 30, 13, 24, 36, 40, 24, 40, 26, 26, 40, 38, 26, 38, 25, 111, 109, 44, 111, 44, 62, 61, 43, 41, 61, 41, 59, 37, 39, 35, 35, 49, 46, 35, 46, 37, 55, 57, 52, 52, 65, 64, 52, 64, 55, 14, 61, 59, 14, 59, 12, 46, 49, 50, 331, 330, 72, 331, 72, 73, 77, 335, 370, 77, 370, 112, 63, 80, 83, 63, 83, 69, 68, 82, 78, 68, 78, 64, 87, 45, 51, 87, 51, 91, 90, 50, 49, 90, 49, 86, 100, 99, 71, 100, 71, 73, 8, 100, 73, 8, 73, 72, 99, 100, 101, 99, 101, 104, 100, 8, 10, 100, 10, 101, 102, 11, 9, 102, 9, 95, 105, 102, 95, 105, 95, 97, 5, 96, 54, 329, 331, 73, 329, 73, 71, 1, 259, 385, 1, 385, 127, 3, 261, 332, 3, 332, 74, 116, 110, 109, 116, 109, 42, 388, 130, 119, 388, 119, 377, 108, 114, 7, 106, 18, 22, 106, 22, 113, 107, 75, 7, 111, 62, 15, 111, 15, 115, 114, 107, 7, 60, 108, 7, 60, 42, 109, 60, 109, 111, 328, 70, 5, 328, 5, 263, 75, 107, 113, 75, 113, 112, 107, 114, 106, 107, 106, 113, 114, 108, 115, 114, 115, 106, 108, 60, 111, 108, 111, 115, 252, 116, 1, 252, 1, 127, 382, 376, 423, 382, 423, 441, 66, 63, 69, 93, 34, 23, 93, 23, 2, 154, 188, 182, 154, 182, 135, 132, 175, 188, 132, 188, 154, 161, 148, 117, 161, 117, 170, 198, 456, 509, 198, 509, 248, 246, 224, 253, 246, 253, 254, 170, 117, 150, 170, 150, 164, 172, 209, 255, 172, 255, 158, 251, 242, 141, 251, 141, 138, 256, 474, 377, 256, 377, 119, 219, 146, 119, 219, 119, 130, 186, 203, 211, 186, 211, 168, 188, 170, 164, 188, 164, 182, 195, 131, 153, 195, 153, 120, 120, 378, 453, 120, 453, 195, 456, 198, 124, 456, 124, 382, 199, 457, 455, 199, 455, 197, 226, 150, 117, 226, 117, 126, 120, 153, 136, 120, 136, 197, 212, 210, 204, 212, 204, 207, 126, 117, 148, 126, 148, 216, 380, 474, 256, 380, 256, 122, 179, 121, 201, 179, 201, 187, 259, 265, 318, 259, 318, 300, 249, 248, 200, 249, 200, 145, 135, 137, 139, 135, 139, 142, 136, 143, 140, 136, 140, 144, 168, 174, 171, 192, 190, 187, 321, 303, 305, 321, 305, 323, 199, 197, 136, 199, 136, 144, 154, 155, 133, 154, 133, 132, 156, 153, 131, 156, 131, 134, 226, 229, 151, 226, 151, 150, 230, 224, 246, 230, 246, 152, 148, 149, 222, 148, 222, 216, 149, 147, 220, 149, 220, 222, 178, 180, 231, 178, 231, 233, 180, 175, 132, 180, 132, 231, 245, 167, 152, 245, 152, 246, 166, 164, 150, 166, 150, 151, 135, 142, 155, 135, 155, 154, 143, 136, 153, 143, 153, 156, 147, 149, 163"
+  },
+  "mesh_totals": {
+    "vertex_count": 4686,
+    "triangle_count": 6576
+  },
+  "leak_scan": {
+    "strings": [
+      "werk",
+      "roundnc",
+      "staging",
+      "yuvra",
+      "gauntlet",
+      "users",
+      "appdata",
+      "\\build",
+      "/build",
+      "d:\\",
+      "d:/",
+      "c:\\",
+      "c:/"
+    ],
+    "absolute_path_regex": "(?i)(?<![a-z0-9])[a-z]:[\\\\/]|\\\\\\\\[a-z0-9]|file://",
+    "scanned": [
+      "crate-nc-v1.usdz",
+      "root layer exported to usda text by pxr",
+      "usdz!crate-nc-v1.usdc",
+      "usdz!textures/crate_diffuse.png"
+    ],
+    "hits": []
+  },
+  "blender": {
+    "pin": "4.2.1 LTS",
+    "exe": "C:/Program Files/Blender Foundation/Blender 4.2/blender.exe",
+    "version_output": [
+      "Blender 4.2.1 LTS",
+      "\tbuild date: 2024-08-20",
+      "\tbuild time: 00:50:53",
+      "\tbuild commit date: 2024-08-19",
+      "\tbuild commit time: 11:21",
+      "\tbuild hash: 396f546c9d82",
+      "\tbuild branch: blender-v4.2-release",
+      "\tbuild platform: Windows",
+      "\tbuild type: Release",
+      "\tbuild c flags: /W3 /w34062 /w34100 /w34115 /w34189 /w35038 /wd4018 /wd4146 /wd4065 /wd4127 /wd4181 /wd4200 /wd4244 /wd4267 /wd4305 /wd4800 /wd4828 /wd4996 /wd4661 /wd4848 /we4013 /we4133 /we4431 /we4033 /DWIN32 /D_WINDOWS /W3 /nologo /J /Gd /MP /bigobj /Zc:inline  -openmp ",
+      "\tbuild c++ flags: /W3 /w34062 /w34100 /w34115 /w34189 /w35038 /wd4018 /wd4146 /wd4065 /wd4127 /wd4181 /wd4200 /wd4244 /wd4267 /wd4305 /wd4800 /wd4828 /wd4996 /wd4661 /wd4848 /we4013 /we4133 /we4431 /we4033 /DWIN32 /D_WINDOWS /W3  /EHsc /nologo /J /Gd /MP /EHsc /bigobj /permissive- /Zc:__cplusplus /Zc:inline  -openmp ",
+      "\tbuild link flags: /MACHINE:X64  /SUBSYSTEM:CONSOLE /STACK:2097152 /ignore:4049 /ignore:4217 /ignore:4221",
+      "\tbuild system: CMake"
+    ],
+    "bpy_version_string": "4.2.1 LTS",
+    "build_hash": "396f546c9d82",
+    "build_date": "2024-08-20",
+    "addons": {
+      "io_scene_gltf2": "4.2.60"
+    },
+    "pxr_usd_version": "0.24.5",
+    "argv": [
+      "--background",
+      "--factory-startup",
+      "--python-use-system-env",
+      "--python-exit-code",
+      "1",
+      "--python",
+      "blender_export_nc.py",
+      "--",
+      "<args.json>"
+    ],
+    "env_pins": {
+      "PYTHONHASHSEED": "0",
+      "PYTHONNOUSERSITE": "1",
+      "TEMP": "<build>/tmp",
+      "TMP": "<build>/tmp"
+    }
+  },
+  "inputs": {
+    "gltf": "fixtures/sources/crate-cc0/wooden_crate_01_2k.gltf",
+    "gltf_sha256": "747c26810ddcca99454ccd27fa0079b3718edda34c75d2a792b2c9bd28772a20",
+    "bin_sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e",
+    "texture": {
+      "package": "fixtures/crate-cc0-full-v1.werk",
+      "package_sha256": "32b1f4d5d0adbed82174b191005cd512d7f54af597b1e6f56f48a0c36f3e3d0b",
+      "entry": "textures/crate-cc0-albedo.png",
+      "manifest_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460,
+      "png_size": [
+        256,
+        256
+      ],
+      "written_as": "crate_diffuse.png"
+    }
+  },
+  "import_settings": {
+    "merge_vertices": false,
+    "import_shading": "NORMALS",
+    "bone_heuristic": "BLENDER",
+    "guess_original_bind_pose": true,
+    "import_pack_images": true
+  },
+  "export_settings": {
+    "check_existing": false,
+    "selected_objects_only": false,
+    "visible_objects_only": false,
+    "export_animation": false,
+    "export_hair": false,
+    "export_uvmaps": true,
+    "rename_uvmaps": true,
+    "export_mesh_colors": false,
+    "export_normals": true,
+    "export_materials": true,
+    "export_subdivision": "IGNORE",
+    "export_armatures": false,
+    "only_deform_bones": false,
+    "export_shapekeys": false,
+    "use_instancing": false,
+    "evaluation_mode": "RENDER",
+    "generate_preview_surface": true,
+    "generate_materialx_network": false,
+    "convert_orientation": false,
+    "export_textures": true,
+    "overwrite_textures": true,
+    "relative_paths": true,
+    "xform_op_mode": "TRS",
+    "root_prim_path": "/root",
+    "export_custom_properties": false,
+    "author_blender_name": false,
+    "convert_world_material": false,
+    "allow_unicode": false,
+    "export_meshes": true,
+    "export_lights": false,
+    "export_cameras": false,
+    "export_curves": false,
+    "export_volumes": false,
+    "triangulate_meshes": false,
+    "usdz_downscale_size": "KEEP"
+  },
+  "scene_edits": [
+    "read_factory_settings(use_empty=True)",
+    "all glTF-imported materials and images removed (the 3 JPEGs are not in the repo)",
+    "one material 'crate_wood': Principled BSDF Base Color <- Image Texture(crate_diffuse.png)",
+    "material assigned to all 3 mesh objects",
+    "identical to blender_export_fbx.py (the FBX control)"
+  ],
+  "blender_view_before_export": [
+    {
+      "object": "wooden_crate_01",
+      "mesh": "Cube.020",
+      "vertex_count": 3706,
+      "polygon_count": 5508,
+      "triangle_count": 5508,
+      "loop_count": 16524,
+      "positions_f32_sha256": "aeaacc6a48d9cc7153d6893b9e00d5be41aa0a5a7e4c7ca81cd358f7e5230914",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "wooden_crate_01_latch",
+      "mesh": "Cube.001",
+      "vertex_count": 384,
+      "polygon_count": 376,
+      "triangle_count": 376,
+      "loop_count": 1128,
+      "positions_f32_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    },
+    {
+      "object": "wooden_crate_01_lid",
+      "mesh": "Cube.005",
+      "vertex_count": 596,
+      "polygon_count": 692,
+      "triangle_count": 692,
+      "loop_count": 2076,
+      "positions_f32_sha256": "7e4ce6b6030fdf01aac85625a48ffcb96789e5168d107298464077e2d29350c0",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "UVMap"
+      ]
+    }
+  ],
+  "blender_view_after_reimport": [
+    {
+      "object": "Cube_001",
+      "mesh": "Cube_001",
+      "vertex_count": 384,
+      "polygon_count": 376,
+      "triangle_count": 376,
+      "loop_count": 1128,
+      "positions_f32_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "st"
+      ]
+    },
+    {
+      "object": "Cube_005",
+      "mesh": "Cube_005",
+      "vertex_count": 596,
+      "polygon_count": 692,
+      "triangle_count": 692,
+      "loop_count": 2076,
+      "positions_f32_sha256": "7e4ce6b6030fdf01aac85625a48ffcb96789e5168d107298464077e2d29350c0",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "st"
+      ]
+    },
+    {
+      "object": "Cube_020",
+      "mesh": "Cube_020",
+      "vertex_count": 3706,
+      "polygon_count": 5508,
+      "triangle_count": 5508,
+      "loop_count": 16524,
+      "positions_f32_sha256": "aeaacc6a48d9cc7153d6893b9e00d5be41aa0a5a7e4c7ca81cd358f7e5230914",
+      "matrix_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "materials": [
+        "crate_wood"
+      ],
+      "uv_layers": [
+        "st"
+      ]
+    }
+  ],
+  "reimported_images": [
+    {
+      "name": "crate_diffuse.png",
+      "filepath": "D:\\build\\usdz\\tmp\\blender_a12352\\usd_textures_tmp\\crate_diffuse.png",
+      "packed": true,
+      "packed_size": 9460,
+      "packed_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "has_data": false
+    }
+  ],
+  "determinism": {
+    "run1_files": [
+      "crate-nc-v1.usdz"
+    ],
+    "run2_files": [
+      "crate-nc-v1.usdz"
+    ],
+    "per_file": {
+      "crate-nc-v1.usdz": {
+        "run1_sha256": "14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7",
+        "run2_sha256": "3e6cfbf45208c9c09738ff07c46d7676478710832630bd396b7aaa8d447ff831",
+        "byte_identical": false,
+        "differing_ranges_offset_len": [
+          [
+            15,
+            3
+          ],
+          [
+            476147,
+            1
+          ],
+          [
+            476153,
+            25
+          ],
+          [
+            476193,
+            1
+          ],
+          [
+            476522,
+            1
+          ],
+          [
+            476541,
+            1
+          ],
+          [
+            477746,
+            2
+          ],
+          [
+            477752,
+            2
+          ],
+          [
+            487749,
+            3
+          ]
+        ],
+        "sizes": [
+          487957,
+          487957
+        ]
+      }
+    },
+    "byte_identical": false,
+    "usd_mesh_prim_order_run1": [
+      "/root/wooden_crate_01_lid/Cube_005",
+      "/root/wooden_crate_01/Cube_020",
+      "/root/wooden_crate_01_latch/Cube_001"
+    ],
+    "usd_mesh_prim_order_run2": [
+      "/root/wooden_crate_01_latch/Cube_001",
+      "/root/wooden_crate_01/Cube_020",
+      "/root/wooden_crate_01_lid/Cube_005"
+    ],
+    "usd_same_meshes_ignoring_order": true,
+    "usd_same_prim_order": false,
+    "usd_png_entry_identical": true
+  },
+  "checks": [
+    {
+      "check": "output files are exactly ['crate-nc-v1.usdz']",
+      "ok": true,
+      "detail": "['crate-nc-v1.usdz']"
+    },
+    {
+      "check": "zip CRC-32 of every entry holds (testzip)",
+      "ok": true,
+      "detail": "None"
+    },
+    {
+      "check": "every entry stored (no compression) and 64-byte aligned (USDZ rule)",
+      "ok": true,
+      "detail": "[[\"crate-nc-v1.usdc\", true, 64], [\"textures/crate_diffuse.png\", true, 478272]]"
+    },
+    {
+      "check": "first entry is the root layer (.usd/.usdc/.usda)",
+      "ok": true,
+      "detail": "crate-nc-v1.usdc"
+    },
+    {
+      "check": "exactly one PNG entry, bytes == source PNG (verbatim)",
+      "ok": true,
+      "detail": "[[\"textures/crate_diffuse.png\", \"af85a84d80b8fee7\", 9460]]"
+    },
+    {
+      "check": "no audio entry (D2: no sound)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "run 2 holds the same meshes and the same PNG (prim order may differ)",
+      "ok": true,
+      "detail": "prim order same: False"
+    },
+    {
+      "check": "all USD mesh faces are triangles",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "check": "points are float3 (point3f[])",
+      "ok": true,
+      "detail": "['point3f[]', 'point3f[]', 'point3f[]']"
+    },
+    {
+      "check": "USD mesh /root/wooden_crate_01_lid/Cube_005 points == Blender mesh before export (same order, float32 bytes)",
+      "ok": true,
+      "detail": "Cube.005"
+    },
+    {
+      "check": "USD mesh /root/wooden_crate_01/Cube_020 points == Blender mesh before export (same order, float32 bytes)",
+      "ok": true,
+      "detail": "Cube.020"
+    },
+    {
+      "check": "USD mesh /root/wooden_crate_01_latch/Cube_001 points == Blender mesh before export (same order, float32 bytes)",
+      "ok": true,
+      "detail": "Cube.001"
+    },
+    {
+      "check": "USD mesh /root/wooden_crate_01_lid/Cube_005 points == Blender re-import of the usdz (alone in a dir)",
+      "ok": true,
+      "detail": "Cube_005"
+    },
+    {
+      "check": "USD mesh /root/wooden_crate_01/Cube_020 points == Blender re-import of the usdz (alone in a dir)",
+      "ok": true,
+      "detail": "Cube_020"
+    },
+    {
+      "check": "USD mesh /root/wooden_crate_01_latch/Cube_001 points == Blender re-import of the usdz (alone in a dir)",
+      "ok": true,
+      "detail": "Cube_001"
+    },
+    {
+      "check": "Blender re-import of the usdz finds the same PNG bytes",
+      "ok": true,
+      "detail": "[{\"name\": \"crate_diffuse.png\", \"filepath\": \"D:\\\\build\\\\usdz\\\\tmp\\\\blender_a12352\\\\usd_textures_tmp\\\\crate_diffuse.png\", \"packed\": true, \"packed_size\": 9460, \"packed_sha256\": \"af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f\", \"has_data\": false}]"
+    },
+    {
+      "check": "totals equal the FBX control (4686 v / 6576 t)",
+      "ok": true,
+      "detail": "4686v/6576t"
+    },
+    {
+      "check": "leak scan: 0 hits in every output (and in the usda text form)",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "all_checks_ok": true
+}

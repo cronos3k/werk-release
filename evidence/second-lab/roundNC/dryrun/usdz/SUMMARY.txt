@@ -1,0 +1,33 @@
+roundNC USDZ dry-run summary (grade_nc.py instrument check, plan 5.7)
+fixture crate-nc-v1.usdz sha256 14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7 (487957 B), ground truth COMPLETE
+
+OK   1-usdz-ref-texture                 expected: PENDING, C1/C4/C5 PASS
+                                        observed: PENDING C1=PASS C2=NEEDS-HUMAN-REVIEW C3=NEEDS-HUMAN-REVIEW C4=PASS C5=PASS
+OK   1-usdz-ref-texture-ruled           expected: PASS; mesh T2-VALUES (OBJ), texture T1; vif any=1.0 (CRC-32), crypto=0.0
+                                        observed: PASS mesh=PASS via out/crate.obj[T2-VALUES] | texture=PASS via out/crate_diffuse.png[T1] | vif any=1.0 crypto=0.0 kinds=['crc32']
+OK   1-usdz-ref-f32-ruled               expected: PASS; mesh T2-EXACT (canonical .f32 dump bytes)
+                                        observed: PASS mesh=PASS via out/crate-positions.f32[T2-EXACT]
+OK   1-usdz-ref-sound-NA-ruled          expected: PASS on mesh only, sound N/A
+                                        observed: PASS na=True C1=PASS C2=PASS C3=PASS-honest C4=PASS C5=PASS
+OK   1-usdz-blender-ref-ruled           expected: C4/C5 PASS (texture T1; mesh by T2, objects in Blender name order); C1 NOT-RUN (no clean re-run), so PENDING
+                                        observed: PENDING C1=NOT-RUN C2=PASS C3=PASS-honest C4=PASS C5=PASS | mesh=PASS via out/crate-blender.obj[T2-COUNT+BBOX] | texture=PASS via out/crate_diffuse.png[T1]
+OK   2-usdz-corrupt-texture             expected: C5 FAIL (texture mismatch), verdict PARTIAL (mesh still exact)
+                                        observed: PARTIAL C5=FAIL texture=FAIL: mismatch out/crate_diffuse.png
+OK   2-usdz-corrupt-f32                 expected: C5 FAIL (mesh), texture still PASS
+                                        observed: PARTIAL C5=FAIL mesh=FAIL: no matching artifact
+OK   2-usdz-usdc-copy-only              expected: C4 PASS (usdc is a mesh-class file), C5 FAIL mesh (usdc copy is not Tier 1), verdict PARTIAL
+                                        observed: PARTIAL C4=PASS C5=FAIL mesh=FAIL: no matching artifact
+OK   2-usdz-input-only                  expected: FAIL (input at its own path is not an extraction, R4)
+                                        observed: FAIL (no graded artifact matches)
+OK   3-echo-usdz-sound                  expected: PASS (no leaks, zip members scanned too)
+                                        observed: PASS leaks=0 self-declared=0 files=4 values=5
+OK   3-echo-usdz-texture                expected: PASS (no leaks, zip members scanned too)
+                                        observed: PASS leaks=0 self-declared=0 files=4 values=5
+OK   3-echo-usdz-SELFTEST-planted-leak  expected: FAIL (planted tier2 sha256 detected)
+                                        observed: FAIL leaks=1
+OK   3-echo-usdz-prompts-sound          expected: PASS
+                                        observed: PASS leaks=0
+OK   3-echo-usdz-prompts-texture        expected: PASS
+                                        observed: PASS leaks=0
+
+checks: 14   as expected: 14   unexpected: 0

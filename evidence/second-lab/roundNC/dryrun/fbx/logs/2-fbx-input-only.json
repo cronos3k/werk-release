@@ -1,0 +1,65 @@
+{
+  "format": "fbx",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\fbx\\corrupt\\no-extraction-input-only",
+  "exit_code": null,
+  "rows": [],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "PASS",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "ruled_by_human": true
+    },
+    "C3": {
+      "result": "PASS-honest",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "file_declares": "none (no checksums of any kind)",
+      "ruled_by_human": true
+    },
+    "C4": {
+      "result": "FAIL",
+      "candidates": {
+        "mesh": [],
+        "texture": []
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "texture": "FAIL: no matching artifact"
+      }
+    }
+  },
+  "verdict": "FAIL",
+  "verdict_reason": "no graded artifact matches",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [],
+    "bytes": 0,
+    "any_declared": null,
+    "cryptographic": null,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [],
+      "bytes": 0,
+      "any_declared": null,
+      "cryptographic": null,
+      "kinds": []
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "workspace": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\fbx\\workspaces\\SELFTEST-planted-leak",
+  "format": "fbx",
+  "files_scanned": 2,
+  "values_checked": 5,
+  "allowed_self_declared": 0,
+  "leaks": [
+    [
+      "PROMPT.txt",
+      "af85a84d80b8fee7 (payload texture:crate_diffuse.png)"
+    ]
+  ],
+  "result": "FAIL"
+}

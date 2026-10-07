@@ -1,0 +1,156 @@
+{
+  "format": "werk",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\clean\\werk-ref-texture",
+  "exit_code": 0,
+  "rows": [
+    {
+      "rel": "ref_extract_werk.py",
+      "sha256": "08e75160b6881e37090ad325d837357f205b37b60660cdf92cf83a637fed0094",
+      "size": 2761,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "out/crate-impact-hard-surface.wav",
+      "sha256": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+      "size": 17644,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "out/game.glb",
+      "sha256": "eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+      "size": 16736,
+      "status": "OK",
+      "class": "mesh",
+      "payload": "mesh:geometry/game.glb",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "out/seg_00.png",
+      "sha256": "395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0",
+      "size": 37183,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:x/splat-foley/segments/seg_00.png",
+      "tier": "T1",
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "PASS",
+      "why": "exit 0; stdout names 36 structure entries (ENVELOPE.layout.txt, LICENSE, MINI-SPECS.md, README.md, README.txt, SPEC.md)"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": [
+          "   2: node geom-game                          type=core.geom.game",
+          "   3:     geometry/game.glb",
+          "   4: node material-wood                      type=core.material",
+          "   5:     materials/wood.json",
+          "   6: node bounds                             type=core.phys.bounds",
+          "   8: node semantics                          type=core.semantics",
+          "   9:     semantics/semantics.json",
+          "  10: node provenance                         type=core.provenance",
+          "  12: node audio-crate-impact-hard-surface    type=core.audio.effect",
+          "  13:     audio/sfx/crate-impact-hard-surface.json",
+          "  14:     audio/sfx/crate-impact-hard-surface.wav",
+          "  15:     audio/sfx/crate-impact-hard-surface.raw.wav",
+          "  16:     audio/sfx/crate-impact-hard-surface.var2.wav",
+          "  17:     audio/sfx/crate-impact-hard-surface.var3.wav",
+          "  18: node spec                               type=core.spec",
+          "  29:     spec/schemas/core.audio.effect.schema.json",
+          "  30:     spec/schemas/core.material.schema.json",
+          "  33:     spec/schemas/core.semantics.schema.json",
+          "  36: node loader-python                      type=core.loader",
+          "  38: node loader-rust                        type=core.loader",
+          "  40: node loader-c                           type=core.loader",
+          "  42: node license                            type=core.license",
+          "  44: node readme                             type=core.readme",
+          "  46: node evidence-segments                  type=x.splat-foley.segments",
+          "  47:     x/splat-foley/segments/seg_00.png",
+          "  48: node rest-poses                         type=core.pose.rest",
+          "  53: extracted mesh -> out/game.glb",
+          "  54: extracted sound -> out/crate-impact-hard-surface.wav",
+          "  55: extracted texture-class image -> out/seg_00.png"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": [
+          "  35:     spec/schemas/signature.schema.json",
+          "  50: zip CRC-32: all entries OK",
+          "  51: declared sha256 verified: 34/34",
+          "  52: not verified here: Ed25519 signature chain, spec_sha256, input_hash"
+        ]
+      },
+      "file_declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain"
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "out/game.glb"
+        ],
+        "texture": [
+          "out/seg_00.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "PASS",
+      "per_class": {
+        "mesh": "PASS via out/game.glb[T1]",
+        "texture": "PASS via out/seg_00.png[T1]"
+      }
+    }
+  },
+  "verdict": "PENDING",
+  "verdict_reason": "auto clauses pass; awaiting: C2,C3",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "mesh:geometry/game.glb",
+      "texture:x/splat-foley/segments/seg_00.png"
+    ],
+    "bytes": 53919,
+    "any_declared": 1.0,
+    "cryptographic": 1.0,
+    "kinds": [
+      "crc32",
+      "sha256"
+    ],
+    "all_extracted": {
+      "payloads_counted": [
+        "mesh:geometry/game.glb",
+        "sound:audio/sfx/crate-impact-hard-surface.wav",
+        "texture:x/splat-foley/segments/seg_00.png"
+      ],
+      "bytes": 71563,
+      "any_declared": 1.0,
+      "cryptographic": 1.0,
+      "kinds": [
+        "crc32",
+        "sha256"
+      ]
+    }
+  }
+}

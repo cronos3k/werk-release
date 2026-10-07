@@ -1,0 +1,7 @@
+# Fixtures and ground truth are HASHED CONTENT (expectations.json pins their
+# sha256). No line-ending translation, ever. The .gltf is JSON text but its
+# bytes are pinned like any payload.
+crate-nc-v1.gltf binary
+*.fbx binary
+*.usdz binary
+*.f32 binary

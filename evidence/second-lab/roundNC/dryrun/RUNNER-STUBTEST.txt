@@ -1,0 +1,72 @@
+run_nc_trials.sh dry test with a stub claude (prints {"is_error":false}); no real agent was launched.
+Date: 2026-10-07. Temp SEAL dirs under the session scratchpad. bash -n: OK.
+
+| test | setup | expected | observed |
+|---|---|---|---|
+| full batch | stub claude, temp SEAL, RESUME=20990101-0000 | seal check passes; 12 trials in order werk,fbx,gltf,usdz x3; echo check PASS on each; exit 0 | as expected, exit 0 |
+| resume + interrupted trial (one run) | same stamp again, TIMING of fbx-t2 deleted first | seal-check and 11 trials skipped as finished; fbx-t2 folder moved to _interrupted and run again | 12 skip lines, fbx-t2 moved and rerun, exit 0 |
+| echo leak | mirror repo, fake fbx payload whose bytes sit in the fixture | fbx-t1 NOT launched, others run, exit 1 | ECHO CHECK FAILED for fbx-t1, LEAKS: 1, gltf-t1 ran, exit 1 |
+| seal broken | stub prints ASD-STE100 | abort before any trial | SEAL BROKEN, exit 1 |
+| API error | stub prints is_error true | abort before any trial | Seal check did not run, exit 1 |
+| pin mismatch | mirror, PROMPT-usdz.txt changed | abort before seal check | PIN MISMATCH, exit 1 |
+
+--- log of the full batch ---
+=== seal-check start 2026-10-07T21:42:39Z
+seal-check rc=0 elapsed=0.2 s
+Seal check passed.
+--- werk-t1 echo check PASS: PROMPT.txt mini-v1.werk 
+=== werk-t1 start 2026-10-07T21:42:40Z
+werk-t1 rc=0 elapsed=0.2 s
+--- fbx-t1 echo check PASS: PROMPT.txt crate-nc-v1.fbx 
+=== fbx-t1 start 2026-10-07T21:42:41Z
+fbx-t1 rc=0 elapsed=0.2 s
+--- gltf-t1 echo check PASS: PROMPT.txt crate-nc-v1.bin crate-nc-v1.gltf crate_diffuse.png 
+=== gltf-t1 start 2026-10-07T21:42:42Z
+gltf-t1 rc=0 elapsed=0.2 s
+--- usdz-t1 echo check PASS: PROMPT.txt crate-nc-v1.usdz 
+=== usdz-t1 start 2026-10-07T21:42:43Z
+usdz-t1 rc=0 elapsed=0.2 s
+--- werk-t2 echo check PASS: PROMPT.txt mini-v1.werk 
+=== werk-t2 start 2026-10-07T21:42:44Z
+werk-t2 rc=0 elapsed=0.2 s
+--- fbx-t2 echo check PASS: PROMPT.txt crate-nc-v1.fbx 
+=== fbx-t2 start 2026-10-07T21:42:45Z
+fbx-t2 rc=0 elapsed=0.1 s
+--- gltf-t2 echo check PASS: PROMPT.txt crate-nc-v1.bin crate-nc-v1.gltf crate_diffuse.png 
+=== gltf-t2 start 2026-10-07T21:42:46Z
+gltf-t2 rc=0 elapsed=0.1 s
+--- usdz-t2 echo check PASS: PROMPT.txt crate-nc-v1.usdz 
+=== usdz-t2 start 2026-10-07T21:42:47Z
+usdz-t2 rc=0 elapsed=0.2 s
+--- werk-t3 echo check PASS: PROMPT.txt mini-v1.werk 
+=== werk-t3 start 2026-10-07T21:42:48Z
+werk-t3 rc=0 elapsed=0.2 s
+--- fbx-t3 echo check PASS: PROMPT.txt crate-nc-v1.fbx 
+=== fbx-t3 start 2026-10-07T21:42:49Z
+fbx-t3 rc=0 elapsed=0.2 s
+--- gltf-t3 echo check PASS: PROMPT.txt crate-nc-v1.bin crate-nc-v1.gltf crate_diffuse.png 
+=== gltf-t3 start 2026-10-07T21:42:50Z
+gltf-t3 rc=0 elapsed=0.1 s
+--- usdz-t3 echo check PASS: PROMPT.txt crate-nc-v1.usdz 
+=== usdz-t3 start 2026-10-07T21:42:51Z
+usdz-t3 rc=0 elapsed=0.1 s
+=== all trials done 2026-10-07T21:42:51Z. Results in <tmp>/seal/nc-20990101-0000
+
+--- log of the resume + interrupted run ---
+=== seal-check already finished, skipping: seal-check rc=0 elapsed=0.2 s
+Seal check passed.
+=== werk-t1 already finished, skipping: werk-t1 rc=0 elapsed=0.2 s
+=== fbx-t1 already finished, skipping: fbx-t1 rc=0 elapsed=0.2 s
+=== gltf-t1 already finished, skipping: gltf-t1 rc=0 elapsed=0.2 s
+=== usdz-t1 already finished, skipping: usdz-t1 rc=0 elapsed=0.2 s
+=== werk-t2 already finished, skipping: werk-t2 rc=0 elapsed=0.2 s
+--- fbx-t2 echo check PASS: PROMPT.txt crate-nc-v1.fbx 
+=== fbx-t2 start 2026-10-07T21:42:53Z
+fbx-t2 rc=0 elapsed=0.2 s
+=== gltf-t2 already finished, skipping: gltf-t2 rc=0 elapsed=0.1 s
+=== usdz-t2 already finished, skipping: usdz-t2 rc=0 elapsed=0.2 s
+=== werk-t3 already finished, skipping: werk-t3 rc=0 elapsed=0.2 s
+=== fbx-t3 already finished, skipping: fbx-t3 rc=0 elapsed=0.2 s
+=== gltf-t3 already finished, skipping: gltf-t3 rc=0 elapsed=0.1 s
+=== usdz-t3 already finished, skipping: usdz-t3 rc=0 elapsed=0.1 s
+=== all trials done 2026-10-07T21:42:54Z. Results in <tmp>/seal/nc-20990101-0000

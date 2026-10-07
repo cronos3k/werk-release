@@ -1,0 +1,35 @@
+roundNC FBX dry-run summary (grade_nc.py instrument check, plan 5.7)
+fixture crate-nc-v1.fbx sha256 ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef (248412 B), ground truth COMPLETE
+
+OK   1-fbx-ref-texture                     expected: PENDING, C1/C4/C5 PASS
+                                           observed: PENDING C1=PASS C2=NEEDS-HUMAN-REVIEW C3=NEEDS-HUMAN-REVIEW C4=PASS C5=PASS
+OK   1-fbx-ref-texture-ruled               expected: PASS; mesh T2-VALUES (OBJ), texture T1
+                                           observed: PASS mesh=PASS via out/crate.obj[T2-VALUES] | texture=PASS via out/crate_diffuse.png[T1]
+OK   1-fbx-ref-f32-ruled                   expected: PASS; mesh T2-EXACT (canonical .f32 dump bytes)
+                                           observed: PASS mesh=PASS via out/crate-positions.f32[T2-EXACT]
+OK   1-fbx-ref-sound-NA-ruled              expected: PASS on mesh only, sound N/A
+                                           observed: PASS na=True C1=PASS C2=PASS C3=PASS-honest C4=PASS C5=PASS
+OK   1-fbx-blender-ref-ruled               expected: C4/C5 PASS (texture T1; mesh by T2, objects in Blender name order); C1 NOT-RUN (no clean re-run), so PENDING
+                                           observed: PENDING C1=NOT-RUN C2=PASS C3=PASS-honest C4=PASS C5=PASS | mesh=PASS via out/crate-blender.obj[T2-COUNT+BBOX] | texture=PASS via out/crate_diffuse.png[T1]
+OK   2-fbx-corrupt-texture                 expected: C5 FAIL (texture mismatch), verdict PARTIAL (mesh still exact)
+                                           observed: PARTIAL C5=FAIL texture=FAIL: mismatch out/crate_diffuse.png
+OK   2-fbx-obj-interior-value-KNOWN-LIMIT  expected: PASS via T2-COUNT+BBOX (known limit: count+bbox rule for text dumps does not see an interior value error)
+                                           observed: PENDING mesh=PASS via out/crate.obj[T2-COUNT+BBOX]
+OK   2-fbx-corrupt-obj-bbox-value          expected: C5 FAIL (mesh: no matching artifact), verdict PARTIAL
+                                           observed: PARTIAL C5=FAIL mesh=FAIL: no matching artifact
+OK   2-fbx-corrupt-f32                     expected: C5 FAIL (mesh), texture still PASS
+                                           observed: PARTIAL C5=FAIL mesh=FAIL: no matching artifact
+OK   2-fbx-input-only                      expected: FAIL (input at its own path is not an extraction, R4)
+                                           observed: FAIL (no graded artifact matches)
+OK   3-echo-fbx-sound                      expected: PASS (no leaks, 0 self-declared)
+                                           observed: PASS leaks=0 self-declared=0 files=2 values=5
+OK   3-echo-fbx-texture                    expected: PASS (no leaks, 0 self-declared)
+                                           observed: PASS leaks=0 self-declared=0 files=2 values=5
+OK   3-echo-fbx-SELFTEST-planted-leak      expected: FAIL (planted texture sha256 detected)
+                                           observed: FAIL leaks=1
+OK   3-echo-fbx-prompts-sound              expected: PASS
+                                           observed: PASS leaks=0
+OK   3-echo-fbx-prompts-texture            expected: PASS
+                                           observed: PASS leaks=0
+
+checks: 15   as expected: 15   unexpected: 0

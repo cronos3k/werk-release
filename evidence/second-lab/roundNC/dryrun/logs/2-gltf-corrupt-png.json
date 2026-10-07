@@ -1,0 +1,115 @@
+{
+  "format": "gltf",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\corrupt\\gltf-png-byteflip",
+  "exit_code": null,
+  "rows": [
+    {
+      "rel": "ref_extract_gltf.py",
+      "sha256": "c175d68585f07149e958b1c6d341613d9724b1168ad665d08e98237d7d7ef47e",
+      "size": 2367,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "out/crate-nc-v1.bin",
+      "sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+      "size": 191040,
+      "status": "OK",
+      "class": "mesh",
+      "payload": "mesh:crate-nc-v1.bin",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "out/crate.obj",
+      "sha256": "2a4243535e53ed51c7351daa686f0f1803954f19503789adea93e8ce0a5c8544",
+      "size": 193782,
+      "status": "OK",
+      "class": "mesh",
+      "payload": null,
+      "tier": "T2-VALUES",
+      "detail": "parsed 4737 positions (text)"
+    },
+    {
+      "rel": "out/crate_diffuse.png",
+      "sha256": "7fc191d33b77f6d9d369cddc95df9e6367610e29da143699b42eafb97d669679",
+      "size": 9460,
+      "status": "XX",
+      "class": "texture",
+      "payload": "texture:crate_diffuse.png",
+      "tier": "T1",
+      "detail": "name matches payload texture:crate_diffuse.png but sha256 != af85a84d80b8fee7"
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "PASS",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "ruled_by_human": true
+    },
+    "C3": {
+      "result": "PASS-honest",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "file_declares": "none (byteLength/count consistency checks only, not cryptographic)",
+      "ruled_by_human": true
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "out/crate-nc-v1.bin",
+          "out/crate.obj"
+        ],
+        "texture": [
+          "out/crate_diffuse.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "PASS via out/crate-nc-v1.bin[T1], out/crate.obj[T2-VALUES]",
+        "texture": "FAIL: mismatch out/crate_diffuse.png"
+      }
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_reason": "graded artifact(s) exact, failing: C5",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "mesh:crate-nc-v1.bin"
+    ],
+    "bytes": 191040,
+    "any_declared": 0.0,
+    "cryptographic": 0.0,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [
+        "mesh:crate-nc-v1.bin"
+      ],
+      "bytes": 191040,
+      "any_declared": 0.0,
+      "cryptographic": 0.0,
+      "kinds": []
+    }
+  }
+}

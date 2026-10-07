@@ -1,0 +1,14 @@
+{
+  "workspace": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\usdz\\workspaces\\SELFTEST-planted-leak",
+  "format": "usdz",
+  "files_scanned": 4,
+  "values_checked": 5,
+  "allowed_self_declared": 0,
+  "leaks": [
+    [
+      "PROMPT.txt",
+      "d5a32ab5669b03cf (tier2 dump file)"
+    ]
+  ],
+  "result": "FAIL"
+}

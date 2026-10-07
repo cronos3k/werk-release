@@ -1,0 +1,1161 @@
+{
+  "round": "roundNC",
+  "what": "ground truth for grade_nc.py; NEVER copy into an agent workspace",
+  "repo_commit_basis": "6d547d0",
+  "tolerance": 1e-05,
+  "integrity_table": {
+    "werk": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain",
+    "fbx": "none (no checksums of any kind)",
+    "gltf": "none (byteLength/count consistency checks only, not cryptographic)",
+    "usdz": "zip CRC-32 per entry (a real, checkable declaration, and the only one)"
+  },
+  "prompt_sha256": {
+    "prompts/sound/PROMPT-fbx.txt": "997f22aabc3afac90bd78975d333e802e724731e92cda3caaff9725623aad4ff",
+    "prompts/sound/PROMPT-gltf.txt": "32bf03b6b6c319f0b499ee729deb98af535d0fe5ff9060e2bd94a5709a14110f",
+    "prompts/sound/PROMPT-usdz.txt": "8c8a3ad4e3637ba58e0c242d2f0e676888cf0d8b8b01abc73071cfb635e05ae4",
+    "prompts/sound/PROMPT-werk.txt": "397aba804e83938068eb2967b32f961253a031cdecb694e8b8aa4129760119d4",
+    "prompts/texture/PROMPT-fbx.txt": "c82c5ff6cf7a8f545b91b48aee6d83f11afbb71e5b6a51f7f8d5424c93297988",
+    "prompts/texture/PROMPT-gltf.txt": "3bfec5fe499f3db6b6bc1c9fc6841dd303148f924bfe934e2620a24230d244a9",
+    "prompts/texture/PROMPT-usdz.txt": "b68cbea04eb7d52ddd23f20949b6ff10dcc26383f4b83a9d02e1f4cc8984ec93",
+    "prompts/texture/PROMPT-werk.txt": "397aba804e83938068eb2967b32f961253a031cdecb694e8b8aa4129760119d4"
+  },
+  "formats": {
+    "werk": {
+      "status": "COMPLETE",
+      "fixture_files": [
+        {
+          "path": "gauntlet/roundOW/mini-v1.werk",
+          "name": "mini-v1.werk",
+          "sha256": "f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837",
+          "size": 960061,
+          "role": "container"
+        }
+      ],
+      "payloads": [
+        {
+          "id": "mesh:geometry/game.glb",
+          "class": "mesh",
+          "path": "geometry/game.glb",
+          "sha256": "eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+          "size": 16736,
+          "crc32": "97a44ca6",
+          "node": "geom-game",
+          "node_type": "core.geom.game",
+          "file_role": null,
+          "primary": true,
+          "integrity": [
+            "sha256",
+            "crc32"
+          ]
+        },
+        {
+          "id": "sound:audio/sfx/crate-impact-hard-surface.wav",
+          "class": "sound",
+          "path": "audio/sfx/crate-impact-hard-surface.wav",
+          "sha256": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+          "size": 17644,
+          "crc32": "9574774b",
+          "node": "audio-crate-impact-hard-surface",
+          "node_type": "core.audio.effect",
+          "file_role": "best",
+          "primary": true,
+          "integrity": [
+            "sha256",
+            "crc32"
+          ]
+        },
+        {
+          "id": "sound:audio/sfx/crate-impact-hard-surface.raw.wav",
+          "class": "sound",
+          "path": "audio/sfx/crate-impact-hard-surface.raw.wav",
+          "sha256": "21ab5fad58956ddd6fdc488a352e14265ce1c92521ec5783b947f2fb14a46d06",
+          "size": 96044,
+          "crc32": "3ebee793",
+          "node": "audio-crate-impact-hard-surface",
+          "node_type": "core.audio.effect",
+          "file_role": "raw",
+          "primary": false,
+          "integrity": [
+            "sha256",
+            "crc32"
+          ]
+        },
+        {
+          "id": "sound:audio/sfx/crate-impact-hard-surface.var2.wav",
+          "class": "sound",
+          "path": "audio/sfx/crate-impact-hard-surface.var2.wav",
+          "sha256": "2419a71d18dff22ee6efee7bc6d9b56e1666cd14c054cc73a43a6bc7ef34b662",
+          "size": 96044,
+          "crc32": "c3ffc45f",
+          "node": "audio-crate-impact-hard-surface",
+          "node_type": "core.audio.effect",
+          "file_role": "variation",
+          "primary": false,
+          "integrity": [
+            "sha256",
+            "crc32"
+          ]
+        },
+        {
+          "id": "sound:audio/sfx/crate-impact-hard-surface.var3.wav",
+          "class": "sound",
+          "path": "audio/sfx/crate-impact-hard-surface.var3.wav",
+          "sha256": "f65e7061bae4cdfd5436c8a087e0ba05685b678176ae8abc5149c08ed7a8cd19",
+          "size": 96044,
+          "crc32": "2c9c7509",
+          "node": "audio-crate-impact-hard-surface",
+          "node_type": "core.audio.effect",
+          "file_role": "variation",
+          "primary": false,
+          "integrity": [
+            "sha256",
+            "crc32"
+          ]
+        },
+        {
+          "id": "texture:x/splat-foley/segments/seg_00.png",
+          "class": "texture",
+          "path": "x/splat-foley/segments/seg_00.png",
+          "sha256": "395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0",
+          "size": 37183,
+          "crc32": "a1051855",
+          "node": "evidence-segments",
+          "node_type": "x.splat-foley.segments",
+          "file_role": "crop",
+          "primary": true,
+          "integrity": [
+            "sha256",
+            "crc32"
+          ]
+        }
+      ],
+      "tier1_declared_all": {
+        "geometry/game.glb": "eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+        "materials/wood.json": "c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61",
+        "physics/bounds.json": "866eb5c8c01ea7121bca325d3bd283ddf47fbba6a43cb39cd49edbbadfde6c82",
+        "semantics/semantics.json": "d5be6dc01dcc5ec0e047b1552df016f498a24318bf45a6a59508125fc60ce156",
+        "provenance/provenance.json": "dcfdceb4551b3c6c6443ddc14d940d4d0c8176fabd6de2e3c7398baf3def0af0",
+        "audio/sfx/crate-impact-hard-surface.json": "2652a7c5bd00c82ea079290d535321193845b146b1948fe207635e52cfc38276",
+        "audio/sfx/crate-impact-hard-surface.wav": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+        "audio/sfx/crate-impact-hard-surface.raw.wav": "21ab5fad58956ddd6fdc488a352e14265ce1c92521ec5783b947f2fb14a46d06",
+        "audio/sfx/crate-impact-hard-surface.var2.wav": "2419a71d18dff22ee6efee7bc6d9b56e1666cd14c054cc73a43a6bc7ef34b662",
+        "audio/sfx/crate-impact-hard-surface.var3.wav": "f65e7061bae4cdfd5436c8a087e0ba05685b678176ae8abc5149c08ed7a8cd19",
+        "spec/MINI-SPECS.md": "8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba",
+        "spec/README.md": "3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56",
+        "spec/SPEC.md": "eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001",
+        "spec/conventions-map.json": "1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37",
+        "spec/examples/restposes.example.hex.txt": "80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051",
+        "spec/examples/restposes.example.wkrp": "6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+        "spec/facets.json": "f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1",
+        "spec/layouts/ENVELOPE.layout.txt": "b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce",
+        "spec/layouts/restposes.layout.txt": "cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5",
+        "spec/schemas/conventions-map.schema.json": "97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f",
+        "spec/schemas/core.audio.effect.schema.json": "04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5",
+        "spec/schemas/core.material.schema.json": "487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6",
+        "spec/schemas/core.phys.bounds.schema.json": "acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e",
+        "spec/schemas/core.provenance.schema.json": "d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935",
+        "spec/schemas/core.semantics.schema.json": "3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f",
+        "spec/schemas/manifest.schema.json": "d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451",
+        "spec/schemas/signature.schema.json": "cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13",
+        "loaders/werk_read.py": "8274359b795405b481d535572e3ec8930c29da20140f23e356c6fef84f162b84",
+        "loaders/werk_read.rs": "f2ef9ba2badd94a1312cd9a42649386e017197bdc3cb0d5106f1ae745d173e62",
+        "loaders/werk_read.c": "dcafb38877b1be2b13cbba1daedc1209ff15eb07fa9a6332e37e78ec119e4292",
+        "LICENSE": "5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53",
+        "README.txt": "f7923cb1f38316f610d8198a2797775ceeb4b07cc6b07d405ee6e8932ccc1564",
+        "x/splat-foley/segments/seg_00.png": "395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0",
+        "poses/rest.wkrp": "6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95"
+      },
+      "tier2_mesh": {
+        "vertex_count": 272,
+        "triangle_count": 408,
+        "bbox": [
+          -0.5,
+          -0.5,
+          -0.5,
+          0.5400000214576721,
+          0.5400000214576721,
+          0.5
+        ],
+        "dump_sha256": "7d31a7c0bb2d0ab4fc0fe7b16243abe0e2fa7fe71c279760d137daab1eff27d2",
+        "dump_size": 3264,
+        "dump_definition": "positions only, float32 little-endian, in the file's own storage order (meshes[] then primitives[] in index order, POSITION accessor element order), no dedup, no reindex, no node transforms",
+        "dump_file": "expectations-data/werk-mesh-dump.f32",
+        "storage_order_equals_byte_order": true,
+        "submeshes": [
+          {
+            "vertex_count": 272,
+            "triangle_count": 408,
+            "bbox": [
+              -0.5,
+              -0.5,
+              -0.5,
+              0.5400000214576721,
+              0.5400000214576721,
+              0.5
+            ],
+            "dump_sha256": "7d31a7c0bb2d0ab4fc0fe7b16243abe0e2fa7fe71c279760d137daab1eff27d2",
+            "dump_size": 3264,
+            "mesh_index": 0,
+            "mesh_name": "crate",
+            "primitive_index": 0
+          }
+        ],
+        "source_payload": "mesh:geometry/game.glb",
+        "dump_file_sha256": "7d31a7c0bb2d0ab4fc0fe7b16243abe0e2fa7fe71c279760d137daab1eff27d2"
+      },
+      "manifest_primary": {
+        "mesh": "geom-game",
+        "sound": "audio-crate-impact-hard-surface"
+      },
+      "absent_classes": [],
+      "notes": [
+        "Tier 1 = the manifest's own declared sha256 for every declared file.",
+        "sound class: any of the four declared WAVs of the primary sound node counts as 'one sound'; the role=best WAV is marked primary.",
+        "texture class: the only image in the package is x/splat-foley/segments/seg_00.png (a segment crop, used as the 'texture-class PNG' the plan 1.1 mentions). Used only if the werk baseline is ever graded with --payload texture; plan 2.1 keeps the baseline on 'one sound'."
+      ],
+      "integrity_declared_by_file": {
+        "declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain",
+        "payload_checks": [
+          "sha256",
+          "crc32"
+        ]
+      },
+      "theoretical_verifiable_integrity_fraction": {
+        "sound": {
+          "payloads": [
+            "mesh:geometry/game.glb",
+            "sound:audio/sfx/crate-impact-hard-surface.wav"
+          ],
+          "any_declared": 1.0,
+          "cryptographic": 1.0
+        },
+        "texture": {
+          "payloads": [
+            "mesh:geometry/game.glb",
+            "texture:x/splat-foley/segments/seg_00.png"
+          ],
+          "any_declared": 1.0,
+          "cryptographic": 1.0
+        }
+      }
+    },
+    "gltf": {
+      "status": "COMPLETE",
+      "origin": "planned fixture (gauntlet/roundNC/crate-nc-v1.*)",
+      "planned_fixture_files": [
+        "crate-nc-v1.gltf",
+        "crate-nc-v1.bin",
+        "crate_diffuse.png"
+      ],
+      "planned_fixture_present": {
+        "crate-nc-v1.gltf": true,
+        "crate-nc-v1.bin": true,
+        "crate_diffuse.png": true
+      },
+      "fixture_files": [
+        {
+          "path": "gauntlet/roundNC/crate-nc-v1.gltf",
+          "name": "crate-nc-v1.gltf",
+          "sha256": "3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69",
+          "size": 4122,
+          "role": "container"
+        },
+        {
+          "path": "gauntlet/roundNC/crate-nc-v1.bin",
+          "name": "crate-nc-v1.bin",
+          "sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+          "size": 191040,
+          "role": "sidecar-buffer"
+        },
+        {
+          "path": "gauntlet/roundNC/crate_diffuse.png",
+          "name": "crate_diffuse.png",
+          "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+          "size": 9460,
+          "role": "sidecar-image"
+        }
+      ],
+      "payloads": [
+        {
+          "id": "mesh:crate-nc-v1.bin",
+          "class": "mesh",
+          "path": "crate-nc-v1.bin",
+          "sha256": "02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab",
+          "size": 191040,
+          "primary": true,
+          "integrity": [],
+          "note": "external buffer; Tier 1 for the mesh class"
+        },
+        {
+          "id": "texture:crate_diffuse.png",
+          "class": "texture",
+          "path": "crate_diffuse.png",
+          "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+          "size": 9460,
+          "primary": true,
+          "integrity": [],
+          "note": "external image"
+        }
+      ],
+      "tier2_mesh": {
+        "vertex_count": 4737,
+        "triangle_count": 6576,
+        "bbox": [
+          -0.4126364588737488,
+          -0.00793334562331438,
+          -0.1961396187543869,
+          0.4126364588737488,
+          0.3416849374771118,
+          0.2128141224384308
+        ],
+        "dump_sha256": "2cc01e4cfe33827249196e6bdfaeac26d45675fa56a999d6d52de589bf1f503c",
+        "dump_size": 56844,
+        "dump_definition": "positions only, float32 little-endian, in the file's own storage order (meshes[] then primitives[] in index order, POSITION accessor element order), no dedup, no reindex, no node transforms",
+        "dump_file": "expectations-data/gltf-mesh-dump.f32",
+        "storage_order_equals_byte_order": true,
+        "submeshes": [
+          {
+            "vertex_count": 622,
+            "triangle_count": 692,
+            "bbox": [
+              -0.3539096713066101,
+              0.29946234822273254,
+              -0.1961396187543869,
+              0.3539096713066101,
+              0.3416849374771118,
+              0.1961396187543869
+            ],
+            "dump_sha256": "01ce0d22c028fd75f0822765a4a2b31f11eb19cf7b5ea7443923099ec1dc0e3d",
+            "dump_size": 7464,
+            "mesh_index": 0,
+            "mesh_name": "Cube.005",
+            "primitive_index": 0
+          },
+          {
+            "vertex_count": 3731,
+            "triangle_count": 5508,
+            "bbox": [
+              -0.4126364588737488,
+              -0.00793334562331438,
+              -0.19549614191055298,
+              0.4126364588737488,
+              0.3139750361442566,
+              0.2128141224384308
+            ],
+            "dump_sha256": "483d874cf4231c9596ae3bee3783b6e4c23931460f1915b5234f7912d11bc241",
+            "dump_size": 44772,
+            "mesh_index": 1,
+            "mesh_name": "Cube.020",
+            "primitive_index": 0
+          },
+          {
+            "vertex_count": 384,
+            "triangle_count": 376,
+            "bbox": [
+              -0.016070956364274025,
+              0.2390938252210617,
+              0.1312473714351654,
+              0.009643923491239548,
+              0.3357900381088257,
+              0.2071036398410797
+            ],
+            "dump_sha256": "997c128b0076d0f7a37b9398fa458dd72329a7148f8fedd3f2005e17119252cc",
+            "dump_size": 4608,
+            "mesh_index": 2,
+            "mesh_name": "Cube.001",
+            "primitive_index": 0
+          }
+        ],
+        "source_payload": "all POSITION accessors of the scene",
+        "accept_submesh_as_c5": false,
+        "dump_file_sha256": "2cc01e4cfe33827249196e6bdfaeac26d45675fa56a999d6d52de589bf1f503c"
+      },
+      "missing_inputs": [],
+      "absent_classes": [
+        "sound"
+      ],
+      "blocking_issues": [],
+      "gltf": {
+        "asset": {
+          "generator": "Khronos glTF Blender I/O v4.2.60",
+          "version": "2.0"
+        },
+        "extensionsUsed": [],
+        "meshes": [
+          {
+            "name": "Cube.005",
+            "primitives": 1
+          },
+          {
+            "name": "Cube.020",
+            "primitives": 1
+          },
+          {
+            "name": "Cube.001",
+            "primitives": 1
+          }
+        ],
+        "nodes": [
+          "wooden_crate_01_lid",
+          "wooden_crate_01",
+          "wooden_crate_01_latch"
+        ],
+        "materials": [
+          "crate_wood"
+        ],
+        "images": [
+          {
+            "mimeType": "image/png",
+            "name": "crate_diffuse",
+            "uri": "crate_diffuse.png"
+          }
+        ],
+        "buffers": [
+          {
+            "byteLength": 191040,
+            "uri": "crate-nc-v1.bin"
+          }
+        ],
+        "primitives": [
+          {
+            "mesh_index": 0,
+            "mesh_name": "Cube.005",
+            "primitive_index": 0,
+            "triangle_count": 692,
+            "position_byte_offset": 0,
+            "vertex_count": 622
+          },
+          {
+            "mesh_index": 1,
+            "mesh_name": "Cube.020",
+            "primitive_index": 0,
+            "triangle_count": 5508,
+            "position_byte_offset": 24056,
+            "vertex_count": 3731
+          },
+          {
+            "mesh_index": 2,
+            "mesh_name": "Cube.001",
+            "primitive_index": 0,
+            "triangle_count": 376,
+            "position_byte_offset": 176496,
+            "vertex_count": 384
+          }
+        ],
+        "storage_order_equals_byte_order": true,
+        "vertex_split_vs_blender": [
+          {
+            "mesh": "Cube.005",
+            "gltf_vertices": 622,
+            "blender_vertices": 596,
+            "extra_vertices_from_split": 26,
+            "vertex_order_identical_to_blender": false
+          },
+          {
+            "mesh": "Cube.020",
+            "gltf_vertices": 3731,
+            "blender_vertices": 3706,
+            "extra_vertices_from_split": 25,
+            "vertex_order_identical_to_blender": false
+          },
+          {
+            "mesh": "Cube.001",
+            "gltf_vertices": 384,
+            "blender_vertices": 384,
+            "extra_vertices_from_split": 0,
+            "vertex_order_identical_to_blender": true
+          }
+        ]
+      },
+      "mesh_totals_note": "FBX stores 4686 vertices / 6576 triangles. glTF stores 4737 / 6576: the glTF exporter split 51 vertices (distinct normal/UV per loop). Ground truth describes the glTF as stored.",
+      "build": {
+        "script": "build_gltf_usdz.py --format gltf + blender_export_nc.py",
+        "record": "build/gltf-build-record.json",
+        "blender": "4.2.1 LTS",
+        "blender_build_hash": "396f546c9d82",
+        "addons": {
+          "io_scene_gltf2": "4.2.60"
+        },
+        "env_pins": {
+          "PYTHONHASHSEED": "0",
+          "PYTHONNOUSERSITE": "1",
+          "TEMP": "<build>/tmp",
+          "TMP": "<build>/tmp"
+        },
+        "export_settings": {
+          "check_existing": false,
+          "export_format": "GLTF_SEPARATE",
+          "export_texture_dir": "",
+          "export_image_format": "AUTO",
+          "export_keep_originals": false,
+          "export_copyright": "",
+          "export_texcoords": true,
+          "export_normals": true,
+          "export_tangents": false,
+          "export_materials": "EXPORT",
+          "export_vertex_color": "MATERIAL",
+          "export_attributes": false,
+          "use_mesh_edges": false,
+          "use_mesh_vertices": false,
+          "export_cameras": false,
+          "export_lights": false,
+          "use_selection": false,
+          "use_visible": false,
+          "use_renderable": false,
+          "use_active_collection": false,
+          "use_active_scene": false,
+          "export_extras": false,
+          "export_yup": true,
+          "export_apply": false,
+          "export_shared_accessors": false,
+          "export_animations": false,
+          "export_skins": false,
+          "export_morph": false,
+          "export_draco_mesh_compression_enable": false,
+          "export_use_gltfpack": false,
+          "export_gpu_instances": false,
+          "export_unused_images": false,
+          "export_unused_textures": false
+        },
+        "import_settings": {
+          "merge_vertices": false,
+          "import_shading": "NORMALS",
+          "bone_heuristic": "BLENDER",
+          "guess_original_bind_pose": true,
+          "import_pack_images": true
+        },
+        "scene_edits": [
+          "read_factory_settings(use_empty=True)",
+          "all glTF-imported materials and images removed (the 3 JPEGs are not in the repo)",
+          "one material 'crate_wood': Principled BSDF Base Color <- Image Texture(crate_diffuse.png)",
+          "material assigned to all 3 mesh objects",
+          "identical to blender_export_fbx.py (the FBX control)"
+        ],
+        "inputs": {
+          "gltf": "fixtures/sources/crate-cc0/wooden_crate_01_2k.gltf",
+          "gltf_sha256": "747c26810ddcca99454ccd27fa0079b3718edda34c75d2a792b2c9bd28772a20",
+          "bin_sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e",
+          "texture": {
+            "package": "fixtures/crate-cc0-full-v1.werk",
+            "package_sha256": "32b1f4d5d0adbed82174b191005cd512d7f54af597b1e6f56f48a0c36f3e3d0b",
+            "entry": "textures/crate-cc0-albedo.png",
+            "manifest_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+            "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+            "size": 9460,
+            "png_size": [
+              256,
+              256
+            ],
+            "written_as": "crate_diffuse.png"
+          }
+        },
+        "determinism": {
+          "byte_identical": true
+        },
+        "leak_scan_hits": 0
+      },
+      "notes": [
+        "Blender glTF Separate export of the same CC0 crate mesh and the same CC0 albedo PNG as the FBX and USDZ controls. Not Poly Haven verbatim (see README).",
+        "Tier 1 = the .bin (mesh class) and the .png (texture class), as shipped.",
+        "Tier 2 = canonical dump from the glTF's own POSITION accessors.",
+        "The exporter split 51 vertices (distinct normal/UV per loop): 4737 vertices as stored vs 4686 in Blender and in the FBX. Triangles equal (6576)."
+      ],
+      "integrity_declared_by_file": {
+        "declares": "none (byteLength/count consistency checks only, not cryptographic)",
+        "payload_checks": [],
+        "structural_only": [
+          "buffers[].byteLength",
+          "bufferViews[].byteLength",
+          "accessors[].count",
+          "accessors[].min/max"
+        ]
+      },
+      "theoretical_verifiable_integrity_fraction": {
+        "sound": {
+          "payloads": [
+            "mesh:crate-nc-v1.bin"
+          ],
+          "any_declared": 0.0,
+          "cryptographic": 0.0
+        },
+        "texture": {
+          "payloads": [
+            "mesh:crate-nc-v1.bin",
+            "texture:crate_diffuse.png"
+          ],
+          "any_declared": 0.0,
+          "cryptographic": 0.0
+        }
+      }
+    },
+    "fbx": {
+      "status": "COMPLETE",
+      "provisional_pending": [],
+      "fixture_files": [
+        {
+          "path": "gauntlet/roundNC/crate-nc-v1.fbx",
+          "name": "crate-nc-v1.fbx",
+          "sha256": "ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef",
+          "size": 248412,
+          "role": "container"
+        }
+      ],
+      "payloads": [
+        {
+          "id": "texture:crate_diffuse.png",
+          "class": "texture",
+          "path": "crate_diffuse.png",
+          "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+          "size": 9460,
+          "primary": true,
+          "integrity": [],
+          "media_type": "image/png",
+          "png_size": [
+            256,
+            256
+          ],
+          "stored_as": "Objects/Video 'crate_diffuse.png' property Content (type R raw bytes), payload at file offset 238212",
+          "verbatim": "Content bytes == source PNG bytes (no re-encode); occurs once in the file; Blender re-import packs the same bytes",
+          "fbx_filename": "D:\\build\\crate-nc-v1.fbm\\crate_diffuse.png",
+          "fbx_relative_filename": "crate-nc-v1.fbm\\crate_diffuse.png",
+          "source": "fixtures/crate-cc0-full-v1.werk!textures/crate-cc0-albedo.png (MANIFEST sha256 verified at build)"
+        }
+      ],
+      "tier2_mesh": {
+        "vertex_count": 4686,
+        "triangle_count": 6576,
+        "bbox": [
+          -0.4126364588737488,
+          -0.2128141224384308,
+          -0.00793334562331438,
+          0.4126364588737488,
+          0.1961396187543869,
+          0.3416849374771118
+        ],
+        "dump_sha256": "d5a32ab5669b03cf9e08fe5cc592b18cff62fabdaf0b8e5bdeb108866438066e",
+        "dump_size": 56232,
+        "dump_definition": "positions only, float32 little-endian: Objects/Geometry nodes of class 'Mesh' in FILE order, each Vertices array (float64 in the file) in element order, each value converted to float32 (lossless here: checked at build), no dedup, no reindex, no node transforms (Model Lcl transforms and GlobalSettings axes NOT applied)",
+        "dump_file": "expectations-data/fbx-mesh-dump.f32",
+        "storage_order_equals_byte_order": true,
+        "submeshes": [
+          {
+            "vertex_count": 596,
+            "triangle_count": 692,
+            "bbox": [
+              -0.3539096713066101,
+              -0.1961396187543869,
+              0.29946234822273254,
+              0.3539096713066101,
+              0.1961396187543869,
+              0.3416849374771118
+            ],
+            "dump_sha256": "7e4ce6b6030fdf01aac85625a48ffcb96789e5168d107298464077e2d29350c0",
+            "dump_size": 7152,
+            "mesh_index": 0,
+            "mesh_name": "Cube.005",
+            "primitive_index": 0,
+            "polygon_count": 692,
+            "fbx_geometry_id": 377604228,
+            "blender_object": "wooden_crate_01_lid"
+          },
+          {
+            "vertex_count": 3706,
+            "triangle_count": 5508,
+            "bbox": [
+              -0.4126364588737488,
+              -0.2128141224384308,
+              -0.00793334562331438,
+              0.4126364588737488,
+              0.19549614191055298,
+              0.3139750361442566
+            ],
+            "dump_sha256": "aeaacc6a48d9cc7153d6893b9e00d5be41aa0a5a7e4c7ca81cd358f7e5230914",
+            "dump_size": 44472,
+            "mesh_index": 1,
+            "mesh_name": "Cube.020",
+            "primitive_index": 0,
+            "polygon_count": 5508,
+            "fbx_geometry_id": 634608277,
+            "blender_object": "wooden_crate_01"
+          },
+          {
+            "vertex_count": 384,
+            "triangle_count": 376,
+            "bbox": [
+              -0.016070956364274025,
+              -0.2071036398410797,
+              0.2390938252210617,
+              0.009643923491239548,
+              -0.1312473714351654,
+              0.3357900381088257
+            ],
+            "dump_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21",
+            "dump_size": 4608,
+            "mesh_index": 2,
+            "mesh_name": "Cube.001",
+            "primitive_index": 0,
+            "polygon_count": 376,
+            "fbx_geometry_id": 489389492,
+            "blender_object": "wooden_crate_01_latch"
+          }
+        ],
+        "storage_order": "Geometry nodes in file order (ascending node offset)",
+        "source_payload": "all Objects/Geometry (Mesh) Vertices arrays of the file",
+        "accept_submesh_as_c5": false,
+        "polygon_count": 6576,
+        "all_polygons_triangles": true,
+        "cross_check": "per Geometry: vertex, polygon and triangle counts and the float32 position sha256 equal Blender's mesh before export AND Blender's re-import of the FBX (build record checks)",
+        "dump_file_sha256": "d5a32ab5669b03cf9e08fe5cc592b18cff62fabdaf0b8e5bdeb108866438066e"
+      },
+      "absent_classes": [
+        "sound"
+      ],
+      "fbx": {
+        "version": 7400,
+        "creator": "Blender (stable FBX IO) - 4.2.1 LTS - 5.12.4",
+        "creation_timestamp": {
+          "Version": 1000,
+          "Year": 2026,
+          "Month": 10,
+          "Day": 6,
+          "Hour": 3,
+          "Minute": 6,
+          "Second": 39,
+          "Millisecond": 604
+        },
+        "geometry_count": 3,
+        "video_count": 1
+      },
+      "build": {
+        "script": "build_controls.py + blender_export_fbx.py",
+        "record": "build/fbx-build-record.json",
+        "blender": "4.2.1 LTS",
+        "blender_build_hash": "396f546c9d82",
+        "addons": {
+          "io_scene_fbx": "5.12.4",
+          "io_scene_gltf2": "4.2.60"
+        },
+        "env_pins": {
+          "PYTHONHASHSEED": "0",
+          "PYTHONNOUSERSITE": "1"
+        },
+        "argv": [
+          "--background",
+          "--factory-startup",
+          "--python-use-system-env",
+          "--python-exit-code",
+          "1",
+          "--python",
+          "blender_export_fbx.py",
+          "--",
+          "<args.json>"
+        ],
+        "export_settings": {
+          "check_existing": false,
+          "use_selection": false,
+          "use_visible": false,
+          "use_active_collection": false,
+          "collection": "",
+          "global_scale": 1.0,
+          "apply_unit_scale": true,
+          "apply_scale_options": "FBX_SCALE_NONE",
+          "use_space_transform": true,
+          "bake_space_transform": false,
+          "object_types": [
+            "MESH"
+          ],
+          "use_mesh_modifiers": true,
+          "use_mesh_modifiers_render": true,
+          "mesh_smooth_type": "OFF",
+          "colors_type": "SRGB",
+          "prioritize_active_color": false,
+          "use_subsurf": false,
+          "use_mesh_edges": false,
+          "use_tspace": false,
+          "use_triangles": false,
+          "use_custom_props": false,
+          "add_leaf_bones": false,
+          "primary_bone_axis": "Y",
+          "secondary_bone_axis": "X",
+          "use_armature_deform_only": false,
+          "armature_nodetype": "NULL",
+          "bake_anim": false,
+          "path_mode": "COPY",
+          "embed_textures": true,
+          "batch_mode": "OFF",
+          "use_batch_own_dir": false,
+          "use_metadata": true,
+          "axis_forward": "-Z",
+          "axis_up": "Y"
+        },
+        "import_settings": {
+          "merge_vertices": false,
+          "import_shading": "NORMALS",
+          "bone_heuristic": "BLENDER",
+          "guess_original_bind_pose": true,
+          "import_pack_images": true
+        },
+        "scene_edits": [
+          "read_factory_settings(use_empty=True)",
+          "all glTF-imported materials and images removed (the 3 JPEGs are not in the repo)",
+          "one material 'crate_wood': Principled BSDF Base Color <- Image Texture(crate_diffuse.png)",
+          "material assigned to all 3 mesh objects"
+        ],
+        "inputs": {
+          "gltf": "fixtures/sources/crate-cc0/wooden_crate_01_2k.gltf",
+          "gltf_sha256": "747c26810ddcca99454ccd27fa0079b3718edda34c75d2a792b2c9bd28772a20",
+          "bin_sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e",
+          "texture": {
+            "package": "fixtures/crate-cc0-full-v1.werk",
+            "package_sha256": "32b1f4d5d0adbed82174b191005cd512d7f54af597b1e6f56f48a0c36f3e3d0b",
+            "entry": "textures/crate-cc0-albedo.png",
+            "manifest_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+            "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+            "size": 9460,
+            "png_size": [
+              256,
+              256
+            ],
+            "written_as": "crate_diffuse.png"
+          }
+        },
+        "determinism": {
+          "run1_sha256": "ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef",
+          "run2_sha256": "5916e2d099170fe8234355b09588b155988c9572074ae50582f3aa8480e8ba01",
+          "run1_size": 248412,
+          "run2_size": 248412,
+          "byte_identical": false,
+          "differing_ranges_offset_len": [
+            [
+              339,
+              1
+            ],
+            [
+              368,
+              2
+            ]
+          ],
+          "differing_bytes_total": 3,
+          "creation_timestamp_span": [
+            152,
+            385
+          ],
+          "all_differences_inside_CreationTimeStamp": true,
+          "content_equal": true
+        }
+      },
+      "notes": [
+        "Tier 1 = the embedded texture only. FBX stores the mesh as arrays, not as a sub-file, so the mesh class is Tier 2 only.",
+        "The same PNG bytes are textures/crate-cc0-albedo.png in fixtures/crate-cc0-*-v1.werk (MANIFEST-declared there). Not reachable from an isolated FBX workspace.",
+        "Vertex/triangle totals equal the glTF source (4686 / 6576): the glTF import kept vertices 1:1 (merge_vertices=False) and FBX stores Blender vertices without splitting. Geometry ORDER differs from the glTF (FBX file order: lid, body, latch)."
+      ],
+      "integrity_declared_by_file": {
+        "declares": "none (no checksums of any kind)",
+        "payload_checks": []
+      },
+      "theoretical_verifiable_integrity_fraction": {
+        "sound": {
+          "payloads": [
+            "mesh:tier2"
+          ],
+          "any_declared": 0.0,
+          "cryptographic": 0.0
+        },
+        "texture": {
+          "payloads": [
+            "mesh:tier2",
+            "texture:crate_diffuse.png"
+          ],
+          "any_declared": 0.0,
+          "cryptographic": 0.0
+        }
+      }
+    },
+    "usdz": {
+      "status": "COMPLETE",
+      "fixture_files": [
+        {
+          "path": "gauntlet/roundNC/crate-nc-v1.usdz",
+          "name": "crate-nc-v1.usdz",
+          "sha256": "14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7",
+          "size": 487957,
+          "role": "container"
+        }
+      ],
+      "payloads": [
+        {
+          "id": "texture:textures/crate_diffuse.png",
+          "class": "texture",
+          "path": "textures/crate_diffuse.png",
+          "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+          "size": 9460,
+          "primary": true,
+          "integrity": [
+            "crc32"
+          ],
+          "crc32": "4bf30478",
+          "media_type": "image/png",
+          "png_size": [
+            256,
+            256
+          ],
+          "stored_as": "zip entry textures/crate_diffuse.png (stored, uncompressed)",
+          "verbatim": "entry bytes == source PNG bytes (no re-encode)",
+          "source": "fixtures/crate-cc0-full-v1.werk!textures/crate-cc0-albedo.png (MANIFEST sha256 verified at build)"
+        }
+      ],
+      "zip_entries": [
+        {
+          "name": "crate-nc-v1.usdc",
+          "size": 478101,
+          "crc32": "11304224",
+          "sha256": "a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa",
+          "compress_type": 0,
+          "magic": "PXR-USDC"
+        },
+        {
+          "name": "textures/crate_diffuse.png",
+          "size": 9460,
+          "crc32": "4bf30478",
+          "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+          "compress_type": 0,
+          "magic": "\u0089PNG\r\n\u001a\n"
+        }
+      ],
+      "tier2_mesh": {
+        "vertex_count": 4686,
+        "triangle_count": 6576,
+        "bbox": [
+          -0.4126364588737488,
+          -0.2128141224384308,
+          -0.00793334562331438,
+          0.4126364588737488,
+          0.1961396187543869,
+          0.3416849374771118
+        ],
+        "dump_sha256": "d5a32ab5669b03cf9e08fe5cc592b18cff62fabdaf0b8e5bdeb108866438066e",
+        "dump_size": 56232,
+        "dump_definition": "positions only, float32 little-endian: every UsdGeom.Mesh prim in stage traversal order (Usd.Stage.Traverse, i.e. namespace order: primChildren), each 'points' attribute (point3f[], default time) in element order; no dedup, no reindex, no xform ops applied, no up-axis conversion (stage upAxis Z, as stored)",
+        "dump_file": "expectations-data/usdz-mesh-dump.f32",
+        "storage_order_equals_byte_order": true,
+        "submeshes": [
+          {
+            "vertex_count": 596,
+            "triangle_count": 692,
+            "bbox": [
+              -0.3539096713066101,
+              -0.1961396187543869,
+              0.29946234822273254,
+              0.3539096713066101,
+              0.1961396187543869,
+              0.3416849374771118
+            ],
+            "dump_sha256": "7e4ce6b6030fdf01aac85625a48ffcb96789e5168d107298464077e2d29350c0",
+            "dump_size": 7152,
+            "mesh_index": 0,
+            "mesh_name": "/root/wooden_crate_01_lid/Cube_005",
+            "primitive_index": 0
+          },
+          {
+            "vertex_count": 3706,
+            "triangle_count": 5508,
+            "bbox": [
+              -0.4126364588737488,
+              -0.2128141224384308,
+              -0.00793334562331438,
+              0.4126364588737488,
+              0.19549614191055298,
+              0.3139750361442566
+            ],
+            "dump_sha256": "aeaacc6a48d9cc7153d6893b9e00d5be41aa0a5a7e4c7ca81cd358f7e5230914",
+            "dump_size": 44472,
+            "mesh_index": 1,
+            "mesh_name": "/root/wooden_crate_01/Cube_020",
+            "primitive_index": 0
+          },
+          {
+            "vertex_count": 384,
+            "triangle_count": 376,
+            "bbox": [
+              -0.016070956364274025,
+              -0.2071036398410797,
+              0.2390938252210617,
+              0.009643923491239548,
+              -0.1312473714351654,
+              0.3357900381088257
+            ],
+            "dump_sha256": "5b71f27947b5d296ae05819cdc0612e9309d2217f6ba44c02aa00b62ea06aa21",
+            "dump_size": 4608,
+            "mesh_index": 2,
+            "mesh_name": "/root/wooden_crate_01_latch/Cube_001",
+            "primitive_index": 0
+          }
+        ],
+        "storage_order": "stage traversal order: /root/wooden_crate_01_lid/Cube_005, /root/wooden_crate_01/Cube_020, /root/wooden_crate_01_latch/Cube_001",
+        "source_payload": "all UsdGeom.Mesh points of the root layer crate-nc-v1.usdc (zip entry, CRC-32 declared)",
+        "accept_submesh_as_c5": false,
+        "integrity": [
+          "crc32"
+        ],
+        "polygon_count": 6576,
+        "all_polygons_triangles": true,
+        "cross_check": "per mesh prim: points float32 sha256 and triangle count equal Blender's mesh before export AND Blender's USD re-import of the usdz (build record checks). Read with Blender's bundled USD 0.24.5.",
+        "dump_file_sha256": "d5a32ab5669b03cf9e08fe5cc592b18cff62fabdaf0b8e5bdeb108866438066e"
+      },
+      "absent_classes": [
+        "sound"
+      ],
+      "usd": {
+        "root_layer_entry": "crate-nc-v1.usdc",
+        "root_layer_encoding": "usdc (binary crate)",
+        "root_layer_sha256": "a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa",
+        "root_layer_size": 478101,
+        "root_layer_crc32": "11304224",
+        "up_axis": "Z",
+        "meters_per_unit": 1.0,
+        "default_prim": "/root",
+        "mesh_prims": [
+          "/root/wooden_crate_01_lid/Cube_005",
+          "/root/wooden_crate_01/Cube_020",
+          "/root/wooden_crate_01_latch/Cube_001"
+        ],
+        "texture_asset_path": "@./textures/crate_diffuse.png@ (relative)"
+      },
+      "build": {
+        "script": "build_gltf_usdz.py --format usdz + blender_export_nc.py",
+        "record": "build/usdz-build-record.json",
+        "blender": "4.2.1 LTS",
+        "blender_build_hash": "396f546c9d82",
+        "pxr_usd_version": "0.24.5",
+        "env_pins": {
+          "PYTHONHASHSEED": "0",
+          "PYTHONNOUSERSITE": "1",
+          "TEMP": "<build>/tmp",
+          "TMP": "<build>/tmp"
+        },
+        "export_settings": {
+          "check_existing": false,
+          "selected_objects_only": false,
+          "visible_objects_only": false,
+          "export_animation": false,
+          "export_hair": false,
+          "export_uvmaps": true,
+          "rename_uvmaps": true,
+          "export_mesh_colors": false,
+          "export_normals": true,
+          "export_materials": true,
+          "export_subdivision": "IGNORE",
+          "export_armatures": false,
+          "only_deform_bones": false,
+          "export_shapekeys": false,
+          "use_instancing": false,
+          "evaluation_mode": "RENDER",
+          "generate_preview_surface": true,
+          "generate_materialx_network": false,
+          "convert_orientation": false,
+          "export_textures": true,
+          "overwrite_textures": true,
+          "relative_paths": true,
+          "xform_op_mode": "TRS",
+          "root_prim_path": "/root",
+          "export_custom_properties": false,
+          "author_blender_name": false,
+          "convert_world_material": false,
+          "allow_unicode": false,
+          "export_meshes": true,
+          "export_lights": false,
+          "export_cameras": false,
+          "export_curves": false,
+          "export_volumes": false,
+          "triangulate_meshes": false,
+          "usdz_downscale_size": "KEEP"
+        },
+        "import_settings": {
+          "merge_vertices": false,
+          "import_shading": "NORMALS",
+          "bone_heuristic": "BLENDER",
+          "guess_original_bind_pose": true,
+          "import_pack_images": true
+        },
+        "scene_edits": [
+          "read_factory_settings(use_empty=True)",
+          "all glTF-imported materials and images removed (the 3 JPEGs are not in the repo)",
+          "one material 'crate_wood': Principled BSDF Base Color <- Image Texture(crate_diffuse.png)",
+          "material assigned to all 3 mesh objects",
+          "identical to blender_export_fbx.py (the FBX control)"
+        ],
+        "inputs": {
+          "gltf": "fixtures/sources/crate-cc0/wooden_crate_01_2k.gltf",
+          "gltf_sha256": "747c26810ddcca99454ccd27fa0079b3718edda34c75d2a792b2c9bd28772a20",
+          "bin_sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e",
+          "texture": {
+            "package": "fixtures/crate-cc0-full-v1.werk",
+            "package_sha256": "32b1f4d5d0adbed82174b191005cd512d7f54af597b1e6f56f48a0c36f3e3d0b",
+            "entry": "textures/crate-cc0-albedo.png",
+            "manifest_sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+            "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+            "size": 9460,
+            "png_size": [
+              256,
+              256
+            ],
+            "written_as": "crate_diffuse.png"
+          }
+        },
+        "determinism": {
+          "run1_files": [
+            "crate-nc-v1.usdz"
+          ],
+          "run2_files": [
+            "crate-nc-v1.usdz"
+          ],
+          "byte_identical": false,
+          "usd_mesh_prim_order_run1": [
+            "/root/wooden_crate_01_lid/Cube_005",
+            "/root/wooden_crate_01/Cube_020",
+            "/root/wooden_crate_01_latch/Cube_001"
+          ],
+          "usd_mesh_prim_order_run2": [
+            "/root/wooden_crate_01_latch/Cube_001",
+            "/root/wooden_crate_01/Cube_020",
+            "/root/wooden_crate_01_lid/Cube_005"
+          ],
+          "usd_same_meshes_ignoring_order": true,
+          "usd_same_prim_order": false,
+          "usd_png_entry_identical": true
+        },
+        "leak_scan_hits": 0
+      },
+      "notes": [
+        "Tier 1 = the PNG zip entry only (sha256 as shipped). The usdc root layer is NOT a Tier 1 mesh payload: copying it out is not a mesh extraction. An agent reaches the mesh only by parsing usdc (binary crate); stdlib Python has no usdc reader. That is part of what this control measures.",
+        "Tier 2 = canonical dump of the authored points, read by Blender's bundled USD library and cross-checked with Blender's re-import.",
+        "The Tier 2 dump bytes equal the FBX control's dump (same Blender mesh, same object order lid, body, latch, Blender Z-up coordinates in both files).",
+        "Integrity the file declares: zip CRC-32 per entry. It covers the PNG and the usdc layer that holds the mesh. Nothing cryptographic.",
+        "USDZ builds are not byte-deterministic: the zip timestamps differ, and the mesh prim order in the stage varies between Blender runs. The fixture is single-build, hash-pinned."
+      ],
+      "integrity_declared_by_file": {
+        "declares": "zip CRC-32 per entry (a real, checkable declaration, and the only one)",
+        "payload_checks": [
+          "crc32"
+        ]
+      },
+      "theoretical_verifiable_integrity_fraction": {
+        "sound": {
+          "payloads": [
+            "mesh:tier2"
+          ],
+          "any_declared": 1.0,
+          "cryptographic": 0.0
+        },
+        "texture": {
+          "payloads": [
+            "mesh:tier2",
+            "texture:textures/crate_diffuse.png"
+          ],
+          "any_declared": 1.0,
+          "cryptographic": 0.0
+        }
+      }
+    }
+  }
+}

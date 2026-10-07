@@ -1,0 +1,9 @@
+{
+  "workspace": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\workspaces\\gltf-texture",
+  "format": "gltf",
+  "files_scanned": 4,
+  "values_checked": 6,
+  "allowed_self_declared": 0,
+  "leaks": [],
+  "result": "PASS"
+}

@@ -1,0 +1,121 @@
+{
+  "format": "werk",
+  "payload": "sound",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\corrupt\\werk-glb-byteflip-in-positions",
+  "exit_code": null,
+  "rows": [
+    {
+      "rel": "ref_extract_werk.py",
+      "sha256": "08e75160b6881e37090ad325d837357f205b37b60660cdf92cf83a637fed0094",
+      "size": 2761,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "out/crate-impact-hard-surface.wav",
+      "sha256": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+      "size": 17644,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "out/game.glb",
+      "sha256": "84bb0f18dfbcbd9b9c7d0ba9b797f3bfd4658d1567401ef6b0ae77c15f1f14e0",
+      "size": 16736,
+      "status": "XX",
+      "class": "mesh",
+      "payload": "mesh:geometry/game.glb",
+      "tier": "T1",
+      "detail": "name matches payload mesh:geometry/game.glb but sha256 != eee8b3cbc87703fc; tier2 (not counted, file is XX): parsed 272 positions (binary) no match"
+    },
+    {
+      "rel": "out/seg_00.png",
+      "sha256": "395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0",
+      "size": 37183,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:x/splat-foley/segments/seg_00.png",
+      "tier": "T1",
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "PASS",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "ruled_by_human": true
+    },
+    "C3": {
+      "result": "PASS",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "file_declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain",
+      "ruled_by_human": true
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "out/game.glb"
+        ],
+        "sound": [
+          "out/crate-impact-hard-surface.wav"
+        ]
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: mismatch out/game.glb",
+        "sound": "PASS via out/crate-impact-hard-surface.wav[T1]"
+      }
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_reason": "graded artifact(s) exact, failing: C5",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "sound:audio/sfx/crate-impact-hard-surface.wav"
+    ],
+    "bytes": 17644,
+    "any_declared": 1.0,
+    "cryptographic": 1.0,
+    "kinds": [
+      "crc32",
+      "sha256"
+    ],
+    "all_extracted": {
+      "payloads_counted": [
+        "sound:audio/sfx/crate-impact-hard-surface.wav",
+        "texture:x/splat-foley/segments/seg_00.png"
+      ],
+      "bytes": 54827,
+      "any_declared": 1.0,
+      "cryptographic": 1.0,
+      "kinds": [
+        "crc32",
+        "sha256"
+      ]
+    }
+  }
+}

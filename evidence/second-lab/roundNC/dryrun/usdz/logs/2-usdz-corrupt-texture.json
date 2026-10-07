@@ -1,0 +1,108 @@
+{
+  "format": "usdz",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\werk\\gauntlet\\roundNC\\dryrun\\usdz\\corrupt\\texture-byteflip",
+  "exit_code": null,
+  "rows": [
+    {
+      "rel": "ref_extract_usdz.py",
+      "sha256": "9adccf01c460d7e739d0af108910c685401f09b23333bb2639720e273bdee60b",
+      "size": 2869,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "out/crate.obj",
+      "sha256": "e355d931deb42d44d857947c9f1fda661d819e7051eeb1303d16f51728436229",
+      "size": 187900,
+      "status": "OK",
+      "class": "mesh",
+      "payload": null,
+      "tier": "T2-VALUES",
+      "detail": "parsed 4686 positions (text)"
+    },
+    {
+      "rel": "out/crate_diffuse.png",
+      "sha256": "7fc191d33b77f6d9d369cddc95df9e6367610e29da143699b42eafb97d669679",
+      "size": 9460,
+      "status": "XX",
+      "class": "texture",
+      "payload": "texture:textures/crate_diffuse.png",
+      "tier": "T1",
+      "detail": "name matches payload texture:textures/crate_diffuse.png but sha256 != af85a84d80b8fee7"
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "PASS",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "ruled_by_human": true
+    },
+    "C3": {
+      "result": "PASS-honest",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [],
+        "program stdout": []
+      },
+      "file_declares": "zip CRC-32 per entry (a real, checkable declaration, and the only one)",
+      "ruled_by_human": true
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "out/crate.obj"
+        ],
+        "texture": [
+          "out/crate_diffuse.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "PASS via out/crate.obj[T2-VALUES]",
+        "texture": "FAIL: mismatch out/crate_diffuse.png"
+      }
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_reason": "graded artifact(s) exact, failing: C5",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "mesh:tier2"
+    ],
+    "bytes": 56232,
+    "any_declared": 1.0,
+    "cryptographic": 0.0,
+    "kinds": [
+      "crc32"
+    ],
+    "all_extracted": {
+      "payloads_counted": [
+        "mesh:tier2"
+      ],
+      "bytes": 56232,
+      "any_declared": 1.0,
+      "cryptographic": 0.0,
+      "kinds": [
+        "crc32"
+      ]
+    }
+  }
+}

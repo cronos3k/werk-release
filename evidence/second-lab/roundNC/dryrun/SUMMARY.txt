@@ -1,0 +1,46 @@
+roundNC dry-run summary (grade_nc.py instrument check, plan 5.7)
+
+OK   1-werk-ref-sound                   expected: PENDING, C1/C4/C5 PASS
+                                        observed: PENDING C1=PASS C2=NEEDS-HUMAN-REVIEW C3=NEEDS-HUMAN-REVIEW C4=PASS C5=PASS
+OK   1-werk-ref-sound-ruled             expected: PASS
+                                        observed: PASS C1=PASS C2=PASS C3=PASS C4=PASS C5=PASS
+OK   1-werk-ref-texture                 expected: PENDING, C1/C4/C5 PASS
+                                        observed: PENDING C1=PASS C2=NEEDS-HUMAN-REVIEW C3=NEEDS-HUMAN-REVIEW C4=PASS C5=PASS
+OK   1-werk-ref-texture-ruled           expected: PASS
+                                        observed: PASS C1=PASS C2=PASS C3=PASS C4=PASS C5=PASS
+OK   1-werk-ref-objdump                 expected: PASS with mesh via T2-VALUES (OBJ text dump)
+                                        observed: PASS mesh=PASS via out/crate.obj[T2-VALUES]
+OK   1-gltf-ref-texture                 expected: PENDING, C1/C4/C5 PASS
+                                        observed: PENDING C1=PASS C2=NEEDS-HUMAN-REVIEW C3=NEEDS-HUMAN-REVIEW C4=PASS C5=PASS
+OK   1-gltf-ref-texture-ruled           expected: PASS; mesh T1 (.bin) + T2-VALUES (OBJ), texture T1
+                                        observed: PASS mesh=PASS via out/crate-nc-v1.bin[T1], out/crate.obj[T2-VALUES] | texture=PASS via out/crate_diffuse.png[T1]
+OK   1-gltf-ref-sound-NA-ruled          expected: PASS on mesh only, sound N/A
+                                        observed: PASS na=True C1=PASS C2=PASS C3=PASS-honest C4=PASS C5=PASS
+OK   2-werk-corrupt-wav                 expected: C5 FAIL (sound mismatch), verdict PARTIAL
+                                        observed: PARTIAL C5=FAIL sound=FAIL: mismatch out/crate-impact-hard-surface.wav
+OK   2-werk-corrupt-glb                 expected: C5 FAIL (mesh mismatch), verdict PARTIAL
+                                        observed: PARTIAL C5=FAIL mesh=FAIL: mismatch out/game.glb
+OK   2-gltf-corrupt-png                 expected: C5 FAIL (texture mismatch), verdict PARTIAL (mesh still exact)
+                                        observed: PARTIAL C5=FAIL texture=FAIL: mismatch out/crate_diffuse.png
+OK   2-gltf-corrupt-bin                 expected: C5 FAIL (mesh mismatch), verdict PARTIAL (texture still exact)
+                                        observed: PARTIAL C5=FAIL mesh=FAIL: mismatch out/crate-nc-v1.bin
+OK   2-gltf-input-only                  expected: FAIL (inputs at their own paths are not extractions, R4)
+                                        observed: FAIL (no graded artifact matches)
+OK   3-echo-werk-sound                  expected: PASS (MANIFEST self-declared hashes allowed, no leaks)
+                                        observed: PASS leaks=0 self-declared=67
+OK   3-echo-werk-texture                expected: PASS (MANIFEST self-declared hashes allowed, no leaks)
+                                        observed: PASS leaks=0 self-declared=67
+OK   3-echo-gltf-sound                  expected: PASS (no leaks)
+                                        observed: PASS leaks=0
+OK   3-echo-gltf-texture                expected: PASS (no leaks)
+                                        observed: PASS leaks=0
+OK   3-echo-gltf-SELFTEST-planted-leak  expected: FAIL (planted leak detected)
+                                        observed: FAIL leaks=1
+OK   3-echo-SELFTEST-planted-leak       expected: FAIL (planted leak detected)
+                                        observed: FAIL leaks=1
+OK   3-echo-prompts-sound               expected: PASS
+                                        observed: PASS leaks=0
+OK   3-echo-prompts-texture             expected: PASS
+                                        observed: PASS leaks=0
+
+checks: 21   as expected: 21   unexpected: 0
