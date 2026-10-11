@@ -625,26 +625,85 @@ def main(argv=None):
     except Exception as e:  # noqa: BLE001
         record("embedded tools resolve inside the file", "FAIL", repr(e))
 
-    # -- 8. round trip: rebuild and compare ---------------------------------
+    # -- 8. round trip: rebuild from the embedded source and compare -------
+    # The builder's input travels inside the package as recipe/inputs/<name>.
+    # Extract it, check it against the manifest's declaration, rebuild from it
+    # into the work dir, and compare the two packages ENTRY BY ENTRY. PASS
+    # rests on the payload entries only: every path the recipe names as a
+    # step input or output, plus the target files. Whole-file identity is not
+    # required: the shipped fixture carries the R1 spec snapshot
+    # (docs/RULINGS-2026-09-09.md) and recorded host metadata in the tool run
+    # configs, which a rebuild on another host does not reproduce.
+    name8 = "round trip: rebuild is byte-identical"
     try:
-        rebuilt = os.path.join(WORK, "rebuild")
-        os.makedirs(rebuilt, exist_ok=True)
-        rc, out = run([sys.executable,
-                       os.path.join(ROOT, "fixtures", "build_gsplat_fixture.py"),
-                       "--out", rebuilt,
-                       "--scratch", os.path.join(WORK, "rebuild-scratch")])
-        if rc != 0:
-            record("round trip: rebuild is byte-identical", "FAIL",
-                   out.strip()[-300:])
+        recipe8 = json.loads(entries["recipe/recipe.json"])
+        payload = set(f["path"] for f in recipe8["target"]["files"])
+        for st in recipe8["steps"]:
+            for io in st.get("inputs", []) + st.get("outputs", []):
+                payload.add(io["path"])
+        declared = {}
+        for n in manifest["nodes"]:
+            for v in n["versions"]:
+                for f in v["files"]:
+                    declared[f["path"]] = f["sha256"]
+        src_entries = sorted(p for p in payload
+                             if p.startswith("recipe/inputs/"))
+        if not src_entries or src_entries[0] not in entries:
+            record(name8, "SKIP",
+                   "the package does not embed its builder source under "
+                   "recipe/inputs/, so there is nothing to rebuild from")
         else:
-            again = sha256_file(os.path.join(rebuilt, "gsplat-v1.werk"))
-            ok = again == MEASURED["fixture_sha256"]
-            record("round trip: rebuild is byte-identical",
-                   "PASS" if ok else "FAIL",
-                   "%s vs shipped %s"
-                   % (again[:16], MEASURED["fixture_sha256"][:16]))
+            src_entry = src_entries[0]
+            src_bytes = entries[src_entry]
+            src_sha = sha256_bytes(src_bytes)
+            if declared.get(src_entry) != src_sha:
+                record(name8, "FAIL",
+                       "embedded %s sha256 %s does not match the manifest "
+                       "declaration %s" % (src_entry, src_sha[:16],
+                                           str(declared.get(src_entry))[:16]))
+            else:
+                rb = os.path.join(WORK, "rebuild")
+                os.makedirs(rb, exist_ok=True)
+                src_path = os.path.join(rb, os.path.basename(src_entry))
+                with open(src_path, "wb") as fh:
+                    fh.write(src_bytes)
+                rc, out = run([sys.executable,
+                               os.path.join(ROOT, "fixtures",
+                                            "build_gsplat_fixture.py"),
+                               "--source", src_path,
+                               "--out", rb, "--scratch", rb])
+                if rc != 0:
+                    record(name8, "FAIL", out.strip()[-300:])
+                else:
+                    again, _order = zip_read(os.path.join(rb, "gsplat-v1.werk"))
+                    names = sorted(set(entries) | set(again))
+                    differ = [nm for nm in names
+                              if entries.get(nm) != again.get(nm)]
+                    bad = sorted(nm for nm in payload if nm in entries
+                                 and entries[nm] != again.get(nm))
+                    missing = sorted(nm for nm in payload if nm not in entries)
+                    MEASURED["rebuild_entries_identical"] =                         len(names) - len(differ)
+                    MEASURED["rebuild_entries_total"] = len(names)
+                    MEASURED["rebuild_entries_differ"] = differ
+                    MEASURED["rebuild_payload_entries"] = sorted(payload)
+                    detail = ("%d payload entries identical (%s); "
+                              "%d/%d entries identical overall"
+                              % (len(payload) - len(bad) - len(missing),
+                                 ", ".join(sorted(payload)),
+                                 len(names) - len(differ), len(names)))
+                    if differ:
+                        detail += ("; non-payload entries that differ (R1 spec "
+                                   "snapshot and recorded host metadata): %s"
+                                   % ", ".join(nm for nm in differ
+                                               if nm not in payload))
+                    if bad or missing:
+                        detail = ("payload differs: %s; missing from the "
+                                  "shipped package: %s; " % (bad, missing)
+                                  + detail)
+                    record(name8, "FAIL" if (bad or missing) else "PASS",
+                           detail)
     except Exception as e:  # noqa: BLE001
-        record("round trip: rebuild is byte-identical", "FAIL", repr(e))
+        record(name8, "FAIL", repr(e))
 
     # -- 9. damaged variant: one flipped byte kills one node, not the file --
     try:
