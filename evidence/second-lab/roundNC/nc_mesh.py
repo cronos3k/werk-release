@@ -19,6 +19,7 @@ Standard library only.
 
 import hashlib
 import json
+import math
 import os
 import struct
 
@@ -268,12 +269,35 @@ def positions_from_file(path):
     return None
 
 
+def nonfinite_count(positions):
+    """How many position tuples hold a NaN, an infinity, or fewer than three
+    components. Such a tuple can never equal an expected value."""
+    n = 0
+    for p in positions:
+        if len(p) < 3 or not all(math.isfinite(c) for c in p[:3]):
+            n += 1
+    return n
+
+
 def compare_positions(got, exp_rec, exp_positions=None):
     """Return one of: 'VALUES' (all positions in order within TOL),
-    'COUNT+BBOX' (count equal, bbox within TOL), or None."""
+    'COUNT+BBOX' (count equal, bbox within TOL), or None.
+
+    Grader revision 2026-10-12 (post hoc; the frozen 504a9ac grader did not
+    have these three checks, see RESULTS-NC.md "grader revisions"):
+      * any non-finite or short position tuple -> None. The frozen test was
+        `abs(a - b) > TOL`, which is False for NaN, so an all-NaN file was
+        graded 'VALUES'.
+      * 'VALUES' needs exp_positions to have exactly the expected count. A
+        shorter expected array used to be zip-truncated.
+      * the bbox fallback is only reached from finite values (min/max over
+        NaN is order-dependent).
+    """
     if len(got) != exp_rec["vertex_count"]:
         return None
-    if exp_positions is not None:
+    if nonfinite_count(got):
+        return None
+    if exp_positions is not None and len(exp_positions) == len(got):
         ok = True
         for a, b in zip(got, exp_positions):
             if abs(a[0] - b[0]) > TOL or abs(a[1] - b[1]) > TOL or abs(a[2] - b[2]) > TOL:
@@ -285,6 +309,25 @@ def compare_positions(got, exp_rec, exp_positions=None):
     if all(abs(x - y) <= TOL for x, y in zip(gb, exp_rec["bbox"])):
         return "COUNT+BBOX"
     return None
+
+
+def submesh_slices(t2, dump):
+    """-> {mesh_name: expected position list} for every sub-mesh whose slice
+    of the full canonical dump (in storage order, cumulative vertex counts)
+    hashes to the sub-mesh's own pinned dump_sha256. A sub-mesh whose slice
+    does not verify is left out, and the caller falls back to count+bbox for
+    it (the frozen behaviour) and says so."""
+    out = {}
+    if not t2 or dump is None:
+        return out
+    off = 0
+    for s in t2.get("submeshes", []):
+        n = s["vertex_count"]
+        sl = dump[off:off + n]
+        off += n
+        if len(sl) == n and sha256_bytes(canonical_dump(sl)) == s.get("dump_sha256"):
+            out[s["mesh_name"]] = sl
+    return out
 
 
 def dump_floats(dump_bytes):

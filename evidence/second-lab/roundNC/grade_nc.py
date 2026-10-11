@@ -126,6 +126,7 @@ def walk(scan, e, dump):
     declared_all = e.get("tier1_declared_all", {})
     inputs = {ff["name"].replace("\\", "/"): ff["sha256"] for ff in e["fixture_files"]}
     t2 = e.get("tier2_mesh")
+    sub_slices = nc_mesh.submesh_slices(t2, dump)
 
     rows = []
     notes = []
@@ -171,15 +172,28 @@ def walk(scan, e, dump):
                     res = nc_mesh.positions_from_file(fp)
                     if res:
                         kind, pos, tri = res
+                        bad = nc_mesh.nonfinite_count(pos)
                         m = nc_mesh.compare_positions(pos, t2, dump)
                         if m == "COUNT+BBOX" and kind != "text":
                             m = None  # plan 1.3: count+bbox only for a text dump
                         sub = []
-                        if not m:
-                            for s in t2.get("submeshes", []):
-                                if len(t2["submeshes"]) > 1 and nc_mesh.compare_positions(pos, s):
-                                    sub.append(s["mesh_name"])
+                        if not m and len(t2.get("submeshes", [])) > 1:
+                            # grader revision 2026-10-12: a sub-mesh match is
+                            # decided on its VALUES (the verified slice of the
+                            # frozen dump), not on count+bbox alone. Where no
+                            # verified slice exists the frozen count+bbox test
+                            # is kept and the detail says so.
+                            for s in t2["submeshes"]:
+                                exp = sub_slices.get(s["mesh_name"])
+                                sm = nc_mesh.compare_positions(pos, s, exp)
+                                if sm == "COUNT+BBOX" and (exp is not None or kind != "text"):
+                                    sm = None
+                                if sm:
+                                    sub.append("%s(%s%s)" % (s["mesh_name"], sm,
+                                                             "" if exp is not None else ",unverified-slice"))
                         info = "parsed %d positions (%s)" % (len(pos), kind)
+                        if bad:
+                            info += "; %d non-finite or short positions (never a match)" % bad
                         if r["status"] == "XX":
                             r["detail"] += "; tier2 (not counted, file is XX): %s %s" % (info, m or "no match")
                         elif m:

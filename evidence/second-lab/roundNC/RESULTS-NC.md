@@ -297,6 +297,14 @@ All 9 control agents named the same top stumble. The frozen prompt keeps werk wo
 
 No sign that the ground truth is wrong. The body sub-mesh values in the frozen dumps equal every agent's independent decode, from three different formats.
 
+### 8.x Grader revision 2026-10-12 (post hoc; the frozen grader is unchanged)
+
+An independent review found that `nc_mesh.compare_positions` graded an all-NaN position file as `VALUES`: its test was `abs(a - b) > TOL`, which is False for NaN. It also let a shorter expected array pass by zip truncation, and sub-mesh matches at `grade_nc.py` were decided on count and bounding box without the expected positions.
+
+Revision (this commit): non-finite or short positions never match; `VALUES` needs the full expected array; sub-mesh matches use the verified slice of the frozen dump (every slice hashes to its pinned `dump_sha256`, 10 of 10) and are labelled `VALUES` or `COUNT+BBOX`. `test_nc_mesh.py` holds the cases and prints the frozen predicate's answer beside the revised one.
+
+The frozen grader at `504a9ac` is what produced every verdict in this report and stays unchanged. Re-grading the 12 committed run folders with the revised grader (same argv as `grading/logs/committed-*.log`) changed no row status, no tier, no clause result and no verdict. The only change is the detail text of the seven sub-mesh rows, which now reads `Cube.020(VALUES)`: the body meshes those agents wrote were value-exact, not only bounds-exact, which is what section 7 and the independent sub-mesh check already found.
+
 ## 9. Proposed amendments (not applied)
 
 Dated 2026-10-11. NOT applied. No verdict above uses them.
