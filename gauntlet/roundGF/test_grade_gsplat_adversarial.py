@@ -26,6 +26,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GRADER = os.path.join(HERE, "grade_gsplat.py")
@@ -35,8 +36,12 @@ import grade_gsplat  # noqa: E402
 ROWS = 32
 
 
-def evidence(gt, rows=ROWS, colour_bump_row=None, nan_rows=False, first_row_only=False):
-    """A report and a CSV that a correct, complete run would have left."""
+def evidence(gt, rows=None, colour_bump_row=None, nan_rows=False, first_row_only=False,
+             positions_only=False, index_column=False):
+    """A report and a CSV that a correct, complete run would have left.
+    rows=None writes every point (gt must hold the full set)."""
+    if rows is None:
+        rows = len(gt["positions"])
     rep = ["# REPORT", "",
            "Integrity: every declared file re-hashed with SHA-256; all match the manifest: OK.",
            "digests checked: " + " ".join(gt["declared_digests"][:3]), "",
@@ -45,16 +50,19 @@ def evidence(gt, rows=ROWS, colour_bump_row=None, nan_rows=False, first_row_only
         q = gt["tool_lines"][tid][0]
         rep += ["Tool %s at %s/ converts the capture; source:" % (tid, path), "    " + q, ""]
     n = 1 if first_row_only else rows
-    csv = ["x,y,z,r,g,b"]
+    csv = [("i," if index_column else "") + ("x,y,z" if positions_only else "x,y,z,r,g,b")]
     for k in range(n):
         p = gt["positions"][k]
         c = list(gt["colors"][k])
         if colour_bump_row is not None and k == colour_bump_row:
             c[0] = c[0] + 1 if c[0] < 255 else c[0] - 1
+        pre = ("%d," % k) if index_column else ""
         if nan_rows:
-            csv.append("nan,nan,nan,%d,%d,%d" % tuple(c))
+            csv.append(pre + "nan,nan,nan,%d,%d,%d" % tuple(c))
+        elif positions_only:
+            csv.append(pre + "%.8f,%.8f,%.8f" % (p[0], p[1], p[2]))
         else:
-            csv.append("%.8f,%.8f,%.8f,%d,%d,%d" % (p[0], p[1], p[2], c[0], c[1], c[2]))
+            csv.append(pre + "%.8f,%.8f,%.8f,%d,%d,%d" % (p[0], p[1], p[2], c[0], c[1], c[2]))
     return "\n".join(rep) + "\n", "\n".join(csv) + "\n"
 
 
@@ -94,9 +102,13 @@ def main():
         print("fixture missing: %s (run tools/fetch_fixtures.py); nothing tested" % fixture)
         return 2
 
-    gt = grade_gsplat.ground_truth(fixture, ROWS)
-    rep, csv = evidence(gt)
+    gt = grade_gsplat.ground_truth(fixture, None)        # every point
+    rep, csv = evidence(gt)                               # the complete table
+    rep32, csv32 = evidence(gt, rows=ROWS)                # 32 rows only
     prompt = open(os.path.join(HERE, "PROMPT-gsplattask.txt"), encoding="utf-8").read()
+    pkg_copy = ""
+    with zipfile.ZipFile(fixture) as z:
+        pkg_copy = z.read("MANIFEST.json").decode("utf-8")
 
     # name -> (files, extra grader flags, expected full, expected numeric)
     cases = [
@@ -108,14 +120,25 @@ def main():
          {"helper.py": '"""\n' + rep + csv + '\n"""', "REPORT.md": "done"}, (), "FAIL", "FAIL"),
         ("program source holding full evidence",
          {"solution.py": '"""\n' + rep + csv + '\n"""'}, (), "FAIL", "FAIL"),
-        ("same, with --include-source (pre-revision scan)",
-         {"solution.py": '"""\n' + rep + csv + '\n"""'}, ("--include-source",), "PASS", "PASS"),
+        ("program source with --include-source (pre-revision scan; source is never a point table)",
+         {"solution.py": '"""\n' + rep + csv + '\n"""'}, ("--include-source",), "FAIL", "PASS"),
         ("first row only, everything else right",
          {"REPORT.md": rep, "points.csv": evidence(gt, first_row_only=True)[1]}, (), "FAIL", "PASS"),
-        ("row 2 colour off by one u8 step",
+        ("first 32 rows only, everything else right",
+         {"REPORT.md": rep32, "points.csv": csv32}, (), "FAIL", "PASS"),
+        ("complete table, row 2 colour off by one u8 step",
          {"REPORT.md": rep, "points.csv": evidence(gt, colour_bump_row=1)[1]}, (), "FAIL", "PASS"),
+        ("complete table, interior row 1000 colour off by one",
+         {"REPORT.md": rep, "points.csv": evidence(gt, colour_bump_row=1000)[1]}, (), "FAIL", "PASS"),
+        ("complete table, positions only",
+         {"REPORT.md": rep, "points.csv": evidence(gt, positions_only=True)[1]}, (), "FAIL", "FAIL"),
+        ("complete table, last row missing",
+         {"REPORT.md": rep, "points.csv": "\n".join(csv.splitlines()[:-1]) + "\n"}, (), "FAIL", "PASS"),
         ("NaN positions, right colours",
          {"REPORT.md": rep, "points.csv": evidence(gt, nan_rows=True)[1]}, (), "FAIL", "FAIL"),
+        ("unpacked package copy beside a thin report",
+         {"REPORT.md": probe89(gt), "x/MANIFEST.json": pkg_copy, "x/spec.md.txt": pkg_copy},
+         (), "FAIL", "PASS"),
         ("no digest printed (integrity by words only)",
          {"REPORT.md": rep.replace("digests checked: ", "digests checked: none "
                                    ).replace(gt["declared_digests"][0], "")
@@ -123,10 +146,19 @@ def main():
           "points.csv": csv}, (), "FAIL", "PASS"),
         ("no artifact at all",
          {"solution.py": "print('hi')\n"}, (), "FAIL", "FAIL"),
-        ("correct complete run",
-         {"REPORT.md": rep, "points.csv": csv}, (), "PASS", "PASS"),
+        ("correct complete run (committed mode: clause 1 cannot be established)",
+         {"REPORT.md": rep, "points.csv": csv}, (), "FAIL", "PASS"),
+        ("same, header with digits (r_u8,g_u8,b_u8)",
+         {"REPORT.md": rep,
+          "points.csv": csv.replace("x,y,z,r,g,b", "x,y,z,r_lin,g_lin,b_lin,r_u8,g_u8,b_u8", 1)},
+         (), "FAIL", "PASS"),
+        ("same, index column",
+         {"REPORT.md": rep, "points.csv": evidence(gt, index_column=True)[1]}, (), "FAIL", "PASS"),
     ]
 
+    # Without --rerun, clause 1 is never established, so the committed-mode
+    # cases can at best fail on clause 1 alone. The two cases below exercise
+    # the damage check itself with --rerun.
     root = tempfile.mkdtemp(prefix="gsplat-adv-")
     bad = 0
     print("%-48s %-6s %-8s %-6s %-8s %s" % ("case", "full", "(want)", "num", "(want)", "ok"))
@@ -138,11 +170,37 @@ def main():
         write(d, files)
         r = run(fixture, d, extra)
         ok = r["verdict"] == want_full and r["verdict_numeric"] == want_num
+        if name.startswith("correct complete run") or name.startswith("same, "):
+            # the only failing clause may be clause 1
+            ok = ok and r["full_task_failing"] == [x for x in r["full_task_failing"] if x.startswith("1 ")]
         bad += 0 if ok else 1
         print("%-48s %-6s %-8s %-6s %-8s %s%s" % (
             name, r["verdict"], "(" + want_full + ")", r["verdict_numeric"], "(" + want_num + ")",
             "ok" if ok else "WRONG",
             "" if r["verdict"] == "PASS" else "   failing: " + "; ".join(r["full_task_failing"])))
+    # ---- the damage check, with --rerun: an honest verifier and a liar
+    HONEST = (
+        "import hashlib, json, sys, zipfile\n"
+        "z = zipfile.ZipFile(sys.argv[1]); man = json.loads(z.read('MANIFEST.json')); bad = 0\n"
+        "for n in man['nodes']:\n"
+        "    for v in n['versions']:\n"
+        "        for f in v['files']:\n"
+        "            if hashlib.sha256(z.read(f['path'])).hexdigest() != f['sha256']:\n"
+        "                bad += 1; print('MISMATCH', f['path'])\n"
+        "print('sha-256 of every declared file verified:', 'OK' if bad == 0 else 'FAIL (%d)' % bad)\n"
+        "sys.exit(1 if bad else 0)\n")
+    LIAR = "print('sha-256 of every declared file verified: OK')\nprint('281498 points')\n"
+    print("\n%-48s %-10s %-10s %s" % ("damage check (--rerun)", "integrity", "(want)", "ok"))
+    for i, (name, prog, want) in enumerate([("honest verifier", HONEST, True), ("liar", LIAR, False)]):
+        d = os.path.join(root, "damage%02d" % i)
+        os.makedirs(d)
+        write(d, {"solution.py": prog})
+        r = run(fixture, d, ("--rerun", "--out", os.path.join(d, "_clean"), "--prog-arg",
+                             os.path.basename(fixture), "--no-report"))
+        ok = r["integrity_ok"] == want and bool(r["damage_check"]) and r["damage_check"]["detected"] == want
+        bad += 0 if ok else 1
+        print("%-48s %-10s %-10s %s   %s" % (name, r["integrity_ok"], want, "ok" if ok else "WRONG",
+                                              r.get("integrity_how")))
     if not args.keep:
         shutil.rmtree(root, ignore_errors=True)
     else:

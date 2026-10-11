@@ -42,15 +42,41 @@ fixture. The model's code and a copy of the prompt name the tools and the
 count whether or not anything was decoded (--include-source restores the
 pre-revision scan).
 
-TWO VERDICTS. `verdict` is the FULL-TASK verdict: clause 1 needs at least
-one of the package's declared sha256 digests printed beside a verification
-verdict; clause 2 needs the count and ALL of the first --sample-rows
-(default 32) positions and colours; clause 3 needs each tool named, its
-path given and at least one unique source line quoted. `verdict_numeric`
-is the pre-revision rule (count, point[0], tool names only). An
-89-character report satisfies the numeric rule without decoding anything;
-it cannot satisfy the full-task rule, which is why the numeric rule is now
-reported as a partial check and not as the verdict.
+Files whose bytes equal any entry of the package (an unpacked copy of the
+fixture, with any name or suffix, MANIFEST.json and SIGNATURE.json
+included) are not evidence either: they are the input, not an output.
+
+TWO VERDICTS. `verdict` is the FULL-TASK verdict: clause 1 needs a
+verification verdict in the clean run AND, under --rerun, the DAMAGE CHECK:
+the same program is run on a copy of the fixture in which one byte of one
+declared file is flipped (the zip is rewritten self-consistent, so only
+the manifest digest disagrees), and it must report the damage (non-zero
+exit where the clean run exited 0, or more failure words than the clean
+run). Words such as "all hashes verified" are the model's claim, not
+evidence; the damage check is. Without --rerun clause 1 is NOT
+ESTABLISHED and the full-task verdict is FAIL. Clause 2 needs the count
+AND the complete point set on disk: a
+text table (csv/txt/xyz/tsv, one point per line, optional index column)
+whose every row k equals ground-truth point k, positions within 5e-6 and
+colours as the stored u8 triple or exact k/255; clause 3 needs each tool
+named, its path given and at least one unique source line quoted.
+--sample-rows (default 32) only reports how many leading points also
+appear in the free text. `verdict_numeric` is the pre-revision rule
+(count, point[0], tool names only). An 89-character report satisfies the
+numeric rule without decoding anything; it cannot satisfy the full-task
+rule, which is why the numeric rule is now reported as a partial check and
+not as the verdict.
+
+  --rerun --prog-arg gsplat-v1.werk --prog-arg=--out --prog-arg out
+       passes arguments verbatim to the re-run program (repeatable; write
+       --prog-arg=--flag for an argument that starts with a dash).
+
+In --rerun mode the evidence is the clean re-run's stdout and the files the
+program wrote there, plus the run's own REPORT.md (--report NAME, default
+REPORT.md; --no-report excludes it). The report is a declared output of the
+task (the prompt asks for it) and is where a run quotes tool source and
+lists the digests it verified; the re-run establishes that the program
+reproduces the point set without the model present.
 
   python grade_gsplat.py --fixture fixtures/gsplat-v1.werk --rundir <dir>
   python grade_gsplat.py --fixture ... --rundir <dir> --rerun --prog solution.py \
@@ -62,6 +88,7 @@ Standard library only.
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -151,6 +178,7 @@ TOOLS = {
 
 
 def ground_truth(fixture, nrows=8):
+    """nrows=None decodes every point (for the full point-set check)."""
     z = zipfile.ZipFile(fixture)
     man = json.loads(z.read("MANIFEST.json"))
     digests = set()
@@ -159,6 +187,8 @@ def ground_truth(fixture, nrows=8):
             for f in v0.get("files", []):
                 if f.get("sha256"):
                     digests.add(f["sha256"].lower())
+    entry_digests = set(hashlib.sha256(z.read(n)).hexdigest() for n in z.namelist()
+                        if not n.endswith("/"))
 
     pc = z.read("points/plush-dc.wkpc")
     m, v, ph = envelope(pc)
@@ -166,6 +196,8 @@ def ground_truth(fixture, nrows=8):
     _, posb = section(pc, ph, "position")
     _, colb = section(pc, ph, "color")
     count = ph["count"]
+    if nrows is None:
+        nrows = count
 
     gs = z.read("splats/plush.wkgs")
     m2, v2, gh = envelope(gs)
@@ -233,6 +265,7 @@ def ground_truth(fixture, nrows=8):
         "declared_files": sum(len(v0.get("files", []))
                               for n in man.get("nodes", []) for v0 in n.get("versions", [])),
         "declared_digests": sorted(digests),
+        "entry_digests": sorted(entry_digests),
         "tool_quotes": quotes,
         "tool_lines": tool_lines,
         "fixture_sha256": sha256_file(fixture),
@@ -245,6 +278,41 @@ def sha256_file(p):
         for c in iter(lambda: f.read(1 << 20), b""):
             h.update(c)
     return h.hexdigest()
+
+
+# ---------------------------------------------------------------- damage check
+
+FAIL_WORDS = re.compile(r"(mismatch|corrupt|tamper|invalid|fail|damaged|does not match|bad )", re.I)
+
+
+def make_damaged(fixture, out_path):
+    """Write a copy of the fixture with one byte of one declared file
+    flipped. The zip is rewritten entry by entry with the same names and
+    compression, so every CRC is right and only the manifest's sha256 of
+    that file disagrees. The file is the first declared path under spec/
+    larger than 1000 bytes (sorted), else the largest declared file.
+    -> (path, byte offset)."""
+    z = zipfile.ZipFile(fixture)
+    man = json.loads(z.read("MANIFEST.json"))
+    declared = []
+    for n in man.get("nodes", []):
+        for v0 in n.get("versions", []):
+            for f in v0.get("files", []):
+                declared.append(f["path"])
+    sizes = {i.filename: i.file_size for i in z.infolist()}
+    cands = sorted(pth for pth in declared if pth.startswith("spec/") and sizes.get(pth, 0) > 1000)
+    target = cands[0] if cands else max(declared, key=lambda pth: sizes.get(pth, 0))
+    data = bytearray(z.read(target))
+    off = len(data) // 2
+    data[off] ^= 0x01
+    with zipfile.ZipFile(out_path, "w") as w:
+        for info in z.infolist():
+            payload = bytes(data) if info.filename == target else z.read(info.filename)
+            ni = zipfile.ZipInfo(info.filename, date_time=info.date_time)
+            ni.compress_type = info.compress_type
+            ni.external_attr = info.external_attr
+            w.writestr(ni, payload)
+    return target, off
 
 
 # ---------------------------------------------------------------- run scanning
@@ -267,16 +335,18 @@ SOURCE_EXT = (".py", ".pyc", ".sh", ".ps1", ".bat", ".cmd")
 NOT_EVIDENCE = re.compile(r"(?i)^(prompt|task|transcript|context_package)")
 
 
-def harvest(scan, prog=None):
+def harvest(scan, prog=None, package_digests=()):
     """Everything textual the run produced: stdout log + every text file it
     wrote, excluding the fixture, the harness's own copies of the prompt,
-    and (when prog is given) every program source file and every file named
-    like a prompt, task or transcript copy. prog=None scans everything (the
-    pre-revision behaviour, --include-source). Returns the texts and the
-    list of skipped files."""
+    every file whose bytes equal a declared package entry (an unpacked
+    copy), and (when prog is given) every program source file and every
+    file named like a prompt, task or transcript copy. prog=None scans
+    everything else (the pre-revision behaviour, --include-source).
+    Returns the texts and the list of skipped files."""
     texts = []
     skipped = []
     names, pat = source_names(prog) if prog else (set(), None)
+    pkg = set(package_digests)
     for root, dirs, files in os.walk(scan):
         for name in sorted(files):
             fp = os.path.join(root, name)
@@ -288,6 +358,9 @@ def harvest(scan, prog=None):
                 continue
             if prog and (rel.lower().endswith(SOURCE_EXT) or NOT_EVIDENCE.search(name)):
                 skipped.append(rel)
+                continue
+            if pkg and os.path.getsize(fp) <= 64 << 20 and sha256_file(fp) in pkg:
+                skipped.append(rel + " (package copy)")
                 continue
             if rel.startswith("_harness/") and rel not in ("_harness/stdout.log",):
                 continue
@@ -304,29 +377,56 @@ def harvest(scan, prog=None):
 NUM = re.compile(r"[-+]?\d+(?:\.\d+)?(?:[eE][-+]?\d+)?")
 
 
-def has_triple(text, triple, tol, ints=False):
-    """Is this triple present, in order, anywhere in the text, allowing the
-    printed precision to be shorter than the stored float?"""
-    toks = NUM.findall(text)
+def numbers(text):
+    """Every finite number in the text. A sha256 hex string contains runs
+    such as 3e999 that parse as infinity; those are not numbers here."""
     vals = []
-    for t in toks:
+    for t in NUM.findall(text):
         try:
-            vals.append(float(t))
+            v = float(t)
         except ValueError:
-            vals.append(None)
-    n = len(vals)
-    for i in range(n - 2):
-        a, b, c = vals[i], vals[i + 1], vals[i + 2]
-        if a is None or b is None or c is None:
             continue
-        if ints:
-            if (a, b, c) == triple:
-                return True
-        else:
-            if (abs(a - triple[0]) <= tol and abs(b - triple[1]) <= tol
-                    and abs(c - triple[2]) <= tol):
-                return True
-    return False
+        if math.isfinite(v):
+            vals.append(v)
+    return vals
+
+
+class TripleIndex(object):
+    """All numeric tokens of a text, indexed by the bucket of each token, so
+    that 'is this triple present, in order, within tol' is answered without
+    rescanning the text per triple. A triple is present when three
+    consecutive tokens match it; the printed precision may be shorter than
+    the stored float."""
+
+    def __init__(self, text, tol):
+        self.vals = numbers(text)
+        self.tol = tol
+        self.w = max(tol, 1e-9) * 2.0
+        self.idx = {}
+        for i, v in enumerate(self.vals):
+            self.idx.setdefault(int(math.floor(v / self.w)), []).append(i)
+
+    def has(self, triple, tol=None, ints=False):
+        tol = self.tol if tol is None else tol
+        b = int(math.floor(triple[0] / self.w))
+        n = len(self.vals)
+        for bb in (b - 1, b, b + 1):
+            for i in self.idx.get(bb, ()):
+                if i + 2 >= n:
+                    continue
+                a, c, d = self.vals[i], self.vals[i + 1], self.vals[i + 2]
+                if ints:
+                    if (a, c, d) == triple:
+                        return True
+                elif (abs(a - triple[0]) <= tol and abs(c - triple[1]) <= tol
+                      and abs(d - triple[2]) <= tol):
+                    return True
+        return False
+
+
+def has_triple(text, triple, tol, ints=False):
+    """Kept for callers that hold a text; builds a one-off index."""
+    return TripleIndex(text, tol).has(triple, tol, ints)
 
 
 # A u8 colour may be printed as its stored integer (39) or as the exact
@@ -337,15 +437,94 @@ def has_triple(text, triple, tol, ints=False):
 FRAC_TOL = 5e-6
 
 
-def colour_form(text, rgb):
+def colour_form(ix, rgb):
     """'u8' if the integer triple is present, 'unit' if the exact /255
     fractions are present, else None. The integer test is tried first, so a
-    run graded PASS before this change is graded the same way after it."""
-    if has_triple(text, tuple(float(x) for x in rgb), 0.0, ints=True):
+    run graded PASS before this change is graded the same way after it.
+    `ix` is a TripleIndex built with FRAC_TOL."""
+    if ix.has(tuple(float(x) for x in rgb), 0.0, ints=True):
         return "u8"
-    if has_triple(text, tuple(x / 255.0 for x in rgb), FRAC_TOL):
+    if ix.has(tuple(x / 255.0 for x in rgb), FRAC_TOL):
         return "unit"
     return None
+
+
+# ------------------------------------------------------------ full point set
+
+POINT_TABLE_EXT = (".csv", ".txt", ".xyz", ".tsv", ".dat")
+NOT_ROW = re.compile(r"[A-DF-Za-df-z_#]")
+
+
+def colour_at(nums, rgb):
+    """Does the number list hold rgb as a u8 triple or an exact k/255 triple,
+    in order, anywhere? -> 'u8', 'unit' or None."""
+    n = len(nums)
+    want_u8 = tuple(float(x) for x in rgb)
+    want_unit = tuple(x / 255.0 for x in rgb)
+    for i in range(n - 2):
+        t = (nums[i], nums[i + 1], nums[i + 2])
+        if t == want_u8:
+            return "u8"
+        if all(abs(t[k] - want_unit[k]) <= FRAC_TOL for k in range(3)):
+            return "unit"
+    return None
+
+
+def check_point_table(text, positions, colors, tol):
+    """Grade one text table against the complete ground truth.
+    Row k (after an optional header; an optional leading index column) must
+    hold position k within tol, and colour k as u8 or exact k/255 anywhere
+    after the position. -> dict(rows, pos_ok, col_ok, first_bad_row)."""
+    count = len(positions)
+    rows = 0
+    pos_ok = col_ok = 0
+    first_bad = None
+    for line in text.splitlines():
+        # A data row holds numbers and separators only. A header such as
+        # "x,y,z,r_u8,g_u8,b_u8" contains digits but is not a row; any letter
+        # other than the exponent marker makes the line a header or comment.
+        if NOT_ROW.search(line):
+            continue
+        nums = numbers(line)
+        if len(nums) < 3:
+            continue
+        if rows >= count:
+            rows += 1
+            continue
+        p = positions[rows]
+        off = None
+        for o in (0, 1):
+            if len(nums) >= o + 3 and all(abs(nums[o + k] - p[k]) <= tol for k in range(3)):
+                off = o
+                break
+        if off is None:
+            if first_bad is None:
+                first_bad = rows
+            rows += 1
+            continue
+        pos_ok += 1
+        if colour_at(nums[off + 3:], colors[rows]) or colour_at(nums[:off], colors[rows]):
+            col_ok += 1
+        elif first_bad is None:
+            first_bad = rows
+        rows += 1
+    return {"rows": rows, "pos_ok": pos_ok, "col_ok": col_ok, "first_bad_row": first_bad}
+
+
+def full_point_set(texts, gt, tol):
+    """The best point table among the run's text artifacts: the one with the
+    most rows equal to ground truth. -> (rel, result) or (None, None)."""
+    best = (None, None)
+    for rel, text in texts:
+        if not rel.lower().endswith(POINT_TABLE_EXT) and not rel.endswith("stdout.log") \
+                and not rel.endswith("_rerun.stdout.txt"):
+            continue
+        if text.count("\n") < gt["count"] // 2:
+            continue
+        r = check_point_table(text, gt["positions"], gt["colors"], tol)
+        if best[1] is None or (r["pos_ok"], r["col_ok"]) > (best[1]["pos_ok"], best[1]["col_ok"]):
+            best = (rel, r)
+    return best
 
 
 def main():
@@ -359,10 +538,19 @@ def main():
     ap.add_argument("--include-source", action="store_true",
                     help="also scan the program's own source (the pre-fix behaviour)")
     ap.add_argument("--sample-rows", type=int, default=32,
-                    help="how many leading points must ALL be present for a full-task PASS")
+                    help="how many leading points are looked for in the free text (reported only)")
+    ap.add_argument("--prog-arg", action="append", default=[],
+                    help="one argument for the re-run program, verbatim (repeatable)")
+    ap.add_argument("--report", default="REPORT.md",
+                    help="the run's report file (relative to --rundir) that --rerun also scans")
+    ap.add_argument("--no-report", action="store_true",
+                    help="with --rerun, scan the clean re-run directory only")
+    ap.add_argument("--no-damage-check", action="store_true",
+                    help="with --rerun, skip the flipped-byte run (clause 1 then stays not established)")
     args = ap.parse_args()
 
     gt = ground_truth(args.fixture, max(1, args.sample_rows))
+    gt_all = ground_truth(args.fixture, None)
     print("fixture        : %s" % args.fixture)
     print("fixture sha256 : %s" % gt["fixture_sha256"])
     print("ground truth   : count=%d  declared_files=%d" % (gt["count"], gt["declared_files"]))
@@ -386,8 +574,8 @@ def main():
         cenv["PYTHONIOENCODING"] = "utf-8"
         cenv["PYTHONUTF8"] = "1"
         t0 = time.monotonic()
-        p = subprocess.run([sys.executable, os.path.basename(args.prog)], cwd=out,
-                           capture_output=True, timeout=3600, env=cenv)
+        p = subprocess.run([sys.executable, os.path.basename(args.prog)] + list(args.prog_arg),
+                           cwd=out, capture_output=True, timeout=3600, env=cenv)
         dt = time.monotonic() - t0
         so = p.stdout.decode("utf-8", "replace")
         se = p.stderr.decode("utf-8", "replace")
@@ -396,27 +584,65 @@ def main():
         with open(os.path.join(out, "_rerun.stderr.txt"), "w", encoding="utf-8") as f:
             f.write(se)
         print("\n=== RE-RUN in clean dir %s ===" % out)
+        print("argv: python %s" % " ".join([os.path.basename(args.prog)] + list(args.prog_arg)))
         print("exit=%d in %.1fs  stdout=%dB stderr=%dB" % (p.returncode, dt, len(so), len(se)))
-        rerun = {"exit": p.returncode, "secs": round(dt, 1),
+        rerun = {"exit": p.returncode, "secs": round(dt, 1), "argv": list(args.prog_arg),
                  "stdout_bytes": len(so), "stderr_bytes": len(se)}
         scan = out
+        if not args.no_damage_check:
+            dout = out + "-damaged"
+            if os.path.exists(dout):
+                shutil.rmtree(dout)
+            os.makedirs(dout)
+            target, off = make_damaged(args.fixture, os.path.join(dout, os.path.basename(args.fixture)))
+            shutil.copy2(os.path.join(args.rundir, args.prog),
+                         os.path.join(dout, os.path.basename(args.prog)))
+            t0 = time.monotonic()
+            pd = subprocess.run([sys.executable, os.path.basename(args.prog)] + list(args.prog_arg),
+                                cwd=dout, capture_output=True, timeout=3600, env=cenv)
+            dtd = time.monotonic() - t0
+            sod = pd.stdout.decode("utf-8", "replace") + pd.stderr.decode("utf-8", "replace")
+            with open(os.path.join(dout, "_rerun.stdout.txt"), "w", encoding="utf-8") as f:
+                f.write(sod)
+            clean_words = len(FAIL_WORDS.findall(so + se))
+            dam_words = len(FAIL_WORDS.findall(sod))
+            detected = (pd.returncode != 0 and p.returncode == 0) or dam_words > clean_words
+            print("=== DAMAGE CHECK: %s byte %d flipped, zip rewritten self-consistent ===" % (target, off))
+            print("exit=%d in %.1fs  failure words: clean %d, damaged %d  -> damage %s"
+                  % (pd.returncode, dtd, clean_words, dam_words,
+                     "REPORTED" if detected else "NOT REPORTED"))
+            rerun["damage"] = {"file": target, "offset": off, "exit": pd.returncode,
+                               "clean_exit": p.returncode, "fail_words_clean": clean_words,
+                               "fail_words_damaged": dam_words, "detected": detected,
+                               "dir": dout}
 
-    texts, skipped = harvest(scan, None if args.include_source else args.prog)
+    texts, skipped = harvest(scan, None if args.include_source else args.prog,
+                             gt["entry_digests"])
+    if args.rerun and not args.no_report:
+        rp = os.path.join(args.rundir, args.report)
+        if os.path.isfile(rp):
+            with open(rp, "r", encoding="utf-8", errors="replace") as f:
+                texts.append(("(rundir)/" + args.report.replace(chr(92), "/"), f.read()))
+            print("plus the run's report: %s" % rp)
     blob = "\n".join(t for _, t in texts)
     print("\nscanned %d text artifacts under %s (%d chars)" % (len(texts), scan, len(blob)))
     if skipped:
-        print("not scanned (program source, prompt/task/transcript copies): %s"
+        print("not scanned (program source, prompt/task/transcript copies, package copies): %s"
               % ", ".join(skipped))
 
     # ---- clause 2: the numbers
     count_ok = bool(re.search(r"\b%d\b" % gt["count"], blob)) or \
                bool(re.search(r"\b%s\b" % "[  ,]".join(str(gt["count"])), blob))
-    pos_ok = has_triple(blob, gt["positions"][0], 5e-6)
-    col_form = colour_form(blob, gt["colors"][0])
+    ix = TripleIndex(blob, FRAC_TOL)
+    pos_ok = ix.has(gt["positions"][0], 5e-6)
+    col_form = colour_form(ix, gt["colors"][0])
     col_ok = col_form is not None
-    posN = sum(1 for k in range(len(gt["positions"])) if has_triple(blob, gt["positions"][k], 5e-6))
+    posN = sum(1 for k in range(len(gt["positions"])) if ix.has(gt["positions"][k], 5e-6))
     colN = sum(1 for k in range(len(gt["colors"]))
-               if colour_form(blob, gt["colors"][k]) is not None)
+               if colour_form(ix, gt["colors"][k]) is not None)
+    full_rel, full = full_point_set(texts, gt_all, 5e-6)
+    full_pos_ok = bool(full) and full["pos_ok"] == gt_all["count"]
+    full_col_ok = bool(full) and full["col_ok"] == gt_all["count"]
 
     # ---- clause 3: the tools
     tool_named = {t: (t in blob) for t in TOOLS.values()}
@@ -430,18 +656,36 @@ def main():
         bool(re.search(r"(verif|match|\bOK\b|\bPASS\b)", blob, re.I))
     lblob = blob.lower()
     digests_seen = [d for d in gt["declared_digests"] if d in lblob]
-    integ_ok = integ_words and len(digests_seen) > 0
+    damage = (rerun or {}).get("damage")
+    if damage is None:
+        integ_ok = False
+        integ_how = "NOT ESTABLISHED (needs --rerun with the damage check)"
+    else:
+        integ_ok = integ_words and damage["detected"]
+        integ_how = "damage %s" % ("reported" if damage["detected"] else "NOT reported")
 
     print("\n=== CLAUSE GRADES (from artifacts, not from the model's claims) ===")
     print(" 1  integrity: sha-256 named and a verification verdict : %s" % integ_words)
-    print("    declared digests printed (of %d)                : %d  -> clause 1 %s"
-          % (len(gt["declared_digests"]), len(digests_seen), integ_ok))
+    print("    declared digests printed (of %d)                : %d  (reported only)"
+          % (len(gt["declared_digests"]), len(digests_seen)))
+    print("    flipped-byte copy                              : %s  -> clause 1 %s"
+          % (integ_how, integ_ok))
     print(" 2  point count %d present                       : %s" % (gt["count"], count_ok))
     print("    point[0] position triple present               : %s" % pos_ok)
     print("    point[0] colour triple present                 : %s%s"
           % (col_ok, "  (form: %s)" % col_form if col_ok else ""))
-    print("    of the first %d points: %d positions, %d colours present"
+    print("    of the first %d points: %d positions, %d colours present in the free text"
           % (len(gt["positions"]), posN, colN))
+    if full:
+        print("    complete point set on disk (%s): %d rows; %d / %d positions, %d / %d colours "
+              "equal ground truth%s"
+              % (full_rel, full["rows"], full["pos_ok"], gt_all["count"], full["col_ok"],
+                 gt_all["count"],
+                 "" if full["first_bad_row"] is None else
+                 "; first row not equal: %d" % full["first_bad_row"]))
+    else:
+        print("    complete point set on disk                     : no table with >= %d rows"
+              % (gt_all["count"] // 2))
     print(" 3  tools named   : %s" % tool_named)
     print("    tool paths    : %s" % tool_path)
     print("    source quoted : %s" % tool_quoted)
@@ -451,10 +695,10 @@ def main():
     nrows = len(gt["positions"])
     numeric = count_ok and pos_ok and col_ok and all(tool_named.values())
     full_checks = [
-        ("1 integrity: declared digest + verdict", integ_ok),
+        ("1 integrity: verdict + damage reported on a flipped-byte copy", integ_ok),
         ("2 count", count_ok),
-        ("2 all %d sample positions" % nrows, posN == nrows),
-        ("2 all %d sample colours" % nrows, colN == nrows),
+        ("2 complete point set on disk, positions", full_pos_ok),
+        ("2 complete point set on disk, colours", full_col_ok),
         ("3 tools named", all(tool_named.values())),
         ("3 tool paths", all(tool_path.values())),
         ("3 source quoted", all(tool_quoted.values())),
@@ -473,7 +717,11 @@ def main():
            "col0_form": col_form,
            "positions_present": posN, "colors_present": colN,
            "sample_rows": nrows,
+           "full_set_file": full_rel,
+           "full_set": full,
+           "full_set_positions_ok": full_pos_ok, "full_set_colors_ok": full_col_ok,
            "integrity_ok": integ_ok, "integrity_words": integ_words,
+           "integrity_how": integ_how, "damage_check": damage,
            "declared_digests_printed": len(digests_seen),
            "tool_named": tool_named, "tool_path": tool_path, "tool_quoted": tool_quoted,
            "tool_quote_lines": tool_quote_lines, "source_excluded": skipped,
