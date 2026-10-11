@@ -1739,6 +1739,31 @@ valid earlier version and MUST report having done so. A `requires` edge into
 a dead node kills the source node too; an `enhances` edge into a dead node
 costs exactly one feature.
 
+**Edge targets.** Every `edges[].to` names a `node_id` in the same
+manifest's `nodes[]`. A writer MUST NOT emit an edge whose target is absent
+from `nodes[]`. A writer that drops a node MUST also drop or rewrite every
+edge into it. A reader MUST still handle a package that breaks this rule, and
+it handles it on the path a dead target already takes. A `requires` edge to
+an absent node kills the source node exactly as a `requires` edge into a dead
+node does: the death propagates along `requires` edges to a fixed point, and
+the reader reports `requires-missing-node` at severity `error` on the source
+node. The source node's files are still size- and hash-checked and reported
+(§10 step 6). An `enhances` edge to an absent node costs one feature, as one
+into a dead node does, and is reported `edge-dangling` at severity `warn`. A
+node that is *skipped* (§10 step 8) is not dead: its bytes are intact, so a
+`requires` edge into it kills nothing.
+
+| edge target | `requires` | `enhances` |
+|---|---|---|
+| alive | no effect | no effect |
+| skipped (§10 step 8) | no effect | no effect |
+| dead | source node dies: `requires-dead-node`, `error` | one feature lost: `enhances-dead-node`, `warn` |
+| absent from `nodes[]` | source node dies: `requires-missing-node`, `error` | one feature lost: `edge-dangling`, `warn` |
+
+A declared node that is not there is the same kind of failure as a declared
+file that is not there (`file-missing`, `error`), and it degrades through the
+same path (law 3).
+
 ## 6. Signatures
 
 **`spec/schemas/signature.schema.json`.** Ed25519 (RFC 8032, pure), keys and
@@ -2004,6 +2029,12 @@ the design.
    path.
 9. **[B]** Never follow a path that is not in some `files[]`. Nothing floats
    and nothing outside the package is ever fetched.
+10. **[B]** Resolve edges (§5) after steps 6 to 8, to a fixed point. A
+    `requires` edge into a dead node, or to a node absent from `nodes[]`,
+    kills the source node (`requires-dead-node`, `requires-missing-node`,
+    both `error`). A `requires` edge into a skipped node does not. An
+    `enhances` edge never kills its source: into a dead node it is
+    `enhances-dead-node`, to an absent node it is `edge-dangling`, both `warn`.
 
 ### 10.1 What "refuse, do not guess" means, operationally
 
@@ -2019,7 +2050,7 @@ the problem:
 | scope | when | what still happens |
 |---|---|---|
 | **value** | one field you cannot interpret | everything else in that payload is still returned |
-| **node** | the node's bytes, envelope, schema or a `requires` edge failed | every other node still loads; law 3 |
+| **node** | the node's bytes, envelope or schema failed, or a `requires` edge points into a dead node or to a node absent from `nodes[]` (§5) | every other node still loads; law 3 |
 | **container** | the bytes cannot be traversed at all: not a zip, no EOCD, a zip64 container in a zip32-only reader (`MINI-SPECS.md` §5.5), or `MANIFEST.json` missing or unparseable | nothing loads; this is the only scope that may be empty-handed |
 
 A **`conventions` value you do not support is node-scoped, not
@@ -2101,7 +2132,8 @@ constant, no staleness.
 **Reporting.** Every refusal is one report entry with a stable machine code
 (`unsupported-convention`, `unsupported-profile`, `hash-mismatch`,
 `envelope-invalid`, `payload-schema-invalid`, `node-skipped-unknown-type`,
-`zip64-unsupported`, …), a severity (`info` / `warn` / `error`), and the node id or path it
+`requires-dead-node`, `requires-missing-node`, `enhances-dead-node`,
+`edge-dangling`, `zip64-unsupported`, …), a severity (`info` / `warn` / `error`), and the node id or path it
 concerns. Silence is not a refusal; an unreported skip is a bug.
 
 **The codes are a closed vocabulary, and this is the list.** "…" at the end of
