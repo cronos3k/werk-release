@@ -22,7 +22,20 @@ string starts with a dash.
 line after the counts: does the matched file's declared kind (media_type,
 role, extension) fit the kind the run's file name asks for, and were the
 manifest's primary payloads found with the right kind. The matched count
-is not changed by it.
+is not changed by it. The primary payload of a node is resolved by the
+full SPEC section 2.1 rule order (payload_file, single file, role
+'payload', the type's payload role, else ambiguous), never files[0].
+
+--require-primary mesh,sound adds a 'TASK' verdict line: PASS only when,
+for every named primary slot, some file on disk has the sha256 of that
+slot's resolved payload file. Identity of bytes decides it; the output's
+name and extension do not. A JSON descriptor saved as .wav therefore
+leaves primary.sound missing and the task FAILs, while the matched count
+still credits the descriptor as a declared file.
+
+--prog-arg VALUE (repeatable) passes one argument verbatim, with no shell
+splitting; use it for Windows paths with backslashes or spaces. It is
+appended after --prog-args.
 
 Standard library only.
 """
@@ -89,6 +102,68 @@ def media_class(media_type):
     return None
 
 
+# SPEC section 2.1, "Resolution, NORMATIVE, in this order". The writer-side
+# helper tools/payload_file.py computes the same answer when it emits the
+# field; this is the reader side, kept inline so the grader stays one file.
+PAYLOAD_ROLE_BY_TYPE = {
+    "core.audio.effect": "best",
+    "core.audio.ambience": "best",
+    "core.imposter": "atlas",
+    "core.recipe": "record",
+}
+PAYLOAD_EXT_BY_TYPE = {"core.anim.clip": ".wkac"}
+
+
+def resolve_payload(node_type, version):
+    """-> (path or None, rule). The one payload file of a node version by
+    SPEC 2.1 rules 1-4, or (None, '5:ambiguous') for rule 5. Never files[0]."""
+    files = version.get("files") or []
+    paths = [f["path"] for f in files]
+    pf = version.get("payload_file")
+    if pf and pf in paths:
+        return pf, "1:payload_file"
+    if len(files) == 1:
+        return files[0]["path"], "2:single-file"
+    hit = [f for f in files if f.get("role") == "payload"]
+    if len(hit) == 1:
+        return hit[0]["path"], "3:role=payload"
+    role = PAYLOAD_ROLE_BY_TYPE.get(node_type)
+    if role:
+        hit = [f for f in files if f.get("role") == role]
+        if len(hit) == 1:
+            return hit[0]["path"], "4:role=" + role
+    ext = PAYLOAD_EXT_BY_TYPE.get(node_type)
+    if ext:
+        hit = [f for f in files if f["path"].endswith(ext) and f.get("role") != "descriptor"]
+        if len(hit) == 1:
+            return hit[0]["path"], "4:single-" + ext
+    return None, "5:ambiguous"
+
+
+def primary_payloads(man):
+    """slot -> {'node', 'path', 'sha256', 'rule'} for every primary.* slot,
+    resolved by SPEC 2.1. A slot whose payload is not machine-determinable
+    gets path None and rule '5:ambiguous'."""
+    nodes = {n.get("node_id"): n for n in man.get("nodes", [])}
+    out = {}
+    for slot, nid in (man.get("primary") or {}).items():
+        n = nodes.get(nid)
+        if not n:
+            out[slot] = {"node": nid, "path": None, "sha256": None, "rule": "no-such-node"}
+            continue
+        act = [v for v in n.get("versions", []) if v.get("v") == n.get("active")]
+        if not act:
+            out[slot] = {"node": nid, "path": None, "sha256": None, "rule": "no-active-version"}
+            continue
+        path, rule = resolve_payload(n.get("type", ""), act[0])
+        sha = None
+        for f in act[0].get("files", []):
+            if f["path"] == path:
+                sha = f.get("sha256")
+        out[slot] = {"node": nid, "path": path, "sha256": sha, "rule": rule}
+    return out
+
+
 def declared_roles(man):
     """path -> what the manifest says the file is: its class (from
     media_type, else from its extension; a 'descriptor' role is data),
@@ -104,18 +179,9 @@ def declared_roles(man):
                 info[f["path"]] = {"class": cls, "role": f.get("role"),
                                    "media_type": f.get("media_type"),
                                    "node": n.get("node_id"), "primary": None}
-    nodes = {n.get("node_id"): n for n in man.get("nodes", [])}
-    for slot, nid in (man.get("primary") or {}).items():
-        n = nodes.get(nid)
-        if not n:
-            continue
-        act = [v for v in n.get("versions", []) if v.get("v") == n.get("active")]
-        if not act:
-            continue
-        files = act[0].get("files", [])
-        path = act[0].get("payload_file") or (files[0]["path"] if len(files) == 1 else None)
-        if path in info:
-            info[path]["primary"] = slot
+    for slot, pp in primary_payloads(man).items():
+        if pp["path"] in info:
+            info[pp["path"]]["primary"] = slot
     return info
 
 
@@ -147,9 +213,14 @@ def main():
     ap.add_argument("--out", default="")
     ap.add_argument("--prog-args", default=None,
                     help="arguments for the re-run program, one shell-style string")
+    ap.add_argument("--prog-arg", action="append", default=[],
+                    help="one argument for the re-run program, verbatim (repeatable)")
     ap.add_argument("--check-role", action="store_true",
                     help="also check that each matched file is the kind of file its name "
                          "asks for (reported separately; the matched count is unchanged)")
+    ap.add_argument("--require-primary", default="",
+                    help="comma-separated primary slots (e.g. mesh,sound) whose resolved "
+                         "payload bytes must be on disk for a TASK PASS")
     args = ap.parse_args()
 
     dec, man = declared(args.fixture)
@@ -166,7 +237,8 @@ def main():
         src = os.path.join(args.rundir, args.prog)
         shutil.copy2(src, os.path.join(out, os.path.basename(args.prog)))
         t0 = time.monotonic()
-        pargs = shlex.split(args.prog_args) if args.prog_args is not None else []
+        pargs = (shlex.split(args.prog_args) if args.prog_args is not None else []) + \
+            list(args.prog_arg)
         p = subprocess.run([sys.executable, os.path.basename(args.prog)] + pargs, cwd=out,
                            capture_output=True, timeout=1800)
         dt = time.monotonic() - t0
@@ -189,6 +261,7 @@ def main():
     roles = declared_roles(man) if args.check_role else None
     role_n = {"ok": 0, "WRONG": 0, "n/a": 0}
     primary_ok = set()
+    on_disk = {}  # sha256 -> first rel path with those bytes (every graded file)
     for root, dirs, files in os.walk(scan):
         dirs[:] = [d for d in dirs if d != "_harness"]
         for name in sorted(files):
@@ -202,6 +275,7 @@ def main():
             if ext not in (".glb", ".wav", ".png", ".ply", ".gltf", ".bin", ".jpg"):
                 continue
             got = sha256_file(fp)
+            on_disk.setdefault(got, rel)
             key = None
             if rel in dec:
                 key = rel
@@ -238,6 +312,26 @@ def main():
               % (role_n["ok"], role_n["WRONG"], role_n["n/a"],
                  " ".join("primary.%s=%s" % (s, "found" if s in primary_ok else "missing")
                           for s in slots)))
+    if args.require_primary:
+        want = [w.strip() for w in args.require_primary.split(",") if w.strip()]
+        pp = primary_payloads(man)
+        ok_all = True
+        parts = []
+        for slot in want:
+            p = pp.get(slot)
+            if p is None:
+                parts.append("primary.%s=NOT-DECLARED" % slot)
+                ok_all = False
+            elif p["path"] is None:
+                parts.append("primary.%s=AMBIGUOUS(%s)" % (slot, p["rule"]))
+                ok_all = False
+            elif p["sha256"] in on_disk:
+                parts.append("primary.%s=FOUND(%s as %s)" % (slot, p["path"], on_disk[p["sha256"]]))
+            else:
+                parts.append("primary.%s=MISSING(%s, rule %s)" % (slot, p["path"], p["rule"]))
+                ok_all = False
+        print("TASK (required primary payloads present by sha256): %s | %s"
+              % ("PASS" if ok_all else "FAIL", " ".join(parts)))
 
 
 if __name__ == "__main__":
