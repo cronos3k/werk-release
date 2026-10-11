@@ -48,9 +48,14 @@ pub enum Code {
     VersionFallback,
     /// A `requires` edge points into a dead node, which kills this node too.
     RequiresDeadNode,
+    /// A `requires` edge names a node_id that is not in the manifest. The
+    /// node dies exactly as if the target were dead (SPEC section 5).
+    RequiresMissingNode,
     /// An `enhances` edge points into a dead node: one feature lost, no more.
     EnhancesDeadNode,
-    /// An edge names a node_id that is not in the manifest.
+    /// An `enhances` edge names a node_id that is not in the manifest: one
+    /// feature lost, no more. A `requires` edge to an absent node is
+    /// `RequiresMissingNode` instead, never both.
     EdgeDangling,
     /// A file is in the container but reachable from no node version. "Nothing
     /// floats" (SPEC section 2) is a claim the package makes; this is it failing.
@@ -119,6 +124,7 @@ impl Code {
             Code::NodeSkippedUnknownType => "node-skipped-unknown-type",
             Code::VersionFallback => "version-fallback",
             Code::RequiresDeadNode => "requires-dead-node",
+            Code::RequiresMissingNode => "requires-missing-node",
             Code::EnhancesDeadNode => "enhances-dead-node",
             Code::EdgeDangling => "edge-dangling",
             Code::FloatingFile => "floating-file",

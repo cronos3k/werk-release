@@ -687,6 +687,20 @@ class Package:
 
     def _propagate_edges(self):
         by_id = {n["node_id"]: n for n in self.nodes}
+        # SPEC section 5: a `requires` edge to a node that is not in nodes[]
+        # kills the source exactly as one into a dead node does. One entry
+        # per such edge, also on a node already dead for another reason. The
+        # node's files were already verified; only its status moves.
+        for n in self.nodes:
+            for e in n["edges"]:
+                if e.get("kind") == "requires" and e.get("to") not in by_id:
+                    if n["status"] != "dead":
+                        n["status"] = "dead"
+                        n["reason"] = "requires `%s`, which is not a node here" % e.get("to")
+                    self.report.add(
+                        "error", "requires-missing-node",
+                        "%s: a `requires` edge to `%s`, which is not a node here, "
+                        "kills this node as a dead target would" % (n["node_id"], e.get("to")))
         changed = True
         while changed:
             changed = False
@@ -707,6 +721,8 @@ class Package:
         for n in self.nodes:
             for e in n["edges"]:
                 tgt = by_id.get(e.get("to"))
+                if tgt is None and e.get("kind") == "requires":
+                    continue  # reported above as requires-missing-node
                 if tgt is None:
                     self.report.add("warn", "edge-dangling",
                                     "%s: edge points at `%s`, which is not a node here"

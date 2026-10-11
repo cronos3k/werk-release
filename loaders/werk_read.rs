@@ -2630,8 +2630,10 @@ fn load(pkg: &Package) -> Result<Load, String> {
     }
 
     // SPEC §5: "A requires edge into a dead node kills the source node too; an
-    // enhances edge into a dead node costs exactly one feature." Run to a
-    // fixpoint so a chain of requires propagates.
+    // enhances edge into a dead node costs exactly one feature." A requires
+    // edge to a node absent from nodes[] kills exactly as a dead target does
+    // (report code requires-missing-node). Run to a fixpoint so a chain of
+    // requires propagates.
     //
     // Note a deliberate distinction: a node whose TYPE this reader skipped is
     // not dead. Its bytes are intact and another reader will use them, so a
@@ -2646,11 +2648,14 @@ fn load(pkg: &Package) -> Result<Load, String> {
             for e in loaded[i].edges.iter().filter(|e| e.kind == "requires") {
                 match loaded.iter().find(|t| t.node_id == e.to) {
                     None => {
-                        kill = Some(format!("requires edge to unknown node {:?}", e.to));
+                        kill = Some(format!(
+                            "requires-missing-node: requires edge to {:?}, which is not in nodes[]",
+                            e.to
+                        ));
                         break;
                     }
                     Some(t) if t.health == Health::Dead => {
-                        kill = Some(format!("requires edge into dead node {:?}", e.to));
+                        kill = Some(format!("requires-dead-node: requires edge into dead node {:?}", e.to));
                         break;
                     }
                     Some(_) => {}
@@ -2678,7 +2683,7 @@ fn load(pkg: &Package) -> Result<Load, String> {
         for e in loaded[i].edges.iter().filter(|e| e.kind == "enhances") {
             match loaded.iter().find(|t| t.node_id == e.to) {
                 None => report.push(format!(
-                    "node {}: enhances edge to unknown node {:?} — one feature lost{}",
+                    "node {}: edge-dangling: enhances edge to {:?}, which is not in nodes[]; one feature lost{}",
                     loaded[i].node_id,
                     e.to,
                     match &e.role {

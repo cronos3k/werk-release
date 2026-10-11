@@ -41,6 +41,8 @@ namespace code
     inline constexpr const char* PrimaryFallback         = "primary-fallback";
     inline constexpr const char* VersionFallback         = "version-fallback";
     inline constexpr const char* FileMissing             = "file-missing";
+    inline constexpr const char* RequiresDeadNode        = "requires-dead-node";
+    inline constexpr const char* RequiresMissingNode     = "requires-missing-node";
     inline constexpr const char* ExternalReference       = "external-reference";
     inline constexpr const char* SubstitutedFallback     = "substituted-fallback";
     inline constexpr const char* SourceDataMissing       = "source-data-missing";

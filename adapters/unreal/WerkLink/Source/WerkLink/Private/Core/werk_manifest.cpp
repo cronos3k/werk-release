@@ -581,8 +581,10 @@ void Package::ResolveVersions(Report& Rep)
     }
 
     // Law 3, via SPEC.md section 5: a `requires` edge into a dead node kills
-    // the source node too. Iterated to a fixed point, because a chain of
-    // requires must propagate all the way.
+    // the source node too, and so does one to a node absent from nodes[].
+    // Iterated to a fixed point, because a chain of requires must propagate
+    // all the way. Each death gets its own code, never hash-mismatch: no hash
+    // failed here, and a tool counting hash mismatches must get the true count.
     bool bChanged = true;
     int Guard = 0;
     while (bChanged && Guard++ < 64)
@@ -601,13 +603,22 @@ void Package::ResolveVersions(Report& Rep)
                     continue;
                 }
                 const Node* T = FindNode(E.to);
-                if (!T || !T->bAlive)
+                if (!T)
                 {
                     N.bAlive = false;
                     N.resolvedIndex = -1;
                     bChanged = true;
-                    Rep.Error(code::HashMismatch, N.nodeId,
-                              "requires edge into dead or missing node '" + E.to + "'");
+                    Rep.Error(code::RequiresMissingNode, N.nodeId,
+                              "requires edge to '" + E.to + "', which is not in nodes[]");
+                    break;
+                }
+                if (!T->bAlive)
+                {
+                    N.bAlive = false;
+                    N.resolvedIndex = -1;
+                    bChanged = true;
+                    Rep.Error(code::RequiresDeadNode, N.nodeId,
+                              "requires edge into dead node '" + E.to + "'");
                     break;
                 }
             }

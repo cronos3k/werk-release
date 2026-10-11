@@ -458,8 +458,9 @@ impl Package {
             self.check_derived();
         }
 
-        // 8. Edges. `requires` into a dead node kills the source, transitively;
-        //    `enhances` into a dead node costs exactly one feature.
+        // 8. Edges (SPEC section 10 step 10). `requires` into a dead node, or
+        //    to a node absent from nodes[], kills the source, transitively;
+        //    `enhances` into a dead or absent node costs exactly one feature.
         self.propagate_edges();
 
         // 8a. A core node that says an extension changes how it is shown, and
@@ -1464,6 +1465,38 @@ impl Package {
             .enumerate()
             .map(|(i, n)| (n.view.node_id.clone(), i))
             .collect();
+        // SPEC section 5: a `requires` edge to a node that is not in nodes[]
+        // kills the source exactly as one into a dead node does. One entry per
+        // such edge, also on a node that is already dead for another reason,
+        // so the manifest defect is never hidden behind a hash mismatch. The
+        // node's files were already verified (step 6); only its status moves.
+        let mut missing = Vec::new();
+        for (i, n) in self.nodes.iter().enumerate() {
+            for e in &n.view.edges {
+                if e.kind == "requires" && !index.contains_key(&e.to) {
+                    missing.push((i, e.to.clone()));
+                }
+            }
+        }
+        for (i, target) in missing {
+            let id = self.nodes[i].view.node_id.clone();
+            if !self.nodes[i].status.is_dead() {
+                self.nodes[i].status = NodeStatus::Dead(format!(
+                    "requires `{target}`, which is not a node in this manifest"
+                ));
+            }
+            self.report.push(
+                Severity::Error,
+                Code::RequiresMissingNode,
+                Some(&id),
+                None,
+                None,
+                format!(
+                    "a `requires` edge to `{target}`, which is not a node in this manifest, \
+                     kills this node as a dead target would"
+                ),
+            );
+        }
         loop {
             let mut changed = false;
             let mut kills = Vec::new();
@@ -1507,6 +1540,9 @@ impl Package {
         for n in &self.nodes {
             for e in &n.view.edges {
                 match index.get(&e.to) {
+                    // A dangling `requires` edge was reported above as
+                    // `requires-missing-node`; only `enhances` is a warning.
+                    None if e.kind == "requires" => {}
                     None => warns.push((
                         Severity::Warn,
                         Code::EdgeDangling,
