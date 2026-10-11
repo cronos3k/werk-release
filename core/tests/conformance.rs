@@ -257,6 +257,94 @@ fn gate_damage_requires_edge_cascades() {
     assert_eq!(p.node("semantics").unwrap().status, NodeStatus::Alive);
 }
 
+/// A `requires` edge to a node that is ABSENT from nodes[] kills the source
+/// exactly as a dead target would, and the death cascades. An `enhances` edge
+/// to an absent node costs one feature. A `requires` edge into a SKIPPED node
+/// kills nothing. The victim's files are still hash-checked. (SPEC section 5,
+/// section 10 step 10.) Gate A runs the three bootstrap loaders on the same
+/// shape of package (tests/run_gate_a.py).
+#[test]
+fn gate_damage_requires_edge_into_absent_node() {
+    let dest = tmp("damaged-dangling.werk");
+    let z = ZipArchive::parse(std::fs::read(fixture_zip()).unwrap()).unwrap();
+    let mut manifest: serde_json::Value =
+        serde_json::from_slice(&z.read("MANIFEST.json").unwrap()).unwrap();
+    for node in manifest["nodes"].as_array_mut().unwrap() {
+        let id = node["node_id"].as_str().unwrap().to_string();
+        let edges = node["edges"].as_array_mut().unwrap();
+        match id.as_str() {
+            // the damage: a requires edge to an id that is in no node
+            "semantics" => edges.push(serde_json::json!(
+                {"to": "ghost-node", "kind": "requires", "role": "describes"})),
+            // the cascade: a live node that requires the victim
+            "provenance" => edges.push(serde_json::json!(
+                {"to": "semantics", "kind": "requires", "role": "test-chain"})),
+            // the control for kind: enhances to an absent node
+            "mat-oak" => edges.push(serde_json::json!(
+                {"to": "ghost-tex", "kind": "enhances", "role": "sampled-by"})),
+            // the control for skipped: requires into a node of unknown type
+            "rest-poses" => edges.push(serde_json::json!(
+                {"to": "x-probe", "kind": "requires", "role": "test-skipped"})),
+            // a node that is ALSO hash-dead: both facts are reported
+            "bounds" => edges.push(serde_json::json!(
+                {"to": "ghost-bounds", "kind": "requires", "role": "test-both"})),
+            _ => {}
+        }
+    }
+    let mut mtext = serde_json::to_string_pretty(&manifest).unwrap();
+    mtext.push('\n');
+    rebuild(&dest, |name, data| match name {
+        "MANIFEST.json" => Some(mtext.clone().into_bytes()),
+        "physics/bounds.json" => Some(flip_last_byte(data)),
+        _ => Some(data),
+    });
+
+    let p = Package::open(&dest).expect("a dangling edge never fails the load");
+    let status = |id: &str| p.node(id).unwrap_or_else(|| panic!("no node {id}")).status.clone();
+    let on = |code: Code| -> Vec<String> {
+        let mut v: Vec<String> = p
+            .report
+            .entries
+            .iter()
+            .filter(|e| e.code == code)
+            .map(|e| e.node_id.clone().unwrap_or_default())
+            .collect();
+        v.sort();
+        v
+    };
+
+    // absent == dead for `requires`, and it cascades
+    assert!(status("semantics").is_dead(), "requires to an absent node kills");
+    assert!(status("provenance").is_dead(), "and the kill cascades");
+    assert_eq!(on(Code::RequiresMissingNode), ["bounds", "semantics"],
+               "one requires-missing-node entry per dangling requires edge");
+    assert_eq!(on(Code::RequiresDeadNode), ["provenance"]);
+
+    // the victim's bytes were still verified, and are still reachable
+    assert_eq!(on(Code::HashMismatch), ["bounds"], "hash check still runs on the victims");
+    assert!(status("bounds").is_dead());
+    assert!(p.blob("semantics/semantics.json").is_ok());
+
+    // enhances to an absent node: one feature, node alive, and the dangling
+    // requires edges are NOT also reported as edge-dangling
+    assert_eq!(status("mat-oak"), NodeStatus::Alive);
+    assert_eq!(on(Code::EdgeDangling), ["mat-oak"], "one entry, enhances only");
+
+    // requires into a SKIPPED node is not fatal
+    assert!(matches!(status("x-probe"), NodeStatus::Skipped(_)));
+    assert_eq!(status("rest-poses"), NodeStatus::Alive);
+
+    // island rule: nothing else is touched
+    for id in ["spec", "license", "readme", "geom-game", "geom-lod1", "tex-basecolor",
+               "loader-python", "loader-rust", "loader-c"] {
+        assert_eq!(status(id), NodeStatus::Alive, "{id} is not downstream");
+    }
+    // SPEC 10.1 exit status: error entries exist, so a CLI exits 1
+    assert!(p.report.errors() >= 4);
+    // the manifest changed under the chain: a separate fact
+    assert!(matches!(p.signature_state, SignatureState::Invalid(_)));
+}
+
 /// A payload whose bytes are intact but whose CONTENT violates the schema the
 /// manifest points at. The node dies; nothing else does.
 #[test]
