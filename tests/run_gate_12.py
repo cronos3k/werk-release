@@ -81,8 +81,14 @@ def record(name, status, detail=""):
 
 
 def run(cmd, cwd=None, env=None):
-    p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True,
-                       env=env)
+    # A host that refuses to start a freshly built executable (Windows
+    # Smart App Control: OSError WinError 4551) must be recorded as a
+    # FAIL with the reason, not crash the gate with a traceback.
+    try:
+        p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True,
+                           env=env)
+    except OSError as e:
+        return 1, "could not start %s (host refused or missing): %r" % (cmd[0], e)
     return p.returncode, (p.stdout or "") + (p.stderr or "")
 
 
