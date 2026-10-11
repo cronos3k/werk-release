@@ -84,7 +84,16 @@ def main() -> int:
     if real:
         h1 = mkwerk.make_from_corpus(src1, args.corpus, "v1")
         h2 = mkwerk.make_from_corpus(src2, args.corpus, "v2")
-        corpus_label = "splat-foley bronze-bell soundpack (real production assets)"
+        if os.path.normcase(os.path.abspath(args.corpus)) == os.path.normcase(
+            os.path.abspath(mkwerk.DEFAULT_CORPUS)
+        ):
+            corpus_label = "splat-foley bronze-bell soundpack (real production assets)"
+        else:
+            # Only the default path is the paper's corpus. Name any other one
+            # by its path, so a run on it is not reported as the paper's.
+            corpus_label = "corpus at %s (--corpus; not the default bronze-bell soundpack)" % (
+                os.path.abspath(args.corpus)
+            )
     else:
         h1 = mkwerk.make_synthetic(src1, "v1")
         h2 = mkwerk.make_synthetic(src2, "v2")
