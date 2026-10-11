@@ -1,7 +1,10 @@
 # roundNC: negative-control round
 
 Status: BUILT and FROZEN. The freeze is the commit that adds this directory (see `PREREGISTRATION.md`).
-No agent trial has run yet.
+
+Results (added after the freeze, 2026-10-11): see `RESULTS-NC.md`. The 12 trials ran in batch `nc-20261011-1543`. Per-trial artifacts are in `runs/`; grading logs and audit scripts are in `grading/`. Nothing below this line and nothing in the freeze commit `504a9ac` was changed after the results. The text below describes the state at the freeze.
+
+At the freeze, no agent trial had run yet.
 Design: `PLAN.md` (verbatim copy of `D:\werk\negative-control-plan.md`, dated 2026-09-30).
 Branch: `roundnc-negative-control`, local only, never pushed. Basis: `main` at `6d547d0`.
 
