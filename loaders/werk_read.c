@@ -90,9 +90,10 @@
  * A corrupt file, a missing file, an unsupported compression method, a
  * malformed node record or an unknown node type NEVER aborts the load.
  * The node is marked dead or skipped, one precise report line is emitted,
- * and every other node still loads.  A `requires` edge into a dead node
- * kills the source node too, transitively; an `enhances` edge into a dead
- * node costs exactly one feature and is only reported.
+ * and every other node still loads.  A `requires` edge into a dead node,
+ * or to a node absent from nodes[], kills the source node too,
+ * transitively; an `enhances` edge into a dead or absent node costs
+ * exactly one feature and is only reported.
  *
  * Exit status (SPEC.md section 10.1; until ruling 9 of 2026-10-13 this
  * file returned 1 for an unreadable container, which the table calls 2):

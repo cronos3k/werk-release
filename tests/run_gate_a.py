@@ -10,6 +10,11 @@ saw, and the damaged-fixture check asserts the EXACT report — the precise
 codes, on the precise nodes, with the precise survivors — because "it did not
 crash" is not a measurement of graceful degradation.
 
+Clause 6b builds one more damaged package in-test (a `requires` edge to an
+absent node, its cascade, and an `enhances` edge to an absent node) and runs
+werk-core and all three bootstrap loaders on it. They must report the same
+dead nodes under the same codes (SPEC section 5, "Edge targets").
+
     python tests/run_gate_a.py [--rebuild]
 
 --rebuild adds the rebuild clauses: crate-v1 and crate-v1-damaged rebuilt
@@ -93,6 +98,127 @@ def build_c_with_msvc(src, exe):
         fh.write('cl /nologo /O2 /W3 "%s" /Fe:"%s"\r\n' % (src, exe))
     rc, _out = run(["cmd", "/c", bat])
     return rc == 0 and os.path.isfile(exe)
+
+
+def build_dangling(dest):
+    """crate-v1.werk with three manifest edits, built in-test (nothing is
+    committed): `semantics` gets a `requires` edge to `ghost-node`, which is
+    in no node; `props` gets a `requires` edge to `semantics` (the cascade);
+    `material-wood` gets an `enhances` edge to `ghost-tex` (the control for
+    the edge kind). `evidence-segments --requires--> evidence-views` is
+    already in the fixture and is the control for a skipped target.
+    SIGNATURE.json is dropped, so the edit does not add a signature-invalid
+    error; every entry stays stored and in the source order."""
+    import zipfile
+    with zipfile.ZipFile(CLEAN) as zin:
+        man = json.loads(zin.read("MANIFEST.json"))
+        by_id = {n["node_id"]: n for n in man["nodes"]}
+        by_id["semantics"]["edges"].append(
+            {"to": "ghost-node", "kind": "requires", "role": "describes"})
+        by_id["props"]["edges"].append(
+            {"to": "semantics", "kind": "requires", "role": "test-chain"})
+        by_id["material-wood"]["edges"].append(
+            {"to": "ghost-tex", "kind": "enhances", "role": "sampled-by"})
+        mbytes = (json.dumps(man, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+        with zipfile.ZipFile(dest, "w", zipfile.ZIP_STORED) as zout:
+            for info in zin.infolist():
+                if info.filename == "SIGNATURE.json":
+                    continue
+                data = mbytes if info.filename == "MANIFEST.json" else zin.read(info.filename)
+                zi = zipfile.ZipInfo(info.filename, date_time=info.date_time)
+                zi.compress_type = zipfile.ZIP_STORED
+                zout.writestr(zi, data)
+
+
+# Each reader's spelling of the same three facts. The CODE token is shared;
+# the line format is each reader's own. A tuple means: all of these on one line.
+DANGLING_EXPECT = {
+    "werk_read.py": [
+        ("semantics requires-missing-node", "requires-missing-node: semantics:"),
+        ("props requires-dead-node", "requires-dead-node: props:"),
+        ("material-wood edge-dangling", "edge-dangling: material-wood:"),
+    ],
+    "werk_read.rs": [
+        ("semantics requires-missing-node", ("node semantics: DEAD", "requires-missing-node:")),
+        ("props requires-dead-node", ("node props: DEAD", "requires-dead-node:")),
+        ("material-wood edge-dangling", "node material-wood: edge-dangling:"),
+    ],
+    "werk_read.c": [
+        ("semantics requires-missing-node", "node=semantics reason=requires-missing-node"),
+        ("props requires-dead-node", "node=props reason=requires-dead-node"),
+        ("material-wood edge-dangling", "node=material-wood reason=edge-dangling"),
+    ],
+}
+# Each loader's DOCUMENTED exit convention (its usage text): 0 with dead
+# nodes; with --strict, py 1, c 1, rs 3. These differ from each other and
+# from the SPEC section 10.1 table. That is a separate, known finding, so
+# this clause checks each loader against its own documentation, not the table.
+DANGLING_EXIT = {"werk_read.py": (0, 1), "werk_read.rs": (0, 3), "werk_read.c": (0, 1)}
+
+
+def dangling_edges_clause(werkpy, loaders, rs_exe, c_exe):
+    dest = os.path.join(WORK, "dangling-edges.werk")
+    build_dangling(dest)
+
+    # werk-core, through the shared library
+    with werkpy.Package.open(dest) as p:
+        st = {n.node_id: n.status for n in p.nodes}
+        codes = {}
+        for e in p.report:
+            codes.setdefault(e.code, []).append(e.node_id or "")
+        problems = []
+        dead = sorted(k for k, v in st.items() if v == "dead")
+        if dead != ["props", "semantics"]:
+            problems.append("dead=%s expected ['props', 'semantics']" % dead)
+        if codes.get("requires-missing-node") != ["semantics"]:
+            problems.append("requires-missing-node on %s" % codes.get("requires-missing-node"))
+        if codes.get("requires-dead-node") != ["props"]:
+            problems.append("requires-dead-node on %s" % codes.get("requires-dead-node"))
+        if codes.get("edge-dangling") != ["material-wood"]:
+            problems.append("edge-dangling on %s" % codes.get("edge-dangling"))
+        if st.get("material-wood") != "alive":
+            problems.append("material-wood is %s" % st.get("material-wood"))
+        if st.get("evidence-segments") != "skipped":
+            problems.append("evidence-segments is %s; a requires edge into a "
+                            "SKIPPED node must not kill" % st.get("evidence-segments"))
+        if codes.get("hash-mismatch"):
+            problems.append("hash-mismatch on %s" % codes.get("hash-mismatch"))
+        if p.errors == 0:
+            problems.append("no error entry, so a CLI would exit 0")
+        record("dangling edges: werk-core", "PASS" if not problems else "FAIL",
+               "semantics dead (requires-missing-node), props dead (cascade), "
+               "material-wood alive (edge-dangling), evidence-segments skipped"
+               if not problems else "; ".join(problems))
+
+    py = [sys.executable, os.path.join(loaders, "werk_read.py")]
+    for name, cmd in (("werk_read.py", py),
+                      ("werk_read.rs", [rs_exe] if rs_exe else None),
+                      ("werk_read.c", [c_exe] if c_exe else None)):
+        label = "dangling edges: " + name
+        if cmd is None:
+            record(label, "SKIP", "not built in this run")
+            continue
+        rc, out = run(cmd + [dest, "--report"])
+        rcs, _ = run(cmd + [dest, "--report", "--strict"])
+        lines = out.splitlines()
+        missing = [what for what, needle in DANGLING_EXPECT[name]
+                   if not any(all(k in l for k in ((needle,) if isinstance(needle, str)
+                                                   else needle)) for l in lines)]
+        problems = []
+        if missing:
+            problems.append("report lacks: " + ", ".join(missing))
+        want = DANGLING_EXIT[name]
+        if (rc, rcs) != want:
+            problems.append("exit %d / --strict %d, documented %d / %d"
+                            % (rc, rcs, want[0], want[1]))
+        # A dangling requires edge is one fact: it must not ALSO be reported
+        # as edge-dangling.
+        for l in lines:
+            if "edge-dangling" in l and "ghost-node" in l:
+                problems.append("ghost-node reported twice: " + l.strip()[:80])
+        record(label, "PASS" if not problems else "FAIL",
+               ("same three facts; exit %d, --strict %d (its documented convention)"
+                % (rc, rcs)) if not problems else "; ".join(problems))
 
 
 def main(argv=None):
@@ -192,6 +318,7 @@ def main(argv=None):
 
     # -- 4/5/6. the three bootstrap readers, standalone ------------------
     loaders = os.path.join(ROOT, "loaders")
+    rs_exe = c_exe = None     # set only when built in THIS run (clause 6b)
 
     rc, out = run([sys.executable, os.path.join(loaders, "werk_read.py"),
                    CLEAN, "--verify", "--strict"])
@@ -206,6 +333,7 @@ def main(argv=None):
         if rc != 0:
             record("bootstrap: werk_read.rs", "FAIL", "rustc: " + out.strip()[-200:])
         else:
+            rs_exe = exe
             rc, out = run([exe, CLEAN, "--verify", "--strict"])
             line = [l for l in out.splitlines() if "verify" in l or "PASS" in l][-1:]
             record("bootstrap: werk_read.rs", "PASS" if rc == 0 else "FAIL",
@@ -228,10 +356,19 @@ def main(argv=None):
     if not built:
         record("bootstrap: werk_read.c", "SKIP", "no C compiler could build it")
     else:
+        c_exe = exe
         rc, out = run([exe, CLEAN, "--verify", "--strict"])
         line = [l for l in out.splitlines() if "verify:" in l][-1:]
         record("bootstrap: werk_read.c", "PASS" if rc == 0 else "FAIL",
                (line[0].strip() if line else out.strip()[-160:]))
+
+    # -- 6b. dangling edges: every reader gives the same answer -----------
+    # SPEC section 5, "Edge targets". Before this clause no shared test held
+    # a `requires` edge to an absent node, and the readers split two ways on
+    # it while each one passed its own gate. werk-core's exact report for the
+    # same shape is core/tests/conformance.rs
+    # gate_damage_requires_edge_into_absent_node.
+    dangling_edges_clause(werkpy, loaders, rs_exe, c_exe)
 
     # -- 7. extraction actually works ------------------------------------
     with werkpy.Package.open(CLEAN) as p:
