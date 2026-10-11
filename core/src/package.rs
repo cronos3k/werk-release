@@ -1689,6 +1689,29 @@ impl Package {
         if let Some(m) = &spec.meta {
             node.insert("meta".into(), m.clone());
         }
+        // SPEC section 5: a writer MUST NOT emit a `requires` edge to a node
+        // that is not in nodes[]. Checked against the manifest as it would be,
+        // before anything is staged, and only for the node being added, so a
+        // package that already carries such an edge can still be edited.
+        {
+            let mut candidate = self.manifest.raw.clone();
+            if let Some(arr) = candidate.get_mut("nodes").and_then(Value::as_array_mut) {
+                arr.push(Value::Object(node.clone()));
+            }
+            let bad: Vec<String> = crate::manifest::dangling_edges(&candidate)
+                .into_iter()
+                .filter(|(src, _, kind)| *src == spec.node_id && kind == "requires")
+                .map(|(_, to, _)| to)
+                .collect();
+            if !bad.is_empty() {
+                return Err(Error::Rejected(format!(
+                    "node `{}` has a `requires` edge to {}, which is not a node in this \
+                     manifest (SPEC section 5); add the target first or drop the edge",
+                    spec.node_id,
+                    bad.iter().map(|t| format!("`{t}`")).collect::<Vec<_>>().join(", ")
+                )));
+            }
+        }
         self.stage(&spec.version);
         self.manifest
             .raw

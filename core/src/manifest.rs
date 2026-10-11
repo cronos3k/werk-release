@@ -420,3 +420,51 @@ pub fn pretty_json(v: &Value) -> Vec<u8> {
     s.push('\n');
     s.into_bytes()
 }
+
+/// SPEC section 5, the writer's half: every `edges[].to` names a node_id in
+/// the same manifest's `nodes[]`. Returns `(source node_id, target, kind)` for
+/// each edge that does not, in manifest order. Takes the raw manifest so a
+/// writer can check what it is about to emit, before any bytes exist.
+pub fn dangling_edges(raw: &Value) -> Vec<(String, String, String)> {
+    let nodes = match raw.get("nodes").and_then(Value::as_array) {
+        Some(n) => n,
+        None => return Vec::new(),
+    };
+    let ids: std::collections::BTreeSet<&str> = nodes
+        .iter()
+        .filter_map(|n| n.get("node_id").and_then(Value::as_str))
+        .collect();
+    let mut out = Vec::new();
+    for n in nodes {
+        let src = n.get("node_id").and_then(Value::as_str).unwrap_or("");
+        for e in n.get("edges").and_then(Value::as_array).into_iter().flatten() {
+            let to = e.get("to").and_then(Value::as_str).unwrap_or("");
+            if !ids.contains(to) {
+                let kind = e.get("kind").and_then(Value::as_str).unwrap_or("");
+                out.push((src.to_string(), to.to_string(), kind.to_string()));
+            }
+        }
+    }
+    out
+}
+
+/// A writer MUST NOT emit a package with a `requires` edge to an absent node
+/// (SPEC section 5): every conformant reader would kill the source node. This
+/// is the refusal every werk-core write path shares. An `enhances` edge to an
+/// absent node is not refused here, because readers degrade it to one lost
+/// feature; it is still a writer bug and `dangling_edges` lists it.
+pub fn refuse_dangling_requires(raw: &Value) -> Result<()> {
+    let bad: Vec<String> = dangling_edges(raw)
+        .into_iter()
+        .filter(|(_, _, kind)| kind == "requires")
+        .map(|(src, to, _)| format!("`{src}` requires `{to}`"))
+        .collect();
+    if bad.is_empty() {
+        return Ok(());
+    }
+    Err(Error::Rejected(format!(
+        "refusing to write a package with a `requires` edge to a node that is not in \
+         nodes[] (SPEC section 5): {}. Drop the edge, or drop the dependent node too.",
+        bad.join(", ")
+    )))
+}

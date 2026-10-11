@@ -62,6 +62,7 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 from spec_sha256 import spec_sha256_of_files          # noqa: E402
 from payload_file import annotate_payload_files       # noqa: E402
 from loader_caps import loader_capabilities        # noqa: E402
+from edge_targets import refuse_dangling_requires     # noqa: E402
 
 sys.path.insert(0, os.path.join(ROOT, "store"))
 sys.path.insert(0, ROOT)
@@ -694,6 +695,8 @@ def sign(manifest_bytes):
 def assemble(files, nodes):
     # SPEC 2.1 (S-XV-4 / S-OW-2)
     annotate_payload_files(nodes)
+    # SPEC 5: never write a `requires` edge to a node not in nodes[].
+    refuse_dangling_requires(nodes)
     preview = 0
     for _round in range(8):
         manifest_bytes = jbytes(build_manifest(files, nodes, preview))

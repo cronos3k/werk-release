@@ -694,6 +694,38 @@ fn a_version_without_a_work_note_is_refused() {
 }
 
 #[test]
+fn a_requires_edge_to_an_absent_node_is_refused_by_the_writer() {
+    // SPEC section 5: a writer MUST NOT emit a dangling `requires` edge.
+    let mut p = Package::open(fixture_zip()).unwrap();
+    let node = |id: &str, edges: serde_json::Value| werk::NewNode {
+        node_id: id.into(),
+        ntype: "core.readme".into(),
+        part_id: None,
+        material_id: None,
+        meta: None,
+        edges,
+        version: authored(&format!("{id}.txt"), b"x\n", "A node added to test the edge rule."),
+    };
+    let err = p
+        .add_node(node("notes", serde_json::json!([{"to": "ghost-node", "kind": "requires"}])))
+        .unwrap_err();
+    assert!(err.to_string().contains("ghost-node"), "{err}");
+    assert!(p.node("notes").is_none(), "a refused node is not half-added");
+    // The same edge into a node that exists is fine.
+    p.add_node(node("notes", serde_json::json!([{"to": "readme", "kind": "requires"}])))
+        .unwrap();
+    // The shared check werkc build-fixture uses.
+    let m = serde_json::json!({"nodes": [
+        {"node_id": "a", "edges": [{"to": "b", "kind": "requires"}]},
+        {"node_id": "c", "edges": [{"to": "d", "kind": "enhances"}]}
+    ]});
+    assert_eq!(werk::manifest::dangling_edges(&m).len(), 2);
+    let err = werk::manifest::refuse_dangling_requires(&m).unwrap_err();
+    assert!(err.to_string().contains("`a` requires `b`"), "{err}");
+    assert!(!err.to_string().contains("`d`"), "enhances is listed, not refused");
+}
+
+#[test]
 fn derived_data_without_declared_inputs_is_refused() {
     // Law 5, machine-enforced.
     let mut p = Package::open(fixture_zip()).unwrap();

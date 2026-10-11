@@ -2,9 +2,15 @@
 """
 build_mini_fixture.py -- the small-context gauntlet fixture.
 
-Deterministic. Produces `gauntlet/roundOW/mini-v1.werk` from bytes that are
+Deterministic. Produces the small-context fixture from bytes that are
 already inside two PINNED, COMMITTED fixtures; it invents no payload and it
 touches neither of them.
+
+`gauntlet/roundOW/mini-v1.werk` is FROZEN. It is the record of the trials
+that ran on it, and pinned hashes and other work refer to it. It was built by
+an earlier version of this script that kept three edges into dropped nodes
+(see "WHAT IT DROPS"). Do not rebuild it in place: the default output is now
+`mini-v2.werk`, which does not exist yet and is a follow-up.
 
 WHY IT EXISTS. The open-weights round's operative protocol inlines everything
 the model may read. `fixtures/crate-v1.werk`'s package is 107 388 tokens
@@ -41,14 +47,27 @@ extracts the primary mesh and one sound to disk"):
   graded-effort argument still mean something).
 
 WHAT IT DROPS: 26 of the 28 audio nodes, the rendered evidence views, the props
-node, and all but one segment crop. Nothing structural.
+node, and all but one segment crop.
+
+That is NOT "nothing structural", as this docstring used to say. Dropping a
+node leaves every edge into it pointing at nothing. mini-v1.werk carries three
+such edges: `geom-game --enhances--> geom-source`,
+`audio-crate-impact-hard-surface --enhances--> audio-package`, and
+`evidence-segments --requires--> evidence-views`. The last one is the case
+SPEC section 5 now rules on: a `requires` edge to an absent node kills the
+source node (`requires-missing-node`, severity error), so every conformant
+reader reports `evidence-segments` dead in mini-v1.werk and exits 1. SPEC
+section 5 also says a writer MUST NOT emit such an edge. This script now
+drops every edge whose target it did not keep, and says which ones it
+dropped. The node `evidence-segments` is kept: it is the package's only
+unknown-namespace node, which is what exercises law 12.
 
 The manifest is rebuilt, `preview_prefix_bytes` is re-converged to its fixed
 point, and the package is re-signed with the same publicly derived DEV key the
 golden fixture uses, so the signature is `signed-and-valid` and every one of the
 four signature states remains reachable.
 
-Usage:  python build_mini_fixture.py [--out gauntlet/roundOW/mini-v1.werk]
+Usage:  python build_mini_fixture.py [--out gauntlet/roundOW/mini-v2.werk]
 """
 
 import argparse
@@ -65,6 +84,7 @@ import build_golden as BG                                    # noqa: E402
 
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 from payload_file import annotate_payload_files              # noqa: E402
+from edge_targets import refuse_dangling_requires            # noqa: E402
 
 SRC = os.path.join(ROOT, "fixtures", "crate-v1.werk")
 ENV_SRC = os.path.join(ROOT, "tests", "fixtures", "crate.werk")
@@ -117,8 +137,10 @@ KEEP_SPEC = [
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(HERE, "mini-v1.werk"))
+    ap.add_argument("--out", default=os.path.join(HERE, "mini-v2.werk"))
     args = ap.parse_args()
+    if os.path.basename(args.out) == "mini-v1.werk":
+        raise SystemExit("mini-v1.werk is frozen (see the docstring); write a new file")
 
     zs = zipfile.ZipFile(SRC)
     man = json.loads(zs.read("MANIFEST.json"))
@@ -150,6 +172,16 @@ def main():
     if env_node is None:
         raise SystemExit("no .wkrp node found in %s" % ENV_SRC)
     nodes.append(env_node)
+
+    # SPEC section 5: a writer that drops a node MUST also drop or rewrite
+    # every edge into it. Drop each edge whose target was not kept, and say so.
+    kept = {n["node_id"] for n in nodes}
+    for n in nodes:
+        for e in n["edges"]:
+            if e["to"] not in kept:
+                print("dropped edge %s --%s--> %s (target not kept)"
+                      % (n["node_id"], e["kind"], e["to"]))
+        n["edges"] = [e for e in n["edges"] if e["to"] in kept]
 
     # collect the bytes every kept file needs
     files = {}
@@ -213,6 +245,8 @@ def main():
     # taking files[0] and shipping the descriptor as the sound -- now has an
     # answer inside MANIFEST.json itself.
     annotate_payload_files(nodes)
+    # SPEC 5: never write a `requires` edge to a node not in nodes[].
+    refuse_dangling_requires(nodes)
 
     # converge preview_prefix_bytes exactly as build_golden.assemble does
     preview = 0

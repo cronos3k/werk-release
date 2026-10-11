@@ -340,6 +340,11 @@ fn cmd_build(out: Option<&String>) -> i32 {
     let mut round = 0;
     loop {
         let manifest = build_manifest(&files, &loader_nodes, &loader_caps, preview_prefix);
+        // SPEC section 5: never write a `requires` edge to an absent node.
+        if let Err(e) = werk::manifest::refuse_dangling_requires(&manifest) {
+            eprintln!("werkc build-fixture: {e}");
+            return 1;
+        }
         manifest_bytes = pretty(&manifest);
 
         // Sign, so the fixture exercises signed-and-valid.
