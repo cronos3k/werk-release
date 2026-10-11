@@ -252,6 +252,22 @@ def main(argv=None):
         gate_clean(spec["clean"], spec, variant)
         gate_damaged(spec["damaged"], spec, variant)
 
+    # -- builder is deterministic (modeled on run_gate_cc0_image.py): build
+    # each variant twice from the in-repo CC0 source and require byte-identity.
+    # --out points into the gate's work dir, never into fixtures/, so running
+    # the gate does not touch the tracked fixtures.
+    for variant in ("lean", "full"):
+        out_dir = os.path.join(WORK, "determinism-crate-%s" % variant)
+        os.makedirs(out_dir, exist_ok=True)
+        rc, out = run([sys.executable, BUILDER, "--variant", variant,
+                       "--out", out_dir, "--check-determinism"])
+        ok = rc == 0 and "determinism: PASS" in out
+        record("%s: builder is deterministic (rebuild identical)" % variant,
+               "PASS" if ok else "FAIL",
+               "two builds, byte-identical" if ok
+               else "builder exit %d (0x%08X): %s"
+               % (rc, rc & 0xFFFFFFFF, out.strip()[-160:] or "no output"))
+
     print()
     npass = sum(1 for _, s, _ in RESULTS if s == "PASS")
     nfail = sum(1 for _, s, _ in RESULTS if s == "FAIL")

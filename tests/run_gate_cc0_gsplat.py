@@ -236,6 +236,22 @@ def main(argv=None):
     gate_clean(SPEC["clean"], SPEC)
     gate_damaged(SPEC["damaged"], SPEC)
 
+    # -- builder is deterministic (modeled on run_gate_cc0_image.py): build
+    # twice and require byte-identity. --out and --scratch point into the
+    # gate's work dir, never into fixtures/, so running the gate does not
+    # touch the tracked fixtures.
+    out_dir = os.path.join(WORK, "determinism-gsplat")
+    os.makedirs(out_dir, exist_ok=True)
+    rc, out = run([sys.executable, BUILDER, "--out", out_dir,
+                   "--scratch", os.path.join(out_dir, "scratch"),
+                   "--check-determinism"])
+    ok = rc == 0 and "determinism: PASS" in out
+    record("gsplat: builder is deterministic (rebuild identical)",
+           "PASS" if ok else "FAIL",
+           "two builds, byte-identical" if ok
+           else "builder exit %d (0x%08X): %s"
+           % (rc, rc & 0xFFFFFFFF, out.strip()[-160:] or "no output"))
+
     print()
     npass = sum(1 for _, s, _ in RESULTS if s == "PASS")
     nfail = sum(1 for _, s, _ in RESULTS if s == "FAIL")
