@@ -1,0 +1,214 @@
+{
+  "format": "gltf",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\gauntlet-sealed\\nc-20261011-1543\\gltf-t1",
+  "exit_code": null,
+  "rows": [
+    {
+      "rel": "extracted/crate_diffuse.png",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:crate_diffuse.png",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "extracted/primary_mesh.obj",
+      "sha256": "dfb015e22c787af0e56502df7df9758e4a74a0bf3dd3c85256b0d54ca0a851e0",
+      "size": 644404,
+      "status": "SUBMESH",
+      "class": "mesh",
+      "payload": null,
+      "tier": "T2-SUBMESH",
+      "detail": "parsed 3731 positions (text) equals submesh Cube.020 only (counts for PARTIAL, not C5)"
+    },
+    {
+      "rel": "extracted/primary_mesh_NORMAL.raw",
+      "sha256": "40ab5b444be0a40e893e730d5cc00976a4d3d9c754c18159a5c12c5fbee3f1be",
+      "size": 44772,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": "",
+      "ext_class": "mesh"
+    },
+    {
+      "rel": "extracted/primary_mesh_POSITION.raw",
+      "sha256": "483d874cf4231c9596ae3bee3783b6e4c23931460f1915b5234f7912d11bc241",
+      "size": 44772,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": "",
+      "ext_class": "mesh"
+    },
+    {
+      "rel": "extracted/primary_mesh_TEXCOORD_0.raw",
+      "sha256": "99229d659e6ecf6a7e67041c5d37a9aab2876b180d5322dd2efbe0d784c95cd9",
+      "size": 29848,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": "",
+      "ext_class": "mesh"
+    },
+    {
+      "rel": "extracted/primary_mesh_indices.raw",
+      "sha256": "521568faf4fbb11a6d78ab0703773fc794cb7d5b5e2279e8ef691bb8bb673c35",
+      "size": 33048,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": "",
+      "ext_class": "mesh"
+    },
+    {
+      "rel": "tools/crate_reader.py",
+      "sha256": "39223252fe1b6fa190fe51194d55b3b8210166576e0d06f456a3bc296442381e",
+      "size": 13089,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/probe.py",
+      "sha256": "fa5a1c3376c924dfb9c745b4de15e17e4a06e245cd87055b9732dea7eefa4ca8",
+      "size": 604,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "  11: | Open the container | **Yes.** The `.gltf` is plain JSON that parses cleanly. Its single buffer `crate-nc-v1.bin` and its image `crate_diffuse.png` both load. |",
+          "  12: | List the node graph with meanings | **Yes, partly.** I listed the scene, nodes, meshes, primitives, material, texture, image, sampler, buffer, bufferViews and accessors. Meanings come from key names",
+          "  13: | Verify every declared hash | **Vacuously yes: there are none.** The program searches the JSON for any key containing hash/sha/digest/checksum/crc/md5 and finds 0. The PNG has no text chunks and the ",
+          "  14: | Extract the primary mesh and one texture | **Yes.** The mesh is `mesh[1] \"Cube.020\"`, used by node `wooden_crate_01`: 3731 vertices and 5508 triangles. The texture is `crate_diffuse.png`, the materi",
+          "  15: | Do the extracted bytes match declared hashes? | **Cannot be answered: nothing is declared.** I give the computed sha256 values below. The texture copy is byte-identical to the source file. |",
+          "  18: - The buffer file size equals the declared `byteLength` (191040).",
+          "  19: - All 12 bufferViews lie inside the buffer and tile it exactly, with no gaps or overlaps.",
+          "  20: - For every accessor, `byteLength` is divisible by count \u00d7 components.",
+          "  21: - The decoded POSITION min/max equal the declared min/max for all 3 meshes.",
+          "  24: - Every index is less than its mesh's vertex count.",
+          "  31: | `extracted/primary_mesh.obj` (positions, UVs, normals, faces; my conversion) | 644404 | none | `dfb015e22c787af0e56502df7df9758e4a74a0bf3dd3c85256b0d54ca0a851e0` |",
+          "  32: | `extracted/primary_mesh_POSITION.raw` (bufferView 4, byte-exact) | 44772 | none | `483d874cf4231c9596ae3bee3783b6e4c23931460f1915b5234f7912d11bc241` |",
+          "  33: | `extracted/primary_mesh_NORMAL.raw` (bufferView 5) | 44772 | none | `40ab5b444be0a40e893e730d5cc00976a4d3d9c754c18159a5c12c5fbee3f1be` |",
+          "  34: | `extracted/primary_mesh_TEXCOORD_0.raw` (bufferView 6) | 29848 | none | `99229d659e6ecf6a7e67041c5d37a9aab2876b180d5322dd2efbe0d784c95cd9` |",
+          "  35: | `extracted/primary_mesh_indices.raw` (bufferView 7) | 33048 | none | `521568faf4fbb11a6d78ab0703773fc794cb7d5b5e2279e8ef691bb8bb673c35` |",
+          "  36: | `extracted/crate_diffuse.png` (byte copy) | 9460 | none | `af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f` |",
+          "  47: 2. `crate_diffuse.png`: parsed into chunks by `probe.py`, looking for embedded text or hashes. There were none.",
+          "  48: 3. `crate-nc-v1.bin`: hashed and scanned for printable strings. There was nothing meaningful.",
+          "  55: - **The meaning of the `componentType` codes 5126 and 5123.** I inferred them empirically (\u00a76).",
+          "  56: - **The meaning of the bufferView `target` codes 34962 and 34963.** Only a correlation was observed.",
+          "  57: - **The meaning of the sampler codes `magFilter` 9729 and `minFilter` 9987.** These are unexplained, so the program lists them raw.",
+          "  58: - **The primitive topology when `mode` is absent.** I assumed a triangle list, supported only by every index count being divisible by 3.",
+          "  61: - **A definition of \"primary mesh\".**",
+          "  63: - **The PNG format definition**, if the texture were to be verified internally (see stumble 3).",
+          "  67: 1. **The task's premises do not match the package.** The task talks about a manifest, declared hashes and possibly a bundled reader. The package has none of them, and no documentation at all. I spent ",
+          "  68: 2. **No documentation inside the file.** Every \"meaning\" I give is derived in one of three ways:",
+          "  69:    - **From key names:** `POSITION`, `NORMAL`, `TEXCOORD_0`, `indices`, `baseColorTexture`, `byteOffset`, and so on.",
+          "  76: 3. **Prior-knowledge leak (I am disclosing it).** In `probe.py` I walked the PNG chunk layout: an 8-byte signature, then length + type + data + CRC per chunk. That layout came from my prior knowledge ",
+          "  78: 5. **\"Primary mesh\" is ambiguous.** I chose the mesh with the most triangles (5508 vs 692 and 376). It is also the node with the unsuffixed name `wooden_crate_01`, while the others are `_lid` and `_la",
+          "  79: 6. **OBJ output is my own choice of format**, written from general knowledge. It is not a file-derived rule. Because the OBJ's bytes depend on my float formatting, I also wrote byte-exact `.raw` slice",
+          "  88: - Reading the .gltf and probing the PNG and .bin: about 1 minute, including the permission-error detours."
+        ],
+        "program stdout": [
+          "   1: {\"duration_api_ms\":142566,\"stop_reason\":\"end_turn\",\"session_id\":\"51feda19-8ac4-4ad5-b62c-9b2bd2a04581\",\"total_cost_usd\":0.6234107999999999,\"usage\":{\"input_tokens\":22,\"cache_creation_input_tokens\":3096"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "  13: | Verify every declared hash | **Vacuously yes: there are none.** The program searches the JSON for any key containing hash/sha/digest/checksum/crc/md5 and finds 0. The PNG has no text chunks and the ",
+          "  15: | Do the extracted bytes match declared hashes? | **Cannot be answered: nothing is declared.** I give the computed sha256 values below. The texture copy is byte-identical to the source file. |",
+          "  17: Structural integrity checks the program does pass (0 failures):",
+          "  18: - The buffer file size equals the declared `byteLength` (191040).",
+          "  21: - The decoded POSITION min/max equal the declared min/max for all 3 meshes.",
+          "  29: | File | Bytes | Declared sha256 | Computed sha256 |",
+          "  38: Input hashes for reference: `crate-nc-v1.gltf` = `3f9a6a47\u2026919f69`, `crate-nc-v1.bin` = `02148a5b\u20260630ab`.",
+          "  47: 2. `crate_diffuse.png`: parsed into chunks by `probe.py`, looking for embedded text or hashes. There were none.",
+          "  48: 3. `crate-nc-v1.bin`: hashed and scanned for printable strings. There was nothing meaningful.",
+          "  52: ## 5. What I wanted from outside the file and could not get",
+          "  62: - **Declared hashes / a manifest.** The task assumes these exist; they don't.",
+          "  63: - **The PNG format definition**, if the texture were to be verified internally (see stumble 3).",
+          "  67: 1. **The task's premises do not match the package.** The task talks about a manifest, declared hashes and possibly a bundled reader. The package has none of them, and no documentation at all. I spent ",
+          "  72:      - 5126 = little-endian float32 is the only candidate whose decoded data reproduces the declared min/max exactly. Big-endian gives non-finite values; int32 and uint32 give a min/max mismatch.",
+          "  76: 3. **Prior-knowledge leak (I am disclosing it).** In `probe.py` I walked the PNG chunk layout: an 8-byte signature, then length + type + data + CRC per chunk. That layout came from my prior knowledge ",
+          "  84: None detected: every structural and consistency check passed. No repair was attempted or needed. Integrity here means internal consistency (sizes, ranges, min/max, unit normals), **not** cryptographic",
+          "  90: - Running and verifying: under 1 minute."
+        ],
+        "program stdout": [
+          "   1: {\"duration_api_ms\":142566,\"stop_reason\":\"end_turn\",\"session_id\":\"51feda19-8ac4-4ad5-b62c-9b2bd2a04581\",\"total_cost_usd\":0.6234107999999999,\"usage\":{\"input_tokens\":22,\"cache_creation_input_tokens\":3096"
+        ]
+      },
+      "file_declares": "none (byteLength/count consistency checks only, not cryptographic)"
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "extracted/primary_mesh.obj",
+          "extracted/primary_mesh_NORMAL.raw",
+          "extracted/primary_mesh_POSITION.raw",
+          "extracted/primary_mesh_TEXCOORD_0.raw",
+          "extracted/primary_mesh_indices.raw"
+        ],
+        "texture": [
+          "extracted/crate_diffuse.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "texture": "PASS via extracted/crate_diffuse.png[T1]"
+      }
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_reason": "graded artifact(s) exact, failing: C5",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "texture:crate_diffuse.png"
+    ],
+    "bytes": 9460,
+    "any_declared": 0.0,
+    "cryptographic": 0.0,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [
+        "texture:crate_diffuse.png"
+      ],
+      "bytes": 9460,
+      "any_declared": 0.0,
+      "cryptographic": 0.0,
+      "kinds": []
+    }
+  }
+}

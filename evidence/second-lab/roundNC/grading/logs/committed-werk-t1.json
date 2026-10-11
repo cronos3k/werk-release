@@ -1,0 +1,555 @@
+{
+  "format": "werk",
+  "payload": "sound",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\gauntlet-sealed\\nc-20261011-1543\\werk-t1",
+  "exit_code": null,
+  "rows": [
+    {
+      "rel": "werk_reader.py",
+      "sha256": "98485100ea40ba384f2cdc4f7b2a9601d180528e53eac97366ee8b8761097427",
+      "size": 51315,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "extracted/audio__sfx__crate-impact-hard-surface.wav",
+      "sha256": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+      "size": 17644,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "extracted/geometry__game.glb",
+      "sha256": "eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+      "size": 16736,
+      "status": "OK",
+      "class": "mesh",
+      "payload": "mesh:geometry/game.glb",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/LICENSE",
+      "sha256": "5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53",
+      "size": 2132,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file LICENSE"
+    },
+    {
+      "rel": "scratch/pkg/MANIFEST.json",
+      "sha256": "f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839",
+      "size": 23311,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/README.txt",
+      "sha256": "f7923cb1f38316f610d8198a2797775ceeb4b07cc6b07d405ee6e8932ccc1564",
+      "size": 1264,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file README.txt"
+    },
+    {
+      "rel": "scratch/pkg/SIGNATURE.json",
+      "sha256": "248879ff8cff860ff29f6b114e5be0b3669a6ae0e97ad2e0aca4ba789dcf3d80",
+      "size": 988,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/audio/sfx/crate-impact-hard-surface.json",
+      "sha256": "2652a7c5bd00c82ea079290d535321193845b146b1948fe207635e52cfc38276",
+      "size": 1783,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file audio/sfx/crate-impact-hard-surface.json"
+    },
+    {
+      "rel": "scratch/pkg/audio/sfx/crate-impact-hard-surface.raw.wav",
+      "sha256": "21ab5fad58956ddd6fdc488a352e14265ce1c92521ec5783b947f2fb14a46d06",
+      "size": 96044,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.raw.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/audio/sfx/crate-impact-hard-surface.var2.wav",
+      "sha256": "2419a71d18dff22ee6efee7bc6d9b56e1666cd14c054cc73a43a6bc7ef34b662",
+      "size": 96044,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.var2.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/audio/sfx/crate-impact-hard-surface.var3.wav",
+      "sha256": "f65e7061bae4cdfd5436c8a087e0ba05685b678176ae8abc5149c08ed7a8cd19",
+      "size": 96044,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.var3.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/audio/sfx/crate-impact-hard-surface.wav",
+      "sha256": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+      "size": 17644,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/geometry/game.glb",
+      "sha256": "eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+      "size": 16736,
+      "status": "OK",
+      "class": "mesh",
+      "payload": "mesh:geometry/game.glb",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "scratch/pkg/materials/wood.json",
+      "sha256": "c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61",
+      "size": 525,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file materials/wood.json"
+    },
+    {
+      "rel": "scratch/pkg/physics/bounds.json",
+      "sha256": "866eb5c8c01ea7121bca325d3bd283ddf47fbba6a43cb39cd49edbbadfde6c82",
+      "size": 654,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file physics/bounds.json"
+    },
+    {
+      "rel": "scratch/pkg/poses/rest.wkrp",
+      "sha256": "6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+      "size": 560,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/examples/restposes.example.wkrp"
+    },
+    {
+      "rel": "scratch/pkg/provenance/provenance.json",
+      "sha256": "dcfdceb4551b3c6c6443ddc14d940d4d0c8176fabd6de2e3c7398baf3def0af0",
+      "size": 4264,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file provenance/provenance.json"
+    },
+    {
+      "rel": "scratch/pkg/semantics/semantics.json",
+      "sha256": "d5be6dc01dcc5ec0e047b1552df016f498a24318bf45a6a59508125fc60ce156",
+      "size": 2589,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file semantics/semantics.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/MINI-SPECS.md",
+      "sha256": "8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba",
+      "size": 40147,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/MINI-SPECS.md"
+    },
+    {
+      "rel": "scratch/pkg/spec/README.md",
+      "sha256": "3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56",
+      "size": 10855,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/README.md"
+    },
+    {
+      "rel": "scratch/pkg/spec/SPEC.md",
+      "sha256": "eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001",
+      "size": 104388,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/SPEC.md"
+    },
+    {
+      "rel": "scratch/pkg/spec/conventions-map.json",
+      "sha256": "1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37",
+      "size": 9269,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/conventions-map.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/facets.json",
+      "sha256": "f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1",
+      "size": 11978,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/facets.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/examples/restposes.example.hex.txt",
+      "sha256": "80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051",
+      "size": 4308,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/examples/restposes.example.hex.txt"
+    },
+    {
+      "rel": "scratch/pkg/spec/examples/restposes.example.wkrp",
+      "sha256": "6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+      "size": 560,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/examples/restposes.example.wkrp"
+    },
+    {
+      "rel": "scratch/pkg/spec/layouts/ENVELOPE.layout.txt",
+      "sha256": "b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce",
+      "size": 26372,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/layouts/ENVELOPE.layout.txt"
+    },
+    {
+      "rel": "scratch/pkg/spec/layouts/restposes.layout.txt",
+      "sha256": "cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5",
+      "size": 5958,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/layouts/restposes.layout.txt"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/conventions-map.schema.json",
+      "sha256": "97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f",
+      "size": 4614,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/conventions-map.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/core.audio.effect.schema.json",
+      "sha256": "04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5",
+      "size": 8628,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/core.audio.effect.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/core.material.schema.json",
+      "sha256": "487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6",
+      "size": 4823,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/core.material.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/core.phys.bounds.schema.json",
+      "sha256": "acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e",
+      "size": 3164,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/core.phys.bounds.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/core.provenance.schema.json",
+      "sha256": "d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935",
+      "size": 6140,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/core.provenance.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/core.semantics.schema.json",
+      "sha256": "3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f",
+      "size": 6917,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/core.semantics.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/manifest.schema.json",
+      "sha256": "d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451",
+      "size": 46174,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/manifest.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/spec/schemas/signature.schema.json",
+      "sha256": "cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13",
+      "size": 11209,
+      "status": "OK-DECLARED",
+      "class": null,
+      "payload": null,
+      "tier": "T1",
+      "detail": "non-payload declared file spec/schemas/signature.schema.json"
+    },
+    {
+      "rel": "scratch/pkg/x/splat-foley/segments/seg_00.png",
+      "sha256": "395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0",
+      "size": 37183,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:x/splat-foley/segments/seg_00.png",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "tools/crosscheck.py",
+      "sha256": "da4ee2a747d4248dd53363d58c2a40398a95fb7e24eaf018dd9b1b6e7fc5689e",
+      "size": 996,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/dump_entries.py",
+      "sha256": "88ca250dd23cbb01ca143c16648bdc534622c8d1ebc068edde1afd1e186734f7",
+      "size": 525,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/peek.py",
+      "sha256": "a3df2aacc83835151c01579975807f7570cab48aeadb02093e955ac98617aeae",
+      "size": 367,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/strings.py",
+      "sha256": "dcc6ea00ae2bf124673019ad1bef791e2e52328a3fc94d5390408b39a8de8055",
+      "size": 289,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/walk.py",
+      "sha256": "a1f185022b877419bd056914fc406a349479c38455d20eb8bdc5c91f4c071b33",
+      "size": 727,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "  10: | list the node graph with meanings | yes. All 14 nodes, with type, meaning, work note, producer, epistemic stamp, files with roles, and edges. Edges whose target node is not in the package are flagge",
+          "  12: | extract the primary mesh and one sound | yes. I followed `primary.*` to the node, then its active version, then the SPEC \u00a72.1 payload rules. I did not take `files[0]`. |",
+          "  19: | slot | node \u2192 resolved path (rule) | output file | size | declared sha256 | computed sha256 |",
+          "  21: | primary.mesh | `geom-game` v1 \u2192 `geometry/game.glb` (\u00a72.1 rule 2, single file) | `extracted/geometry__game.glb` | 16736 | `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce` | `eee8b3",
+          "  22: | primary.sound | `audio-crate-impact-hard-surface` v1 \u2192 `audio/sfx/crate-impact-hard-surface.wav` (\u00a72.1 rule 1, `payload_file`; the `role: best` entry agrees) | `extracted/audio__sfx__crate-impact-ha",
+          "  25: - **Mesh:** GLB version 2, 272 vertices, 408 triangles, attributes POSITION, NORMAL and COLOR_0. The vertex AABB I computed from the BIN chunk is [-0.5,-0.5,-0.5]..[0.54,0.54,0.5], which exactly match",
+          "  26: - **Sound:** RIFF/WAVE PCM, 16 kHz, mono, 16-bit, 0.550 s. That matches the descriptor's `audio_format` and `refined.duration`.",
+          "  44: 7. `spec/MINI-SPECS.md`: the heading list, then \u00a71\u2013\u00a78.1 (lines 1\u2013400), then \u00a79\u2013\u00a713 (lines 488\u2013977). I skipped the PNG filter details (\u00a78.2\u20138.3) because I never decode pixels.",
+          "  46: 9. `audio/sfx/crate-impact-hard-surface.json`",
+          "  53: My program parses the other payloads (material, semantics, provenance, the PNG) as data, but I never read them myself. I did not open any of the JSON schemas, `spec/facets.json`, `LICENSE`, or `proven",
+          "  57: - SPEC \u00a72.1's payload-resolution rules are what stop the classic mistake of extracting the sound's JSON descriptor instead of the WAV.",
+          "  68:   - `PROFILE-IMAGE.md` and `X-C2PA-EXPORT.md`",
+          "  74:   - `geometry/source.glb` (for `geom-game`)",
+          "  75:   - `audio/package.json` (for the audio effect)",
+          "  76:   - `x/splat-foley/views/view_00..05.png` (for `evidence-segments`)",
+          "  89:    - It talks about \"every one of the twenty sound effects\"; the package has one sound effect node.",
+          "  90:    - It says rest poses are \"deliberately absent\", yet the package has a `core.pose.rest` node (`poses/rest.wkrp`).",
+          "  92: 4. **spec/README.md points to many files that are not here.** These include `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `signature.example.txt`, `skeleton/*`, and the points/g",
+          "  97: 6. **Edges point at nodes that are not in the package.** `geom-game` \u2192 `geom-source`, `audio-crate-impact-hard-surface` \u2192 `audio-package`, and `evidence-segments` \u2192 `evidence-views` (a **requires** ed",
+          "  98:    - SPEC \u00a75 says a `requires` edge into a *dead* node kills the source node. It does not say what happens when the target node is *absent*.",
+          " 100:    - That is a judgement call the spec does not settle, so another reader could reasonably kill the node.",
+          " 101: 7. **`evidence-segments` meta does not match its files.** `meta.count = 10` and `meta.images` describes 10 PNGs (`seg_00`..`seg_09`), but `files[]` carries only `seg_00.png`. SPEC's \"never follow a pa",
+          " 103: 9. **The envelope `input_hash` rule is not met.** ENVELOPE \u00a73 says `input_hash` in a header is \"Mandatory for derived nodes; the manifest also carries it, and the two MUST agree\". The WKRP header in `",
+          " 104: 10. **\"Two different nodes claiming one path\" leaves a case open.** It is defined as an error, but nothing says what it means when two nodes carry byte-identical content under different paths. That ha",
+          " 106: 12. **Payload-role ambiguity, now resolved by the spec.** Without SPEC \u00a72.1, `files[0]` of the sound node is the JSON descriptor. The spec handles this well now, but I note it as the most likely trap.",
+          " 114: - The manifest says the producer was `werkc 0.1.0`, with `epistemic: measured`, \"settled orientations from a drop simulation\", and `input_files` `geometry/game.glb` + `physics/bounds.json`.",
+          " 116: - It is also physically implausible. Pose 0 is the identity rotation, but its contacts sit at y = 0, not on the crate's bottom face at y = \u22120.5 (per bounds.json and the mesh). The contact square of \u00b10",
+          " 119: What I did: reported it (`input-hash-mismatch`, `envelope-producer-disagrees`, `payload-is-spec-example`, `rest-pose-implausible`, all `warn`), kept the node listed, and did **not** attempt any repair"
+        ],
+        "program stdout": [
+          "   1: {\"duration_api_ms\":368209,\"stop_reason\":\"end_turn\",\"session_id\":\"b3911a6a-b415-4913-a84e-0f44a3d05efa\",\"total_cost_usd\":2.3827134,\"usage\":{\"input_tokens\":58,\"cache_creation_input_tokens\":141551,\"cache"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   9: | open the container | yes. I wrote my own store-mode zip reader from MINI-SPECS \u00a75 (EOCD scan from the end, zip64 detection, central directory, local headers, CRC-32 per \u00a76). It found 36 entries, all",
+          "  11: | verify every declared hash | yes. All 34 `files[].sha256` and sizes match (every container entry except MANIFEST.json and SIGNATURE.json; nothing is unlisted), and so do `license.sha256` and `spec_s",
+          "  13: | extracted bytes hash to the declared values | **yes, both match** (table below). |",
+          "  19: | slot | node \u2192 resolved path (rule) | output file | size | declared sha256 | computed sha256 |",
+          "  32: - The only thing my reader does with those three files is hash them against the manifest; all three match.",
+          "  45: 8. `SIGNATURE.json`",
+          "  56: - MINI-SPECS supplied the exact zip record layouts, the `input_hash` construction with a worked example from this package, and complete Ed25519 verification parameters. Its \u00a712.1 also gave the signed-",
+          "  61: ## 5. What I wanted from outside the file and could not get",
+          "  67:   - `spec/examples/signature.example.txt`, `MANIFEST.example.json` and `SIGNATURE.example.json`",
+          "  73: - **The inputs needed to check three `input_hash` values:**",
+          "  78:   These were left out when the package was cut down from a bigger one, so those hashes cannot be checked from inside the file.",
+          "  92: 4. **spec/README.md points to many files that are not here.** These include `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `signature.example.txt`, `skeleton/*`, and the points/g",
+          "  99:    - I chose to report these as `warn` (`edge-target-missing`) and keep `evidence-segments` live, because its own bytes verify.",
+          " 103: 9. **The envelope `input_hash` rule is not met.** ENVELOPE \u00a73 says `input_hash` in a header is \"Mandatory for derived nodes; the manifest also carries it, and the two MUST agree\". The WKRP header in `",
+          " 110: No byte-level damage: every CRC, size and sha256 is good, and the signature verifies. There is **one inconsistency that the format's own checks expose**:",
+          " 113: - Its sha256 (`6c2c44d5\u20265f95`) is identical to `spec/examples/restposes.example.wkrp`. It decodes to exactly the example in `restposes.example.hex.txt`: 2 poses, 7 contacts, envelope producer `werk-ex",
+          " 115: - The declared `input_hash` (`60e08ed1\u202696c8`) does **not** reproduce. I rebuilt it as `4b91ccbb\u2026b983` using the documented construction (raw digests in `input_files` order, then `{}`). I also tried bo",
+          " 119: What I did: reported it (`input-hash-mismatch`, `envelope-producer-disagrees`, `payload-is-spec-example`, `rest-pose-implausible`, all `warn`), kept the node listed, and did **not** attempt any repair",
+          " 131: | investigating the rest-pose `input_hash` and writing this report | ~10% |"
+        ],
+        "program stdout": [
+          "   1: {\"duration_api_ms\":368209,\"stop_reason\":\"end_turn\",\"session_id\":\"b3911a6a-b415-4913-a84e-0f44a3d05efa\",\"total_cost_usd\":2.3827134,\"usage\":{\"input_tokens\":58,\"cache_creation_input_tokens\":141551,\"cache"
+        ]
+      },
+      "file_declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain"
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "extracted/geometry__game.glb",
+          "scratch/pkg/geometry/game.glb"
+        ],
+        "sound": [
+          "extracted/audio__sfx__crate-impact-hard-surface.wav",
+          "scratch/pkg/audio/sfx/crate-impact-hard-surface.raw.wav",
+          "scratch/pkg/audio/sfx/crate-impact-hard-surface.var2.wav",
+          "scratch/pkg/audio/sfx/crate-impact-hard-surface.var3.wav",
+          "scratch/pkg/audio/sfx/crate-impact-hard-surface.wav"
+        ]
+      }
+    },
+    "C5": {
+      "result": "PASS",
+      "per_class": {
+        "mesh": "PASS via extracted/geometry__game.glb[T1], scratch/pkg/geometry/game.glb[T1]",
+        "sound": "PASS via extracted/audio__sfx__crate-impact-hard-surface.wav[T1], scratch/pkg/audio/sfx/crate-impact-hard-surface.raw.wav[T1], scratch/pkg/audio/sfx/crate-impact-hard-surface.var2.wav[T1], scratch/pkg/audio/sfx/crate-impact-hard-surface.var3.wav[T1], scratch/pkg/audio/sfx/crate-impact-hard-surface.wav[T1]"
+      }
+    }
+  },
+  "verdict": "PENDING",
+  "verdict_reason": "auto clauses pass; awaiting: C1,C2,C3",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "mesh:geometry/game.glb",
+      "sound:audio/sfx/crate-impact-hard-surface.raw.wav",
+      "sound:audio/sfx/crate-impact-hard-surface.var2.wav",
+      "sound:audio/sfx/crate-impact-hard-surface.var3.wav",
+      "sound:audio/sfx/crate-impact-hard-surface.wav"
+    ],
+    "bytes": 322512,
+    "any_declared": 1.0,
+    "cryptographic": 1.0,
+    "kinds": [
+      "crc32",
+      "sha256"
+    ],
+    "all_extracted": {
+      "payloads_counted": [
+        "mesh:geometry/game.glb",
+        "sound:audio/sfx/crate-impact-hard-surface.raw.wav",
+        "sound:audio/sfx/crate-impact-hard-surface.var2.wav",
+        "sound:audio/sfx/crate-impact-hard-surface.var3.wav",
+        "sound:audio/sfx/crate-impact-hard-surface.wav",
+        "texture:x/splat-foley/segments/seg_00.png"
+      ],
+      "bytes": 359695,
+      "any_declared": 1.0,
+      "cryptographic": 1.0,
+      "kinds": [
+        "crc32",
+        "sha256"
+      ]
+    }
+  }
+}

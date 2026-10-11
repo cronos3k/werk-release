@@ -1,0 +1,22 @@
+roundNC trial usdz-t3, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2350 b68cbea04eb7d52ddd23f20949b6ff10dcc26383f4b83a9d02e1f4cc8984ec93 PROMPT.txt
+     8394 773cf43c907338f3089fcfac7511bea68352145373a4bd6b4b8a90e1c9d54b6e REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     5090 d2bb3fb6b7c919ba0960085f90b06ac1ae5f1c72a2e99b1541c640e291bf510d _agent-stdout.txt
+       29 c92dc16619c7c9fa311e401e4e78d6ca05c33053b1c797e4fd4da23ebf8f7a5a _harness/TIMING.txt
+   478101 a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa extracted/crate-nc-v1.usdc
+      315 48452a64de7b4dd5667b938883ea90968d1f9831605d30dd35d3bbab4a4dba03 tools/hexdump.py
+     7630 8a3eb23cd96638f1b7b76605c972b420031d041a8c302d1e1209a18ab9621e46 tools/inspect_usdz.py
+      131 d9ef70a8f50a1eec33971a02cef590f4553d857e763a9ca7e35c5b5b102ed3db tools/peek.py
+      409 b5fbe109ff7b32d07d27776009ea682c68145441f121ead5a23d6f5d40094c66 tools/scan.py
+
+SKIPPED (size B, sha256, path, reason)
+   487957 14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7 crate-nc-v1.usdz  [byte copy of fixture file crate-nc-v1.usdz]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f extracted/textures_crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

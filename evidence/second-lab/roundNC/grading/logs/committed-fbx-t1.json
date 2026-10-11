@@ -1,0 +1,195 @@
+{
+  "format": "fbx",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\gauntlet-sealed\\nc-20261011-1543\\fbx-t1",
+  "exit_code": null,
+  "rows": [
+    {
+      "rel": "fbx_extract.py",
+      "sha256": "f93e903c4c4fd3c0a686fc90e9952930bdb0de87a1c71d82b08561a38318548a",
+      "size": 18037,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "extracted/crate_diffuse.png",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:crate_diffuse.png",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "extracted/extracted.json",
+      "sha256": "445d122eadf86760a45c50d7e7b36f68f7aacb272f10411cae5020ecc7e35ce4",
+      "size": 4698,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "extracted/wooden_crate_01.obj",
+      "sha256": "838a683c8611f219ad2cc9be7f86683a9376380ae8433021e0660db13453b382",
+      "size": 861616,
+      "status": "SUBMESH",
+      "class": "mesh",
+      "payload": null,
+      "tier": "T2-SUBMESH",
+      "detail": "parsed 3706 positions (text) equals submesh Cube.020 only (counts for PARTIAL, not C5)"
+    },
+    {
+      "rel": "tools/dump.py",
+      "sha256": "938267c031e253007b5147aad33d826610c83583e63beb4976cbc0bc547b5036",
+      "size": 2178,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/peek.py",
+      "sha256": "5f018ef956a9dd7c0565c40453854a5ea84e2fac155e15f062b9c7219fabcfce",
+      "size": 322,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/pngchunks.py",
+      "sha256": "6d744b9acdc9c425d9af8ace45451d2bdb89412bbd8c9324e9ad88aa5dc29707",
+      "size": 486,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "tools/strings.py",
+      "sha256": "1da392cca7ce606ad12fa812e93864e42b83dd6cb761161ad921bc5c2dca1459",
+      "size": 277,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "NOT-RUN",
+      "why": "exit code needs --rerun"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "   4: Exploration helpers I wrote are in `tools/` (`peek.py` hexdump, `strings.py`, `dump.py`, `pngchunks.py`). None of them came from the file.",
+          "  11: | Open the container | **Yes.** The whole file parses as one tree: a 27-byte header, 11 top-level nodes, a null terminator, and a 162-byte footer. Every node's end offset and property-list length chec",
+          "  12: | List node graph with meanings | **Yes.** It prints the full node tree with a meaning for each node name, then the object graph from the `Connections` (child \u2192 parent). |",
+          "  13: | Verify every declared hash | **Partly; the premise doesn't hold.** The file declares **no** hashes: there is no manifest and no sha256/md5 value anywhere. I searched the raw strings, every node and ",
+          "  14: | Extract primary mesh | **Yes.** `extracted/wooden_crate_01.obj` |",
+          "  15: | Extract one texture | **Yes.** `extracted/crate_diffuse.png`, the embedded bytes written verbatim (256\u00d7256 RGBA; I viewed it and it shows wood planks). |",
+          "  22: | `extracted/wooden_crate_01.obj` | Primary mesh: model `wooden_crate_01` \u2192 geometry `Cube.020`, 3706 vertices, 5508 polygons (all triangles), 16,524 corners, per-corner UVs and normals. Converted to ",
+          "  23: | `extracted/crate_diffuse.png` | Contents of the `Video \"crate_diffuse.png\"` node's `Content` field. The texture `base_color_texture` uses it, and it is wired to material `crate_wood`'s DiffuseColor.",
+          "  27: **Why I picked this mesh as \"primary\":** there are three models: `wooden_crate_01`, `wooden_crate_01_lid` and `wooden_crate_01_latch`. I chose the one whose name has no part suffix. It is also by far ",
+          "  31: **None exists, and I never opened, ran or ported one.** The file contains no executable or script content. The only blobs are numeric arrays and one PNG.",
+          "  37: 1. Bytes 0x000\u20130x400 (hexdump). This gave me the magic string, the version number (7400) and the node record layout.",
+          "  38: 2. A printable-strings scan of the whole file, looking for docs, a manifest or hashes. Found none, but it showed the embedded PNG and the external path `D:\\build\\crate-nc-v1.fbm\\...`.",
+          "  39: 3. Hexdumps of 0x3A200\u20130x3A400 (the start of the PNG) and 0x3C900\u2013EOF (the Connections, the end of the tree and the footer).",
+          "  40: 4. A full walk of the node tree (`tools/dump.py`), decompressing every array.",
+          "  41: 5. The chunks of the embedded PNG.",
+          "  43: **What unblocked me:** step 4, the node tree itself. Once the record layout from step 1 parsed the whole file to EOF with every offset consistent, everything else followed. There was no documentation ",
+          "  47: - **A format specification.** The file contains no documentation: no rules, no glossary, no schema. Everything I used was inferred from byte patterns, from the self-describing node names, and (see \u00a76)",
+          "  49: - **The PNG spec** (chunk layout and CRC32). Same situation: verified with stdlib `zlib.crc32` on the strength of prior knowledge.",
+          "  52: - **`D:\\build\\crate-nc-v1.fbm\\crate_diffuse.png`**, the external path the file points to. I deliberately didn't look: it is outside my working directory, and the embedded copy made it unnecessary.",
+          "  56: 1. **The task's description doesn't match the file.** It talks about a package with internal files, documentation, a manifest with declared hashes, and possibly a bundled reader. This file is a single",
+          "  61:    - zlib and PNG can't be derived from the file at all.",
+          "  62:    - Some semantics are prior knowledge only partly backed by data: \"a negative index means ~v and closes the polygon\", the `ByPolygonVertex`/`IndexToDirect` meanings, and rotations being in degrees. ",
+          "  64: 4. **\"Primary mesh\" is ambiguous** (see \u00a72). I chose by name and size, and the two criteria agree.",
+          "  65: 5. **The mesh has no byte-exact form inside the file.** It is stored as zlib-compressed arrays, so any \"extracted mesh\" is a conversion, and its hash depends on my choices of OBJ format and float form",
+          "  81: - PNG check, writing the final program and running it: about 2 minutes.",
+          "  82: - Sanity checks (viewing the PNG, reading the start of the OBJ) and this report: about 1\u20132 minutes."
+        ],
+        "program stdout": [
+          "   1: {\"duration_api_ms\":271460,\"stop_reason\":\"end_turn\",\"session_id\":\"4530e41f-539b-44b0-854a-2db99f16ef58\",\"total_cost_usd\":1.161977,\"usage\":{\"input_tokens\":42,\"cache_creation_input_tokens\":63007,\"cache_r"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   5: Input sha256 (read-only, never modified): `ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef`, 248,412 bytes.",
+          "  13: | Verify every declared hash | **Partly; the premise doesn't hold.** The file declares **no** hashes: there is no manifest and no sha256/md5 value anywhere. I searched the raw strings, every node and ",
+          "  16: | Extracted bytes match manifest-declared hashes? | **Can't be done: there is no manifest.** Computed hashes are below. Declared: none. |",
+          "  20: | File | What | Declared sha256 | Computed sha256 |",
+          "  38: 2. A printable-strings scan of the whole file, looking for docs, a manifest or hashes. Found none, but it showed the embedded PNG and the external path `D:\\build\\crate-nc-v1.fbm\\...`.",
+          "  49: - **The PNG spec** (chunk layout and CRC32). Same situation: verified with stdlib `zlib.crc32` on the strength of prior knowledge.",
+          "  50: - **How `FileId`, the footer id and the 16-byte trailer are computed**, which would be needed to verify them. Not in the file, so they remain unverified.",
+          "  51: - **The manifest with declared sha256 values** that the task refers to. It doesn't exist in this file.",
+          "  56: 1. **The task's description doesn't match the file.** It talks about a package with internal files, documentation, a manifest with declared hashes, and possibly a bundled reader. This file is a single",
+          "  65: 5. **The mesh has no byte-exact form inside the file.** It is stored as zlib-compressed arrays, so any \"extracted mesh\" is a conversion, and its hash depends on my choices of OBJ format and float form",
+          "  74: None found: every structural, adler32 and CRC check passed. I attempted no repairs, and no copies were needed because the original was only ever opened for reading."
+        ],
+        "program stdout": [
+          "   1: {\"duration_api_ms\":271460,\"stop_reason\":\"end_turn\",\"session_id\":\"4530e41f-539b-44b0-854a-2db99f16ef58\",\"total_cost_usd\":1.161977,\"usage\":{\"input_tokens\":42,\"cache_creation_input_tokens\":63007,\"cache_r"
+        ]
+      },
+      "file_declares": "none (no checksums of any kind)"
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "extracted/wooden_crate_01.obj"
+        ],
+        "texture": [
+          "extracted/crate_diffuse.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "texture": "PASS via extracted/crate_diffuse.png[T1]"
+      }
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_reason": "graded artifact(s) exact, failing: C5",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "texture:crate_diffuse.png"
+    ],
+    "bytes": 9460,
+    "any_declared": 0.0,
+    "cryptographic": 0.0,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [
+        "texture:crate_diffuse.png"
+      ],
+      "bytes": 9460,
+      "any_declared": 0.0,
+      "cryptographic": 0.0,
+      "kinds": []
+    }
+  }
+}

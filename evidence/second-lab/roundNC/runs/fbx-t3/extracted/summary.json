@@ -1,0 +1,9 @@
+{
+ "sha256": {
+  "wooden_crate_01.obj": "2cd3e0284fca6706ccd425eff8b38709ce55c6071765a4f8c0177dc47c6b6690",
+  "wooden_crate_01.vertices.f64le": "248680133659898f248f8f19a241f080a1b6faa05aa9acc7e11367b071f2adbc",
+  "crate_diffuse.png": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+  "crate_wood.mtl": "9414da65d763d1be03a2b4fb3fbaeddc4369cfdad9f77047b01cc583dd74b107"
+ },
+ "checks_failed": 0
+}

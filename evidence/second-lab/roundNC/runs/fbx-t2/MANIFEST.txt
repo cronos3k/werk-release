@@ -1,0 +1,24 @@
+roundNC trial fbx-t2, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2347 c82c5ff6cf7a8f545b91b48aee6d83f11afbb71e5b6a51f7f8d5424c93297988 PROMPT.txt
+    10443 1d7a55e4f3891adc60f1fcf2f8b4c9784a222e38bf286be8c8faa61b1dbcd808 REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     7599 3f4c9ea5c586c86c1aafc8f2b353349c571c5c57053a0be1af3b19ab0707c226 _agent-stdout.txt
+       28 043ec2ce9e2f6414fa24b68e548acef3763936c1b314ab5223e123ae69853fdc _harness/TIMING.txt
+       58 9414da65d763d1be03a2b4fb3fbaeddc4369cfdad9f77047b01cc583dd74b107 out/wooden_crate_01.mtl
+   645168 b4107ecd8636461e0012c1a3221281b030f55fbb1ef253ba402ec28fb203ce2d out/wooden_crate_01.obj
+    20116 cd168d7144a1cd5d1dc66a56ff5a10ee41778f21a570715b9649aec52835e663 tools/crate_reader.py
+      350 21689ce2f46fae75b7db366dc39b7ede79d58dfef2e5d1f721a0ed51c11eb77a tools/peek.py
+     1087 502d59cb5f04b787d48a72b1bf2376d9bc8e837387b2eb35086794cc9412568b tools/probe.py
+      257 59f02b06f81dfa5bc683677d1b76dbc9aadb329825b61c0e88a5d039e99aa435 tools/strings.py
+     1875 439ef8b8c594661dd11ce92b760ab4393eff3ba7c29fc7dd046b028633793da6 tools/walk.py
+
+SKIPPED (size B, sha256, path, reason)
+   248412 ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef crate-nc-v1.fbx  [byte copy of fixture file crate-nc-v1.fbx]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f out/crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

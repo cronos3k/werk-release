@@ -1,0 +1,113 @@
+{
+  "format": "usdz",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\nc-grading\\scratch-literal\\usdz-t1",
+  "exit_code": 1,
+  "rows": [
+    {
+      "rel": "crate_probe.py",
+      "sha256": "786f93750d8cf3dfe42cf7d9014406120e15ef4b8f28486091086472af6859c9",
+      "size": 2213,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "FAIL",
+      "why": "exit 1 in clean dir"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "   8: | List the node graph with meanings | **No** |",
+          "  10: | Extract the primary mesh | **No** |",
+          "  11: | Extract one texture | **No** |",
+          "  17: its compressed token and integer encodings, PNG, CRC32). Hard constraint 4 says",
+          "  33: Nothing. No mesh or texture was written to disk, so I have no declared or",
+          "  41: `textures/crate_diffuse.png`.",
+          "  48:    `textures/crate_diffuse.png`, the magic `PXR-USDC`, and the PNG `IEND` marker.",
+          "  51: 3. Text runs of 16 or more characters. The only meaningful strings were the two",
+          "  55:    partly readable (compressed) token list, and a PNG header. Not found:",
+          "  57: 5. Reading the token fragments. The word `documentation` appears only as a scene",
+          "  71: 3. **Scene file layout (`.usdc`, magic `PXR-USDC`, version bytes `00 09 00`):**",
+          "  73:    * the meaning of the `TOKENS`, `STRINGS`, `FIELDS`, `FIELDSETS`, `PATHS` and",
+          "  77:    * how paths and specs combine into the node graph",
+          "  79:    Without this I cannot list the node graph or find the mesh's points and indices.",
+          "  80: 4. **The meaning of node and attribute names** (for example `Mesh`, `points`,",
+          "  81:    `faceVertexIndices`, `UsdPreviewSurface`, `primvars`), to write \"meanings\"",
+          "  83: 5. **Image layout and compression** (`textures/crate_diffuse.png`), only if the",
+          "  84:    texture had to be decoded or checked internally. Copying its bytes out would",
+          " 118: * The PNG data ends with an intact `IEND` marker."
+        ],
+        "program stdout": []
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   9: | Verify every declared hash | **Not applicable / No.** No hashes are declared anywhere I could find (no manifest, no sha256 strings). |",
+          "  15: no README, no manifest, no hash list and no bundled reader. Every way to open it",
+          "  17: its compressed token and integer encodings, PNG, CRC32). Hard constraint 4 says",
+          "  22: it is read-only. It prints the file size, the sha256 of the whole file, a list of",
+          "  23: printable text runs, and a search for manifest, hash, spec or reader markers. It",
+          "  27: * sha256 of the whole input file (computed; nothing to compare it to):",
+          "  33: Nothing. No mesh or texture was written to disk, so I have no declared or",
+          "  34: computed per-file sha256 values to report.",
+          "  63: ## 5. What I needed from outside the file and could not get",
+          "  68:    hold member lengths, offsets and checksums, and in what byte order.",
+          "  69: 2. **Checksum algorithm:** the container appears to store a 32-bit checksum per",
+          "  79:    Without this I cannot list the node graph or find the mesh's points and indices.",
+          "  86: 6. **A manifest of declared sha256 values.** The task assumes one exists, and",
+          "  92:   declared hashes, documentation and a bundled reader. None of them exist in this",
+          "  96:   signatures, `IHDR`, `IDAT`, `tEXt` and the USD section names because I",
+          " 104:   helper scripts into `tools/` (`peek.py`, `scan.py`, `find.py`). I also could not",
+          " 108:   quick to write from memory (stored ZIP members, CRC32, the crate table of",
+          " 121: I could not check the stored checksums, for the reasons in section 5."
+        ],
+        "program stdout": []
+      },
+      "file_declares": "zip CRC-32 per entry (a real, checkable declaration, and the only one)"
+    },
+    "C4": {
+      "result": "FAIL",
+      "candidates": {
+        "mesh": [],
+        "texture": []
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "texture": "FAIL: no matching artifact"
+      }
+    }
+  },
+  "verdict": "FAIL",
+  "verdict_reason": "program does not run clean",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [],
+    "bytes": 0,
+    "any_declared": null,
+    "cryptographic": null,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [],
+      "bytes": 0,
+      "any_declared": null,
+      "cryptographic": null,
+      "kinds": []
+    }
+  }
+}

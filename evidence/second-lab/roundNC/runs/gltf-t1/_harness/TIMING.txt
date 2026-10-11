@@ -1,0 +1,1 @@
+gltf-t1 rc=0 elapsed=146.0 s

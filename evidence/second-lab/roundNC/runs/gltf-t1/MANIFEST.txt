@@ -1,0 +1,26 @@
+roundNC trial gltf-t1, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2402 3bfec5fe499f3db6b6bc1c9fc6841dd303148f924bfe934e2620a24230d244a9 PROMPT.txt
+     8876 95852c694c3a86a5a23553aa7a6259448bad254cf64cea8a93d7c68a3a6f129b REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     6895 0aac17a12bc2520d17913a7d6a00cfdfbf68f8760fb3096f241a25745734e9b7 _agent-stdout.txt
+       29 808ab6094b1ca5135889c6e215bc91a0a097af6b0e55fec2f6b43564df469402 _harness/TIMING.txt
+   644404 dfb015e22c787af0e56502df7df9758e4a74a0bf3dd3c85256b0d54ca0a851e0 extracted/primary_mesh.obj
+    44772 40ab5b444be0a40e893e730d5cc00976a4d3d9c754c18159a5c12c5fbee3f1be extracted/primary_mesh_NORMAL.raw
+    44772 483d874cf4231c9596ae3bee3783b6e4c23931460f1915b5234f7912d11bc241 extracted/primary_mesh_POSITION.raw
+    29848 99229d659e6ecf6a7e67041c5d37a9aab2876b180d5322dd2efbe0d784c95cd9 extracted/primary_mesh_TEXCOORD_0.raw
+    33048 521568faf4fbb11a6d78ab0703773fc794cb7d5b5e2279e8ef691bb8bb673c35 extracted/primary_mesh_indices.raw
+    13089 39223252fe1b6fa190fe51194d55b3b8210166576e0d06f456a3bc296442381e tools/crate_reader.py
+      604 fa5a1c3376c924dfb9c745b4de15e17e4a06e245cd87055b9732dea7eefa4ca8 tools/probe.py
+
+SKIPPED (size B, sha256, path, reason)
+   191040 02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab crate-nc-v1.bin  [byte copy of fixture file crate-nc-v1.bin]
+     4122 3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69 crate-nc-v1.gltf  [byte copy of fixture file crate-nc-v1.gltf]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f extracted/crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

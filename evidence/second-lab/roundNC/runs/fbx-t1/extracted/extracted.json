@@ -1,0 +1,193 @@
+{
+ "source": "D:/gauntlet-sealed/nc-20261011-1543/fbx-t1/crate-nc-v1.fbx",
+ "source_sha256": "ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef",
+ "files": [
+  {
+   "file": "D:/gauntlet-sealed/nc-20261011-1543/fbx-t1/extracted\\wooden_crate_01.obj",
+   "kind": "mesh (Wavefront OBJ, converted)",
+   "sha256": "838a683c8611f219ad2cc9be7f86683a9376380ae8433021e0660db13453b382",
+   "source_sha256": "248680133659898f248f8f19a241f080a1b6faa05aa9acc7e11367b071f2adbc",
+   "declared_sha256": null
+  },
+  {
+   "file": "D:/gauntlet-sealed/nc-20261011-1543/fbx-t1/extracted\\crate_diffuse.png",
+   "kind": "texture 256x256 PNG (verbatim bytes)",
+   "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+   "declared_sha256": null
+  }
+ ],
+ "checks": [
+  {
+   "check": "magic is b'Kaydara FBX Binary  \\x00\\x1a\\x00'",
+   "ok": true
+  },
+  {
+   "check": "all 11 top-level nodes, nested end offsets and property lengths consistent",
+   "ok": true
+  },
+  {
+   "check": "24 arrays decoded to declared element counts (21 zlib-compressed, adler32 verified)",
+   "ok": true
+  },
+  {
+   "check": "footer padding (6 bytes) is zero",
+   "ok": true
+  },
+  {
+   "check": "footer version 7400 equals header version 7400",
+   "ok": true
+  },
+  {
+   "check": "footer: 120 zero bytes then 16-byte trailer, ending exactly at EOF",
+   "ok": true
+  },
+  {
+   "check": "FBXHeaderExtension/FBXVersion equals header version",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 38256780 -> 0",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 412733650 -> 0",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 889579962 -> 0",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 377604228 -> 38256780",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 634608277 -> 412733650",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 489389492 -> 889579962",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 445651283 -> 38256780",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 445651283 -> 412733650",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 445651283 -> 889579962",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 239636287 -> 445651283",
+   "ok": true
+  },
+  {
+   "check": "connection endpoints exist: 46979567 -> 239636287",
+   "ok": true
+  },
+  {
+   "check": "Definitions declares 3 Geometry, found 3",
+   "ok": true
+  },
+  {
+   "check": "Definitions declares 3 Model, found 3",
+   "ok": true
+  },
+  {
+   "check": "Definitions declares 1 Material, found 1",
+   "ok": true
+  },
+  {
+   "check": "Definitions declares 1 Texture, found 1",
+   "ok": true
+  },
+  {
+   "check": "Definitions declares 1 Video, found 1",
+   "ok": true
+  },
+  {
+   "check": "Cube.005: vertex array is xyz triples",
+   "ok": true
+  },
+  {
+   "check": "Cube.005: every face index in range [0,596) after ~ on negatives",
+   "ok": true
+  },
+  {
+   "check": "Cube.005: last corner closes a polygon",
+   "ok": true
+  },
+  {
+   "check": "Cube.005: NormalsIndex/UVIndex have one entry per corner",
+   "ok": true
+  },
+  {
+   "check": "Cube.005: normal/uv indices in range",
+   "ok": true
+  },
+  {
+   "check": "Cube.020: vertex array is xyz triples",
+   "ok": true
+  },
+  {
+   "check": "Cube.020: every face index in range [0,3706) after ~ on negatives",
+   "ok": true
+  },
+  {
+   "check": "Cube.020: last corner closes a polygon",
+   "ok": true
+  },
+  {
+   "check": "Cube.020: NormalsIndex/UVIndex have one entry per corner",
+   "ok": true
+  },
+  {
+   "check": "Cube.020: normal/uv indices in range",
+   "ok": true
+  },
+  {
+   "check": "Cube.001: vertex array is xyz triples",
+   "ok": true
+  },
+  {
+   "check": "Cube.001: every face index in range [0,384) after ~ on negatives",
+   "ok": true
+  },
+  {
+   "check": "Cube.001: last corner closes a polygon",
+   "ok": true
+  },
+  {
+   "check": "Cube.001: NormalsIndex/UVIndex have one entry per corner",
+   "ok": true
+  },
+  {
+   "check": "Cube.001: normal/uv indices in range",
+   "ok": true
+  },
+  {
+   "check": "video \"crate_diffuse.png\": PNG signature",
+   "ok": true
+  },
+  {
+   "check": "video \"crate_diffuse.png\": chunk IHDR crc32",
+   "ok": true
+  },
+  {
+   "check": "video \"crate_diffuse.png\": chunk IDAT crc32",
+   "ok": true
+  },
+  {
+   "check": "video \"crate_diffuse.png\": chunk IEND crc32",
+   "ok": true
+  },
+  {
+   "check": "video \"crate_diffuse.png\": chunks end exactly at IEND/EOF",
+   "ok": true
+  }
+ ]
+}

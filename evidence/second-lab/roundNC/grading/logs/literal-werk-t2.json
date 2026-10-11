@@ -1,0 +1,132 @@
+{
+  "format": "werk",
+  "payload": "sound",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\nc-grading\\scratch-literal\\werk-t2",
+  "exit_code": 2,
+  "rows": [
+    {
+      "rel": "werkread.py",
+      "sha256": "43fa0f7adde5dc2a9b2fc6ed6e1b961b39dde2a2e76f0fb7c90935e68377ee72",
+      "size": 32175,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "FAIL",
+      "why": "exit 2 in clean dir"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "  10: | list the node graph with meanings | yes. 14 nodes listed with type meaning, liveness, active version, epistemic stamp, producer, work note, files, roles and edges |",
+          "  13: | extract primary mesh + one sound | yes, both written to `out/` |",
+          "  20: | slot | node | resolved file (rule) | bytes | declared sha256 | computed sha256 of file on disk |",
+          "  22: | `primary.mesh` | `geom-game` (`core.geom.game`) | `geometry/game.glb` (\u00a72.1 rule 2: single file) \u2192 `out/game.glb` | 16736 | `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce` | `eee8",
+          "  23: | `primary.sound` | `audio-crate-impact-hard-surface` (`core.audio.effect`) | `audio/sfx/crate-impact-hard-surface.wav` (\u00a72.1 rule 1: `payload_file`; it's also the `best` role) \u2192 `out/crate-impact-har",
+          "  26: - **GLB**: glTF 2, length field equals file length. One triangle primitive (mode 4) with attributes POSITION, NORMAL and COLOR_0: 272 vertices, 408 triangles. POSITION min/max is (\u22120.5,\u22120.5,\u22120.5)\u2026(0.5",
+          "  27: - **WAV**: PCM, 1 channel, 16000 Hz, 16-bit, 8800 frames = 0.55 s. This agrees with the descriptor's `audio_format` and with `refined.duration: 0.55`. I did **not** take `files[0]`, which is the JSON ",
+          "  31: **I never opened, read, ran, compiled or ported any of `loaders/werk_read.py`, `.rs` or `.c`.** Their bytes were touched only as opaque data: listed in the zip directory, read to compute their sha256 ",
+          "  46: 12. `audio/sfx/crate-impact-hard-surface.json`",
+          "  49: I hashed but didn't read: `LICENSE`, all of `spec/schemas/*.json`, `spec/facets.json`, `spec/examples/restposes.example.hex.txt`, `semantics/semantics.json`, `materials/wood.json`, `provenance/provena",
+          "  56: - **The nodes this mini package was cut from**: `geometry/source.glb`, `audio/package.json` and `x/splat-foley/views/view_0[0-5].png`. Without them the `input_hash` of `geom-game`, `audio-crate-impact",
+          "  69: 4. **README.txt contradicts the package.** It says \"every one of the twenty sound effects\" (there is one effect node with 4 WAVs), mentions rendered views (absent), and lists \"rest poses\" as **deliber",
+          "  70: 5. **`spec/README.md` points at many files not in this package**: `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `examples/signature.example.txt`, `MANIFEST.example.json`, the gs",
+          "  71: 6. **Dangling edges, and no rule for an edge to an *absent* node.** `geom-game \u2192 geom-source` (enhances), `audio-\u2026 \u2192 audio-package` (enhances) and `evidence-segments \u2192 evidence-views` (**requires**) a",
+          "  72: 7. **`evidence-segments.meta` misdescribes its own payload**: `count: 10` and ten `images[]` entries, but `files[]` holds only `seg_00.png`. This isn't a hash error, since meta isn't hash-declared, bu",
+          "  80: **No byte-level damage**: every CRC, size and sha256 is intact, and the signature is valid. So there was nothing to repair and I attempted no repair. I did find one **semantic integrity problem** that",
+          "  82: **The `rest-poses` node (`core.pose.rest`, `poses/rest.wkrp`) does not appear to describe this crate.**",
+          "  83: - Its declared `input_hash` `60e08ed1\u2026` matches **none** of 8 plausible constructions over its declared inputs (`geometry/game.glb`, `physics/bounds.json`). I tried both orders, raw vs hex digests, an",
+          "  86: - ENVELOPE.layout.txt \u00a73 says `input_hash` is \"mandatory for derived nodes\" in the envelope header and must agree with the manifest; this header has none.",
+          "  87: - The node also looks appended: different JSON key order from every other node, `created` 09:00 while everything else is 10:00, and `poses/` is not in `container.entry_order`.",
+          "  89: Because the signature is valid **over the current manifest**, this isn't post-signing tampering: whoever holds the dev key signed it this way. (The key is a publicly derived dev key, per README and SI",
+          " 105: - `out/game.glb`, `out/crate-impact-hard-surface.wav`: the extracted payloads."
+        ],
+        "program stdout": [
+          "   6: Opens the container (store-mode zip, MINI-SPECS \u00a75), lists the node graph with",
+          "   7: meanings, verifies every declared hash (files[].sha256/size, license.sha256,",
+          "  10: and extracts the primary mesh and primary sound (SPEC \u00a72 `primary`, \u00a72.1"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   9: | open the container | yes. Store-mode zip, 36 entries, every entry's CRC-32 checked, zip64 detection done (not zip64) |",
+          "  11: | verify every declared hash | yes. 34/34 `files[].sha256`+`size` match; `license.sha256` matches; `spec_sha256` (over 17 spec files) matches; 1 of 5 `input_hash` values is checkable and matches (`bou",
+          "  12: | signature | **`signed-and-valid`**. Ed25519 implemented from MINI-SPECS \u00a712 and self-tested against RFC 8032 vector 1 and the \u00a712.1 worked example before use |",
+          "  14: | extracted bytes hash to the manifest's values | **yes, both match** |",
+          "  20: | slot | node | resolved file (rule) | bytes | declared sha256 | computed sha256 of file on disk |",
+          "  31: **I never opened, read, ran, compiled or ported any of `loaders/werk_read.py`, `.rs` or `.c`.** Their bytes were touched only as opaque data: listed in the zip directory, read to compute their sha256 ",
+          "  36: 2. The zip central directory (entry names, sizes, offsets, CRCs), via Python `zipfile`.",
+          "  40: 6. `spec/SPEC.md`: first the heading list, then lines 1\u2013490 (\u00a70\u2013\u00a72.1, start of \u00a73), then lines 1142\u20131461 (\u00a75 versioning, \u00a76 signatures, \u00a77 loaders, \u00a79, \u00a710 reader checklist, \u00a710.1/\u00a710.2).",
+          "  42: 8. `SIGNATURE.json`",
+          "  49: I hashed but didn't read: `LICENSE`, all of `spec/schemas/*.json`, `spec/facets.json`, `spec/examples/restposes.example.hex.txt`, `semantics/semantics.json`, `materials/wood.json`, `provenance/provena",
+          "  51: **What unblocked me:** `MANIFEST.json` plus **`spec/MINI-SPECS.md`**. MINI-SPECS was the single most valuable file: it gives the exact `input_hash` construction with a worked example from this package",
+          "  53: ## 5. What I wanted from outside the file and could not get",
+          "  56: - **The nodes this mini package was cut from**: `geometry/source.glb`, `audio/package.json` and `x/splat-foley/views/view_0[0-5].png`. Without them the `input_hash` of `geom-game`, `audio-crate-impact",
+          "  58: - **A JSON Schema validator.** Python's stdlib has none, so I didn't validate `MANIFEST.json` or the JSON payloads against their schemas. My reader is a \u00a710.0 **bootstrap-class** reader in that respec",
+          "  62:   - Python stdlib `hashlib`/`zlib.crc32` instead of implementing SHA-256/512 and CRC-32 by hand. MINI-SPECS explicitly endorses library use for zip and hashes, and its test vectors are what I'd check ",
+          "  70: 5. **`spec/README.md` points at many files not in this package**: `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `examples/signature.example.txt`, `MANIFEST.example.json`, the gs",
+          "  71: 6. **Dangling edges, and no rule for an edge to an *absent* node.** `geom-game \u2192 geom-source` (enhances), `audio-\u2026 \u2192 audio-package` (enhances) and `evidence-segments \u2192 evidence-views` (**requires**) a",
+          "  72: 7. **`evidence-segments.meta` misdescribes its own payload**: `count: 10` and ten `images[]` entries, but `files[]` holds only `seg_00.png`. This isn't a hash error, since meta isn't hash-declared, bu",
+          "  73: 8. **`input_hash` that can't be checked.** SPEC/MINI-SPECS define how to compute it but don't say what a reader should report when the declared `input_files` aren't in the package. I report `info: inp",
+          "  75: 10. **Ed25519 had two acceptable verification equations** (cofactor-8 vs cofactorless). I used the cofactor form. The rule \"MUST NOT accept a signature that fails both\" is clear, so this was only a mo",
+          "  80: **No byte-level damage**: every CRC, size and sha256 is intact, and the signature is valid. So there was nothing to repair and I attempted no repair. I did find one **semantic integrity problem** that",
+          "  83: - Its declared `input_hash` `60e08ed1\u2026` matches **none** of 8 plausible constructions over its declared inputs (`geometry/game.glb`, `physics/bounds.json`). I tried both orders, raw vs hex digests, an",
+          "  84: - Its bytes are **identical to `spec/examples/restposes.example.wkrp`** (same sha256 `6c2c44d5\u2026`). The envelope header inside says `producer: {tool: \"werk-example\"}`, while the manifest claims `produc",
+          "  86: - ENVELOPE.layout.txt \u00a73 says `input_hash` is \"mandatory for derived nodes\" in the envelope header and must agree with the manifest; this header has none.",
+          "  89: Because the signature is valid **over the current manifest**, this isn't post-signing tampering: whoever holds the dev key signed it this way. (The key is a publicly derived dev key, per README and SI",
+          "  95: - reading README, spec/README, MANIFEST, SPEC, MINI-SPECS, SIGNATURE, conventions-map and the layouts (about 1\u20132 min of wall time; the tool calls were fast, but this was the bulk of the reasoning);"
+        ],
+        "program stdout": [
+          "   7: meanings, verifies every declared hash (files[].sha256/size, license.sha256,",
+          "   8: spec_sha256, input_hash where inputs are present, zip CRC-32), verifies the",
+          "   9: Ed25519 signature chain (MINI-SPECS \u00a712, SPEC \u00a76), parses the WKRP envelope,"
+        ]
+      },
+      "file_declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain"
+    },
+    "C4": {
+      "result": "FAIL",
+      "candidates": {
+        "mesh": [],
+        "sound": []
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "sound": "FAIL: no matching artifact"
+      }
+    }
+  },
+  "verdict": "FAIL",
+  "verdict_reason": "program does not run clean",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [],
+    "bytes": 0,
+    "any_declared": null,
+    "cryptographic": null,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [],
+      "bytes": 0,
+      "any_declared": null,
+      "cryptographic": null,
+      "kinds": []
+    }
+  }
+}

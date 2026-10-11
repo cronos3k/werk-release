@@ -1,0 +1,10 @@
+f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837  /d/werk/werk/gauntlet/roundOW/mini-v1.werk
+ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef  /d/werk/werk/gauntlet/roundNC/crate-nc-v1.fbx
+3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69  /d/werk/werk/gauntlet/roundNC/crate-nc-v1.gltf
+02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab  /d/werk/werk/gauntlet/roundNC/crate-nc-v1.bin
+af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f  /d/werk/werk/gauntlet/roundNC/crate_diffuse.png
+14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7  /d/werk/werk/gauntlet/roundNC/crate-nc-v1.usdz
+397aba804e83938068eb2967b32f961253a031cdecb694e8b8aa4129760119d4  /d/werk/werk/gauntlet/roundNC/prompts/texture/PROMPT-werk.txt
+c82c5ff6cf7a8f545b91b48aee6d83f11afbb71e5b6a51f7f8d5424c93297988  /d/werk/werk/gauntlet/roundNC/prompts/texture/PROMPT-fbx.txt
+3bfec5fe499f3db6b6bc1c9fc6841dd303148f924bfe934e2620a24230d244a9  /d/werk/werk/gauntlet/roundNC/prompts/texture/PROMPT-gltf.txt
+b68cbea04eb7d52ddd23f20949b6ff10dcc26383f4b83a9d02e1f4cc8984ec93  /d/werk/werk/gauntlet/roundNC/prompts/texture/PROMPT-usdz.txt

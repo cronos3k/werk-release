@@ -1,0 +1,159 @@
+== CONTENTS ==
+asset: version=2.0 generator='Khronos glTF Blender I/O v4.2.60'  (producer tool + format version string)
+default scene: 0
+scene[0] 'Scene'  -- root of the node graph
+  node[0] 'wooden_crate_01_lid' -> mesh[0] 'Cube.005'  (object placed in scene; transform: none/identity; children: none)
+    primitive[0]: material=0 indices=accessor[3] mode=absent (index count divisible by 3 -> treated as triangles)
+      POSITION   accessor[0] VEC3 x 622
+      NORMAL     accessor[1] VEC3 x 622
+      TEXCOORD_0 accessor[2] VEC2 x 622
+  node[1] 'wooden_crate_01' -> mesh[1] 'Cube.020'  (object placed in scene; transform: none/identity; children: none)
+    primitive[0]: material=0 indices=accessor[7] mode=absent (index count divisible by 3 -> treated as triangles)
+      POSITION   accessor[4] VEC3 x 3731
+      NORMAL     accessor[5] VEC3 x 3731
+      TEXCOORD_0 accessor[6] VEC2 x 3731
+  node[2] 'wooden_crate_01_latch' -> mesh[2] 'Cube.001'  (object placed in scene; transform: none/identity; children: none)
+    primitive[0]: material=0 indices=accessor[11] mode=absent (index count divisible by 3 -> treated as triangles)
+      POSITION   accessor[8] VEC3 x 384
+      NORMAL     accessor[9] VEC3 x 384
+      TEXCOORD_0 accessor[10] VEC2 x 384
+material[0] 'crate_wood': doubleSided=True baseColorTexture=texture[0] metallic=0 roughness=0.5
+texture[0]: image[0] via sampler[0]  (texture = image + sampling settings)
+image[0] 'crate_diffuse': uri=crate_diffuse.png mimeType=image/png
+sampler[0]: magFilter=9729 minFilter=9987  (opaque filter code; meaning not stated anywhere in the package)
+buffer[0]: uri=crate-nc-v1.bin byteLength=191040  (raw binary blob)
+bufferView[0]: buffer[0] offset=0 length=7464 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[1]: buffer[0] offset=7464 length=7464 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[2]: buffer[0] offset=14928 length=4976 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[3]: buffer[0] offset=19904 length=4152 target=34963 -> index data (inferred: used only by primitive "indices" accessors)
+bufferView[4]: buffer[0] offset=24056 length=44772 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[5]: buffer[0] offset=68828 length=44772 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[6]: buffer[0] offset=113600 length=29848 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[7]: buffer[0] offset=143448 length=33048 target=34963 -> index data (inferred: used only by primitive "indices" accessors)
+bufferView[8]: buffer[0] offset=176496 length=4608 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[9]: buffer[0] offset=181104 length=4608 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[10]: buffer[0] offset=185712 length=3072 target=34962 -> vertex-attribute data (inferred: used only by POSITION/NORMAL/TEXCOORD_0 accessors)
+bufferView[11]: buffer[0] offset=188784 length=2256 target=34963 -> index data (inferred: used only by primitive "indices" accessors)
+accessor[0]: bufferView[0] VEC3 x 622, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[1]: bufferView[1] VEC3 x 622, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[2]: bufferView[2] VEC2 x 622, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[3]: bufferView[3] SCALAR x 2076, componentType=5123 -> uint16 little-endian (inferred: 2-byte, all values < vertex count)
+accessor[4]: bufferView[4] VEC3 x 3731, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[5]: bufferView[5] VEC3 x 3731, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[6]: bufferView[6] VEC2 x 3731, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[7]: bufferView[7] SCALAR x 16524, componentType=5123 -> uint16 little-endian (inferred: 2-byte, all values < vertex count)
+accessor[8]: bufferView[8] VEC3 x 384, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[9]: bufferView[9] VEC3 x 384, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[10]: bufferView[10] VEC2 x 384, componentType=5126 -> float32 little-endian (inferred: 4-byte, decodes to declared min/max)
+accessor[11]: bufferView[11] SCALAR x 1128, componentType=5123 -> uint16 little-endian (inferred: 2-byte, all values < vertex count)
+
+== INTEGRITY ==
+declared hashes/checksums found in manifest: 0 []
+(nothing to compare against; computed sha256 values are recorded below)
+  3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69  crate-nc-v1.gltf
+  02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab  crate-nc-v1.bin
+  af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f  crate_diffuse.png
+structural checks:
+  [PASS] buffer[0] file size 191040 == declared byteLength 191040
+  [PASS] bufferView[0] within buffer
+  [PASS] bufferView[1] within buffer
+  [PASS] bufferView[2] within buffer
+  [PASS] bufferView[3] within buffer
+  [PASS] bufferView[4] within buffer
+  [PASS] bufferView[5] within buffer
+  [PASS] bufferView[6] within buffer
+  [PASS] bufferView[7] within buffer
+  [PASS] bufferView[8] within buffer
+  [PASS] bufferView[9] within buffer
+  [PASS] bufferView[10] within buffer
+  [PASS] bufferView[11] within buffer
+  [PASS] bufferViews do not overlap
+  [INFO] bufferViews tile buffer contiguously from 0 to 191040, gaps=none
+  [PASS] accessor[0] target 34962 consistent with attribute role
+  [PASS] accessor[1] target 34962 consistent with attribute role
+  [PASS] accessor[2] target 34962 consistent with attribute role
+  [PASS] accessor[3] target 34963 consistent with index role
+  [PASS] accessor[4] target 34962 consistent with attribute role
+  [PASS] accessor[5] target 34962 consistent with attribute role
+  [PASS] accessor[6] target 34962 consistent with attribute role
+  [PASS] accessor[7] target 34963 consistent with index role
+  [PASS] accessor[8] target 34962 consistent with attribute role
+  [PASS] accessor[9] target 34962 consistent with attribute role
+  [PASS] accessor[10] target 34962 consistent with attribute role
+  [PASS] accessor[11] target 34963 consistent with index role
+  [PASS] accessor[0] componentType 5126 has a hypothesis
+  [PASS] accessor[0] POSITION: count 622 x 12 bytes == bufferView length 7464
+  [PASS] accessor[0] POSITION count matches POSITION count 622
+  [PASS] accessor[0] POSITION all values finite
+  [PASS] accessor[0] POSITION decoded min/max == declared min/max (confirms float32 LE)
+  [PASS] accessor[1] componentType 5126 has a hypothesis
+  [PASS] accessor[1] NORMAL: count 622 x 12 bytes == bufferView length 7464
+  [PASS] accessor[1] NORMAL count matches POSITION count 622
+  [PASS] accessor[1] NORMAL all values finite
+  [PASS] accessor[1] NORMAL vectors unit length (max dev 1.02e-07)
+  [PASS] accessor[2] componentType 5126 has a hypothesis
+  [PASS] accessor[2] TEXCOORD_0: count 622 x 8 bytes == bufferView length 4976
+  [PASS] accessor[2] TEXCOORD_0 count matches POSITION count 622
+  [PASS] accessor[2] TEXCOORD_0 all values finite
+  [INFO] accessor[2] TEXCOORD_0 range [0.0247, 0.9949]
+  [PASS] accessor[3] componentType 5123 has a hypothesis
+  [PASS] accessor[3] indices: count 2076 x 2 bytes == bufferView length 4152
+  [PASS] mesh[0] index count 2076 divisible by 3
+  [PASS] mesh[0] indices max 621 < vertex count 622
+  [INFO] mesh[0] indices reference 622/622 vertices, min=0
+  [PASS] mesh[0] 0 degenerate triangles
+  [PASS] accessor[4] componentType 5126 has a hypothesis
+  [PASS] accessor[4] POSITION: count 3731 x 12 bytes == bufferView length 44772
+  [PASS] accessor[4] POSITION count matches POSITION count 3731
+  [PASS] accessor[4] POSITION all values finite
+  [PASS] accessor[4] POSITION decoded min/max == declared min/max (confirms float32 LE)
+  [PASS] accessor[5] componentType 5126 has a hypothesis
+  [PASS] accessor[5] NORMAL: count 3731 x 12 bytes == bufferView length 44772
+  [PASS] accessor[5] NORMAL count matches POSITION count 3731
+  [PASS] accessor[5] NORMAL all values finite
+  [PASS] accessor[5] NORMAL vectors unit length (max dev 1.24e-07)
+  [PASS] accessor[6] componentType 5126 has a hypothesis
+  [PASS] accessor[6] TEXCOORD_0: count 3731 x 8 bytes == bufferView length 29848
+  [PASS] accessor[6] TEXCOORD_0 count matches POSITION count 3731
+  [PASS] accessor[6] TEXCOORD_0 all values finite
+  [INFO] accessor[6] TEXCOORD_0 range [0.0051, 0.9949]
+  [PASS] accessor[7] componentType 5123 has a hypothesis
+  [PASS] accessor[7] indices: count 16524 x 2 bytes == bufferView length 33048
+  [PASS] mesh[1] index count 16524 divisible by 3
+  [PASS] mesh[1] indices max 3730 < vertex count 3731
+  [INFO] mesh[1] indices reference 3731/3731 vertices, min=0
+  [PASS] mesh[1] 0 degenerate triangles
+  [PASS] accessor[8] componentType 5126 has a hypothesis
+  [PASS] accessor[8] POSITION: count 384 x 12 bytes == bufferView length 4608
+  [PASS] accessor[8] POSITION count matches POSITION count 384
+  [PASS] accessor[8] POSITION all values finite
+  [PASS] accessor[8] POSITION decoded min/max == declared min/max (confirms float32 LE)
+  [PASS] accessor[9] componentType 5126 has a hypothesis
+  [PASS] accessor[9] NORMAL: count 384 x 12 bytes == bufferView length 4608
+  [PASS] accessor[9] NORMAL count matches POSITION count 384
+  [PASS] accessor[9] NORMAL all values finite
+  [PASS] accessor[9] NORMAL vectors unit length (max dev 1.06e-07)
+  [PASS] accessor[10] componentType 5126 has a hypothesis
+  [PASS] accessor[10] TEXCOORD_0: count 384 x 8 bytes == bufferView length 3072
+  [PASS] accessor[10] TEXCOORD_0 count matches POSITION count 384
+  [PASS] accessor[10] TEXCOORD_0 all values finite
+  [INFO] accessor[10] TEXCOORD_0 range [0.0488, 0.9945]
+  [PASS] accessor[11] componentType 5123 has a hypothesis
+  [PASS] accessor[11] indices: count 1128 x 2 bytes == bufferView length 2256
+  [PASS] mesh[2] index count 1128 divisible by 3
+  [PASS] mesh[2] indices max 383 < vertex count 384
+  [INFO] mesh[2] indices reference 384/384 vertices, min=0
+  [PASS] mesh[2] 0 degenerate triangles
+  [PASS] image crate_diffuse.png magic bytes contain "PNG" (mimeType image/png)
+
+== EXTRACTION ==
+primary mesh: node 'wooden_crate_01' -> mesh[1] 'Cube.020' (name-heuristic and largest-vertex-count agree: True)
+  [PASS] mesh bufferViews [4, 5, 6, 7] are contiguous in buffer (24056..176496)
+  [PASS] extracted texture byte-identical to package image
+extracted files (no declared hashes exist in the manifest to compare with):
+  f3d98f3d9c6b830577a79792b52abcf220ab310d4da789069b3cdf772ee50889  primary_mesh_wooden_crate_01.bin (152440 bytes)
+  1a76387f9c35bf7a069351c701253f806f031bd6d5a08157f8fb5aaf269c2002  primary_mesh_wooden_crate_01.obj (860249 bytes)
+  af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f  crate_diffuse.png (9460 bytes)
+  raw mesh slice = buffer bytes [24056, 176496) of crate-nc-v1.bin
+
+OVERALL: ALL CHECKS PASSED

@@ -1,0 +1,63 @@
+roundNC trial werk-t2, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2334 397aba804e83938068eb2967b32f961253a031cdecb694e8b8aa4129760119d4 PROMPT.txt
+    13322 69cea8c0d03640ab7e06d607d840bc9565695848ead0959cab4eccf0510cfe2d REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     7414 1390151c3e8c15e853c232ae8a21aa5245c20ef1c3512f6df6a87301a9b0e11e _agent-stdout.txt
+    32175 43fa0f7adde5dc2a9b2fc6ed6e1b961b39dde2a2e76f0fb7c90935e68377ee72 werkread.py
+       29 a215b293e6b1c0496bc958bf130d596ef0263c8e18a1b6bc059f20b28208ae79 _harness/TIMING.txt
+    17644 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e out/crate-impact-hard-surface.wav
+    16736 eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce out/game.glb
+      305 6949fbc9967f4f6d732343460c83f7489b61a93ff8d58969fc134abf5b42f83c tools/dump.py
+      244 22b0306e67f4817380f21c6525d8441c93f2e02a3d461b5812396ed8cfa4ae93 tools/ls.py
+      370 a4dbe737951dc65e5119cfa250352e685da4a67787a45d86cae53cb7c0163486 tools/peek.py
+      917 bc140d0e016ef5af4f4ba3360a7246a6fee9969167253a7f645a9e1605a2d38f tools/probe_restposes.py
+
+SKIPPED (size B, sha256, path, reason)
+   960061 f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837 mini-v1.werk  [byte copy of fixture file mini-v1.werk]
+     2132 5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53 work/flat/LICENSE.txt  [agent's unpacked working copy of the fixture's entries]
+    23311 f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839 work/flat/MANIFEST.json.txt  [agent's unpacked working copy of the fixture's entries]
+     1264 f7923cb1f38316f610d8198a2797775ceeb4b07cc6b07d405ee6e8932ccc1564 work/flat/README.txt  [agent's unpacked working copy of the fixture's entries]
+      988 248879ff8cff860ff29f6b114e5be0b3669a6ae0e97ad2e0aca4ba789dcf3d80 work/flat/SIGNATURE.json.txt  [agent's unpacked working copy of the fixture's entries]
+     1783 2652a7c5bd00c82ea079290d535321193845b146b1948fe207635e52cfc38276 work/flat/audio__sfx__crate-impact-hard-surface.json.txt  [agent's unpacked working copy of the fixture's entries]
+      525 c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61 work/flat/materials__wood.json.txt  [agent's unpacked working copy of the fixture's entries]
+      654 866eb5c8c01ea7121bca325d3bd283ddf47fbba6a43cb39cd49edbbadfde6c82 work/flat/physics__bounds.json.txt  [agent's unpacked working copy of the fixture's entries]
+     4264 dcfdceb4551b3c6c6443ddc14d940d4d0c8176fabd6de2e3c7398baf3def0af0 work/flat/provenance__provenance.json.txt  [agent's unpacked working copy of the fixture's entries]
+     2589 d5be6dc01dcc5ec0e047b1552df016f498a24318bf45a6a59508125fc60ce156 work/flat/semantics__semantics.json.txt  [agent's unpacked working copy of the fixture's entries]
+    40147 8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba work/flat/spec__MINI-SPECS.md.txt  [agent's unpacked working copy of the fixture's entries]
+    10855 3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56 work/flat/spec__README.md.txt  [agent's unpacked working copy of the fixture's entries]
+   104388 eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001 work/flat/spec__SPEC.md.txt  [agent's unpacked working copy of the fixture's entries]
+     9269 1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37 work/flat/spec__conventions-map.json.txt  [agent's unpacked working copy of the fixture's entries]
+     4308 80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051 work/flat/spec__examples__restposes.example.hex.txt  [agent's unpacked working copy of the fixture's entries]
+    11978 f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1 work/flat/spec__facets.json.txt  [agent's unpacked working copy of the fixture's entries]
+    26372 b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce work/flat/spec__layouts__ENVELOPE.layout.txt  [agent's unpacked working copy of the fixture's entries]
+     5958 cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5 work/flat/spec__layouts__restposes.layout.txt  [agent's unpacked working copy of the fixture's entries]
+     8628 04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5 work/flat/spec__schemas__core.audio.effect.schema.json.txt  [agent's unpacked working copy of the fixture's entries]
+    46174 d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451 work/flat/spec__schemas__manifest.schema.json.txt  [agent's unpacked working copy of the fixture's entries]
+    11209 cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13 work/flat/spec__schemas__signature.schema.json.txt  [agent's unpacked working copy of the fixture's entries]
+     2132 5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53 work/x/LICENSE.txt  [agent's unpacked working copy of the fixture's entries]
+    23311 f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839 work/x/MANIFEST.json.txt  [agent's unpacked working copy of the fixture's entries]
+     1264 f7923cb1f38316f610d8198a2797775ceeb4b07cc6b07d405ee6e8932ccc1564 work/x/README.txt  [agent's unpacked working copy of the fixture's entries]
+      988 248879ff8cff860ff29f6b114e5be0b3669a6ae0e97ad2e0aca4ba789dcf3d80 work/x/SIGNATURE.json.txt  [agent's unpacked working copy of the fixture's entries]
+     1783 2652a7c5bd00c82ea079290d535321193845b146b1948fe207635e52cfc38276 work/x/audio/sfx/crate-impact-hard-surface.json.txt  [agent's unpacked working copy of the fixture's entries]
+      525 c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61 work/x/materials/wood.json.txt  [agent's unpacked working copy of the fixture's entries]
+      654 866eb5c8c01ea7121bca325d3bd283ddf47fbba6a43cb39cd49edbbadfde6c82 work/x/physics/bounds.json.txt  [agent's unpacked working copy of the fixture's entries]
+     4264 dcfdceb4551b3c6c6443ddc14d940d4d0c8176fabd6de2e3c7398baf3def0af0 work/x/provenance/provenance.json.txt  [agent's unpacked working copy of the fixture's entries]
+     2589 d5be6dc01dcc5ec0e047b1552df016f498a24318bf45a6a59508125fc60ce156 work/x/semantics/semantics.json.txt  [agent's unpacked working copy of the fixture's entries]
+    40147 8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba work/x/spec/MINI-SPECS.md.txt  [agent's unpacked working copy of the fixture's entries]
+    10855 3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56 work/x/spec/README.md.txt  [agent's unpacked working copy of the fixture's entries]
+   104388 eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001 work/x/spec/SPEC.md.txt  [agent's unpacked working copy of the fixture's entries]
+     9269 1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37 work/x/spec/conventions-map.json.txt  [agent's unpacked working copy of the fixture's entries]
+    11978 f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1 work/x/spec/facets.json.txt  [agent's unpacked working copy of the fixture's entries]
+     4308 80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051 work/x/spec/examples/restposes.example.hex.txt  [agent's unpacked working copy of the fixture's entries]
+    26372 b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce work/x/spec/layouts/ENVELOPE.layout.txt  [agent's unpacked working copy of the fixture's entries]
+     5958 cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5 work/x/spec/layouts/restposes.layout.txt  [agent's unpacked working copy of the fixture's entries]
+     8628 04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5 work/x/spec/schemas/core.audio.effect.schema.json.txt  [agent's unpacked working copy of the fixture's entries]
+    46174 d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451 work/x/spec/schemas/manifest.schema.json.txt  [agent's unpacked working copy of the fixture's entries]
+    11209 cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13 work/x/spec/schemas/signature.schema.json.txt  [agent's unpacked working copy of the fixture's entries]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

@@ -1,0 +1,15 @@
+roundNC trial seal-check, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     3767 0ca0c42ef11554e015d642c1969900dc27547b86210bba9b430d63436df6ea8d _agent-stdout.txt
+       30 f0043f138d1d6faddfb12ed6498ae476653f452033fc1d934483d773f4ee707e _harness/TIMING.txt
+
+SKIPPED (size B, sha256, path, reason)
+(none)
+
+NOTES
+- _agent-stdout.txt: REDACTED copy. The local Windows user name in paths was replaced with <user>; nothing else changed in content (JSON re-serialised). Original: 3766 B, sha256 7235582143d4c10068fa7b739ec68663d0d3c0edb23392f5f0841c1410fffab5. No email, organisation or account field was present.
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

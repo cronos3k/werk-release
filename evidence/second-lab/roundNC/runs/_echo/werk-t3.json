@@ -1,0 +1,9 @@
+{
+  "workspace": "D:/gauntlet-sealed/nc-20261011-1543/werk-t3",
+  "format": "werk",
+  "files_scanned": 38,
+  "values_checked": 34,
+  "allowed_self_declared": 67,
+  "leaks": [],
+  "result": "PASS"
+}

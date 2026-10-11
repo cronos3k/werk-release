@@ -1,0 +1,1 @@
+usdz-t1 rc=0 elapsed=127.9 s

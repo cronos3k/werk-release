@@ -1,0 +1,20 @@
+roundNC trial usdz-t1, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2350 b68cbea04eb7d52ddd23f20949b6ff10dcc26383f4b83a9d02e1f4cc8984ec93 PROMPT.txt
+     6794 ee477259c8c4a4d5c02b0474c184ce9f9908c9fb7c457e569483f372ded44ab8 REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     5753 702969926e42afe47389f0bfaeb3dfec23f093a17841ec8270adc858a400543f _agent-stdout.txt
+     2213 786f93750d8cf3dfe42cf7d9014406120e15ef4b8f28486091086472af6859c9 crate_probe.py
+       29 d94e6e5563afa5b5a25e6418d9b960a9d68bad7fe7510490f80e0f11dc3768cd _harness/TIMING.txt
+      243 5f53d5310a2cec8098ffc0b8f848ceafa495e6d1b60a8eeeccf1af699034337e tools/find.py
+       91 321f4f9ee102cd81c24ee85726ac3b9b9b0ef2a6d5c4fbff6d9c2b0c173145d4 tools/peek.py
+      409 f4b3c5ce1ce5ec5b9be4606af70a03339f3be536b86becb6d976c4037ffb8faf tools/scan.py
+
+SKIPPED (size B, sha256, path, reason)
+   487957 14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7 crate-nc-v1.usdz  [byte copy of fixture file crate-nc-v1.usdz]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

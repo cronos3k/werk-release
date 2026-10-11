@@ -1,0 +1,14 @@
+{
+ "werk-t1": ["C2=PASS", "C3=PASS"],
+ "werk-t2": ["C2=PASS", "C3=PASS"],
+ "werk-t3": ["C2=PASS", "C3=PASS"],
+ "fbx-t1": ["C2=PASS", "C3=PASS-honest"],
+ "fbx-t2": ["C2=PASS", "C3=PASS-honest"],
+ "fbx-t3": ["C2=PASS", "C3=PASS-honest"],
+ "gltf-t1": ["C2=PASS", "C3=PASS-honest"],
+ "gltf-t2": ["C2=PASS", "C3=PASS-honest"],
+ "gltf-t3": ["C2=PASS", "C3=PASS-honest"],
+ "usdz-t1": ["C2=FAIL", "C3=FAIL"],
+ "usdz-t2": ["C2=PASS", "C3=PASS"],
+ "usdz-t3": ["C2=PASS", "C3=FAIL"]
+}

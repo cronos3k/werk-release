@@ -1,0 +1,24 @@
+roundNC trial gltf-t2, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2402 3bfec5fe499f3db6b6bc1c9fc6841dd303148f924bfe934e2620a24230d244a9 PROMPT.txt
+     9723 a866f74ffe17226ca5ff9119a6ad2f6214290d8457575205ad4bc8f629bcc334 REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     5957 6d76a4da692e872b0ffc050cea84cd2e0f7a1d48ff76b3d1029d146446984ded _agent-stdout.txt
+       29 51a167d233d072d5bf7152a6cc7e81c6a4df53630c8a47f9e2108013424d174c _harness/TIMING.txt
+   152440 f3d98f3d9c6b830577a79792b52abcf220ab310d4da789069b3cdf772ee50889 out/primary_mesh_wooden_crate_01.bin
+   860249 1a76387f9c35bf7a069351c701253f806f031bd6d5a08157f8fb5aaf269c2002 out/primary_mesh_wooden_crate_01.obj
+    11522 5a5942650a7c3a20324c5be2fb0971351d52f53117c425e06cdb70745be12a46 out/run_log.txt
+    15680 3ab5553381ffa4c6cd84bec4aec18313c273f8722179b7080a370f2dcae56c8d tools/crate_reader.py
+      593 90c1494d9cf7e74fd198067be8f5f97154d025198687937323340242956a2f89 tools/probe.py
+
+SKIPPED (size B, sha256, path, reason)
+   191040 02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab crate-nc-v1.bin  [byte copy of fixture file crate-nc-v1.bin]
+     4122 3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69 crate-nc-v1.gltf  [byte copy of fixture file crate-nc-v1.gltf]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f out/crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

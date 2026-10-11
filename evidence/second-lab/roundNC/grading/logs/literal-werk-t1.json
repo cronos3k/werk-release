@@ -1,0 +1,133 @@
+{
+  "format": "werk",
+  "payload": "sound",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\nc-grading\\scratch-literal\\werk-t1",
+  "exit_code": 2,
+  "rows": [
+    {
+      "rel": "werk_reader.py",
+      "sha256": "98485100ea40ba384f2cdc4f7b2a9601d180528e53eac97366ee8b8761097427",
+      "size": 51315,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "FAIL",
+      "why": "exit 2 in clean dir"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "  10: | list the node graph with meanings | yes. All 14 nodes, with type, meaning, work note, producer, epistemic stamp, files with roles, and edges. Edges whose target node is not in the package are flagge",
+          "  12: | extract the primary mesh and one sound | yes. I followed `primary.*` to the node, then its active version, then the SPEC \u00a72.1 payload rules. I did not take `files[0]`. |",
+          "  19: | slot | node \u2192 resolved path (rule) | output file | size | declared sha256 | computed sha256 |",
+          "  21: | primary.mesh | `geom-game` v1 \u2192 `geometry/game.glb` (\u00a72.1 rule 2, single file) | `extracted/geometry__game.glb` | 16736 | `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce` | `eee8b3",
+          "  22: | primary.sound | `audio-crate-impact-hard-surface` v1 \u2192 `audio/sfx/crate-impact-hard-surface.wav` (\u00a72.1 rule 1, `payload_file`; the `role: best` entry agrees) | `extracted/audio__sfx__crate-impact-ha",
+          "  25: - **Mesh:** GLB version 2, 272 vertices, 408 triangles, attributes POSITION, NORMAL and COLOR_0. The vertex AABB I computed from the BIN chunk is [-0.5,-0.5,-0.5]..[0.54,0.54,0.5], which exactly match",
+          "  26: - **Sound:** RIFF/WAVE PCM, 16 kHz, mono, 16-bit, 0.550 s. That matches the descriptor's `audio_format` and `refined.duration`.",
+          "  44: 7. `spec/MINI-SPECS.md`: the heading list, then \u00a71\u2013\u00a78.1 (lines 1\u2013400), then \u00a79\u2013\u00a713 (lines 488\u2013977). I skipped the PNG filter details (\u00a78.2\u20138.3) because I never decode pixels.",
+          "  46: 9. `audio/sfx/crate-impact-hard-surface.json`",
+          "  53: My program parses the other payloads (material, semantics, provenance, the PNG) as data, but I never read them myself. I did not open any of the JSON schemas, `spec/facets.json`, `LICENSE`, or `proven",
+          "  57: - SPEC \u00a72.1's payload-resolution rules are what stop the classic mistake of extracting the sound's JSON descriptor instead of the WAV.",
+          "  68:   - `PROFILE-IMAGE.md` and `X-C2PA-EXPORT.md`",
+          "  74:   - `geometry/source.glb` (for `geom-game`)",
+          "  75:   - `audio/package.json` (for the audio effect)",
+          "  76:   - `x/splat-foley/views/view_00..05.png` (for `evidence-segments`)",
+          "  89:    - It talks about \"every one of the twenty sound effects\"; the package has one sound effect node.",
+          "  90:    - It says rest poses are \"deliberately absent\", yet the package has a `core.pose.rest` node (`poses/rest.wkrp`).",
+          "  92: 4. **spec/README.md points to many files that are not here.** These include `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `signature.example.txt`, `skeleton/*`, and the points/g",
+          "  97: 6. **Edges point at nodes that are not in the package.** `geom-game` \u2192 `geom-source`, `audio-crate-impact-hard-surface` \u2192 `audio-package`, and `evidence-segments` \u2192 `evidence-views` (a **requires** ed",
+          "  98:    - SPEC \u00a75 says a `requires` edge into a *dead* node kills the source node. It does not say what happens when the target node is *absent*.",
+          " 100:    - That is a judgement call the spec does not settle, so another reader could reasonably kill the node.",
+          " 101: 7. **`evidence-segments` meta does not match its files.** `meta.count = 10` and `meta.images` describes 10 PNGs (`seg_00`..`seg_09`), but `files[]` carries only `seg_00.png`. SPEC's \"never follow a pa",
+          " 103: 9. **The envelope `input_hash` rule is not met.** ENVELOPE \u00a73 says `input_hash` in a header is \"Mandatory for derived nodes; the manifest also carries it, and the two MUST agree\". The WKRP header in `",
+          " 104: 10. **\"Two different nodes claiming one path\" leaves a case open.** It is defined as an error, but nothing says what it means when two nodes carry byte-identical content under different paths. That ha",
+          " 106: 12. **Payload-role ambiguity, now resolved by the spec.** Without SPEC \u00a72.1, `files[0]` of the sound node is the JSON descriptor. The spec handles this well now, but I note it as the most likely trap.",
+          " 114: - The manifest says the producer was `werkc 0.1.0`, with `epistemic: measured`, \"settled orientations from a drop simulation\", and `input_files` `geometry/game.glb` + `physics/bounds.json`.",
+          " 116: - It is also physically implausible. Pose 0 is the identity rotation, but its contacts sit at y = 0, not on the crate's bottom face at y = \u22120.5 (per bounds.json and the mesh). The contact square of \u00b10",
+          " 119: What I did: reported it (`input-hash-mismatch`, `envelope-producer-disagrees`, `payload-is-spec-example`, `rest-pose-implausible`, all `warn`), kept the node listed, and did **not** attempt any repair"
+        ],
+        "program stdout": [
+          "  15:   5. walks nodes[], checks size + sha256 of every file, license.sha256,",
+          "  17:   6. dispatches by type (WKRP envelope, GLB, WAV, PNG structural checks)",
+          "  18:   7. lists the node graph with meanings",
+          "  19:   8. extracts primary.mesh and primary.sound via SPEC \u00a72.1 and re-hashes them"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   9: | open the container | yes. I wrote my own store-mode zip reader from MINI-SPECS \u00a75 (EOCD scan from the end, zip64 detection, central directory, local headers, CRC-32 per \u00a76). It found 36 entries, all",
+          "  11: | verify every declared hash | yes. All 34 `files[].sha256` and sizes match (every container entry except MANIFEST.json and SIGNATURE.json; nothing is unlisted), and so do `license.sha256` and `spec_s",
+          "  13: | extracted bytes hash to the declared values | **yes, both match** (table below). |",
+          "  19: | slot | node \u2192 resolved path (rule) | output file | size | declared sha256 | computed sha256 |",
+          "  32: - The only thing my reader does with those three files is hash them against the manifest; all three match.",
+          "  45: 8. `SIGNATURE.json`",
+          "  56: - MINI-SPECS supplied the exact zip record layouts, the `input_hash` construction with a worked example from this package, and complete Ed25519 verification parameters. Its \u00a712.1 also gave the signed-",
+          "  61: ## 5. What I wanted from outside the file and could not get",
+          "  67:   - `spec/examples/signature.example.txt`, `MANIFEST.example.json` and `SIGNATURE.example.json`",
+          "  73: - **The inputs needed to check three `input_hash` values:**",
+          "  78:   These were left out when the package was cut down from a bigger one, so those hashes cannot be checked from inside the file.",
+          "  92: 4. **spec/README.md points to many files that are not here.** These include `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `signature.example.txt`, `skeleton/*`, and the points/g",
+          "  99:    - I chose to report these as `warn` (`edge-target-missing`) and keep `evidence-segments` live, because its own bytes verify.",
+          " 103: 9. **The envelope `input_hash` rule is not met.** ENVELOPE \u00a73 says `input_hash` in a header is \"Mandatory for derived nodes; the manifest also carries it, and the two MUST agree\". The WKRP header in `",
+          " 110: No byte-level damage: every CRC, size and sha256 is good, and the signature verifies. There is **one inconsistency that the format's own checks expose**:",
+          " 113: - Its sha256 (`6c2c44d5\u20265f95`) is identical to `spec/examples/restposes.example.wkrp`. It decodes to exactly the example in `restposes.example.hex.txt`: 2 poses, 7 contacts, envelope producer `werk-ex",
+          " 115: - The declared `input_hash` (`60e08ed1\u202696c8`) does **not** reproduce. I rebuilt it as `4b91ccbb\u2026b983` using the documented construction (raw digests in `input_files` order, then `{}`). I also tried bo",
+          " 119: What I did: reported it (`input-hash-mismatch`, `envelope-producer-disagrees`, `payload-is-spec-example`, `rest-pose-implausible`, all `warn`), kept the node listed, and did **not** attempt any repair",
+          " 131: | investigating the rest-pose `input_hash` and writing this report | ~10% |"
+        ],
+        "program stdout": [
+          "  14:   4. verifies SIGNATURE.json (Ed25519, MINI-SPECS \u00a712; self-tested first)",
+          "  15:   5. walks nodes[], checks size + sha256 of every file, license.sha256,",
+          "  16:      spec_sha256, input_hash wherever every input is present, nothing-floats",
+          "  19:   8. extracts primary.mesh and primary.sound via SPEC \u00a72.1 and re-hashes them"
+        ]
+      },
+      "file_declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain"
+    },
+    "C4": {
+      "result": "FAIL",
+      "candidates": {
+        "mesh": [],
+        "sound": []
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "sound": "FAIL: no matching artifact"
+      }
+    }
+  },
+  "verdict": "FAIL",
+  "verdict_reason": "program does not run clean",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [],
+    "bytes": 0,
+    "any_declared": null,
+    "cryptographic": null,
+    "kinds": [],
+    "all_extracted": {
+      "payloads_counted": [],
+      "bytes": 0,
+      "any_declared": null,
+      "cryptographic": null,
+      "kinds": []
+    }
+  }
+}

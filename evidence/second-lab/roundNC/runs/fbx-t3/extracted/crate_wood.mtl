@@ -1,0 +1,3 @@
+newmtl crate_wood
+Kd 0.8 0.8 0.8
+map_Kd crate_diffuse.png

@@ -1,0 +1,1 @@
+fbx-t3 rc=0 elapsed=199.9 s

@@ -1,0 +1,182 @@
+{
+  "format": "usdz",
+  "payload": "texture",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\nc-grading\\scratch\\usdz-t3",
+  "exit_code": 0,
+  "rows": [
+    {
+      "rel": "inspect_usdz.py",
+      "sha256": "8a3eb23cd96638f1b7b76605c972b420031d041a8c302d1e1209a18ab9621e46",
+      "size": 7630,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "rerun_usdz-t3.py",
+      "sha256": "e77ff8ca97f69cff81f709a53abdbf5819082bb813975a44ed2688e40f73eace",
+      "size": 389,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "extracted/crate-nc-v1.usdc",
+      "sha256": "a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa",
+      "size": 478101,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": "",
+      "ext_class": "mesh"
+    },
+    {
+      "rel": "extracted/textures_crate_diffuse.png",
+      "sha256": "af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+      "size": 9460,
+      "status": "OK",
+      "class": "texture",
+      "payload": "texture:textures/crate_diffuse.png",
+      "tier": "T1",
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "PASS",
+      "why": "exit 0; stdout names 2 structure entries (crate-nc-v1.usdz, crate_diffuse.png)"
+    },
+    "C2": {
+      "result": "PASS",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "  14: | List the contents with meanings | **Partly.** Both stored entries are listed with their meanings, and so are the six sections of the scene layer. **The scene's node graph (prim hierarchy) is not dec",
+          "  15: | Verify every declared hash | **No declared sha256 exists**, so there was nothing to verify against. The package contains no 32+ character hex strings at all, and no \"manifest\" or \"sha\" token is read",
+          "  16: | Extract the primary mesh | **Only as the containing scene layer**, `crate-nc-v1.usdc`, which holds mesh `Cube_020`. **Mesh geometry (points and indices) was NOT extracted**, because that needs the s",
+          "  17: | Extract one texture | **Yes**: `textures/crate_diffuse.png`. |",
+          "  25: | `extracted/textures_crate_diffuse.png` | `textures/crate_diffuse.png` (payload @478272) | 9460 | none declared | `af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f` |",
+          "  31: **None exists**, so I never opened, ran or ported one. The package holds exactly two entries (a binary scene layer and a PNG), and a scan for record markers found no hidden or orphan entries outside t",
+          "  35: 1. The container's first and last 256 bytes. These showed the entry names `crate-nc-v1.usdc` and `textures/crate_diffuse.png`, plus the trailing table.",
+          "  37: 3. A hexdump of bytes 475900\u2013478400: the tail of the .usdc (token text, the section table naming TOKENS / STRINGS / FIELDS / FIELDSETS / PATHS / SPECS) and the PNG entry header.",
+          "  44: 1. **The container format spec.** It would tell me what the 4-byte \"check32\" field is and confirm the meanings of the version, flags/method and stamp fields. I inferred only the fields I could cross-c",
+          "  46: 3. **The binary scene-layer (\"PXR-USDC\") format spec.** I need it to decode the PATHS, SPECS and FIELDS sections into a node graph and to find the mesh's attribute arrays.",
+          "  49: 6. (Optional) **The PNG spec**, to validate the texture's internal chunk checksums. I checked only that it starts with the PNG signature and ends with the `IEND` trailer bytes seen in the file.",
+          "  53: - **The task description does not match the file.** It refers to a manifest, declared hashes, a node graph \"with meanings\", and possibly a bundled reader. None of these exist here. I spent time scanni",
+          "  55: - **Inferring rather than knowing:** some field meanings are inferred, not documented.",
+          "  58:   - The meaning of the `0x1986` two-byte tag at the start of each extra field is unknown.",
+          "  60: - **Line-reading the token table is lossy.** Fragments like `typeNamea`, `Mesha`, `qIndicesN` and `bdiffusI` are compression artefacts (literal runs cut by back-reference codes), not real names. I rep",
+          "  61: - **I deliberately did not scrape float arrays** out of the .usdc to pass them off as \"the mesh\". Without the spec I cannot tell which run is points, which is normals and which is UVs, so any result w",
+          "  66: - All 29 run-time checks pass (22 on the container, 6 on the section table, 1 on the PNG trailer): names match between entry headers and the table, header fields are byte-identical to the table copies",
+          "  67: - The PNG ends with the expected trailer."
+        ],
+        "program stdout": [
+          "  18:   [ok] textures/crate_diffuse.png: entry marker at 478165",
+          "  19:   [ok] textures/crate_diffuse.png: name in entry header == name in table",
+          "  20:   [ok] textures/crate_diffuse.png: entry header fields == table record fields",
+          "  21:   [ok] textures/crate_diffuse.png: both size fields equal (9460) -> consistent with bytes stored verbatim",
+          "  22:   [ok] textures/crate_diffuse.png: payload starts 64-byte aligned at 478272 (extra field looks like zero padding)",
+          "  23:   [ok] textures/crate_diffuse.png: padding bytes are all zero",
+          "  30:     payload offset 64, 478101 bytes: binary scene layer (magic PXR-USDC); holds the scene incl. mesh Cube_020",
+          "  32:     undeclared-meaning fields: check32=0x11304224 stamp=(35919, 23879) versions=(0, 10) flags/method=(0, 0) extra=86190e00+zeros",
+          "  49:     metersPerUnit, Blender v4.2.1 LTS, documentation, upAxis, root, primChildren, defaultPrim, specifier, Xform, typeNamea, generated, customData, wooden_c, _01_lid, _materials, _latch, Scope, outputs",
+          "  50: - textures/crate_diffuse.png",
+          "  51:     payload offset 478272, 9460 bytes: image (PNG signature, 256x256 per IHDR bytes), referenced as texture",
+          "  53:     undeclared-meaning fields: check32=0x4bf30478 stamp=(35918, 23879) versions=(0, 10) flags/method=(0, 0) extra=86192f00+zeros",
+          "  54:   [ok] textures/crate_diffuse.png: ends with the IEND trailer seen in file",
+          "  64:   wrote extracted\\textures_crate_diffuse.png  sha256 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f"
+        ]
+      },
+      "ruled_by_human": true
+    },
+    "C3": {
+      "result": "FAIL",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   4: It uses only the Python standard library (`hashlib`, `struct`, `re`, `os`, `sys`).",
+          "   9: Partial success. The core blocker is that **the package contains no documentation of any kind**: no spec, no README, no manifest, no declared sha256 values, and no reader program.",
+          "  15: | Verify every declared hash | **No declared sha256 exists**, so there was nothing to verify against. The package contains no 32+ character hex strings at all, and no \"manifest\" or \"sha\" token is read",
+          "  18: | Do the extracted bytes hash to the declared values? | **Cannot be answered: no values are declared.** The computed hashes are below. Re-reading the written files gives the same hashes as the in-memo",
+          "  22: | Output file | Source entry | Bytes | Declared sha256 | Computed sha256 |",
+          "  24: | `extracted/crate-nc-v1.usdc` | `crate-nc-v1.usdc` (payload @64) | 478101 | none declared | `a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa` |",
+          "  25: | `extracted/textures_crate_diffuse.png` | `textures/crate_diffuse.png` (payload @478272) | 9460 | none declared | `af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f` |",
+          "  27: The container itself is 487957 bytes with sha256 `14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7`. It was opened read-only and never modified.",
+          "  40: **Nothing \"unblocked\" me**, because there was no documentation to find. What made the container work was **internal consistency**: every length or offset field I relied on equals a span I could observ",
+          "  42: ## 5. What I wanted from outside the file and could not get",
+          "  45: 2. **The checksum algorithm for the 4-byte check fields.** I have a prior-knowledge guess about what it is. The rules say recognising a format does not license using it, so I deliberately did not comp",
+          "  48: 5. **A declared-hash manifest.** The task assumes one exists, but this package has none. If a manifest was meant to be included, it is missing from this file.",
+          "  49: 6. (Optional) **The PNG spec**, to validate the texture's internal chunk checksums. I checked only that it starts with the PNG signature and ends with the `IEND` trailer bytes seen in the file.",
+          "  53: - **The task description does not match the file.** It refers to a manifest, declared hashes, a node graph \"with meanings\", and possibly a bundled reader. None of these exist here. I spent time scanni",
+          "  61: - **I deliberately did not scrape float arrays** out of the .usdc to pass them off as \"the mesh\". Without the spec I cannot tell which run is points, which is normals and which is UVs, so any result w",
+          "  68: - The 4-byte check values were not verified (see \u00a75), so silent corruption inside the payloads cannot be ruled out."
+        ],
+        "program stdout": [
+          "   2:   size 487957  sha256 14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7",
+          "  31:     computed sha256 a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa",
+          "  32:     undeclared-meaning fields: check32=0x11304224 stamp=(35919, 23879) versions=(0, 10) flags/method=(0, 0) extra=86190e00+zeros",
+          "  51:     payload offset 478272, 9460 bytes: image (PNG signature, 256x256 per IHDR bytes), referenced as texture",
+          "  52:     computed sha256 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f",
+          "  53:     undeclared-meaning fields: check32=0x4bf30478 stamp=(35918, 23879) versions=(0, 10) flags/method=(0, 0) extra=86192f00+zeros",
+          "  56: == declared hashes ==",
+          "  58:   No sha256 manifest exists in the package. The only candidate integrity values are the",
+          "  60:   were NOT verified.",
+          "  63:   wrote extracted\\crate-nc-v1.usdc  sha256 a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa",
+          "  64:   wrote extracted\\textures_crate_diffuse.png  sha256 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f"
+        ]
+      },
+      "file_declares": "zip CRC-32 per entry (a real, checkable declaration, and the only one)",
+      "ruled_by_human": true
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "extracted/crate-nc-v1.usdc"
+        ],
+        "texture": [
+          "extracted/textures_crate_diffuse.png"
+        ]
+      }
+    },
+    "C5": {
+      "result": "FAIL",
+      "per_class": {
+        "mesh": "FAIL: no matching artifact",
+        "texture": "PASS via extracted/textures_crate_diffuse.png[T1]"
+      }
+    }
+  },
+  "verdict": "PARTIAL",
+  "verdict_reason": "graded artifact(s) exact, failing: C3,C5",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "texture:textures/crate_diffuse.png"
+    ],
+    "bytes": 9460,
+    "any_declared": 1.0,
+    "cryptographic": 0.0,
+    "kinds": [
+      "crc32"
+    ],
+    "all_extracted": {
+      "payloads_counted": [
+        "texture:textures/crate_diffuse.png"
+      ],
+      "bytes": 9460,
+      "any_declared": 1.0,
+      "cryptographic": 0.0,
+      "kinds": [
+        "crc32"
+      ]
+    }
+  }
+}

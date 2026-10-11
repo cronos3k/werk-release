@@ -1,0 +1,253 @@
+{
+  "format": "werk",
+  "payload": "sound",
+  "second_payload_na": false,
+  "ground_truth_status": "COMPLETE",
+  "scan_dir": "D:\\werk\\nc-grading\\scratch\\werk-t1",
+  "exit_code": 0,
+  "rows": [
+    {
+      "rel": "rerun_werk-t1.py",
+      "sha256": "4b1ca094fda514a1c0fbd2e3a184072bbb12c6338335af9d0a98a947fc9c7912",
+      "size": 377,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "werk_reader.py",
+      "sha256": "98485100ea40ba384f2cdc4f7b2a9601d180528e53eac97366ee8b8761097427",
+      "size": 51315,
+      "status": "?",
+      "class": null,
+      "payload": null,
+      "tier": null,
+      "detail": ""
+    },
+    {
+      "rel": "extracted/audio__sfx__crate-impact-hard-surface.wav",
+      "sha256": "1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+      "size": 17644,
+      "status": "OK",
+      "class": "sound",
+      "payload": "sound:audio/sfx/crate-impact-hard-surface.wav",
+      "tier": "T1",
+      "detail": ""
+    },
+    {
+      "rel": "extracted/geometry__game.glb",
+      "sha256": "eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+      "size": 16736,
+      "status": "OK",
+      "class": "mesh",
+      "payload": "mesh:geometry/game.glb",
+      "tier": "T1",
+      "detail": ""
+    }
+  ],
+  "notes": [],
+  "clauses": {
+    "C1": {
+      "result": "PASS",
+      "why": "exit 0; stdout names 36 structure entries (ENVELOPE.layout.txt, LICENSE, MINI-SPECS.md, README.md, README.txt, SPEC.md)"
+    },
+    "C2": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "listing names the payloads and states what they are",
+      "evidence": {
+        "REPORT.md": [
+          "  10: | list the node graph with meanings | yes. All 14 nodes, with type, meaning, work note, producer, epistemic stamp, files with roles, and edges. Edges whose target node is not in the package are flagge",
+          "  12: | extract the primary mesh and one sound | yes. I followed `primary.*` to the node, then its active version, then the SPEC \u00a72.1 payload rules. I did not take `files[0]`. |",
+          "  19: | slot | node \u2192 resolved path (rule) | output file | size | declared sha256 | computed sha256 |",
+          "  21: | primary.mesh | `geom-game` v1 \u2192 `geometry/game.glb` (\u00a72.1 rule 2, single file) | `extracted/geometry__game.glb` | 16736 | `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce` | `eee8b3",
+          "  22: | primary.sound | `audio-crate-impact-hard-surface` v1 \u2192 `audio/sfx/crate-impact-hard-surface.wav` (\u00a72.1 rule 1, `payload_file`; the `role: best` entry agrees) | `extracted/audio__sfx__crate-impact-ha",
+          "  25: - **Mesh:** GLB version 2, 272 vertices, 408 triangles, attributes POSITION, NORMAL and COLOR_0. The vertex AABB I computed from the BIN chunk is [-0.5,-0.5,-0.5]..[0.54,0.54,0.5], which exactly match",
+          "  26: - **Sound:** RIFF/WAVE PCM, 16 kHz, mono, 16-bit, 0.550 s. That matches the descriptor's `audio_format` and `refined.duration`.",
+          "  44: 7. `spec/MINI-SPECS.md`: the heading list, then \u00a71\u2013\u00a78.1 (lines 1\u2013400), then \u00a79\u2013\u00a713 (lines 488\u2013977). I skipped the PNG filter details (\u00a78.2\u20138.3) because I never decode pixels.",
+          "  46: 9. `audio/sfx/crate-impact-hard-surface.json`",
+          "  53: My program parses the other payloads (material, semantics, provenance, the PNG) as data, but I never read them myself. I did not open any of the JSON schemas, `spec/facets.json`, `LICENSE`, or `proven",
+          "  57: - SPEC \u00a72.1's payload-resolution rules are what stop the classic mistake of extracting the sound's JSON descriptor instead of the WAV.",
+          "  68:   - `PROFILE-IMAGE.md` and `X-C2PA-EXPORT.md`",
+          "  74:   - `geometry/source.glb` (for `geom-game`)",
+          "  75:   - `audio/package.json` (for the audio effect)",
+          "  76:   - `x/splat-foley/views/view_00..05.png` (for `evidence-segments`)",
+          "  89:    - It talks about \"every one of the twenty sound effects\"; the package has one sound effect node.",
+          "  90:    - It says rest poses are \"deliberately absent\", yet the package has a `core.pose.rest` node (`poses/rest.wkrp`).",
+          "  92: 4. **spec/README.md points to many files that are not here.** These include `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `signature.example.txt`, `skeleton/*`, and the points/g",
+          "  97: 6. **Edges point at nodes that are not in the package.** `geom-game` \u2192 `geom-source`, `audio-crate-impact-hard-surface` \u2192 `audio-package`, and `evidence-segments` \u2192 `evidence-views` (a **requires** ed",
+          "  98:    - SPEC \u00a75 says a `requires` edge into a *dead* node kills the source node. It does not say what happens when the target node is *absent*.",
+          " 100:    - That is a judgement call the spec does not settle, so another reader could reasonably kill the node.",
+          " 101: 7. **`evidence-segments` meta does not match its files.** `meta.count = 10` and `meta.images` describes 10 PNGs (`seg_00`..`seg_09`), but `files[]` carries only `seg_00.png`. SPEC's \"never follow a pa",
+          " 103: 9. **The envelope `input_hash` rule is not met.** ENVELOPE \u00a73 says `input_hash` in a header is \"Mandatory for derived nodes; the manifest also carries it, and the two MUST agree\". The WKRP header in `",
+          " 104: 10. **\"Two different nodes claiming one path\" leaves a case open.** It is defined as an error, but nothing says what it means when two nodes carry byte-identical content under different paths. That ha",
+          " 106: 12. **Payload-role ambiguity, now resolved by the spec.** Without SPEC \u00a72.1, `files[0]` of the sound node is the JSON descriptor. The spec handles this well now, but I note it as the most likely trap.",
+          " 114: - The manifest says the producer was `werkc 0.1.0`, with `epistemic: measured`, \"settled orientations from a drop simulation\", and `input_files` `geometry/game.glb` + `physics/bounds.json`.",
+          " 116: - It is also physically implausible. Pose 0 is the identity rotation, but its contacts sit at y = 0, not on the crate's bottom face at y = \u22120.5 (per bounds.json and the mesh). The contact square of \u00b10",
+          " 119: What I did: reported it (`input-hash-mismatch`, `envelope-producer-disagrees`, `payload-is-spec-example`, `rest-pose-implausible`, all `warn`), kept the node listed, and did **not** attempt any repair"
+        ],
+        "program stdout": [
+          "   9:     summary : The small-context conformance fixture: the golden crate reduced to one mesh, one sound, one image, one binary envelope and the nodes that describe them, so that a package's whole manifes",
+          "  20:     OK           geometry/game.glb",
+          "  22:     OK           materials/wood.json",
+          "  26:     OK           semantics/semantics.json",
+          "  30:     OK           audio/sfx/crate-impact-hard-surface.json",
+          "  32:     OK           audio/sfx/crate-impact-hard-surface.wav",
+          "  34:     OK           audio/sfx/crate-impact-hard-surface.raw.wav",
+          "  36:     OK           audio/sfx/crate-impact-hard-surface.var2.wav",
+          "  38:     OK           audio/sfx/crate-impact-hard-surface.var3.wav",
+          "  60:     OK           spec/schemas/core.audio.effect.schema.json",
+          "  62:     OK           spec/schemas/core.material.schema.json",
+          "  68:     OK           spec/schemas/core.semantics.schema.json",
+          "  84:     OK           x/splat-foley/segments/seg_00.png",
+          "  96:     UNVERIFIABLE (inputs absent) input_hash audio-crate-impact-hard-surface v1",
+          " 105:     geom-game                        GLB: 272 vertices, 408 triangles, attrs COLOR_0,NORMAL,POSITION",
+          " 107:     material-wood                    JSON ok (10 top-level keys; schema validation NOT performed)",
+          " 109:     semantics                        JSON ok (8 top-level keys; schema validation NOT performed)",
+          " 111:     audio-crate-impact-hard-surface  descriptor: \"hit by heavy object\", interaction, CLAP 0.4016, declared 16000 Hz/1 ch/16-bit pcm-int",
+          " 112:     audio-crate-impact-hard-surface  WAV best   16000 Hz, 1 ch, 16-bit fmt=1, 0.550 s  (audio/sfx/crate-impact-hard-surface.wav)",
+          " 113:     audio-crate-impact-hard-surface  WAV raw    16000 Hz, 1 ch, 16-bit fmt=1, 3.000 s  (audio/sfx/crate-impact-hard-surface.raw.wav)",
+          " 114:     audio-crate-impact-hard-surface  WAV variation 16000 Hz, 1 ch, 16-bit fmt=1, 3.000 s  (audio/sfx/crate-impact-hard-surface.var2.wav)",
+          " 115:     audio-crate-impact-hard-surface  WAV variation 16000 Hz, 1 ch, 16-bit fmt=1, 3.000 s  (audio/sfx/crate-impact-hard-surface.var3.wav)",
+          " 116:     evidence-segments                PNG 932x899 bit_depth 8 colour_type 2, chunk CRCs ok (x/splat-foley/segments/seg_00.png)",
+          " 120:     cross-check: bounds.json AABB matches the mesh vertices",
+          " 122: [7] NODE GRAPH (14 nodes)",
+          " 124:       meaning : runtime game mesh (GLB); the default primary mesh",
+          " 125:       note    : Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPEC 3.10 requires NORMAL and requires COLOR_0 to be linear.",
+          " 127:       file    : geometry/game.glb                                  16736 B",
+          " 129:   * material-wood  [core.material]  active v1  live",
+          " 130:       meaning : PBR material parameters (JSON); authoritative over GLB materials",
+          " 131:       note    : Authored PBR parameters for the crate's only material.",
+          " 133:       file    : materials/wood.json                                  525 B",
+          " 134:       edge    : material-wood --enhances/shades--> geom-game",
+          " 136:       meaning : measured bounding box / sphere for culling and placement (JSON)",
+          " 141:   * semantics  [core.semantics]  active v1  live",
+          " 142:       meaning : facet tags, palette, search text (JSON); renders a browser listing",
+          " 143:       note    : Hand-authored facet tags, palette and search text. This node alone renders a browser listing (law 9).",
+          " 145:       file    : semantics/semantics.json                            2589 B",
+          " 146:       edge    : semantics --enhances/describes--> geom-game",
+          " 148:       meaning : who made what, from what, with which models (JSON)",
+          "      ... (truncated)"
+        ]
+      }
+    },
+    "C3": {
+      "result": "NEEDS-HUMAN-REVIEW",
+      "criterion": "verifies what the file declares AND reports what could not be verified; invented verification = FAIL",
+      "evidence": {
+        "REPORT.md": [
+          "   9: | open the container | yes. I wrote my own store-mode zip reader from MINI-SPECS \u00a75 (EOCD scan from the end, zip64 detection, central directory, local headers, CRC-32 per \u00a76). It found 36 entries, all",
+          "  11: | verify every declared hash | yes. All 34 `files[].sha256` and sizes match (every container entry except MANIFEST.json and SIGNATURE.json; nothing is unlisted), and so do `license.sha256` and `spec_s",
+          "  13: | extracted bytes hash to the declared values | **yes, both match** (table below). |",
+          "  19: | slot | node \u2192 resolved path (rule) | output file | size | declared sha256 | computed sha256 |",
+          "  32: - The only thing my reader does with those three files is hash them against the manifest; all three match.",
+          "  45: 8. `SIGNATURE.json`",
+          "  56: - MINI-SPECS supplied the exact zip record layouts, the `input_hash` construction with a worked example from this package, and complete Ed25519 verification parameters. Its \u00a712.1 also gave the signed-",
+          "  61: ## 5. What I wanted from outside the file and could not get",
+          "  67:   - `spec/examples/signature.example.txt`, `MANIFEST.example.json` and `SIGNATURE.example.json`",
+          "  73: - **The inputs needed to check three `input_hash` values:**",
+          "  78:   These were left out when the package was cut down from a bigger one, so those hashes cannot be checked from inside the file.",
+          "  92: 4. **spec/README.md points to many files that are not here.** These include `PROFILE-IMAGE.md`, `X-C2PA-EXPORT.md`, `examples/make-examples.py`, `signature.example.txt`, `skeleton/*`, and the points/g",
+          "  99:    - I chose to report these as `warn` (`edge-target-missing`) and keep `evidence-segments` live, because its own bytes verify.",
+          " 103: 9. **The envelope `input_hash` rule is not met.** ENVELOPE \u00a73 says `input_hash` in a header is \"Mandatory for derived nodes; the manifest also carries it, and the two MUST agree\". The WKRP header in `",
+          " 110: No byte-level damage: every CRC, size and sha256 is good, and the signature verifies. There is **one inconsistency that the format's own checks expose**:",
+          " 113: - Its sha256 (`6c2c44d5\u20265f95`) is identical to `spec/examples/restposes.example.wkrp`. It decodes to exactly the example in `restposes.example.hex.txt`: 2 poses, 7 contacts, envelope producer `werk-ex",
+          " 115: - The declared `input_hash` (`60e08ed1\u202696c8`) does **not** reproduce. I rebuilt it as `4b91ccbb\u2026b983` using the documented construction (raw digests in `input_files` order, then `{}`). I also tried bo",
+          " 119: What I did: reported it (`input-hash-mismatch`, `envelope-producer-disagrees`, `payload-is-spec-example`, `rest-pose-implausible`, all `warn`), kept the node listed, and did **not** attempt any repair",
+          " 131: | investigating the rest-pose `input_hash` and writing this report | ~10% |"
+        ],
+        "program stdout": [
+          "  10:     sha256  : f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839",
+          "  13: [3] CONVENTIONS: 21 declared; all supported by this reader",
+          "  16: [4] SIGNATURE: signed-and-valid",
+          "  19: [5] HASHES",
+          "  21:                  declared eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce",
+          "  23:                  declared c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61",
+          "  25:                  declared 866eb5c8c01ea7121bca325d3bd283ddf47fbba6a43cb39cd49edbbadfde6c82",
+          "  27:                  declared d5be6dc01dcc5ec0e047b1552df016f498a24318bf45a6a59508125fc60ce156",
+          "  29:                  declared dcfdceb4551b3c6c6443ddc14d940d4d0c8176fabd6de2e3c7398baf3def0af0",
+          "  31:                  declared 2652a7c5bd00c82ea079290d535321193845b146b1948fe207635e52cfc38276",
+          "  33:                  declared 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e",
+          "  35:                  declared 21ab5fad58956ddd6fdc488a352e14265ce1c92521ec5783b947f2fb14a46d06",
+          "  37:                  declared 2419a71d18dff22ee6efee7bc6d9b56e1666cd14c054cc73a43a6bc7ef34b662",
+          "  39:                  declared f65e7061bae4cdfd5436c8a087e0ba05685b678176ae8abc5149c08ed7a8cd19",
+          "  41:                  declared 8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba",
+          "  43:                  declared 3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56",
+          "  45:                  declared eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001",
+          "  47:                  declared 1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37",
+          "  49:                  declared 80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051",
+          "  51:                  declared 6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+          "  53:                  declared f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1",
+          "  55:                  declared b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce",
+          "  57:                  declared cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5",
+          "  59:                  declared 97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f",
+          "  61:                  declared 04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5",
+          "  63:                  declared 487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6",
+          "  65:                  declared acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e",
+          "  67:                  declared d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935",
+          "  69:                  declared 3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f",
+          "  71:                  declared d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451",
+          "  72:     OK           spec/schemas/signature.schema.json",
+          "  73:                  declared cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13",
+          "  75:                  declared 8274359b795405b481d535572e3ec8930c29da20140f23e356c6fef84f162b84",
+          "  77:                  declared f2ef9ba2badd94a1312cd9a42649386e017197bdc3cb0d5106f1ae745d173e62",
+          "  79:                  declared dcafb38877b1be2b13cbba1daedc1209ff15eb07fa9a6332e37e78ec119e4292",
+          "  81:                  declared 5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53",
+          "  83:                  declared f7923cb1f38316f610d8198a2797775ceeb4b07cc6b07d405ee6e8932ccc1564",
+          "  85:                  declared 395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0",
+          "  87:                  declared 6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+          "  88:     OK           license.sha256 -> LICENSE",
+          "      ... (truncated)"
+        ]
+      },
+      "file_declares": "per-file sha256 for every declared file, zip CRC-32s, spec_sha256, input_hash, Ed25519 chain"
+    },
+    "C4": {
+      "result": "PASS",
+      "candidates": {
+        "mesh": [
+          "extracted/geometry__game.glb"
+        ],
+        "sound": [
+          "extracted/audio__sfx__crate-impact-hard-surface.wav"
+        ]
+      }
+    },
+    "C5": {
+      "result": "PASS",
+      "per_class": {
+        "mesh": "PASS via extracted/geometry__game.glb[T1]",
+        "sound": "PASS via extracted/audio__sfx__crate-impact-hard-surface.wav[T1]"
+      }
+    }
+  },
+  "verdict": "PENDING",
+  "verdict_reason": "auto clauses pass; awaiting: C2,C3",
+  "verifiable_integrity_fraction": {
+    "payloads_counted": [
+      "mesh:geometry/game.glb",
+      "sound:audio/sfx/crate-impact-hard-surface.wav"
+    ],
+    "bytes": 34380,
+    "any_declared": 1.0,
+    "cryptographic": 1.0,
+    "kinds": [
+      "crc32",
+      "sha256"
+    ],
+    "all_extracted": {
+      "payloads_counted": [
+        "mesh:geometry/game.glb",
+        "sound:audio/sfx/crate-impact-hard-surface.wav"
+      ],
+      "bytes": 34380,
+      "any_declared": 1.0,
+      "cryptographic": 1.0,
+      "kinds": [
+        "crc32",
+        "sha256"
+      ]
+    }
+  }
+}

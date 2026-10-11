@@ -1,0 +1,26 @@
+roundNC trial gltf-t3, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2402 3bfec5fe499f3db6b6bc1c9fc6841dd303148f924bfe934e2620a24230d244a9 PROMPT.txt
+    11002 83d58c4ab58a42fc100f8c2294e21890adff9f8a4d42171dc1d92e3f8bda02ff REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     5839 d6fde2327178aca1a82742e1d1c8373b5bb9ce4d7716f5041d5040de0190ee51 _agent-stdout.txt
+    11808 3bbe148e6dc8b218c9a590dfe2d9ce64bb9871974dc1dd2cd9bb2cdf971947d2 crate_reader.py
+       29 70ba1062e596598ccb78c2f02f98bad3af31d46e1825c9c9b3867700c3d476fb _harness/TIMING.txt
+    33048 521568faf4fbb11a6d78ab0703773fc794cb7d5b5e2279e8ef691bb8bb673c35 out/wooden_crate_01.INDICES.raw
+    44772 40ab5b444be0a40e893e730d5cc00976a4d3d9c754c18159a5c12c5fbee3f1be out/wooden_crate_01.NORMAL.raw
+    44772 483d874cf4231c9596ae3bee3783b6e4c23931460f1915b5234f7912d11bc241 out/wooden_crate_01.POSITION.raw
+    29848 99229d659e6ecf6a7e67041c5d37a9aab2876b180d5322dd2efbe0d784c95cd9 out/wooden_crate_01.TEXCOORD_0.raw
+   644599 a0c13410e03cb631185c9422f9cc54c63b2581f8d7ac918c1d0812c9ed030a9e out/wooden_crate_01.obj
+      579 6efac6a753a24ad8a1fc7498d4e43e0d1436763cb7f0c6b2ed6419798ade0fe1 tools/probe.py
+
+SKIPPED (size B, sha256, path, reason)
+   191040 02148a5ba343d0d1eba4664be44416db5594c8a2147f61067c0ef5af010630ab crate-nc-v1.bin  [byte copy of fixture file crate-nc-v1.bin]
+     4122 3f9a6a472de5a08573b4fa1cf4c3de53fffa03ec2c3fdb5b8a2d89c5bb919f69 crate-nc-v1.gltf  [byte copy of fixture file crate-nc-v1.gltf]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f out/crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

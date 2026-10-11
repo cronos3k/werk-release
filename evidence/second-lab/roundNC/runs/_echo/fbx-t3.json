@@ -1,0 +1,9 @@
+{
+  "workspace": "D:/gauntlet-sealed/nc-20261011-1543/fbx-t3",
+  "format": "fbx",
+  "files_scanned": 2,
+  "values_checked": 5,
+  "allowed_self_declared": 0,
+  "leaks": [],
+  "result": "PASS"
+}

@@ -1,0 +1,57 @@
+roundNC trial werk-t1, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2334 397aba804e83938068eb2967b32f961253a031cdecb694e8b8aa4129760119d4 PROMPT.txt
+    13019 bd38a49e1c5e7739343162bcf362b597b3b89ee528527ba718ffac43859f926c REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     7055 f947b5eb25b89b926771526bc5c9017e661ad0bff20acf643418e0e277a935e3 _agent-stdout.txt
+    51315 98485100ea40ba384f2cdc4f7b2a9601d180528e53eac97366ee8b8761097427 werk_reader.py
+       29 aa6c5800593a8b6eecce8e4fbad417740e5f2463dfbc18c74603d3e89614c79b _harness/TIMING.txt
+    17644 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e extracted/audio__sfx__crate-impact-hard-surface.wav
+    16736 eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce extracted/geometry__game.glb
+      996 da4ee2a747d4248dd53363d58c2a40398a95fb7e24eaf018dd9b1b6e7fc5689e tools/crosscheck.py
+      525 88ca250dd23cbb01ca143c16648bdc534622c8d1ebc068edde1afd1e186734f7 tools/dump_entries.py
+      367 a3df2aacc83835151c01579975807f7570cab48aeadb02093e955ac98617aeae tools/peek.py
+      289 dcc6ea00ae2bf124673019ad1bef791e2e52328a3fc94d5390408b39a8de8055 tools/strings.py
+      727 a1f185022b877419bd056914fc406a349479c38455d20eb8bdc5c91f4c071b33 tools/walk.py
+
+SKIPPED (size B, sha256, path, reason)
+   960061 f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837 mini-v1.werk  [byte copy of fixture file mini-v1.werk]
+     2132 5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53 scratch/pkg/LICENSE  [agent's unpacked working copy of the fixture's entries]
+    23311 f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839 scratch/pkg/MANIFEST.json  [agent's unpacked working copy of the fixture's entries]
+     1264 f7923cb1f38316f610d8198a2797775ceeb4b07cc6b07d405ee6e8932ccc1564 scratch/pkg/README.txt  [agent's unpacked working copy of the fixture's entries]
+      988 248879ff8cff860ff29f6b114e5be0b3669a6ae0e97ad2e0aca4ba789dcf3d80 scratch/pkg/SIGNATURE.json  [agent's unpacked working copy of the fixture's entries]
+     1783 2652a7c5bd00c82ea079290d535321193845b146b1948fe207635e52cfc38276 scratch/pkg/audio/sfx/crate-impact-hard-surface.json  [agent's unpacked working copy of the fixture's entries]
+    96044 21ab5fad58956ddd6fdc488a352e14265ce1c92521ec5783b947f2fb14a46d06 scratch/pkg/audio/sfx/crate-impact-hard-surface.raw.wav  [agent's unpacked working copy of the fixture's entries]
+    96044 2419a71d18dff22ee6efee7bc6d9b56e1666cd14c054cc73a43a6bc7ef34b662 scratch/pkg/audio/sfx/crate-impact-hard-surface.var2.wav  [agent's unpacked working copy of the fixture's entries]
+    96044 f65e7061bae4cdfd5436c8a087e0ba05685b678176ae8abc5149c08ed7a8cd19 scratch/pkg/audio/sfx/crate-impact-hard-surface.var3.wav  [agent's unpacked working copy of the fixture's entries]
+    17644 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e scratch/pkg/audio/sfx/crate-impact-hard-surface.wav  [agent's unpacked working copy of the fixture's entries]
+    16736 eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce scratch/pkg/geometry/game.glb  [agent's unpacked working copy of the fixture's entries]
+      525 c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61 scratch/pkg/materials/wood.json  [agent's unpacked working copy of the fixture's entries]
+      654 866eb5c8c01ea7121bca325d3bd283ddf47fbba6a43cb39cd49edbbadfde6c82 scratch/pkg/physics/bounds.json  [agent's unpacked working copy of the fixture's entries]
+      560 6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95 scratch/pkg/poses/rest.wkrp  [agent's unpacked working copy of the fixture's entries]
+     4264 dcfdceb4551b3c6c6443ddc14d940d4d0c8176fabd6de2e3c7398baf3def0af0 scratch/pkg/provenance/provenance.json  [agent's unpacked working copy of the fixture's entries]
+     2589 d5be6dc01dcc5ec0e047b1552df016f498a24318bf45a6a59508125fc60ce156 scratch/pkg/semantics/semantics.json  [agent's unpacked working copy of the fixture's entries]
+    40147 8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba scratch/pkg/spec/MINI-SPECS.md  [agent's unpacked working copy of the fixture's entries]
+    10855 3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56 scratch/pkg/spec/README.md  [agent's unpacked working copy of the fixture's entries]
+   104388 eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001 scratch/pkg/spec/SPEC.md  [agent's unpacked working copy of the fixture's entries]
+     9269 1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37 scratch/pkg/spec/conventions-map.json  [agent's unpacked working copy of the fixture's entries]
+    11978 f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1 scratch/pkg/spec/facets.json  [agent's unpacked working copy of the fixture's entries]
+     4308 80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051 scratch/pkg/spec/examples/restposes.example.hex.txt  [agent's unpacked working copy of the fixture's entries]
+      560 6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95 scratch/pkg/spec/examples/restposes.example.wkrp  [agent's unpacked working copy of the fixture's entries]
+    26372 b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce scratch/pkg/spec/layouts/ENVELOPE.layout.txt  [agent's unpacked working copy of the fixture's entries]
+     5958 cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5 scratch/pkg/spec/layouts/restposes.layout.txt  [agent's unpacked working copy of the fixture's entries]
+     4614 97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f scratch/pkg/spec/schemas/conventions-map.schema.json  [agent's unpacked working copy of the fixture's entries]
+     8628 04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5 scratch/pkg/spec/schemas/core.audio.effect.schema.json  [agent's unpacked working copy of the fixture's entries]
+     4823 487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6 scratch/pkg/spec/schemas/core.material.schema.json  [agent's unpacked working copy of the fixture's entries]
+     3164 acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e scratch/pkg/spec/schemas/core.phys.bounds.schema.json  [agent's unpacked working copy of the fixture's entries]
+     6140 d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935 scratch/pkg/spec/schemas/core.provenance.schema.json  [agent's unpacked working copy of the fixture's entries]
+     6917 3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f scratch/pkg/spec/schemas/core.semantics.schema.json  [agent's unpacked working copy of the fixture's entries]
+    46174 d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451 scratch/pkg/spec/schemas/manifest.schema.json  [agent's unpacked working copy of the fixture's entries]
+    11209 cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13 scratch/pkg/spec/schemas/signature.schema.json  [agent's unpacked working copy of the fixture's entries]
+    37183 395fdb67b623688e62f8abf3378ea04cf142716074a506b30d129d61be1553d0 scratch/pkg/x/splat-foley/segments/seg_00.png  [agent's unpacked working copy of the fixture's entries]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

@@ -1,0 +1,46 @@
+TASK
+
+Here is a file: mini-v1.werk (in your working directory). Write a program in
+Python that opens it, lists its contents with their meanings, verifies
+integrity, and extracts the primary mesh and one sound to disk. You may read
+anything inside the file. You may not search the web or read anything outside
+the file.
+
+HARD CONSTRAINTS (isolation — these are not negotiable)
+
+1. The ONLY permitted input is mini-v1.werk and its contents. Everything you
+   need must be derived from inside that file.
+2. Do not read, list, glob or search any directory outside your own working
+   directory. In particular F:\werk, F:\splat-foley and any directory anywhere
+   on this machine named spec/, werk/ or loaders/ are off limits.
+3. Do not search the web and do not fetch any URL.
+4. Recognising the format from prior knowledge does NOT license using it. If
+   you think you know what this format is, you must still derive every rule
+   from the file itself. If you need something you cannot find inside the file,
+   REPORT that you need it rather than fetching it.
+5. Do not modify mini-v1.werk. Work on copies if you need to.
+6. Do not execute any program that came out of the file.
+
+REPORTING
+
+Write your final report to a file named REPORT.md in your working directory.
+It must contain:
+
+* Whether you succeeded: did your program open the container, list the node
+  graph with meanings, verify every declared hash, extract the primary mesh
+  and one sound, and do the extracted bytes hash to the values the manifest
+  declares?
+* What you extracted, with the declared and computed sha256 of each extracted
+  file.
+* Whether you ever opened, ran or ported any reader program bundled INSIDE the
+  file, and if so at what point and why.
+* Which files inside the package you read, in the order you read them, and
+  which one unblocked you.
+* Everything you wanted from outside the file and could not get.
+* Every stumble, honestly. A stumble is worth more to this experiment than a
+  clean run; under-reporting to look competent would corrupt the result.
+  List each place the documentation inside the file was ambiguous, wrong,
+  missing or cost you time, even if you worked it out in the end.
+* Anything you did about damaged or corrupted data, if you tried that.
+
+Report your own wall-clock sense of how long each phase took if you can.

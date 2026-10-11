@@ -1,0 +1,27 @@
+roundNC trial fbx-t3, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2347 c82c5ff6cf7a8f545b91b48aee6d83f11afbb71e5b6a51f7f8d5424c93297988 PROMPT.txt
+    10173 e505032f230704a0b50057dc3b196373f74ccbfb5216f52236a1c8d77436d379 REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     6343 76b029a7aef72dbad5b8c78e4c8ea2cd03c260eca8e14a8098aa31b30b9b84a6 _agent-stdout.txt
+       28 50daa57e923719aa8d400b8cb7e2a40c657ed6502002444e0af8af3697b02ee6 _harness/TIMING.txt
+       58 9414da65d763d1be03a2b4fb3fbaeddc4369cfdad9f77047b01cc583dd74b107 extracted/crate_wood.mtl
+      423 56b2d5e50aea420f0e59899fc27068a0744453bd3f696d631872caf60279500c extracted/summary.json
+   861591 2cd3e0284fca6706ccd425eff8b38709ce55c6071765a4f8c0177dc47c6b6690 extracted/wooden_crate_01.obj
+    88944 248680133659898f248f8f19a241f080a1b6faa05aa9acc7e11367b071f2adbc extracted/wooden_crate_01.vertices.f64le
+     2221 ea5afdfd595b30d98e1b3f8298dda6c21121c7589ba0b1839fa8e4cf6344f816 tools/dump.py
+    15139 fd26dfce62829aa33f283e5dd3ed09e28756530c3eafb8961484b7514157812b tools/fbxpkg.py
+      341 7040d1872c4822f13d2b3b351572b10c39a6edda048f8a551e5aff8ac46f0466 tools/hexdump.py
+     1204 c28fd379ca8b38124dc40add679875f67f183575aba2087452be3fe35492e2f2 tools/probe.py
+      258 b798b4fbcdaab68d6bc7c1c0359b0f151808b625208d0f4866190446d1adb07f tools/strings.py
+
+SKIPPED (size B, sha256, path, reason)
+   248412 ca28bbe959e14dc54ed40f29e1ce2f12530fc46f15976681e7bece9d626816ef crate-nc-v1.fbx  [byte copy of fixture file crate-nc-v1.fbx]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f extracted/crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+    33050 6f6d531bb7a7fb80c10da1184097d06760581cba4efff839a8236fecf9b057f4 tools/__pycache__/fbxpkg.cpython-314.pyc  [compiled Python cache]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

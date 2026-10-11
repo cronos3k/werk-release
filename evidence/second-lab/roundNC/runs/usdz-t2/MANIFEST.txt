@@ -1,0 +1,23 @@
+roundNC trial usdz-t2, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2350 b68cbea04eb7d52ddd23f20949b6ff10dcc26383f4b83a9d02e1f4cc8984ec93 PROMPT.txt
+    10868 c951c8e8ca0993b472e3a189e684af1b6f342306f4406943ce1b24e33109e65d REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     8117 2d9aad74a7ecdf2c1ad8cc0b4ab02df1bbb2f756217dd1688175b468ffa2fe63 _agent-stdout.txt
+    28700 addd8ba33297a46f68e2dbac6badc96b6d7a99a18870cead2980036de3b1dd71 usdz_tool.py
+       29 9c113584b0e6d544408f206817f8b188685280e1348656e91d85319bb7b364b1 _harness/TIMING.txt
+   478101 a7eed1afb71e2f47fc4ba94c6899e0ebc5b77bf240f78af4ae2d5c41530d3faa extracted/crate-nc-v1.usdc
+  1536119 881eb91d67b6010f9cf5feaab46da6e67f995ca8a43fba3276f84d057d4a2e5e extracted/root_wooden_crate_01_Cube_020.obj
+      371 9ec7245732809a725c09d90fae5b1cc376ee5bb132ca21b2a1c67024e27981e8 tools/peek.py
+     2028 896f490e8970d15580faa528d3db1fde88eec39a193b3bb0ffa862e4304d1d24 tools/probe_zip.py
+      497 465ab2867c41fc9b61b7e4df023db3473d5f004bbf8779fa194e55081bb5a392 tools/scan.py
+
+SKIPPED (size B, sha256, path, reason)
+   487957 14cd873a32574a7fd30f9b3599b64ca128ff105ef992329a74794ecdedd806b7 crate-nc-v1.usdz  [byte copy of fixture file crate-nc-v1.usdz]
+     9460 af85a84d80b8fee7bf413a5edc2e722f4442df09a5d2d064d8b16dfb0a51ec1f extracted/crate_diffuse.png  [byte copy of fixture file crate_diffuse.png]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

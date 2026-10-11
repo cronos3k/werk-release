@@ -1,0 +1,25 @@
+roundNC trial werk-t3, batch nc-20261011-1543 (sealed harness, 2026-10-11)
+Source: the sealed batch folder. Files are byte copies unless noted.
+
+INCLUDED (size B, sha256, path)
+     2334 397aba804e83938068eb2967b32f961253a031cdecb694e8b8aa4129760119d4 PROMPT.txt
+    14472 440c322c8f17724bcefc62e1df5497ff7af406c6fd54279d069035fc95f5f810 REPORT.md
+        0 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 _agent-stderr.txt
+     6927 ad5dca0529d3e134976f75e4f01ec302bd2a0c14c49b16c786421e8f02cd34b9 _agent-stdout.txt
+    41087 db34abbf9dba122403a2ccaba42cba522b706056c73ee1f7a666ec91feee0f24 werk_reader.py
+       29 f9bbc816aa2cf14112cd490b3f55734409b70577bc7a1a2a4335907b7d678713 _harness/TIMING.txt
+    17644 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e extracted/crate-impact-hard-surface.wav
+    16736 eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce extracted/game.glb
+     1363 807bce6ed45b8b3d1f7bdf581e0c0dfa73a81e58b6f72e9ebabfca3d756a09a2 tools/diag_restposes.py
+      414 bec5b110107a3071f79ac60709e1d46dda8edf5cb9bb3256433eac8dafb9cdc3 tools/hexdump.py
+      602 101bb0831c962c8640c6d143123866c068a30a85f89e27ca2b6763088d8b2833 tools/zcat.py
+      383 6ca175dbe7dfea6154533ee49d04b053c2f4de2809cf90516cee326a98d55993 tools/zgrep.py
+      843 5733fca49fe44ecf6d8c0c3bc7dd5da5a42b9f1c49a9e4c3876dbf7965e631a8 tools/ziplist.py
+
+SKIPPED (size B, sha256, path, reason)
+   960061 f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837 mini-v1.werk  [byte copy of fixture file mini-v1.werk]
+    60475 c54f671d51d6f749cf94cffb52ba07a7e8aa2d63b70ba9b55216fc3ecedb916c __pycache__/werk_reader.cpython-314.pyc  [compiled Python cache]
+
+NOTES
+- _agent-stdout.txt was checked for email, organisation and account fields before inclusion. None was present.
+- The agent session transcript is not included. It is retained locally and available on request.

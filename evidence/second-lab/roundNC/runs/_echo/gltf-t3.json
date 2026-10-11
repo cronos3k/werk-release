@@ -1,0 +1,9 @@
+{
+  "workspace": "D:/gauntlet-sealed/nc-20261011-1543/gltf-t3",
+  "format": "gltf",
+  "files_scanned": 4,
+  "values_checked": 6,
+  "allowed_self_declared": 0,
+  "leaks": [],
+  "result": "PASS"
+}
