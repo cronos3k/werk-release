@@ -33,9 +33,24 @@ The splat task's three clauses, and how each is graded:
           must appear in the run's output or report. Any such line counts if
           it is unique to that tool; the count per tool is reported.
 
-The program's own source (--prog and its saved iterations) is not scanned:
-it is the model's code, not its output (--include-source restores the old
-behaviour).
+EVIDENCE ALLOWLIST (grader revision 2026-10-12). Only the run's outputs are
+evidence: the harness stdout log, the clean re-run's stdout, and the data or
+report files the program wrote. Not scanned: every program source file
+(.py, .sh, .ps1, .bat, .cmd; not only --prog and its iterations), any file
+whose name starts with prompt, task, transcript or context_package, and the
+fixture. The model's code and a copy of the prompt name the tools and the
+count whether or not anything was decoded (--include-source restores the
+pre-revision scan).
+
+TWO VERDICTS. `verdict` is the FULL-TASK verdict: clause 1 needs at least
+one of the package's declared sha256 digests printed beside a verification
+verdict; clause 2 needs the count and ALL of the first --sample-rows
+(default 32) positions and colours; clause 3 needs each tool named, its
+path given and at least one unique source line quoted. `verdict_numeric`
+is the pre-revision rule (count, point[0], tool names only). An
+89-character report satisfies the numeric rule without decoding anything;
+it cannot satisfy the full-task rule, which is why the numeric rule is now
+reported as a partial check and not as the verdict.
 
   python grade_gsplat.py --fixture fixtures/gsplat-v1.werk --rundir <dir>
   python grade_gsplat.py --fixture ... --rundir <dir> --rerun --prog solution.py \
@@ -138,6 +153,12 @@ TOOLS = {
 def ground_truth(fixture, nrows=8):
     z = zipfile.ZipFile(fixture)
     man = json.loads(z.read("MANIFEST.json"))
+    digests = set()
+    for n in man.get("nodes", []):
+        for v0 in n.get("versions", []):
+            for f in v0.get("files", []):
+                if f.get("sha256"):
+                    digests.add(f["sha256"].lower())
 
     pc = z.read("points/plush-dc.wkpc")
     m, v, ph = envelope(pc)
@@ -211,6 +232,7 @@ def ground_truth(fixture, nrows=8):
         "colors_recomputed_matching": ncol_ok,
         "declared_files": sum(len(v0.get("files", []))
                               for n in man.get("nodes", []) for v0 in n.get("versions", [])),
+        "declared_digests": sorted(digests),
         "tool_quotes": quotes,
         "tool_lines": tool_lines,
         "fixture_sha256": sha256_file(fixture),
@@ -241,11 +263,17 @@ def source_names(prog):
     return {rel, base}, pat
 
 
+SOURCE_EXT = (".py", ".pyc", ".sh", ".ps1", ".bat", ".cmd")
+NOT_EVIDENCE = re.compile(r"(?i)^(prompt|task|transcript|context_package)")
+
+
 def harvest(scan, prog=None):
     """Everything textual the run produced: stdout log + every text file it
     wrote, excluding the fixture, the harness's own copies of the prompt,
-    and (when prog is given) the program's own source. Returns the texts and
-    the list of skipped source files."""
+    and (when prog is given) every program source file and every file named
+    like a prompt, task or transcript copy. prog=None scans everything (the
+    pre-revision behaviour, --include-source). Returns the texts and the
+    list of skipped files."""
     texts = []
     skipped = []
     names, pat = source_names(prog) if prog else (set(), None)
@@ -256,6 +284,9 @@ def harvest(scan, prog=None):
             if rel.endswith(".werk"):
                 continue
             if prog and (rel in names or pat.match(rel)):
+                skipped.append(rel)
+                continue
+            if prog and (rel.lower().endswith(SOURCE_EXT) or NOT_EVIDENCE.search(name)):
                 skipped.append(rel)
                 continue
             if rel.startswith("_harness/") and rel not in ("_harness/stdout.log",):
@@ -327,9 +358,11 @@ def main():
     ap.add_argument("--json-out", default="")
     ap.add_argument("--include-source", action="store_true",
                     help="also scan the program's own source (the pre-fix behaviour)")
+    ap.add_argument("--sample-rows", type=int, default=32,
+                    help="how many leading points must ALL be present for a full-task PASS")
     args = ap.parse_args()
 
-    gt = ground_truth(args.fixture)
+    gt = ground_truth(args.fixture, max(1, args.sample_rows))
     print("fixture        : %s" % args.fixture)
     print("fixture sha256 : %s" % gt["fixture_sha256"])
     print("ground truth   : count=%d  declared_files=%d" % (gt["count"], gt["declared_files"]))
@@ -372,7 +405,8 @@ def main():
     blob = "\n".join(t for _, t in texts)
     print("\nscanned %d text artifacts under %s (%d chars)" % (len(texts), scan, len(blob)))
     if skipped:
-        print("not scanned (the program's own source): %s" % ", ".join(skipped))
+        print("not scanned (program source, prompt/task/transcript copies): %s"
+              % ", ".join(skipped))
 
     # ---- clause 2: the numbers
     count_ok = bool(re.search(r"\b%d\b" % gt["count"], blob)) or \
@@ -392,11 +426,16 @@ def main():
     tool_quoted = {t: n > 0 for t, n in tool_quote_lines.items()}
 
     # ---- clause 1: integrity
-    integ_ok = bool(re.search(r"sha-?256", blob, re.I)) and \
+    integ_words = bool(re.search(r"sha-?256", blob, re.I)) and \
         bool(re.search(r"(verif|match|\bOK\b|\bPASS\b)", blob, re.I))
+    lblob = blob.lower()
+    digests_seen = [d for d in gt["declared_digests"] if d in lblob]
+    integ_ok = integ_words and len(digests_seen) > 0
 
     print("\n=== CLAUSE GRADES (from artifacts, not from the model's claims) ===")
-    print(" 1  integrity: sha-256 named and a verification verdict : %s" % integ_ok)
+    print(" 1  integrity: sha-256 named and a verification verdict : %s" % integ_words)
+    print("    declared digests printed (of %d)                : %d  -> clause 1 %s"
+          % (len(gt["declared_digests"]), len(digests_seen), integ_ok))
     print(" 2  point count %d present                       : %s" % (gt["count"], count_ok))
     print("    point[0] position triple present               : %s" % pos_ok)
     print("    point[0] colour triple present                 : %s%s"
@@ -409,20 +448,39 @@ def main():
     print("    quoted lines  : %s  (of %s candidate lines)"
           % (tool_quote_lines, {t: len(v) for t, v in gt["tool_lines"].items()}))
 
-    passed = count_ok and pos_ok and col_ok and all(tool_named.values())
-    print("\nVERDICT (clauses 2 and 3, the spec-forcing ones): %s"
-          % ("PASS" if passed else "FAIL"))
+    nrows = len(gt["positions"])
+    numeric = count_ok and pos_ok and col_ok and all(tool_named.values())
+    full_checks = [
+        ("1 integrity: declared digest + verdict", integ_ok),
+        ("2 count", count_ok),
+        ("2 all %d sample positions" % nrows, posN == nrows),
+        ("2 all %d sample colours" % nrows, colN == nrows),
+        ("3 tools named", all(tool_named.values())),
+        ("3 tool paths", all(tool_path.values())),
+        ("3 source quoted", all(tool_quoted.values())),
+    ]
+    failing = [name for name, ok in full_checks if not ok]
+    passed = not failing
+    print("\nVERDICT (full task, clauses 1-3): %s%s"
+          % ("PASS" if passed else "FAIL",
+             "" if passed else "   failing: " + "; ".join(failing)))
+    print("numeric sub-check (count, point[0], tool names; the pre-2026-10-12 verdict rule): %s"
+          % ("PASS" if numeric else "FAIL"))
 
     row = {"fixture": args.fixture, "fixture_sha256": gt["fixture_sha256"],
            "rundir": args.rundir, "scanned": scan, "rerun": rerun,
            "count_ok": count_ok, "pos0_ok": pos_ok, "col0_ok": col_ok,
            "col0_form": col_form,
            "positions_present": posN, "colors_present": colN,
-           "sample_rows": len(gt["positions"]),
-           "integrity_ok": integ_ok,
+           "sample_rows": nrows,
+           "integrity_ok": integ_ok, "integrity_words": integ_words,
+           "declared_digests_printed": len(digests_seen),
            "tool_named": tool_named, "tool_path": tool_path, "tool_quoted": tool_quoted,
            "tool_quote_lines": tool_quote_lines, "source_excluded": skipped,
            "verdict": "PASS" if passed else "FAIL",
+           "verdict_rule": "full-task-2026-10-12",
+           "full_task_failing": failing,
+           "verdict_numeric": "PASS" if numeric else "FAIL",
            "artifacts": [n for n, _ in texts]}
     if args.json_out:
         with open(args.json_out, "w", encoding="utf-8") as f:
