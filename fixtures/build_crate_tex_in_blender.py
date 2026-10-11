@@ -30,10 +30,17 @@ AP.add_argument("--normal", required=True)
 AP.add_argument("--mr", required=True)
 AP.add_argument("--addon", required=True)
 AP.add_argument("--report", required=True)
+AP.add_argument("--created", required=True)
+AP.add_argument("--source-label", required=True)
 A = AP.parse_args(ARGV)
 
 sys.path.insert(0, A.addon)
 import werk_blender  # noqa: E402
+import werk_blender.exporter  # noqa: E402
+
+# The exporter stamps `created` with the wall clock. A fixture must not, so
+# the builder supplies the fixed value (build_crate_tex.py CREATED).
+werk_blender.exporter._now = lambda: A.created
 
 
 def box_uvs(mesh):
@@ -71,6 +78,11 @@ def main():
     # already gate-measured, so this fixture's geometry is the real crate and
     # not a primitive standing in for one.
     res = werk_blender.import_file(A.src)
+    # The importer records the absolute source path as `werk_source`, and the
+    # exporter writes it into game.glb. Record a host-independent name instead.
+    for o in bpy.data.objects:
+        if "werk_source" in o.keys():
+            o["werk_source"] = A.source_label
     meshes = [o for o in bpy.data.objects if o.type == "MESH"]
     if not meshes:
         raise SystemExit("no mesh imported from %s" % A.src)

@@ -62,6 +62,27 @@ ROOT = os.path.dirname(HERE)
 TEX_SIZE = 256
 PLANKS = 6
 
+# A fixed `created`, as in the other fixture builders, so that two runs give
+# the same bytes. This is the value the pinned crate-tex-v1.werk carries.
+CREATED = "2026-08-09T04:40:00Z"
+
+
+def source_label(src):
+    """The source fixture's name as recorded in the package (`werk_source`).
+
+    Repo-relative with forward slashes when the source is inside the repo,
+    else the basename. Never an absolute host path: that would make the bytes
+    depend on where the repo is checked out.
+    """
+    src = os.path.abspath(src)
+    try:
+        rel = os.path.relpath(src, ROOT)
+    except ValueError:  # another drive on Windows
+        return os.path.basename(src)
+    if rel == os.pardir or rel.startswith(os.pardir + os.sep) or os.path.isabs(rel):
+        return os.path.basename(src)
+    return rel.replace(os.sep, "/")
+
 
 # ---------------------------------------------------------------------------
 # a minimal deterministic PNG writer (stdlib zlib only)
@@ -250,7 +271,9 @@ def main():
                "--normal", maps["normal"][0],
                "--mr", maps["mr"][0],
                "--addon", os.path.join(ROOT, "adapters", "blender"),
-               "--report", report_path]
+               "--report", report_path,
+               "--created", CREATED,
+               "--source-label", source_label(args.src)]
         proc = subprocess.run(cmd, capture_output=True, text=True)
         if proc.returncode != 0 or not os.path.isfile(target):
             sys.stdout.write(proc.stdout[-4000:])
@@ -273,11 +296,11 @@ def main():
         a = hashlib.sha256(open(out_path, "rb").read()).hexdigest()
         b = hashlib.sha256(open(second, "rb").read()).hexdigest()
         os.remove(second)
-        # MANIFEST.json carries a wall clock, so whole-file identity is not the
-        # claim; payload identity is. The add-on's own gate makes the same
-        # distinction and names it rather than hiding it.
-        print("  determinism: whole-file %s (manifest carries `created`)"
-              % ("identical" if a == b else "DIFFERS, as expected"))
+        # `created` is fixed and `werk_source` is host-independent, so the
+        # claim is whole-file identity.
+        print("  determinism: whole-file %s" % ("identical" if a == b else "DIFFERS"))
+        if a != b:
+            return 1
     return 0
 
 
