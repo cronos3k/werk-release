@@ -93,15 +93,23 @@ def test_both_versions_still_materialize_after_dedup(store, werk_v1, werk_v2, tm
                     assert a.read() == b.read(), "%s differs in %s" % (rel, name)
 
 
+# The real corpus is private to the author's machine. WERK_STORE_CORPUS points
+# this test at another corpus with the same layout (model/model.glb,
+# model/textures/, views/*.png, audio/<group>/*.wav, properties.json).
+# Unset, the test uses mkwerk.DEFAULT_CORPUS, as before.
+REAL_CORPUS = os.environ.get("WERK_STORE_CORPUS") or mkwerk.DEFAULT_CORPUS
+
+
 @pytest.mark.skipif(
-    not mkwerk.corpus_available(), reason="real asset corpus not present on this machine"
+    not mkwerk.corpus_available(REAL_CORPUS),
+    reason="real asset corpus not present on this machine (set WERK_STORE_CORPUS to use another)",
 )
 def test_dedup_on_the_real_corpus(store, tmp_path):
     """The gate measurement, on production assets rather than generated noise."""
     src1 = str(tmp_path / "bell-v1")
     src2 = str(tmp_path / "bell-v2")
-    h1 = mkwerk.make_from_corpus(src1, variant="v1")
-    h2 = mkwerk.make_from_corpus(src2, variant="v2")
+    h1 = mkwerk.make_from_corpus(src1, REAL_CORPUS, variant="v1")
+    h2 = mkwerk.make_from_corpus(src2, REAL_CORPUS, variant="v2")
 
     ingest(store, src1)
     ingest(store, src2)
