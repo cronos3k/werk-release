@@ -241,24 +241,128 @@ def main(argv=None):
         record("round-trip byte identity", "PASS" if same else "FAIL",
                "sha256 identical" if same else "DIFFERS")
 
-    # -- 3. the builder is deterministic (AUTHOR-LAB) --------------------
-    # This clause re-runs build_image_fixture.py, whose source is the private
-    # <WERK_LAB>/SFNovels tree. When that source is absent it SKIPs rather than FAILs:
-    # the publicly reproducible image-determinism proof is the CC0 gate,
-    # tests/run_gate_cc0_image.py (build_image_cc0.py rebuilds byte-identically
-    # from in-repo inputs). See ruling R3, docs/RULINGS-2026-09-09.md.
+    # -- 3. rebuild, at three levels ----------------------------------------
+    # "Rebuild" means three different things, and each is reported on its
+    # own (Codex review rows G16, G17):
+    #   L1 archive reassembly: the whole .werk is byte-identical to the pin,
+    #      rebuilt from the inputs the package carries plus named substitutions
+    #   L2 computed payloads: every entry the builder computes (not copies)
+    #      reproduces from those inputs
+    #   L3 original inputs: the builder on the author's <WERK_LAB>/SFNovels tree
+    # L1 and L2 run on any machine. The rebuild goes into the work dir, never
+    # into fixtures/. The substitutions are named in tests/package_rebuild.py
+    # and in the clause detail. L3 SKIPs where the author tree is absent; the
+    # public image determinism proof without substitutions is
+    # tests/run_gate_cc0_image.py (ruling R3, docs/RULINGS-2026-09-09.md).
+    import package_rebuild as pr
+    n1 = "rebuild L1: archive reassembly"
+    n2 = "rebuild L2: computed payloads reproduce"
+    try:
+        shipped, _order = pr.read_zip(IMAGE_WERK)
+        inputs = set(pr.IMAGE_INPUTS) | set(
+            nm for nm in shipped
+            if nm.startswith("spec/") or nm.startswith("loaders/"))
+        bad = pr.check_declared(shipped, inputs)
+        if bad:
+            for nm in (n1, n2):
+                record(nm, "FAIL", "packaged inputs do not match the manifest: "
+                       + "; ".join(bad[:5]))
+        else:
+            rb = os.path.join(WORK, "rebuild")
+            root = os.path.join(rb, "root")
+            src = os.path.join(rb, "src")
+            out = os.path.join(rb, "out")
+            shutil.rmtree(out, ignore_errors=True)
+            pr.make_overlay(ROOT, shipped, root)
+            pr.image_source_tree(shipped, src)
+            ev_path = os.path.join(rb, "pipeline-source.txt")
+            with open(ev_path, "wb") as fh:
+                fh.write(shipped[pr.IMAGE_EVIDENCE])
+            stock, zdesc = pr.zlib_is_stock()
+            rc, log = run([sys.executable,
+                           os.path.join(ROOT, "tests", "package_rebuild.py"),
+                           "image", root, src, out, ev_path]
+                          + (["--restock"] if stock else []))
+            rebuilt_path = os.path.join(out, "ista-varun-v1.werk")
+            if rc != 0 or not os.path.isfile(rebuilt_path):
+                for nm in (n1, n2):
+                    record(nm, "FAIL", "builder exit %d: %s"
+                           % (rc, log.strip()[-200:]))
+            else:
+                again, _o = pr.read_zip(rebuilt_path)
+                pngs = [nm for nm in shipped if nm.startswith("image/")
+                        and nm.endswith(".png") and nm not in inputs]
+                c = pr.compare(shipped, again, inputs, png_by_pixels=pngs)
+                subs = pr.IMAGE_SUBSTITUTIONS if stock else \
+                    pr.IMAGE_SUBSTITUTIONS[:-1]
+                measured = {
+                    "entries_total": c["total"],
+                    "entries_identical": c["identical"],
+                    "entries_differ": c["differ"],
+                    "computed": len(c["computed"]),
+                    "png_scanline_only": c["png_scanline_only"],
+                    "zlib": zdesc}
+                print("          rebuild: %s" % json.dumps(measured))
+                whole = sha256_file(rebuilt_path)
+                pin = sha256_file(IMAGE_WERK)
+                d1 = ("%s vs pin %s; %d/%d entries identical; %s; "
+                      "substitutions: %s"
+                      % (whole[:16], pin[:16], c["identical"], c["total"],
+                         zdesc, " | ".join(subs)))
+                if whole == pin:
+                    record(n1, "PASS", d1)
+                elif not stock:
+                    record(n1, "SKIP", "needs a stock zlib to re-deflate the "
+                           "preview PNGs; run the gate under a CPython whose "
+                           "zlib module is stock (3.13 or earlier on Windows); "
+                           "differ: %s; %s"
+                           % (", ".join(c["differ"]), d1))
+                else:
+                    record(n1, "FAIL", "differ: %s; %s"
+                           % (", ".join(c["differ"]), d1))
+                d2 = ("%d computed entries: %d byte-identical, %d with "
+                      "identical chunks and scanlines but a different deflate "
+                      "stream (%s); %d input entries taken from the package "
+                      "(%d spec/ and loaders/ files, %s)"
+                      % (len(c["computed"]),
+                         len(c["computed"]) - len(c["computed_bad"])
+                         - len(c["png_scanline_only"]),
+                         len(c["png_scanline_only"]),
+                         ", ".join(c["png_scanline_only"]) or "none",
+                         len(inputs), len(inputs) - len(pr.IMAGE_INPUTS),
+                         ", ".join(pr.IMAGE_INPUTS)))
+                if c["computed_bad"] or c["inputs_bad"]:
+                    record(n2, "FAIL", "differ: %s; %s"
+                           % (", ".join(c["computed_bad"] + c["inputs_bad"]),
+                              d2))
+                else:
+                    record(n2, "PASS", d2 + "; recipe/recipe.json and "
+                           "MANIFEST.json carry the copied evidence's hash, "
+                           "so they confirm the copy, not its generation")
+    except Exception as e:  # noqa: BLE001
+        for nm in (n1, n2):
+            record(nm, "FAIL", repr(e))
+
+    # L3: the original inputs. Before K17 this clause was named
+    # "builder is deterministic (author-lab)".
+    n3 = "rebuild L3: original inputs (author-lab)"
     rc, out = run([sys.executable, os.path.join(FIX, "build_image_fixture.py"),
                    "--out", WORK])
     rebuilt = os.path.join(WORK, "ista-varun-v1.werk")
     if rc != 0 or not os.path.isfile(rebuilt):
-        record("builder is deterministic (author-lab)", "SKIP",
-               "needs the private ista-varun source; the public determinism "
-               "proof is tests/run_gate_cc0_image.py. " + out.strip()[-120:])
+        record(n3, "SKIP",
+               "needs the author's <WERK_LAB>/SFNovels tree: the artifacts.db row and "
+               "the four whole producer source files the package carries only "
+               "as excerpts plus sha256 (so pipeline-source.txt cannot be "
+               "regenerated here). Generating the source image itself (model "
+               "output) is outside any rebuild. " + out.strip()[-120:])
     else:
         same = sha256_file(rebuilt) == sha256_file(IMAGE_WERK)
-        record("builder is deterministic", "PASS" if same else "FAIL",
-               "two runs, identical sha256" if same
-               else "a second run produced different bytes")
+        record(n3, "PASS" if same else "FAIL",
+               "rebuilt from the original tree, identical sha256" if same
+               else "a rebuild from the original tree produced different "
+               "bytes (with a zlib-ng Pillow the preview PNGs differ, "
+               "unavailable-audit finding A1)")
 
     # -- 4. the three bootstrap loaders, standalone -----------------------
     loaders = os.path.join(ROOT, "loaders")
