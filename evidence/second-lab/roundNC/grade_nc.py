@@ -43,6 +43,9 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import nc_mesh  # noqa: E402
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from rerun_support import prepare_output, program_args, run_python
+
 
 HARNESS_FILES = {"PROMPT.txt", "REPORT.md", "_agent-stdout.txt", "_agent-stderr.txt"}
 CLASS_EXT = {
@@ -88,29 +91,26 @@ def load_exp(path, fmt, allow_prov):
 # ------------------------------------------------------------------ re-run
 
 def do_rerun(args, e):
-    out = os.path.realpath(args.out)
-    if os.path.exists(out):
-        shutil.rmtree(out)
-    os.makedirs(out)
+    out = prepare_output(args.out, [args.rundir, args.repo])
     for ff in e["fixture_files"]:
-        dst = os.path.join(out, ff["name"])
+        src = os.path.join(args.repo, ff["path"])
+        if nc_mesh.sha256_file(src) != ff["sha256"]:
+            raise ValueError("fixture hash differs from frozen expectation: " + ff["name"])
+        dst = os.path.realpath(os.path.join(out, ff["name"]))
+        if os.path.commonpath([out, dst]) != out:
+            raise ValueError("fixture name leaves the scratch directory")
         os.makedirs(os.path.dirname(dst), exist_ok=True)
-        shutil.copy2(os.path.join(args.repo, ff["path"]), dst)
+        shutil.copy2(src, dst)
     src = os.path.join(args.rundir, args.prog)
     shutil.copy2(src, os.path.join(out, os.path.basename(args.prog)))
-    t0 = time.monotonic()
-    p = subprocess.run([sys.executable, os.path.basename(args.prog)], cwd=out,
-                       capture_output=True, timeout=1800)
-    dt = time.monotonic() - t0
-    so = p.stdout.decode("utf-8", "replace")
-    se = p.stderr.decode("utf-8", "replace")
+    result = run_python(os.path.basename(args.prog), program_args(args), out)
     print("\n=== RE-RUN in clean dir %s ===" % out)
-    print("argv: python %s" % os.path.basename(args.prog))
-    print("exit: %d  in %.1fs" % (p.returncode, dt))
-    enc = sys.stdout.encoding or "utf-8"
-    sys.stdout.write(so.encode(enc, "replace").decode(enc, "replace"))
-    sys.stderr.write(se.encode(enc, "replace").decode(enc, "replace"))
-    return out, p.returncode, so
+    print("run status: %s; exit: %s; seconds: %s" %
+          (result["status"], result["exit"], result["secs"]))
+    print(result["stdout"])
+    if result["stderr"]:
+        print(result["stderr"], file=sys.stderr)
+    return out, result
 
 
 # --------------------------------------------------------------- the walk
@@ -258,7 +258,12 @@ def grade(args, doc, e, dump, scan, exit_code, prog_stdout):
 
     clauses = {}
     # C1
-    if exit_code is None:
+    run_status = getattr(args, "run_status", "not-run")
+    if run_status == "host-error":
+        clauses["C1"] = {"result": "HOST-ERROR", "why": "host could not launch the program"}
+    elif run_status == "program-timeout":
+        clauses["C1"] = {"result": "FAIL", "why": "program exceeded the timeout"}
+    elif exit_code is None:
         clauses["C1"] = {"result": "NOT-RUN", "why": "exit code needs --rerun"}
     elif exit_code != 0:
         clauses["C1"] = {"result": "FAIL", "why": "exit %d in clean dir" % exit_code}
@@ -329,7 +334,11 @@ def grade(args, doc, e, dump, scan, exit_code, prog_stdout):
     graded_match = any(r["status"] in ("OK", "SUBMESH") and r["class"] for r in rows)
     res = {k: v["result"] for k, v in clauses.items()}
     passing = lambda v: v in ("PASS", "PASS-honest")
-    if exit_code not in (None, 0):
+    if run_status == "host-error":
+        verdict, why = "HOST-ERROR", "host could not launch the program"
+    elif run_status == "program-timeout":
+        verdict, why = "FAIL", "program exceeded the timeout"
+    elif exit_code not in (None, 0):
         verdict = "FAIL"
         why = "program does not run clean"
     elif not graded_match:
@@ -414,6 +423,8 @@ def grade(args, doc, e, dump, scan, exit_code, prog_stdout):
         print("  WARNING: ground truth for %s is %s; this verdict is NOT reportable."
               % (args.format, e["status"]))
     return {"format": args.format, "payload": second, "second_payload_na": absent,
+            "score_version": "post-hoc-rerun-2026-10-11",
+            "rerun": getattr(args, "run_result", None),
             "ground_truth_status": e["status"], "scan_dir": scan, "exit_code": exit_code,
             "rows": rows, "notes": notes, "clauses": clauses, "verdict": verdict,
             "verdict_reason": why, "verifiable_integrity_fraction": vif}
@@ -495,6 +506,8 @@ def main():
     ap.add_argument("--rerun", action="store_true")
     ap.add_argument("--prog", default="")
     ap.add_argument("--out", default="")
+    ap.add_argument("--prog-args", default=None, help="shell-style argument string")
+    ap.add_argument("--prog-arg", action="append", default=[], help="one verbatim argument; repeatable")
     ap.add_argument("--human", action="append", default=[],
                     help="human ruling, e.g. C2=PASS or C3=PASS-honest or C3=FAIL")
     ap.add_argument("--allow-provisional", action="store_true")
@@ -516,7 +529,9 @@ def main():
         if args.rerun:
             if not (args.prog and args.out):
                 raise SystemExit("--rerun needs --prog and --out")
-            scan, exit_code, prog_stdout = do_rerun(args, e)
+            scan, args.run_result = do_rerun(args, e)
+            args.run_status = args.run_result["status"]
+            exit_code, prog_stdout = args.run_result["exit"], args.run_result["stdout"]
         else:
             scan = args.rundir
         res = grade(args, doc, e, dump, scan, exit_code, prog_stdout)
