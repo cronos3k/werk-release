@@ -51,6 +51,9 @@ import sys
 import time
 import zipfile
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from rerun_support import prepare_output, program_args, run_python
+
 
 def sha256_file(p):
     h = hashlib.sha256()
@@ -229,28 +232,21 @@ def main():
     print("declared files: %d" % len(dec))
 
     if args.rerun:
-        out = os.path.realpath(args.out)
-        if os.path.exists(out):
-            shutil.rmtree(out)
-        os.makedirs(out)
+        if not args.prog:
+            raise SystemExit("--rerun needs --prog")
+        out = prepare_output(args.out, [args.rundir, args.fixture])
         shutil.copy2(args.fixture, os.path.join(out, os.path.basename(args.fixture)))
-        src = os.path.join(args.rundir, args.prog)
-        shutil.copy2(src, os.path.join(out, os.path.basename(args.prog)))
-        t0 = time.monotonic()
-        pargs = (shlex.split(args.prog_args) if args.prog_args is not None else []) + \
-            list(args.prog_arg)
-        p = subprocess.run([sys.executable, os.path.basename(args.prog)] + pargs, cwd=out,
-                           capture_output=True, timeout=1800)
-        dt = time.monotonic() - t0
+        shutil.copy2(os.path.join(args.rundir, args.prog), os.path.join(out, os.path.basename(args.prog)))
+        result = run_python(os.path.basename(args.prog), program_args(args), out)
         print("\n=== RE-RUN in clean dir %s ===" % out)
-        print("argv: python %s" % " ".join([os.path.basename(args.prog)] +
-                                           [shlex.quote(a) for a in pargs]))
-        print("exit: %d  in %.1fs" % (p.returncode, dt))
-        so = p.stdout.decode("utf-8", "replace")
-        se = p.stderr.decode("utf-8", "replace")
-        enc = sys.stdout.encoding or "utf-8"
-        sys.stdout.write(so.encode(enc, "replace").decode(enc, "replace"))
-        sys.stderr.write(se.encode(enc, "replace").decode(enc, "replace"))
+        print("run status: %s; exit: %s; seconds: %s" %
+              (result["status"], result["exit"], result["secs"]))
+        print(result["stdout"])
+        if result["stderr"]:
+            print(result["stderr"], file=sys.stderr)
+        if result["status"] != "completed" or result["exit"] != 0:
+            print("TASK: " + ("HOST-ERROR" if result["status"] == "host-error" else "FAIL"))
+            return
         scan = out
     else:
         scan = args.rundir

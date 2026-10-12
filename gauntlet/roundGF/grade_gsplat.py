@@ -98,6 +98,9 @@ import sys
 import time
 import zipfile
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from rerun_support import prepare_output, program_args, run_python
+
 # ---------------------------------------------------------------- MessagePack
 
 def mp(b, i=0):
@@ -539,6 +542,7 @@ def main():
                     help="also scan the program's own source (the pre-fix behaviour)")
     ap.add_argument("--sample-rows", type=int, default=32,
                     help="how many leading points are looked for in the free text (reported only)")
+    ap.add_argument("--prog-args", default=None, help="shell-style argument string")
     ap.add_argument("--prog-arg", action="append", default=[],
                     help="one argument for the re-run program, verbatim (repeatable)")
     ap.add_argument("--report", default="REPORT.md",
@@ -563,58 +567,35 @@ def main():
     scan = args.rundir
     rerun = None
     if args.rerun:
-        out = os.path.realpath(args.out)
-        if os.path.exists(out):
-            shutil.rmtree(out)
-        os.makedirs(out)
+        out = prepare_output(args.out, [args.rundir, args.fixture])
         shutil.copy2(args.fixture, os.path.join(out, os.path.basename(args.fixture)))
-        shutil.copy2(os.path.join(args.rundir, args.prog),
-                     os.path.join(out, os.path.basename(args.prog)))
-        cenv = dict(os.environ)
-        cenv["PYTHONIOENCODING"] = "utf-8"
-        cenv["PYTHONUTF8"] = "1"
-        t0 = time.monotonic()
-        p = subprocess.run([sys.executable, os.path.basename(args.prog)] + list(args.prog_arg),
-                           cwd=out, capture_output=True, timeout=3600, env=cenv)
-        dt = time.monotonic() - t0
-        so = p.stdout.decode("utf-8", "replace")
-        se = p.stderr.decode("utf-8", "replace")
-        with open(os.path.join(out, "_rerun.stdout.txt"), "w", encoding="utf-8") as f:
-            f.write(so)
-        with open(os.path.join(out, "_rerun.stderr.txt"), "w", encoding="utf-8") as f:
-            f.write(se)
-        print("\n=== RE-RUN in clean dir %s ===" % out)
-        print("argv: python %s" % " ".join([os.path.basename(args.prog)] + list(args.prog_arg)))
-        print("exit=%d in %.1fs  stdout=%dB stderr=%dB" % (p.returncode, dt, len(so), len(se)))
-        rerun = {"exit": p.returncode, "secs": round(dt, 1), "argv": list(args.prog_arg),
-                 "stdout_bytes": len(so), "stderr_bytes": len(se)}
+        shutil.copy2(os.path.join(args.rundir, args.prog), os.path.join(out, os.path.basename(args.prog)))
+        pargs = program_args(args)
+        rerun = run_python(os.path.basename(args.prog), pargs, out, 3600)
+        so, se = rerun["stdout"], rerun["stderr"]
+        for name, text in (("stdout", so), ("stderr", se)):
+            with open(os.path.join(out, "_rerun.%s.txt" % name), "w", encoding="utf-8") as f:
+                f.write(text)
+        print("\n=== RE-RUN: %s; exit=%s ===" % (rerun["status"], rerun["exit"]))
         scan = out
-        if not args.no_damage_check:
-            dout = out + "-damaged"
-            if os.path.exists(dout):
-                shutil.rmtree(dout)
-            os.makedirs(dout)
+        if not args.no_damage_check and rerun["status"] == "completed" and rerun["exit"] == 0:
+            dout = prepare_output(out + "-damaged", [args.rundir, args.fixture])
             target, off = make_damaged(args.fixture, os.path.join(dout, os.path.basename(args.fixture)))
-            shutil.copy2(os.path.join(args.rundir, args.prog),
-                         os.path.join(dout, os.path.basename(args.prog)))
-            t0 = time.monotonic()
-            pd = subprocess.run([sys.executable, os.path.basename(args.prog)] + list(args.prog_arg),
-                                cwd=dout, capture_output=True, timeout=3600, env=cenv)
-            dtd = time.monotonic() - t0
-            sod = pd.stdout.decode("utf-8", "replace") + pd.stderr.decode("utf-8", "replace")
+            shutil.copy2(os.path.join(args.rundir, args.prog), os.path.join(dout, os.path.basename(args.prog)))
+            damaged = run_python(os.path.basename(args.prog), pargs, dout, 3600)
+            sod = damaged["stdout"] + damaged["stderr"]
             with open(os.path.join(dout, "_rerun.stdout.txt"), "w", encoding="utf-8") as f:
                 f.write(sod)
             clean_words = len(FAIL_WORDS.findall(so + se))
             dam_words = len(FAIL_WORDS.findall(sod))
-            detected = (pd.returncode != 0 and p.returncode == 0) or dam_words > clean_words
-            print("=== DAMAGE CHECK: %s byte %d flipped, zip rewritten self-consistent ===" % (target, off))
-            print("exit=%d in %.1fs  failure words: clean %d, damaged %d  -> damage %s"
-                  % (pd.returncode, dtd, clean_words, dam_words,
-                     "REPORTED" if detected else "NOT REPORTED"))
-            rerun["damage"] = {"file": target, "offset": off, "exit": pd.returncode,
-                               "clean_exit": p.returncode, "fail_words_clean": clean_words,
-                               "fail_words_damaged": dam_words, "detected": detected,
-                               "dir": dout}
+            detected = damaged["status"] == "completed" and (
+                damaged["exit"] != 0 or dam_words > clean_words)
+            print("=== DAMAGE CHECK: %s; status=%s; detected=%s ===" %
+                  (target, damaged["status"], detected))
+            rerun["damage"] = {"file": target, "offset": off, "exit": damaged["exit"],
+                               "status": damaged["status"], "error": damaged["error"],
+                               "clean_exit": rerun["exit"], "fail_words_clean": clean_words,
+                               "fail_words_damaged": dam_words, "detected": detected, "dir": dout}
 
     texts, skipped = harvest(scan, None if args.include_source else args.prog,
                              gt["entry_digests"])
@@ -704,9 +685,14 @@ def main():
         ("3 source quoted", all(tool_quoted.values())),
     ]
     failing = [name for name, ok in full_checks if not ok]
-    passed = not failing
+    if rerun and (rerun["status"] != "completed" or rerun["exit"] != 0):
+        failing.append("program did not complete with exit 0")
+    host_error = bool(rerun) and (rerun["status"] == "host-error" or
+                                 (damage or {}).get("status") == "host-error")
+    passed = not failing and not host_error
+    verdict = "HOST-ERROR" if host_error else ("PASS" if passed else "FAIL")
     print("\nVERDICT (full task, clauses 1-3): %s%s"
-          % ("PASS" if passed else "FAIL",
+          % (verdict,
              "" if passed else "   failing: " + "; ".join(failing)))
     print("numeric sub-check (count, point[0], tool names; the pre-2026-10-12 verdict rule): %s"
           % ("PASS" if numeric else "FAIL"))
@@ -725,7 +711,7 @@ def main():
            "declared_digests_printed": len(digests_seen),
            "tool_named": tool_named, "tool_path": tool_path, "tool_quoted": tool_quoted,
            "tool_quote_lines": tool_quote_lines, "source_excluded": skipped,
-           "verdict": "PASS" if passed else "FAIL",
+           "verdict": verdict,
            "verdict_rule": "full-task-2026-10-12",
            "full_task_failing": failing,
            "verdict_numeric": "PASS" if numeric else "FAIL",

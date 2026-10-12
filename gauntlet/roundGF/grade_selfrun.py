@@ -32,9 +32,13 @@ import hashlib
 import json
 import os
 import re
-import subprocess
+import shutil
+import tempfile
 import sys
 import zipfile
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from rerun_support import run_command
 
 
 def lf(b):
@@ -100,19 +104,20 @@ def main():
     # ---- grade B: the grader runs the binary the run built
     B = {}
     if exes and not args.no_exec:
-        exe = os.path.join(root, exes[0])
+        # Use a separate directory for each vector. Keep the original run read-only.
         for v in vectors:
-            argv = [exe] + list(v["argv"][1:])
-            try:
-                p = subprocess.run(argv, cwd=root, capture_output=True, timeout=1800)
-                got = lf(p.stdout)
+            with tempfile.TemporaryDirectory(prefix="werk-selfrun-") as scratch:
+                exe = os.path.join(scratch, os.path.basename(exes[0]))
+                shutil.copy2(os.path.join(root, exes[0]), exe)
+                shutil.copy2(args.fixture, os.path.join(scratch, os.path.basename(args.fixture)))
+                result = run_command([exe] + list(v["argv"][1:]), scratch)
                 B[v["vector_id"]] = {
-                    "exe": exes[0], "exit": p.returncode,
-                    "sha256_lf": sha(got), "bytes_lf": len(got),
-                    "match": sha(got) == v["stdout_sha256_lf"],
+                    "exe": exes[0], "exit": result["exit"], "status": result["status"],
+                    "error": result["error"], "sha256_lf": result["stdout_sha256_lf"],
+                    "bytes_lf": result["stdout_bytes_lf"],
+                    "match": result["status"] == "completed" and result["exit"] == 0
+                             and result["stdout_sha256_lf"] == v["stdout_sha256_lf"],
                 }
-            except Exception as e:
-                B[v["vector_id"]] = {"exe": exes[0], "error": str(e), "match": False}
 
     print("\n=== GRADE A -- ECHO CHECK ONLY, NOT EVIDENCE (the expected text is "
           "inside the package and is inlined in this arm's prompt) ===")
@@ -131,7 +136,8 @@ def main():
     # the grader itself invoking a binary the run actually built. Same rule as
     # "an agent's report is evidence about the agent", applied to a grader that
     # was accepting the package's own answer key.
-    verdict = "PASS" if nB == len(vectors) else "FAIL"
+    host_error = any(r.get("status") == "host-error" for r in B.values())
+    verdict = "HOST-ERROR" if host_error else ("PASS" if nB == len(vectors) else "FAIL")
     print("\nvectors reproduced: A %d/%d   B %d/%d   ->  %s"
           % (nA, len(vectors), nB, len(vectors), verdict))
 
