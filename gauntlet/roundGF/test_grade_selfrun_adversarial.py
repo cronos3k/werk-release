@@ -22,10 +22,13 @@ class SelfrunTests(unittest.TestCase):
             want = b"vector output\n"
             digest = hashlib.sha256(want).hexdigest()
             vector = {"vector_id": "synthetic", "steps": 1, "temperature": 1,
-                      "stdout_sha256_lf": digest, "stdout_file": "expected.txt", "argv": ["tool", "one"]}
+                      "stdout_sha256_lf": digest, "stdout_file": "expected.txt",
+                      "argv": ["tool", "model/stories15M.bin", "-z", "model/tokenizer.bin"]}
             with zipfile.ZipFile(fixture, "w") as archive:
                 archive.writestr("testvectors/vectors.json", json.dumps({"vectors": [vector]}))
                 archive.writestr("testvectors/expected.txt", want)
+                archive.writestr("model/stories15M.bin", b"synthetic model")
+                archive.writestr("model/tokenizer.bin", b"synthetic tokenizer")
             for name in ["PROMPT-copy.txt", "helper.py", "solution.py", "REPORT.md", None]:
                 run = root / (name or "empty")
                 run.mkdir()
@@ -44,7 +47,13 @@ class SelfrunTests(unittest.TestCase):
                                                 ("host-error", None, "HOST-ERROR")]:
                 result = {"status": status, "exit": exit_code, "error": None,
                           "stdout_sha256_lf": digest, "stdout_bytes_lf": len(want)}
-                with patch.object(sys, "argv", argv), patch.object(grade_selfrun, "run_command", return_value=result), \
+                def invoke(command, scratch):
+                    data = Path(scratch)
+                    self.assertEqual((data / "model/stories15M.bin").read_bytes(), b"synthetic model")
+                    self.assertEqual((data / "model/tokenizer.bin").read_bytes(), b"synthetic tokenizer")
+                    self.assertFalse((data / "testvectors").exists())
+                    return result
+                with patch.object(sys, "argv", argv), patch.object(grade_selfrun, "run_command", side_effect=invoke), \
                         contextlib.redirect_stdout(io.StringIO()):
                     grade_selfrun.main()
                 self.assertEqual(json.loads(out.read_text())["verdict"], verdict)

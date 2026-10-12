@@ -110,6 +110,15 @@ def main():
                 exe = os.path.join(scratch, os.path.basename(exes[0]))
                 shutil.copy2(os.path.join(root, exes[0]), exe)
                 shutil.copy2(args.fixture, os.path.join(scratch, os.path.basename(args.fixture)))
+                # Supply runtime data without exposing the stored expected outputs.
+                with zipfile.ZipFile(args.fixture) as package:
+                    for member in ("model/stories15M.bin", "model/tokenizer.bin"):
+                        if member not in v["argv"][1:]:
+                            continue
+                        destination = os.path.join(scratch, *member.split("/"))
+                        os.makedirs(os.path.dirname(destination), exist_ok=True)
+                        with open(destination, "wb") as output:
+                            output.write(package.read(member))
                 result = run_command([exe] + list(v["argv"][1:]), scratch)
                 B[v["vector_id"]] = {
                     "exe": exes[0], "exit": result["exit"], "status": result["status"],
