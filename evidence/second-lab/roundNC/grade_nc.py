@@ -48,6 +48,8 @@ from rerun_support import prepare_output, program_args, run_python
 
 
 HARNESS_FILES = {"PROMPT.txt", "REPORT.md", "_agent-stdout.txt", "_agent-stderr.txt"}
+SOURCE_EXT = (".py", ".pyc", ".sh", ".ps1", ".bat", ".cmd", ".c", ".cpp", ".rs", ".js", ".ts")
+NOT_EVIDENCE = re.compile(r"^(prompt|task|transcript|context_package)", re.I)
 CLASS_EXT = {
     "mesh": (".glb", ".gltf", ".obj", ".ply", ".fbx", ".usd", ".usdc", ".usda",
              ".stl", ".bin", ".f32", ".raw"),
@@ -135,7 +137,7 @@ def walk(scan, e, dump):
         for name in sorted(files):
             fp = os.path.join(root, name)
             rel = os.path.relpath(fp, scan).replace("\\", "/")
-            if rel in HARNESS_FILES:
+            if rel in HARNESS_FILES or name.lower().endswith(SOURCE_EXT) or NOT_EVIDENCE.search(name):
                 continue
             size = os.path.getsize(fp)
             if size == 0:
@@ -174,7 +176,7 @@ def walk(scan, e, dump):
                         kind, pos, tri = res
                         bad = nc_mesh.nonfinite_count(pos)
                         m = nc_mesh.compare_positions(pos, t2, dump)
-                        if m == "COUNT+BBOX" and kind != "text":
+                        if m == "COUNT+BBOX" and (dump is not None or kind != "text"):
                             m = None  # plan 1.3: count+bbox only for a text dump
                         sub = []
                         if not m and len(t2.get("submeshes", [])) > 1:
@@ -423,7 +425,7 @@ def grade(args, doc, e, dump, scan, exit_code, prog_stdout):
         print("  WARNING: ground truth for %s is %s; this verdict is NOT reportable."
               % (args.format, e["status"]))
     return {"format": args.format, "payload": second, "second_payload_na": absent,
-            "score_version": "post-hoc-rerun-2026-10-11",
+            "score_version": "post-hoc-artifact-evidence-2026-10-11",
             "rerun": getattr(args, "run_result", None),
             "ground_truth_status": e["status"], "scan_dir": scan, "exit_code": exit_code,
             "rows": rows, "notes": notes, "clauses": clauses, "verdict": verdict,
