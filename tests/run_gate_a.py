@@ -12,6 +12,11 @@ crash" is not a measurement of graceful degradation.
 
     python tests/run_gate_a.py [--rebuild]
 
+--rebuild adds the rebuild clauses: crate-v1 and crate-v1-damaged rebuilt
+from the inputs crate-v1.werk carries, reported at three levels (archive
+reassembly, computed payloads, original inputs). It writes only to the
+gate's work dir.
+
 Exit 0 only when nothing FAILED and nothing was SKIPPED.
 """
 
@@ -92,14 +97,19 @@ def build_c_with_msvc(src, exe):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--rebuild", action="store_true")
+    ap.add_argument("--rebuild", action="store_true",
+                    help="also rebuild the golden pair from the inputs the "
+                    "package carries, into the work dir")
     args = ap.parse_args(argv)
 
     os.makedirs(WORK, exist_ok=True)
     print("werk Stage 3 Gate A — the golden sample")
     print("repo   : %s" % ROOT)
 
-    if args.rebuild or not os.path.isfile(CLEAN):
+    # --rebuild no longer builds into fixtures/: it adds the rebuild clauses
+    # (section 9), which build into the work dir. A missing fixture is still
+    # built in place from the author's source tree, as before.
+    if not os.path.isfile(CLEAN):
         rc, out = run([sys.executable, os.path.join(FIX, "build_golden.py")])
         if rc != 0:
             record("build", "FAIL", out.strip()[-300:])
@@ -272,6 +282,96 @@ def main(argv=None):
                                     ", ".join("%s -> %s" % kv for kv in
                                               sorted(resolved.items()))))
            if not problems else "; ".join(problems))
+
+    # -- 9. --rebuild: rebuild the golden pair, at three levels -----------
+    # "Rebuild" means three different things, and each is reported on its
+    # own (Codex review rows G16, G17):
+    #   L1 archive reassembly: the whole .werk is byte-identical to the pin,
+    #      rebuilt from the inputs crate-v1.werk carries
+    #   L2 computed payloads: every entry the builder computes (not copies,
+    #      and not the records its JSON inputs were reconstructed from)
+    #   L3 original inputs: the builder on the author's source tree
+    # L1 and L2 run on any machine. Every input comes out of crate-v1.werk
+    # and is checked against its manifest sha256. The rebuild goes into the
+    # work dir, never into fixtures/.
+    if args.rebuild:
+        import package_rebuild as pr
+        try:
+            shipped = {}
+            for key, path in (("crate-v1", CLEAN),
+                              ("crate-v1-damaged", DAMAGED)):
+                shipped[key], _o = pr.read_zip(path)
+            rb = os.path.join(WORK, "rebuild")
+            root = os.path.join(rb, "root")
+            src = os.path.join(rb, "src")
+            out = os.path.join(rb, "out")
+            shutil.rmtree(out, ignore_errors=True)
+            os.makedirs(out)
+            spec_loaders = pr.make_overlay(ROOT, shipped["crate-v1"], root)
+            copied, records = pr.golden_source_tree(shipped["crate-v1"], src)
+            bad = pr.check_declared(shipped["crate-v1"],
+                                    spec_loaders + copied + records)
+            if bad:
+                raise ValueError("packaged inputs do not match the manifest: "
+                                 + "; ".join(bad[:5]))
+            rc, log = run([sys.executable,
+                           os.path.join(root, "fixtures", "build_golden.py"),
+                           "--src", src, "--out", out])
+            if rc != 0:
+                raise ValueError("builder exit %d: %s"
+                                 % (rc, log.strip()[-200:]))
+            not_computed = set(spec_loaders) | set(copied) | set(records)
+            for key, path in (("crate-v1", CLEAN),
+                              ("crate-v1-damaged", DAMAGED)):
+                rebuilt_path = os.path.join(out, key + ".werk")
+                again, _o = pr.read_zip(rebuilt_path)
+                c = pr.compare(shipped[key], again, not_computed)
+                whole, pin = sha256_file(rebuilt_path), sha256_file(path)
+                d1 = ("%s vs pin %s; %d/%d entries identical; substitution: %s"
+                      % (whole[:16], pin[:16], c["identical"], c["total"],
+                         " | ".join(pr.GOLDEN_SUBSTITUTIONS)))
+                if whole != pin:
+                    d1 = "differ: %s; %s" % (", ".join(c["differ"]), d1)
+                record("rebuild L1: %s archive" % key,
+                       "PASS" if whole == pin else "FAIL", d1)
+                ok_computed = len(c["computed"]) - len(c["computed_bad"])
+                d2 = ("%d/%d computed entries identical; not counted: %d "
+                      "binaries copied in (model, views, segments, sound "
+                      "takes), %d JSON records the JSON inputs were "
+                      "reconstructed from (circular), %d spec/ and loaders/ "
+                      "files"
+                      % (ok_computed, len(c["computed"]), len(copied),
+                         len(records), len(spec_loaders)))
+                if c["computed_bad"] or c["inputs_bad"]:
+                    d2 = "differ: %s; %s" % (
+                        ", ".join(c["computed_bad"] + c["inputs_bad"]), d2)
+                record("rebuild L2: %s computed payloads" % key,
+                       "FAIL" if (c["computed_bad"] or c["inputs_bad"])
+                       else "PASS", d2)
+        except Exception as e:  # noqa: BLE001
+            record("rebuild L1/L2 from the packaged inputs", "FAIL", repr(e))
+
+        # L3: the original inputs, the path --rebuild used to take (it built
+        # into fixtures/; now it builds into the work dir).
+        n3 = "rebuild L3: original inputs (author-lab)"
+        orig = os.path.join(WORK, "rebuild-original")
+        os.makedirs(orig, exist_ok=True)
+        rc, log = run([sys.executable, os.path.join(FIX, "build_golden.py"),
+                       "--out", orig])
+        if rc != 0:
+            record(n3, "SKIP",
+                   "needs the author's splat-foley output tree "
+                   "(<WERK_LAB>/splat-foley/outputs/example): the original JSON "
+                   "inputs. The model, views, segments and sound takes are "
+                   "outputs of the splat-foley pipeline; regenerating them is "
+                   "outside any rebuild. " + log.strip()[-120:])
+        else:
+            same = all(sha256_file(os.path.join(orig, os.path.basename(p)))
+                       == sha256_file(p) for p in (CLEAN, DAMAGED))
+            record(n3, "PASS" if same else "FAIL",
+                   "both fixtures rebuilt from the original tree, identical "
+                   "sha256" if same else "a rebuild from the original tree "
+                   "produced different bytes")
 
     print()
     print("manifest sha256 %s" % clean_manifest)

@@ -4,8 +4,8 @@
 Law 1 says a werk answers every question it raises. A fixture whose builder
 read its inputs from the author's own disk still carries those inputs (the
 source binaries, and the records the JSON inputs became), so a gate can
-rebuild it on any machine. This module holds the steps for the rebuild
-clauses of Gate 9 (ista-varun-v1):
+rebuild it on any machine. This module holds the shared steps for the rebuild
+clauses of Gate 9 (ista-varun-v1) and Gate A (crate-v1, crate-v1-damaged):
 
   1. read the shipped package and check every entry used as an input against
      the sha256 its manifest declares,
@@ -261,6 +261,86 @@ def _run_image(argv):
     m.build_evidence = lambda src_root: ev
     os.makedirs(out, exist_ok=True)
     return m.main(["--src", src, "--out", out])
+
+
+# --- crate-v1 (Gate A) --------------------------------------------------------
+
+GOLDEN_SUBSTITUTIONS = [
+    "asset.json, description.json, segments.json, sfx_plan.json and "
+    "sfx/<slug>.json reconstructed from audio/package.json and the "
+    "audio/sfx/*.json records, with only the fields build_golden.py reads",
+]
+
+
+def golden_source_tree(entries, dest):
+    """Reconstruct the <WERK_LAB>/splat-foley/outputs/example files build_golden.py
+    reads. Binaries are copied verbatim. Returns (copied, records): the
+    package entries copied in as binary inputs, and the JSON records the
+    JSON inputs were reconstructed from. A rebuild that reproduces a record
+    is circular evidence for it, so a gate reports records apart from the
+    computed payloads."""
+    if os.path.exists(dest):
+        shutil.rmtree(dest)
+    for sub in ("views", "segments", "sfx"):
+        os.makedirs(os.path.join(dest, sub))
+    copied, records = [], []
+
+    def J(nm):
+        records.append(nm)
+        return json.loads(entries[nm].decode("utf-8"))
+
+    def W(rel, obj):
+        with open(os.path.join(dest, rel), "w", encoding="utf-8") as fh:
+            json.dump(obj, fh, indent=1)
+
+    def copy(nm, rel):
+        copied.append(nm)
+        _write(os.path.join(dest, rel), entries[nm])
+
+    copy("geometry/source.glb", "model.glb")
+    for sub in ("views", "segments"):
+        pre = "x/splat-foley/%s/" % sub
+        for nm in sorted(e for e in entries if e.startswith(pre)):
+            copy(nm, os.path.join(sub, nm[len(pre):]))
+    ap = J("audio/package.json")
+    W("asset.json", {"asset": ap["asset"], "source": ap["source"],
+                     "kind": ap["geometry"]["kind"],
+                     "n_vertices": ap["geometry"]["n_vertices"],
+                     "n_faces": ap["geometry"]["n_faces"]})
+    objs, segs = [], []
+    for o in ap["objects"]:
+        d = {k: v for k, v in o.items() if k != "part_id"}
+        if "segment" in d:
+            s = dict(d["segment"])
+            s["view"] = s["view"].split("/")[-1]
+            s["crop"] = s["crop"].split("/")[-1]
+            d["segment"] = s
+            segs.append({k: s[k] for k in ("crop", "area_frac", "stability")
+                         if k in s})
+        objs.append(d)
+    W("description.json", {"objects": objs})
+    W("segments.json", {"segments": segs})
+    effs = []
+    for e in ap["effects"]:
+        effs.append({k: e[k] for k in ("slug", "object", "material", "category",
+                                       "interaction", "prompt", "seconds",
+                                       "loopable") if k in e})
+        m = J(e["meta"])
+        side = {k: m[k] for k in ("prompt_used", "seconds", "loopable",
+                                  "clap_score", "accepted")}
+        if "attempts" in m:
+            side["attempts"] = m["attempts"]
+        if "variations" in m:
+            side["variations"] = [{"file": v["file"].split("/")[-1],
+                                   "clap_score": v["clap_score"]}
+                                  for v in m["variations"]]
+        if m.get("refined"):
+            side["refined"] = m["refined"]
+        W(os.path.join("sfx", e["slug"] + ".json"), side)
+        for t in e["takes"]:
+            copy(t["file"], os.path.join("sfx", t["file"].split("/")[-1]))
+    W("sfx_plan.json", {"effects": effs})
+    return sorted(set(copied)), sorted(set(records))
 
 
 # --- comparison ---------------------------------------------------------------
