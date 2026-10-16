@@ -343,7 +343,7 @@ def main(argv=None):
         for nm in (n1, n2):
             record(nm, "FAIL", repr(e))
 
-    # L3: the original inputs. Before K17 this clause was named
+    # L3: the original inputs. Before this change the clause was named
     # "builder is deterministic (author-lab)".
     n3 = "rebuild L3: original inputs (author-lab)"
     rc, out = run([sys.executable, os.path.join(FIX, "build_image_fixture.py"),
