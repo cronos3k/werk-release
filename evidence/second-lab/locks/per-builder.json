@@ -1,0 +1,491 @@
+{
+  "revision": "b02ce99f0a1978493ba804fd44e5aa696ecd6cb1",
+  "builders": [
+    {
+      "source": "tools/build_native.py",
+      "sha256": "669c57b7f9fa48096b567601da6a985e11e14730739285c7b41a9fb50ed3e22b",
+      "imports": [
+        "argparse",
+        "json",
+        "os",
+        "platform",
+        "shutil",
+        "subprocess",
+        "sys",
+        "time"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_crate_cc0.py",
+      "sha256": "714d90740a2fd5b397c1cd8a53bb05509b3f1f8822730661b489fa63da0f6913",
+      "imports": [
+        "argparse",
+        "build_crate_tex",
+        "build_golden",
+        "json",
+        "math",
+        "os",
+        "payload_file",
+        "pipeline",
+        "shutil",
+        "spec_sha256",
+        "struct",
+        "sys"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_crate_tex.py",
+      "sha256": "44a4b5eada51e4af6572a8f6f66d0ac6e59af4ce77d16e11c2d348790dfece44",
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "os",
+        "struct",
+        "subprocess",
+        "sys",
+        "zlib"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_crate_tex_in_blender.py",
+      "sha256": "a0029b3cbf219fd9da6fe19d875653e9b955e39b86a8ba3f7d46458bb34913b6",
+      "imports": [
+        "argparse",
+        "bpy",
+        "json",
+        "os",
+        "sys",
+        "werk_blender",
+        "zipfile"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_golden.py",
+      "sha256": "f207a7d6298e3f51c50605779711aafb692c6c075a69ba0a5fb97cc56ac07a75",
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "math",
+        "os",
+        "payload_file",
+        "random",
+        "spec_sha256",
+        "struct",
+        "sys",
+        "werkstore"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_gsplat_cc0.py",
+      "sha256": "414ab115888f1ee39ccd9ea39c6cba2c3b5ac5681f95c49fcc84b7f45ab359ec",
+      "imports": [
+        "argparse",
+        "json",
+        "math",
+        "numpy",
+        "os",
+        "pipeline",
+        "sys"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_gsplat_fixture.py",
+      "sha256": "e3e9b1742440a01627ba3dc7169d55449d213298c4585efdcfd121f4d866bc8d",
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "numpy",
+        "os",
+        "pipeline",
+        "sys",
+        "time"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_image_cc0.py",
+      "sha256": "d3212323dea60b49aa9c959390d5ff29fca8886ecbe266208e5ed692995729a3",
+      "imports": [
+        "PIL",
+        "argparse",
+        "build_image_fixture",
+        "io",
+        "json",
+        "labhog",
+        "math",
+        "numpy",
+        "os",
+        "payload_file",
+        "spec_sha256",
+        "sys",
+        "werkstore"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_image_fixture.py",
+      "sha256": "a91dd5a760486613fd50b36bcd4ad8b1f7c01d6700e00de6c26da13c7dc2fd1d",
+      "imports": [
+        "PIL",
+        "argparse",
+        "hashlib",
+        "importlib",
+        "io",
+        "json",
+        "labhog",
+        "math",
+        "os",
+        "payload_file",
+        "spec_sha256",
+        "sqlite3",
+        "struct",
+        "sys",
+        "werkstore"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "fixtures/build_retarget_fixture.py",
+      "sha256": "728e4aebc44a980d8e3b450eb4821f41cff48b94a878fee57550d05ae3964ab9",
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "os",
+        "payload_file",
+        "retarget",
+        "spec_sha256",
+        "struct",
+        "sys",
+        "werkstore"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "gauntlet/roundHC/build_smiley_werk.py",
+      "sha256": "bb304f0c225ece8e5008b173f2532293921695eba969be6c364a73182ab0bcd8",
+      "imports": [
+        "argparse",
+        "build_golden",
+        "hashlib",
+        "json",
+        "make_smiley",
+        "os",
+        "spec_sha256",
+        "sys"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "gauntlet/roundNC/build_controls.py",
+      "sha256": "e8fc39c53ed97b1e334b5053f550891aa7b51eae7af96ca13a04ca53f531c3c6",
+      "imports": [
+        "argparse",
+        "hashlib",
+        "json",
+        "nc_fbx",
+        "os",
+        "shutil",
+        "struct",
+        "subprocess",
+        "sys",
+        "zipfile"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "gauntlet/roundNC/build_expectations.py",
+      "sha256": "88a0c8edbc7e721e8b7e01cabfde8b880bc090212fe2ef5cf34f48e66825a60c",
+      "imports": [
+        "argparse",
+        "binascii",
+        "io",
+        "json",
+        "nc_fbx",
+        "nc_mesh",
+        "os",
+        "sys",
+        "zipfile"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "gauntlet/roundNC/build_gltf_usdz.py",
+      "sha256": "7afdcf4ae0e2da1e8c8dcade6b26bf0f1a8ad0d1ba6552824ae63e355be95daa",
+      "imports": [
+        "argparse",
+        "binascii",
+        "build_controls",
+        "hashlib",
+        "io",
+        "json",
+        "nc_mesh",
+        "os",
+        "re",
+        "shutil",
+        "struct",
+        "subprocess",
+        "sys",
+        "zipfile"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "gauntlet/roundOW/build_mini_fixture.py",
+      "sha256": "8ef3f713db2bb4085538353a7711bd708181ce134a85d74f0af83bcf080347fe",
+      "imports": [
+        "argparse",
+        "build_golden",
+        "json",
+        "os",
+        "payload_file",
+        "sys",
+        "zipfile"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "gauntlet/roundSR/build_selfrun_fixture.py",
+      "sha256": "25e4a7dc8224fc30d1d8f1cb2ad38469c9cd0388cc483e4d29469711dd9f7d07",
+      "imports": [
+        "argparse",
+        "io",
+        "json",
+        "os",
+        "pipeline",
+        "spec_sha256",
+        "sys",
+        "tools"
+      ],
+      "dependency_locks": [
+        "installed-3.10.11.json",
+        "installed-3.13.7.json",
+        "installed-3.14.0.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "tools/blender/build_addon_zip.py",
+      "sha256": "273199fd83d29c8cff232bad73846a3aa19eb4a368e0edde2eebac99f76acb21",
+      "imports": [
+        "argparse",
+        "os",
+        "sys",
+        "vendor_spec",
+        "zipfile"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/axes.py",
+      "sha256": "ec5e35c46195e1d07d7187059f30a347839f34e8a16e0b318b2ce294f66047e6",
+      "imports": [
+        "math",
+        "sys"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/bounds.py",
+      "sha256": "6384c9afee4ea37bdd2b4f54a036168108f693c96f40a3892268ea64649893ff",
+      "imports": [
+        "math",
+        "random",
+        "sys"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/common.py",
+      "sha256": "d97954fb0bbd7551a166dd30f62a09ed68cca8a3873b80b2d792c77478e6edad",
+      "imports": [
+        "errno",
+        "hashlib",
+        "json",
+        "os",
+        "re",
+        "shutil",
+        "tempfile"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/envelope.py",
+      "sha256": "3ae95c5b6e2831c24a7b89a42abd516553e8cec1824bd3a74ea3b7aee6bce9df",
+      "imports": [
+        "math",
+        "struct",
+        "vendor"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/exporter.py",
+      "sha256": "d333cb3a9411e9525637b4400783894a6d5f319d85bbaaf2831569e7325961a3",
+      "imports": [
+        "",
+        "bpy",
+        "common",
+        "datetime",
+        "hashlib",
+        "importer",
+        "json",
+        "mathutils",
+        "os",
+        "struct",
+        "time",
+        "uuid"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/importer.py",
+      "sha256": "42e194a5aa3e849b6315c0bd6d0225c3928b0df7fdf9253778b74ad6e2c014ce",
+      "imports": [
+        "",
+        "bpy",
+        "common",
+        "json",
+        "mathutils",
+        "os",
+        "struct",
+        "time",
+        "vendor"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/wzip.py",
+      "sha256": "fb405590b46729fbdc44330f7f3508f21b62b4deb31c8e57e8615ca8fc5bfe26",
+      "imports": [
+        "struct",
+        "vendor"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    },
+    {
+      "source": "adapters/blender/werk_blender/__init__.py",
+      "sha256": "a56a179fff073390f24defe0938dff527bc2d23e049cc733284a5c2b30aeb80a",
+      "imports": [
+        "",
+        "bpy",
+        "bpy_extras",
+        "exporter",
+        "importer",
+        "os",
+        "sys"
+      ],
+      "dependency_locks": [
+        "installed-3.11.7.json"
+      ],
+      "environment_basis": "Current installed snapshots. Historical build dependency versions unknown unless the report names them."
+    }
+  ],
+  "lock_basis": "Complete current environments with declared dependency edges. Historical versions are not inferred."
+}

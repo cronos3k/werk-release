@@ -1,0 +1,21 @@
+{
+  "python": "3.10.11 (tags/v3.10.11:7d4cc5a, Apr  5 2023, 00:38:17) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "machine": "AMD64",
+  "executable": "C:/Users/<user>/AppData/Local/Programs/Python/Python310/python.exe",
+  "PYTHONUTF8": null,
+  "utf8_mode": 0,
+  "zlib_runtime": "1.2.13",
+  "zlib_compile": "1.2.13",
+  "packages": {
+    "numpy": "1.26.4",
+    "Pillow": "12.3.0",
+    "scipy": null,
+    "jsonschema": null,
+    "pytest": "9.1.1",
+    "cryptography": null,
+    "zstandard": null
+  },
+  "pillow_zlib": "1.3.1.zlib-ng",
+  "pillow_zlib_ng": "2.3.3"
+}

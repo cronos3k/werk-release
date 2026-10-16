@@ -1,0 +1,16 @@
+{
+  "sessions": 26,
+  "records": 4785,
+  "redactions": {
+    "email": 78,
+    "user_name": 1574,
+    "synced_skill": 0,
+    "account_attachment": 80,
+    "account_context_value": 339
+  },
+  "tool_order_and_identifiers_preserved": true,
+  "record_links_preserved": true,
+  "session_boundaries_preserved": true,
+  "source_files_unchanged": true,
+  "manifest_sha256": "a3f95582303daca844ae4f78679ddd0dde1c8252ad5c0cff129652aeee5efabd"
+}

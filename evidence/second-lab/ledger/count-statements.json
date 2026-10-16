@@ -1,0 +1,696 @@
+[
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 22,
+    "statement_sha256": "7e1bb5b51adbef64cc8c48c75bcc5b2116b8fa64ab008b091534cd3033cd4428",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 331,
+    "statement_sha256": "2123c94d8841a2c172e4ba468521b82067fbf172b2110a8f03b88db31f93201f",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 408,
+    "statement_sha256": "a5b546dbdc8ff3635aa45219034c245de2b524f55ed87322e2c5de9d53d79527",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 509,
+    "statement_sha256": "449f0c3b2dcf48c3b6ed53cb49b77704a0db6f1a3b3eed6bcd4e22b44828b2ac",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round2/python",
+      "author/round2/rust"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 601,
+    "statement_sha256": "6c6dbc73cf99265c252fea163966365f94953405a91b9064c5880a3d7e804b7d",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 903,
+    "statement_sha256": "4d21a4caf58bd235cc2e9417e3d8a486cadf6a0abfa277ea24e776d6e1ab171a",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c",
+      "author/round2/python",
+      "author/round2/rust",
+      "author/round3/splat",
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 904,
+    "statement_sha256": "1593ec08053e1791138e58198d7aa33cd0d11f5147fbd94326dbf7f2a9392014",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundSR/codex",
+      "author/roundSR/kimi"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/PAPER.md",
+    "line": 905,
+    "statement_sha256": "dcbf0929998fc417d086ab25afe1efbe831470e0b70a39b248eb82a5e5df5de3",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundHC/attempt1",
+      "author/roundGF/hc-kimi"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 37,
+    "statement_sha256": "0300358b5f302c0beb2f1f499ede2b88c17709d61a0ee50c6945221296ffa5f0",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 73,
+    "statement_sha256": "76be17c604730be6441ec4b121b9e4893197937eee301e7853682e2706ffaa51",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round2/python",
+      "author/round2/rust"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 121,
+    "statement_sha256": "2147a0367e8af909f3594a40a1585dd5a26cc414d497f79927313eeead75e12d",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 136,
+    "statement_sha256": "86a3cafb5bd19acecea14a092f28b1d77906c0777614fa153095e11514d48891",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round2/python",
+      "author/round2/rust"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 139,
+    "statement_sha256": "cf77db3851fc33a6aabd59180f84f02f12e8adaee6d2001af35ce84490177830",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round2/python",
+      "author/round2/rust"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 156,
+    "statement_sha256": "255893f797f06bd25deacd91dc07c5ae2107fe316a6735c96106df0f495129ea",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round3/splat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 203,
+    "statement_sha256": "e5bf7f6b5ec12900c293444d9384502dc514bde600c589c60a9d9a7b08bac36c",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 214,
+    "statement_sha256": "ad43dbad1f263c552bb7d541dfd790d91528c96e11c5386497b321151d171c73",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundOW/ebai27b__mini",
+      "author/roundOW/ebai27b__mini__retry",
+      "author/roundOW/glm46vflash__mini",
+      "author/roundOW/glm46vflash__mini__retry",
+      "author/roundOW/glm47flash__mini",
+      "author/roundOW/glm47flash__mini__retry",
+      "author/roundOW/llama31-8b__mini",
+      "author/roundOW/llama31-8b__mini__retry",
+      "author/roundOW/qwen3coder30b__mini",
+      "author/roundOW/qwen4b__mini",
+      "author/roundOW/qwen4b__mini__retry"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 224,
+    "statement_sha256": "daf07134721d8ea90adcb8c7c772783ff23115febbf34a9f801e194aca7099ec",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundOW/llama31-8b__envel",
+      "author/roundOW/qwen3coder30b__envel"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 245,
+    "statement_sha256": "8402c16604b4154c42ad140e5546112827e90f73ae1f69fbe4cf65e31351ffce",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundSR/codex",
+      "author/roundSR/kimi"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 283,
+    "statement_sha256": "0e5a19b14f127c8122753b437436fc5e24a4b03a47276972162c798c9ca2bdf1",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundHC/attempt1"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 304,
+    "statement_sha256": "1a3fbb45187e5e2c52f8998b22d4433361f39e46b007fe703a69363845ee649b",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundGF/hc-kimi"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 344,
+    "statement_sha256": "547bbb2d2cf9b5023c02f55df9da9164829f00e6feefabaaa9a109c5809602dd",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c",
+      "author/round2/python",
+      "author/round2/rust",
+      "author/round3/splat",
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat",
+      "author/roundSR/codex",
+      "author/roundSR/kimi",
+      "author/roundHC/attempt1",
+      "author/roundGF/hc-kimi"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 345,
+    "statement_sha256": "8bde9004a746f4a2493642b14070a3fd6a181dfca11dac0615cbcdc39bb54687",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c",
+      "author/round2/python",
+      "author/round2/rust",
+      "author/round3/splat",
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 474,
+    "statement_sha256": "e00979cb296ba298b1c9a320b58bdd3e0bf85608f850a2c2c8af71218e95e9ea",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 503,
+    "statement_sha256": "ac062ce648b6084cec6df8f133da02adcf218510eba70002ba508f9afe75975d",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c",
+      "author/round2/python",
+      "author/round2/rust",
+      "author/round3/splat",
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat",
+      "author/roundSR/codex",
+      "author/roundSR/kimi",
+      "author/roundHC/attempt1"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 584,
+    "statement_sha256": "213f28bc23b85a9e6487a46e45318060d885df79205728befca590efb0266eb5",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c",
+      "author/round2/python",
+      "author/round2/rust"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 632,
+    "statement_sha256": "a39d4200384282ac67b52426c872e49e5a175a39bb11c0c34250f20c692a9b90",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundGF/gemma-4-e4b__gsplat",
+      "author/roundGF/glm-4.6v-flash__gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "paper/v2/NUMBERS.md",
+    "line": 648,
+    "statement_sha256": "520d1fb49f0ce6762c03a6ff754a08ccb9d875f818f1356bd819abcdd223f89c",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundGF/gemma-4-e4b__gsplat",
+      "author/roundGF/glm-4.6v-flash__gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 18,
+    "statement_sha256": "55b895002111f3276e0df3c0fc559e5559dbd741faae5011b4ab81ef71780d67",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 19,
+    "statement_sha256": "86c1a3e996f1b27cbe1f4f188c85ffac4d6b8586529efdb41b1be68a87f1e520",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 20,
+    "statement_sha256": "ba1ffbd0444b0ecd59c27c31ff61a267d5d258966bfe217544529464a4003fec",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 28,
+    "statement_sha256": "036654331219924b4f27d069023015aefa0b405384ce55fd17b528622f98d30d",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 173,
+    "statement_sha256": "e9f6bb17cb718f30be4cfe4463cb186814cc1b20b9d56237d95fa205d3b3c571",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 257,
+    "statement_sha256": "7e716549093be79f7cdcd80a8d686df58f53019a0b8f50dc10c6fb5ea5956da6",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/round2/python",
+      "author/round2/rust"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 591,
+    "statement_sha256": "b83053b09968d9ec8c0758851905c7561b3a08c9a60fea4b1e2b97a36a39287c",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 592,
+    "statement_sha256": "583a85668f36edbaa9052a97568a3ebe9d7360f63c9c9063c11884aec9ed3d86",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 593,
+    "statement_sha256": "b321a38b35edc49ae19aa9dd04cab41d01ee0b4df571135869431ff7dade2a91",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 607,
+    "statement_sha256": "b84e0406a68104326f9f1e00d8a81790b6eba3967727b96430936d139d96c638",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 771,
+    "statement_sha256": "4cb68ed780a765845c86ee128035b2ff1c8112827d90f18e5697b068796d41db",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundOW/ebai27b__mini",
+      "author/roundOW/ebai27b__mini__retry",
+      "author/roundOW/glm46vflash__mini",
+      "author/roundOW/glm46vflash__mini__retry",
+      "author/roundOW/glm47flash__mini",
+      "author/roundOW/glm47flash__mini__retry",
+      "author/roundOW/llama31-8b__mini",
+      "author/roundOW/llama31-8b__mini__retry",
+      "author/roundOW/qwen3coder30b__mini",
+      "author/roundOW/qwen4b__mini",
+      "author/roundOW/qwen4b__mini__retry"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 772,
+    "statement_sha256": "20cf6d09a697b14a335eacc21a7762263e44a6f99ffc6f6b188c9f2983805700",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundOW/ebai27b__mini",
+      "author/roundOW/ebai27b__mini__retry",
+      "author/roundOW/glm46vflash__mini",
+      "author/roundOW/glm46vflash__mini__retry",
+      "author/roundOW/glm47flash__mini",
+      "author/roundOW/glm47flash__mini__retry",
+      "author/roundOW/llama31-8b__mini",
+      "author/roundOW/llama31-8b__mini__retry",
+      "author/roundOW/qwen3coder30b__mini",
+      "author/roundOW/qwen4b__mini",
+      "author/roundOW/qwen4b__mini__retry"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 917,
+    "statement_sha256": "ed9a59cd58900bdf8bb822ed467b5886cda59e23d9d4a2d12170ddeef50a2b53",
+    "kind": "behavior count",
+    "attempt_ids": [
+      "author/roundSR/codex",
+      "author/roundSR/kimi"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Attempt traits are not established per row. Do not infer them from an aggregate statement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 946,
+    "statement_sha256": "05c458d68a19ddbcf1c26309fb1bfaa403112784af571bf86e8815317cbdeebc",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundHC/attempt1"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1064,
+    "statement_sha256": "5b5fc65b47ef10198c16f34eb07da355cd5a18ae29b70f25b524285856e33134",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundGF/hc-kimi"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1065,
+    "statement_sha256": "403570285258c8fc216d4739420496cf63bf7332a0b12ee391d659d715be6d21",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundGF/gemma-4-e4b__gsplat",
+      "author/roundGF/glm-4.6v-flash__gsplat"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1085,
+    "statement_sha256": "335312942d0d5b07a5e6ca94f0b7c8230b8aa8979ce3f8a0ba1fe344c1bf070b",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundOW/llama31-8b__envel",
+      "author/roundOW/qwen3coder30b__envel"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1126,
+    "statement_sha256": "4a26ad7d80c21af1589d8d346fcf4d278690d8b6ed13ea56b381f0c0cada6d66",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundHC/attempt1",
+      "author/roundGF/hc-kimi"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1154,
+    "statement_sha256": "75249385f71f9394c95925ba209b59266dd30dffabae6f5abb9195050852d0b9",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/round1/python",
+      "author/round1/javascript",
+      "author/round1/rust",
+      "author/round1/c",
+      "author/round2/python",
+      "author/round2/rust",
+      "author/round3/splat"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1155,
+    "statement_sha256": "9ed9d7feac0fedcfc3f56b7a95ae39e924eede0dbe06af90b795aad66427d279",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundXV/openai",
+      "author/roundXV/openai-gsplat",
+      "author/roundSR/codex",
+      "author/roundHC/attempt1"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1156,
+    "statement_sha256": "cd33d4f3fa12651a3e4074a152a975cb41520e6c77e0aef2dcb5592d252296aa",
+    "kind": "attempt or model-group count",
+    "attempt_ids": [
+      "author/roundXV/moonshot",
+      "author/roundXV/moonshot-gsplat",
+      "author/roundSR/kimi",
+      "author/roundGF/hc-kimi"
+    ],
+    "status": "scope mapped; reported numerator requires its original rule",
+    "reason": "Linked attempt identifiers establish the scope. Published verdicts and model grouping must be distinguished from revised scoring."
+  },
+  {
+    "source": "gauntlet/RESULTS.md",
+    "line": 1203,
+    "statement_sha256": "9a3ae01fc03c7823c0f3f2ef2f33de0dc6d3791dfca853633315e74cdcfd6583",
+    "kind": "measurement, not an attempt denominator",
+    "attempt_ids": [
+      "author/roundDS/dsv4__splat__retry"
+    ],
+    "status": "not an attempt count",
+    "reason": "Clause, file, point, timing, or capacity count. An attempt ledger does not reproduce this measurement."
+  }
+]

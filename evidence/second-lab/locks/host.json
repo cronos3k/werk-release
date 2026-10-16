@@ -1,0 +1,10 @@
+{
+  "os": "Windows 11 Home",
+  "version": "10.0.26200.0",
+  "shell": "PowerShell 7.6.5",
+  "git": "2.51.0.windows.1",
+  "rustc": "1.98.0",
+  "rustc_commit": "88d9e12ae178fab0fb5cc050a94da85685d449ea",
+  "cargo": "1.98.0",
+  "target": "x86_64-pc-windows-msvc"
+}

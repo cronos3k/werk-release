@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-12",
+  "retained_decisions": {
+    "PASS": 26,
+    "FAIL": 21,
+    "PARTIAL": 14,
+    "UNAVAILABLE": 6,
+    "HOST-ERROR": 1
+  },
+  "retained": 68,
+  "excluded": 13,
+  "python_programs_rerun": 53,
+  "additional_image_readers": 2,
+  "hardcopy_decoders_rerun": 2,
+  "native_runtime_checks": 3,
+  "payload_probes": 58,
+  "spec_probes": 49,
+  "coverage_rows": 239,
+  "redacted_sessions": 26,
+  "redacted_records": 4785,
+  "source_files_unchanged": true,
+  "remaining_external_limits": [
+    "Six retained attempts have no executable program.",
+    "Historical input builds remain absent.",
+    "UE 5.7, MinGW and the CUB gate source are absent.",
+    "Some historical dependency versions are unrecorded.",
+    "August raw session is absent."
+  ],
+  "unmapped_count_statements": 128,
+  "unreproduced_mapped_ratio_measurements": 61
+}

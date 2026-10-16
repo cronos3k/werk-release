@@ -1,0 +1,167 @@
+{
+  "python": "3.11.7 (main, Feb  5 2024, 18:45:06) [MSC v.1928 64 bit (AMD64)]",
+  "runtime": "3.11.7",
+  "scope": "Installed distributions and declared dependency edges. Optional extras are not enabled by this lock.",
+  "PYTHONUTF8": null,
+  "utf8_mode": 1,
+  "zlib": "1.2.13",
+  "packages": {
+    "autopep8": {
+      "name": "autopep8",
+      "version": "1.6.0",
+      "requires": [
+        "pycodestyle >=2.8.0",
+        "toml"
+      ],
+      "installed_record_sha256": "ae05ef19259151a44c9cfbbbeadf53435ccdc593963465873d9456b4b7d4286a"
+    },
+    "certifi": {
+      "name": "certifi",
+      "version": "2021.10.8",
+      "requires": [],
+      "installed_record_sha256": "5aebb3820fae1491aa06fd24b6431d7c022bd10b043875620c5a8078b2639234"
+    },
+    "charset-normalizer": {
+      "name": "charset-normalizer",
+      "version": "2.0.10",
+      "requires": [
+        "unicodedata2 ; extra == 'unicode_backport'"
+      ],
+      "installed_record_sha256": "c526e7e103eba9308957abdbb82a86e0b522a7d06c13f2c2f22c25e4f0f23352"
+    },
+    "cython": {
+      "name": "Cython",
+      "version": "0.29.30",
+      "requires": [],
+      "installed_record_sha256": "6f9f1ef2beb43a43b5742a9f1ef46eaad2ccdeaa8c8b3b7978ddc278474db03e"
+    },
+    "idna": {
+      "name": "idna",
+      "version": "3.3",
+      "requires": [],
+      "installed_record_sha256": "dcffc5f4b6036d7f9562139021bae3da46adc8582683b00204f7a4c002e20889"
+    },
+    "meson": {
+      "name": "meson",
+      "version": "0.63.0",
+      "requires": [
+        "ninja >=1.8.2 ; extra == 'ninja'",
+        "tqdm ; extra == 'progress'",
+        "mypy ; extra == 'typing'",
+        "typing-extensions ; (python_version < \"3.8\") and extra == 'typing'"
+      ],
+      "installed_record_sha256": "91e2dd10613fe9be23752db723e8f370451c0ddcd8d1208f1c81fcfee0a66fb6"
+    },
+    "numpy": {
+      "name": "numpy",
+      "version": "1.24.3",
+      "requires": [],
+      "installed_record_sha256": null
+    },
+    "pip": {
+      "name": "pip",
+      "version": "23.2.1",
+      "requires": [],
+      "installed_record_sha256": "1afbdc81dd0aa5f251d0a9f7612de9b425335bfc9b2e146c81e6362eafa984f8"
+    },
+    "pycodestyle": {
+      "name": "pycodestyle",
+      "version": "2.8.0",
+      "requires": [],
+      "installed_record_sha256": "63fc6fd6d6adb39aeccd8bd66d2ce82d4663f18064598494322442272d8e1d94"
+    },
+    "requests": {
+      "name": "requests",
+      "version": "2.27.1",
+      "requires": [
+        "urllib3 <1.27,>=1.21.1",
+        "certifi >=2017.4.17",
+        "chardet <5,>=3.0.2 ; python_version < \"3\"",
+        "idna <3,>=2.5 ; python_version < \"3\"",
+        "charset-normalizer ~=2.0.0 ; python_version >= \"3\"",
+        "idna <4,>=2.5 ; python_version >= \"3\"",
+        "PySocks !=1.5.7,>=1.5.6 ; extra == 'socks'",
+        "win-inet-pton ; (sys_platform == \"win32\" and python_version == \"2.7\") and extra == 'socks'",
+        "chardet <5,>=3.0.2 ; extra == 'use_chardet_on_py3'"
+      ],
+      "installed_record_sha256": "a129a2cce533bbf401c4440da46394b3f3dc38d448229a75d7ee4cd5eae1d863"
+    },
+    "setuptools": {
+      "name": "setuptools",
+      "version": "63.2.0",
+      "requires": [
+        "sphinx ; extra == 'docs'",
+        "jaraco.packaging >=9 ; extra == 'docs'",
+        "rst.linker >=1.9 ; extra == 'docs'",
+        "jaraco.tidelift >=1.4 ; extra == 'docs'",
+        "pygments-github-lexers ==0.0.5 ; extra == 'docs'",
+        "sphinx-favicon ; extra == 'docs'",
+        "sphinx-inline-tabs ; extra == 'docs'",
+        "sphinx-reredirects ; extra == 'docs'",
+        "sphinxcontrib-towncrier ; extra == 'docs'",
+        "furo ; extra == 'docs'",
+        "pytest >=6 ; extra == 'testing'",
+        "pytest-checkdocs >=2.4 ; extra == 'testing'",
+        "pytest-flake8 ; extra == 'testing'",
+        "pytest-enabler >=1.3 ; extra == 'testing'",
+        "pytest-perf ; extra == 'testing'",
+        "mock ; extra == 'testing'",
+        "flake8-2020 ; extra == 'testing'",
+        "virtualenv >=13.0.0 ; extra == 'testing'",
+        "wheel ; extra == 'testing'",
+        "pip >=19.1 ; extra == 'testing'",
+        "jaraco.envs >=2.2 ; extra == 'testing'",
+        "pytest-xdist ; extra == 'testing'",
+        "jaraco.path >=3.2.0 ; extra == 'testing'",
+        "build[virtualenv] ; extra == 'testing'",
+        "filelock >=3.4.0 ; extra == 'testing'",
+        "pip-run >=8.8 ; extra == 'testing'",
+        "ini2toml[lite] >=0.9 ; extra == 'testing'",
+        "tomli-w >=1.0.0 ; extra == 'testing'",
+        "pytest ; extra == 'testing-integration'",
+        "pytest-xdist ; extra == 'testing-integration'",
+        "pytest-enabler ; extra == 'testing-integration'",
+        "virtualenv >=13.0.0 ; extra == 'testing-integration'",
+        "tomli ; extra == 'testing-integration'",
+        "wheel ; extra == 'testing-integration'",
+        "jaraco.path >=3.2.0 ; extra == 'testing-integration'",
+        "jaraco.envs >=2.2 ; extra == 'testing-integration'",
+        "build[virtualenv] ; extra == 'testing-integration'",
+        "filelock >=3.4.0 ; extra == 'testing-integration'",
+        "pytest-black >=0.3.7 ; (platform_python_implementation != \"PyPy\") and extra == 'testing'",
+        "pytest-cov ; (platform_python_implementation != \"PyPy\") and extra == 'testing'",
+        "pytest-mypy >=0.9.1 ; (platform_python_implementation != \"PyPy\") and extra == 'testing'"
+      ],
+      "installed_record_sha256": "dc53c4b57a8462522d0c7985efe6d39f54b6e9ede26313d2eaa44274381da199"
+    },
+    "toml": {
+      "name": "toml",
+      "version": "0.10.2",
+      "requires": [],
+      "installed_record_sha256": "61302e79418a7ce8e96a0467e3f9b6e733578c78922caa6cfee3672a7f94dd88"
+    },
+    "urllib3": {
+      "name": "urllib3",
+      "version": "1.26.8",
+      "requires": [
+        "brotlipy >=0.6.0 ; extra == 'brotli'",
+        "pyOpenSSL >=0.14 ; extra == 'secure'",
+        "cryptography >=1.3.4 ; extra == 'secure'",
+        "idna >=2.0.0 ; extra == 'secure'",
+        "certifi ; extra == 'secure'",
+        "ipaddress ; (python_version == \"2.7\") and extra == 'secure'",
+        "PySocks !=1.5.7,<2.0,>=1.5.6 ; extra == 'socks'"
+      ],
+      "installed_record_sha256": "fc73e89c9199d31d29c3310920761de2b5a827c738987cccd21005e74d6e4af5"
+    },
+    "zstandard": {
+      "name": "zstandard",
+      "version": "0.16.0",
+      "requires": [
+        "cffi >=1.11 ; platform_python_implementation == \"PyPy\"",
+        "cffi >=1.11 ; extra == 'cffi'"
+      ],
+      "installed_record_sha256": "41108863f30f6578ee8a72db58e9933725472523e3abb26b378357b6e79df80d"
+    }
+  }
+}
