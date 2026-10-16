@@ -311,6 +311,15 @@ def main(argv=None):
                          zdesc, " | ".join(subs)))
                 if whole == pin:
                     record(n1, "PASS", d1)
+                elif stock and c["json_float_only"] and set(c["differ"]) <= (
+                        {"MANIFEST.json", "SIGNATURE.json"}
+                        | set(c["json_float_only"])):
+                    record(n1, "SKIP", "byte identity depends on this host's "
+                           "maths library: %s differ only in the last digits "
+                           "of floats (largest relative difference %.1e), "
+                           "plus the manifest and signature that hash them; "
+                           "%s" % (", ".join(c["json_float_only"]),
+                                   c["json_max_rel_diff"], d1))
                 elif not stock:
                     record(n1, "SKIP", "needs a stock zlib to re-deflate the "
                            "preview PNGs; run the gate under a CPython whose "
@@ -323,14 +332,18 @@ def main(argv=None):
                 d2 = ("%d computed entries: %d byte-identical, %d with "
                       "identical chunks and scanlines but a different deflate "
                       "stream (%s); %d input entries taken from the package "
-                      "(%d spec/ and loaders/ files, %s)"
+                      "(%d spec/ and loaders/ files, %s); %d JSON entries "
+                      "equal within a relative %.0e (%s)"
                       % (len(c["computed"]),
                          len(c["computed"]) - len(c["computed_bad"])
-                         - len(c["png_scanline_only"]),
+                         - len(c["png_scanline_only"])
+                         - len(c["json_float_only"]),
                          len(c["png_scanline_only"]),
                          ", ".join(c["png_scanline_only"]) or "none",
                          len(inputs), len(inputs) - len(pr.IMAGE_INPUTS),
-                         ", ".join(pr.IMAGE_INPUTS)))
+                         ", ".join(pr.IMAGE_INPUTS),
+                         len(c["json_float_only"]), pr.JSON_REL_TOL,
+                         ", ".join(c["json_float_only"]) or "none"))
                 if c["computed_bad"] or c["inputs_bad"]:
                     record(n2, "FAIL", "differ: %s; %s"
                            % (", ".join(c["computed_bad"] + c["inputs_bad"]),

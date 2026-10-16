@@ -345,6 +345,34 @@ def golden_source_tree(entries, dest):
 
 # --- comparison ---------------------------------------------------------------
 
+JSON_REL_TOL = 1e-12
+
+
+def json_float_diff(a, b):
+    """Largest relative difference between two JSON documents that have the
+    same structure and differ only in floating-point values, or None. Floats
+    computed through pow/exp can differ in the last digit between C maths
+    libraries (glibc vs MSVC), so such entries reproduce the computation but
+    not the bytes."""
+    try:
+        x, y = json.loads(a), json.loads(b)
+    except (ValueError, UnicodeDecodeError):
+        return None
+    worst = [0.0]
+
+    def walk(u, v):
+        if isinstance(u, dict) and isinstance(v, dict):
+            return u.keys() == v.keys() and all(walk(u[k], v[k]) for k in u)
+        if isinstance(u, list) and isinstance(v, list):
+            return len(u) == len(v) and all(walk(i, j) for i, j in zip(u, v))
+        if isinstance(u, float) and isinstance(v, float):
+            d = abs(u - v) / max(abs(u), abs(v), 1e-300)
+            worst[0] = max(worst[0], d)
+            return d <= JSON_REL_TOL
+        return type(u) is type(v) and u == v
+    return worst[0] if walk(x, y) else None
+
+
 def compare(shipped, rebuilt, inputs, png_by_pixels=()):
     """Entry-by-entry comparison. `inputs` are entries copied into the build
     (they are not evidence of computation). MANIFEST.json and SIGNATURE.json
@@ -356,7 +384,7 @@ def compare(shipped, rebuilt, inputs, png_by_pixels=()):
     container = {"MANIFEST.json", "SIGNATURE.json"}
     r = {"total": len(names), "identical": 0, "differ": [],
          "computed": [], "computed_bad": [], "png_scanline_only": [],
-         "inputs_bad": []}
+         "json_float_only": [], "json_max_rel_diff": 0.0, "inputs_bad": []}
     for nm in names:
         a, b = shipped.get(nm), rebuilt.get(nm)
         same = a == b
@@ -376,6 +404,10 @@ def compare(shipped, rebuilt, inputs, png_by_pixels=()):
         if nm in png_by_pixels and a is not None and b is not None \
                 and png_scanlines(a) == png_scanlines(b):
             r["png_scanline_only"].append(nm)
+        elif nm.endswith(".json") and a is not None and b is not None                 and json_float_diff(a, b) is not None:
+            r["json_float_only"].append(nm)
+            r["json_max_rel_diff"] = max(r["json_max_rel_diff"],
+                                         json_float_diff(a, b))
         else:
             r["computed_bad"].append(nm)
     return r
