@@ -26,4 +26,4 @@ A completed program with a nonzero exit cannot receive PASS.
 Keep the original verdict beside every post-hoc verdict.
 
 The frozen negative-control grader at `504a9ac` keeps its original interface.
-The revision lives on `local/nc-grader-fixes`, based on `b02ce99`.
+The revised grader is in PR #8 (branch `roundnc-negative-control`), after the freeze.
