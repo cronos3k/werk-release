@@ -1820,6 +1820,16 @@ The three states a conformant tool MUST surface distinctly:
 **signed-and-valid** · **absent** (anonymous, and visibly so) ·
 **present-and-invalid** (tampering under an existing signature). A tool that
 collapses the last two into one warning has defeated the doctrine.
+**Absent means not in the container.** A `SIGNATURE.json` that is there but
+cannot be read as a chain — not UTF-8 JSON, not an object, an entry that does
+not decode — is present-and-invalid, never absent. A chain in an
+`algorithm` the reader does not implement is neither: the reader says
+**unverified**, §10 step 4's fourth word, which is a statement about the
+reader and not a fourth state of the package (§10.1, `signature_algorithm`).
+A reader that does not implement Ed25519 at all says `unverified` too, but
+what it can check without the mathematics — that the file is a JSON object
+whose `manifest_sha256` is the sha256 of the manifest bytes — it checks, and
+a failure there is present-and-invalid.
 
 ## 7. Embedded loaders — `core.loader`
 
