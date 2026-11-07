@@ -400,9 +400,9 @@
             "additionalProperties": false,
             "required": ["to", "kind"],
             "properties": {
-              "to": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "node_id of the target node."},
+              "to": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "node_id of the target node. MUST name a node in this manifest's nodes[]; a writer MUST NOT emit an edge to an absent node (SPEC section 5)."},
               "kind": {
-                "description": "'requires' means this node is meaningless without the target; 'enhances' means it adds a feature the target does not need. Almost everything is 'enhances' (law 3). A 'requires' edge into a dead node kills this node too; an 'enhances' edge into a dead node costs one feature.",
+                "description": "'requires' means this node is meaningless without the target; 'enhances' means it adds a feature the target does not need. Almost everything is 'enhances' (law 3). A 'requires' edge into a dead node, or to a node absent from nodes[], kills this node too (requires-dead-node, requires-missing-node); an 'enhances' edge into a dead or absent node costs one feature (SPEC section 5).",
                 "enum": ["requires", "enhances"]
               },
               "role": {

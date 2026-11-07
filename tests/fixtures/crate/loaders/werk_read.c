@@ -90,9 +90,10 @@
  * A corrupt file, a missing file, an unsupported compression method, a
  * malformed node record or an unknown node type NEVER aborts the load.
  * The node is marked dead or skipped, one precise report line is emitted,
- * and every other node still loads.  A `requires` edge into a dead node
- * kills the source node too, transitively; an `enhances` edge into a dead
- * node costs exactly one feature and is only reported.
+ * and every other node still loads.  A `requires` edge into a dead node,
+ * or to a node absent from nodes[], kills the source node too,
+ * transitively; an `enhances` edge into a dead or absent node costs
+ * exactly one feature and is only reported.
  *
  * Exit status (SPEC.md section 10.1; until ruling 9 of 2026-10-13 this
  * file returned 1 for an unreadable container, which the table calls 2):
@@ -2623,7 +2624,9 @@ static wnode *find_node(wmanifest *m, const char *id)
 
 /* SPEC.md section 5: "A requires edge into a dead node kills the source
    node too; an enhances edge into a dead node costs exactly one
-   feature."
+   feature."  A `requires` edge to a node absent from nodes[] kills the
+   same way (requires-missing-node); an `enhances` edge to one is
+   edge-dangling.
    Two passes, deliberately.  The first runs the `requires` kill to a
    fixpoint so a chain of requires propagates.  The second reports the
    `enhances` degradations exactly once, which it could not do inside the
@@ -2686,12 +2689,13 @@ static void propagate_requires(wmanifest *m)
             tgt = find_node(m, to);
             if (!tgt)
                 sl_addf(&m->report,
-                        "DEGRADED  node=%s loses one feature: 'enhances' edge to "
-                        "%s, which is not in nodes[]", nd->id, to);
+                        "DEGRADED  node=%s reason=edge-dangling target=%s is not "
+                        "in nodes[]; the 'enhances' edge loses one feature",
+                        nd->id, to);
             else if (tgt->dead)
                 sl_addf(&m->report,
-                        "DEGRADED  node=%s loses one feature: 'enhances' edge to "
-                        "dead node %s", nd->id, to);
+                        "DEGRADED  node=%s reason=enhances-dead-node target=%s; "
+                        "the 'enhances' edge loses one feature", nd->id, to);
         }
     }
 }

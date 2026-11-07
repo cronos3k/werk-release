@@ -15,10 +15,10 @@ them from the file alone.
 
 | fixture | bytes | sha256 |
 |---|---|---|
-| crate-cc0-lean-v1.werk | 1478048 | d0f93d2fd6a011f9405dc7d55ee8cc2de751a46701a44316e5c1a500e2decd9b |
-| crate-cc0-lean-v1-damaged.werk | 1479251 | 8edd9e20fcf63d8ed762b401db63cb08f94bac2bbd076d809a70f5667a853acb |
-| crate-cc0-full-v1.werk | 1531623 | 57a89de514eca180bfd6709475efefd4727ba1e9a48a211e73b18a3153c4a8f3 |
-| crate-cc0-full-v1-damaged.werk | 1532826 | 72802ac7731c978659fd3a26e1c23193861542e4ea25df775160798ca7e1d643 |
+| crate-cc0-lean-v1.werk | 1481529 | 299ded3d7d9f9935b4aa1611a57ce1ebe062746f03a2eccc9fc947b9620f60cc |
+| crate-cc0-lean-v1-damaged.werk | 1482732 | 51752bd1b2160ea2d71e50306204850f72e6831e104be46befc0697d3913c51c |
+| crate-cc0-full-v1.werk | 1535104 | 4b62cd9ab61cda099762f5b7fa6bb7b828c018e8abbb41f6e4be028e03281e31 |
+| crate-cc0-full-v1-damaged.werk | 1536307 | 3ae6b6356472d92187da3e04a41bacf945baae716642e804bb1b6b2f4af07d63 |
 
 - **Lean** (13 nodes): mesh + 3 procedural textures + material + measured bounds +
   a `core.disclosure` blob + spec/loader/license/readme/provenance. The smallest
@@ -85,8 +85,8 @@ Gate: `tests/run_gate_cc0_image.py` — **9 PASS**.
 
 | fixture | bytes | sha256 |
 |---|---|---|
-| image-cc0-v1.werk | 5532277 | 0ae9db458cafdb48af9b6152ecb8e997790ac267d0baa28d5e156af74df923cb |
-| image-cc0-v1-damaged.werk | 5533326 | 36e44d5778b64afdd2ce8537bcea9acb5c883b380ba5cc1fd846deaab7f28d2d |
+| image-cc0-v1.werk | 5535758 | 582489761b29f2a2f02a2539b9d642684cb94fe1e6fb89eeb9b173fb5de27358 |
+| image-cc0-v1-damaged.werk | 5536807 | d841db4d83f66ac292a0da641ca27883178a5db6ed56762de35af608c8cb0fac |
 
 ### Gaussian splat — `gsplat-cc0-v1.werk` (+ `-damaged`)
 Profile `3d-entity/1`, 10 nodes. Source: a **synthetic** Gaussian splat
@@ -98,8 +98,8 @@ the research-only licences on the usual 3DGS scenes), fed through the real
 
 | fixture | bytes | sha256 |
 |---|---|---|
-| gsplat-cc0-v1.werk | 1746891 | b4402e10f36653e6732d05396380fe57bc4d936d8ab8d7cae27b005acc72eda6 |
-| gsplat-cc0-v1-damaged.werk | 1747941 | 0a41f0129a373c8a2792ec5d9206fc36ff952e045f4321d34f6f6d820d234f6a |
+| gsplat-cc0-v1.werk | 1750927 | 43f9bea9a027c911e9e437d1f48c8f99d23e474d87ba1640d8855ea590947046 |
+| gsplat-cc0-v1-damaged.werk | 1751977 | 44d5334d2ed5323fe66c1b92040d8dde96aa3f70f04a6136b4f900538d257832 |
 
 ### Hardcopy — already reproducible, no new file
 `gauntlet/roundHC/` is self-contained: `make_smiley.py` → `build_smiley_werk.py`

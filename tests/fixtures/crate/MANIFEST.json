@@ -17,7 +17,7 @@
       "x/"
     ],
     "form": "zip",
-    "preview_prefix_bytes": 841641,
+    "preview_prefix_bytes": 845680,
     "zip_compression": "store"
   },
   "conventions": {
@@ -107,8 +107,8 @@
             {
               "media_type": "text/markdown",
               "path": "spec/SPEC.md",
-              "sha256": "cdc64856bed0cfbd7810c1b2e32518c9447a0303bce26fd3b0616c61d585cfcb",
-              "size": 162717
+              "sha256": "2e3133b7b2004580249432ee85da64fbefd3a5fddc71d69e5a4b2b2f2d3b2d79",
+              "size": 164950
             },
             {
               "media_type": "text/markdown",
@@ -203,8 +203,8 @@
             {
               "media_type": "application/json",
               "path": "spec/schemas/manifest.schema.json",
-              "sha256": "b0248a5aab97c94c75b24d01d6ab46468f6de6c77dea5b5a7d37a8ea47afa0f1",
-              "size": 48791
+              "sha256": "b9dc00c3061db82d0135a5a30336039f20fca4bda854d9d7d511c2d32d90a90b",
+              "size": 49009
             },
             {
               "media_type": "application/json",
@@ -308,8 +308,8 @@
             {
               "media_type": "text/x-python",
               "path": "loaders/werk_read.py",
-              "sha256": "b172dbf685cdac08e54258c5ec3c74fbf581f090ef33eb4744843b7f7e13c24e",
-              "size": 54447
+              "sha256": "1a839b6ba89f202007a8af0d0b377de4912f75d37b30f90134d489f28486d4f8",
+              "size": 55480
             }
           ],
           "note": "Single-file zero-dependency bootstrap reader, so the package carries a way to read itself (law 1).",
@@ -348,8 +348,8 @@
             {
               "media_type": "text/x-rust",
               "path": "loaders/werk_read.rs",
-              "sha256": "33de20a21eed7f9352b7d1c02a4325e1226322b51794678cf1f71f3522549d2b",
-              "size": 124824
+              "sha256": "1fe3d7d0a4c090147666c48f51d2ea2a7168bed13ff12f293708c74afbcc6822",
+              "size": 125118
             }
           ],
           "note": "Single-file zero-dependency bootstrap reader, so the package carries a way to read itself (law 1).",
@@ -388,8 +388,8 @@
             {
               "media_type": "text/x-c",
               "path": "loaders/werk_read.c",
-              "sha256": "69a7eaebaf5cfb2fa8420ae925b6676d1b69909281f98ee094f2060a2fe82f36",
-              "size": 137671
+              "sha256": "ac0f68c459a0614953ddb419edecfe38bc14b1c315d86c7df820a87b1aad3a05",
+              "size": 137932
             }
           ],
           "note": "Single-file zero-dependency bootstrap reader, so the package carries a way to read itself (law 1).",
@@ -733,7 +733,7 @@
     "core.semantics": "spec/schemas/core.semantics.schema.json"
   },
   "signature_file": "SIGNATURE.json",
-  "spec_sha256": "049a13d6756987f41f3e7a47c4c2cdb23d51feff42edacd59971e68a66d42f58",
+  "spec_sha256": "ddba2d95643428fef156279cee081d6f0fb2c235334435d8a460db3f41d43803",
   "werk": {
     "major": 1,
     "minor": 0
