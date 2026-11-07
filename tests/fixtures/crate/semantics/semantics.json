@@ -1,0 +1,50 @@
+{
+  "description": "A small wooden crate, used here as the werk conformance fixture. Everything about it is deliberately minimal so a reader can be checked by hand.",
+  "facets": {
+    "condition": [
+      "worn"
+    ],
+    "function": [
+      "container",
+      "prop"
+    ],
+    "scale-class": [
+      "handheld"
+    ]
+  },
+  "facets_version": 1,
+  "keywords": [
+    "fixture",
+    "crate",
+    "conformance"
+  ],
+  "note": "Facet tags are illustrative; registry membership is checked against spec/facets.json, which travels in this package.",
+  "palette": {
+    "average_luminance": 0.29,
+    "colors": [
+      {
+        "hex_srgb": "#b88c57",
+        "linear_rgb": [
+          0.4793,
+          0.2582,
+          0.0953
+        ],
+        "name": "oak",
+        "weight": 0.78
+      },
+      {
+        "hex_srgb": "#3f3a35",
+        "linear_rgb": [
+          0.0508,
+          0.0439,
+          0.0368
+        ],
+        "name": "iron",
+        "weight": 0.22
+      }
+    ],
+    "dominant_index": 0,
+    "method": "authored"
+  },
+  "schema_version": 1
+}

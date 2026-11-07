@@ -1,0 +1,119 @@
+core.pose.rest — layout grammar v1
+==================================
+
+Magic "WKRP" (57 4B 52 50), envelope version 1.
+Read spec/layouts/ENVELOPE.layout.txt first.
+
+What it is
+----------
+The set of orientations in which this entity comes to rest when dropped on a
+flat, level, infinitely rigid floor — measured, not guessed, by dropping the
+entity in a rigid-body simulation from many random initial orientations and
+recording where it settles. The profile's target count is 32 distinct
+settled orientations, but the count is whatever the measurement found and is
+declared in the header.
+
+Each entry carries the orientation, how often the drop sim landed there, and
+the contact points that touch the floor in that orientation.
+
+Two masters (law 9): a runtime uses it to place props convincingly without
+simulating; the tooling uses the contact points to pick a thumbnail camera
+that does not shoot the object from underneath, and to place the object in
+imposter bakes.
+
+Header keys (in addition to the mandatory envelope keys)
+--------------------------------------------------------
+
+  key                type            meaning
+  -----------------  --------------  --------------------------------------
+  "pose_count"       uint            number of entries in section 0.
+  "contact_count"    uint            total number of contact points in
+                                     section 1, summed over all entries.
+  "trials"           uint            how many drops were simulated. 0 means
+                                     the poses were authored, not measured;
+                                     "probability" is then meaningless and
+                                     MUST be 0.0 in every entry.
+  "floor_normal"     array<float>[3] model-space direction the floor normal
+                                     points, unit. Canonically [0,1,0] (the
+                                     manifest's up_axis).
+  "settle_epsilon_m" float           the linear tolerance the sim used to
+                                     declare "settled", metres.
+  "merge_angle_deg"  float           two settled orientations closer than
+                                     this angle were merged into one entry;
+                                     their probabilities were summed.
+
+Payload sections
+----------------
+
+  section 0
+    "name"   : "poses"
+    "dtype"  : "record"
+    "shape"  : [pose_count]
+    "stride" : 32
+    "size"   : 32 * pose_count
+
+    record layout, 32 bytes, little-endian, no implicit padding:
+
+      offset  size  type   field
+      ------  ----  -----  --------------------------------------------
+       +0      4    f32    quat_w
+       +4      4    f32    quat_x
+       +8      4    f32    quat_y
+      +12      4    f32    quat_z     (order is w,x,y,z; see conventions)
+      +16      4    u32    contact_first  index of this entry's first
+                                          contact point in section 1
+      +20      4    u32    contact_count  number of contact points, >= 1
+      +24      4    f32    probability    fraction of trials that settled
+                                          here, 0.0..1.0
+      +28      4    f32    support_area_m2  area of the convex hull of this
+                                          entry's contact points projected
+                                          onto the floor plane, m^2. 0.0 if
+                                          fewer than 3 contacts.
+
+    The quaternion rotates the entity FROM its model-space rest orientation
+    INTO the settled orientation, in the manifest's declared handedness. To
+    place a settled instance: R = quat, then translate so the lowest contact
+    point sits on the floor plane.
+
+    Invariant a reader MUST check:
+      sum over entries of contact_count == header "contact_count"
+      entries are sorted by "probability" DESCENDING; entry 0 is the most
+      likely resting pose and is what a tool uses when it needs exactly one.
+      sum of probability over all entries is 1.0 +/- 1e-3 when trials > 0.
+
+  section 1
+    "name"   : "contacts"
+    "dtype"  : "f32"
+    "shape"  : [contact_count, 3]
+    "stride" : 12
+    "size"   : 12 * contact_count
+
+    Contact point c, components (x,y,z), lives at
+        offset + 12*c + 0, +4, +8
+    Coordinates are in MODEL space (the entity's own untransformed frame),
+    metres — NOT in the settled frame. To get floor-space positions, apply
+    the entry's quaternion. Storing them in model space means one point can
+    be shared conceptually across poses and lets a reader show contact
+    points on the untransformed mesh without inverting anything.
+
+Decisions recorded here
+-----------------------
+  D-RP-1  Two sections with fixed strides, rather than the variable-length
+          "count then that many points, then the next entry" record the
+          draft sketched. Variable-length records force a reader to DERIVE
+          each entry's offset by walking the file, which law 8's corollary
+          forbids. With a fixed 32-byte entry stride plus an index into a
+          flat contact array, entry N is at a computed-from-declared-stride
+          offset and can be read with one numpy view.
+  D-RP-2  "up_contact_count" from the draft is named "contact_count" here.
+          There is no separate notion of an up-contact: a contact point is a
+          point that touches the floor, and which way is up is stated once,
+          in "floor_normal".
+  D-RP-3  Contacts are in model space, not settled space (rationale above).
+  D-RP-4  probability is stored per entry rather than a raw hit count, so
+          the field remains meaningful after entries are merged or pruned.
+          "trials" is kept so a consumer can recover counts and judge the
+          statistical weight of a small probability.
+  D-RP-5  Entries are sorted by probability descending, normatively. A
+          consumer that wants "the" rest pose reads entry 0 and needs no
+          policy of its own.

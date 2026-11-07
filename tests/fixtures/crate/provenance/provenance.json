@@ -1,0 +1,29 @@
+{
+  "runs": [
+    {
+      "finished": "2026-08-08T09:00:00Z",
+      "note": "Built by werkc build-fixture from bytes that are all present in this package. No model was involved; nothing here is inferred by a machine.",
+      "produced": [
+        {
+          "node_id": "geom-game",
+          "v": 1
+        },
+        {
+          "node_id": "geom-lod1",
+          "v": 1
+        },
+        {
+          "node_id": "rest-poses",
+          "v": 1
+        }
+      ],
+      "run_id": "fixture-build",
+      "started": "2026-08-08T09:00:00Z",
+      "tool": {
+        "name": "werkc",
+        "version": "0.1.0"
+      }
+    }
+  ],
+  "schema_version": 1
+}

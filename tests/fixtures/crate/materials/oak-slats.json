@@ -1,0 +1,25 @@
+{
+  "alpha_mode": "opaque",
+  "base_color_factor": [
+    0.72,
+    0.55,
+    0.34,
+    1.0
+  ],
+  "double_sided": false,
+  "epistemic": "authored",
+  "ior": 1.5,
+  "material_id": "oak-slats",
+  "metallic_factor": 0.0,
+  "model": "metallic-roughness",
+  "name": "Oak slats",
+  "note": "Fixture material. Values are plausible for oak and are authored, not measured.",
+  "roughness_factor": 0.68,
+  "textures": {
+    "base_color": {
+      "node": "tex-basecolor",
+      "path": "textures/crate-basecolor.png",
+      "uv_set": 0
+    }
+  }
+}

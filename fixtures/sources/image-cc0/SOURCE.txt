@@ -1,0 +1,27 @@
+werk CC0 fixture source — wooden-crate texture (2K)
+===================================================
+
+Image: a 2048x2048 photographic-style texture atlas of weathered wooden crate
+planks (the same "Wooden Crate 01" family as fixtures/sources/crate-cc0/), by
+Poly Haven.
+  https://polyhaven.com/
+
+Licence: CC0 1.0 Universal (public domain dedication).
+  https://creativecommons.org/publicdomain/zero/1.0/
+  Poly Haven publishes all of its assets under CC0. No attribution is required;
+  the NOTICE embedded in the built fixture credits Poly Haven as a courtesy,
+  not as a licence obligation.
+
+File kept here:
+  image-cc0-source.jpg  — the CC0 image, verbatim. 2048x2048 RGB JPEG,
+                          2728494 bytes, sha256
+                          0ba1a7745837c7b5495b6a90051ddb92b25224476526ebd19418286afc3d429b
+
+This directory is the INPUT to fixtures/build_image_cc0.py, which packages the
+image into a werk profile image/1 package: the JPEG is carried verbatim as
+image/source.jpg (the archival anchor), two deterministic Lanczos-3 PNG
+derivatives (a 1024-wide preview and a 256-wide thumbnail) are computed from it,
+and a measured werk.descriptor.labhog/1 style descriptor (a WKEM envelope) plus
+a measured palette are computed over its pixels. Everything in the package is
+CC0/public-domain, so the whole build stays reproducible from this repository
+alone.

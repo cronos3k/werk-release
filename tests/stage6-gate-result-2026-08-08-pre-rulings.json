@@ -1,0 +1,636 @@
+{
+ "tolerances": {
+  "scan_best_over_median": 0.7,
+  "wrong_pose_min_damage_rad": 0.3,
+  "frame_invariance_adjacent_rad": 1e-05,
+  "roundtrip_rad": 0.0001,
+  "transit_rad": 0.0001,
+  "bone_length_drift_m": 1e-09,
+  "hips_min_m": 0.6,
+  "hips_max_m": 1.3
+ },
+ "sources": [
+  {
+   "key": "cesium",
+   "path": "<repo>\\retarget/testdata/CesiumMan.glb",
+   "sha256": "b7001eaeea8254bd44773bcd247e78696d94169388fbb2a1800fc69434e777d9",
+   "size": 438044,
+   "origin": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/CesiumMan/glTF-Binary/CesiumMan.glb",
+   "licence": "see retarget/testdata/CesiumMan-README.md (Khronos sample asset)"
+  },
+  {
+   "key": "ue",
+   "path": "<lab>/Stage6UE/export/ue-mannequin.json",
+   "sha256": "d184d8f2579b082351d40848773af128c49808744c380c793eda0cea63abda05",
+   "size": 2753648,
+   "origin": "exported from a live UE 5.7.4 by retarget/tools/ue_export_skeleton.py, from C:/Program Files/Epic Games/UE_5.7/Templates/TemplateResources/High/Mannequin copied verbatim into a throwaway project at <lab>/Stage6UE",
+   "licence": "Epic engine content; NOT redistributed, in the fixture or in this repository"
+  },
+  {
+   "key": "cmu",
+   "path": "<repo>\\retarget/testdata/02_01.bvh",
+   "sha256": "cf56db43157acc3d200b3d4215523f54d354a8926bea67e1f6c8031bd335ba7e",
+   "size": 260091,
+   "origin": "https://raw.githubusercontent.com/una-dinosauria/cmu-mocap/master/data/002/02_01.bvh -- Bruce Hahne's BVH conversion of the CMU Graphics Lab Motion Capture Database",
+   "licence": "free for all uses; CMU's own terms in cmu-READMEFIRST.txt"
+  }
+ ],
+ "retargets": {
+  "cesium": {
+   "label": "glTF: Khronos CesiumMan",
+   "rig_bones": 21,
+   "clip_frames": 48,
+   "rate_hz": 23.999999421708143,
+   "map_id": "cesium-man",
+   "map_from": "<repo>\\retarget\\maps\\cesium-man.json",
+   "bound_bones": 19,
+   "solved_scale": 1.356963211760668,
+   "solved_rotation_wxyz": [
+    4.804005359298641e-05,
+    -1.1296894236804036e-06,
+    0.9961024610725073,
+    0.0882036548912301
+   ],
+   "calibration": {
+    "source": "rest-pose",
+    "scanned": 49,
+    "direction_rms_rad": 0.4295526608799986
+   },
+   "calibration_direction_rms_rad": 0.4295526608799986,
+   "calibration_direction_max_rad": 0.7052698278555504,
+   "calibration_position_rms_m": 0.14867750944491315,
+   "scan": {
+    "candidates": 49,
+    "best": 0.4295526608799986,
+    "median": 0.885862101411222,
+    "worst": 0.9883844558060787
+   },
+   "frame_invariance": {
+    "frames": 48,
+    "adjacent": {
+     "pairs": 15,
+     "rms_rad": 0.42955903163934317,
+     "max_rad": 0.705270523424315,
+     "spread_rad": 2.353604502370113e-06
+    },
+    "interposed": null,
+    "interposed_bones": []
+   },
+   "wkac_bytes": 18800,
+   "scan_best_over_median": 0.4848978866978281,
+   "wrong_pose_damage_rad": 0.8877817471292705,
+   "roundtrip": {
+    "bones": 19,
+    "frames": 48,
+    "max_rad": 5.1567566454997316e-08,
+    "rms_rad": 1.3515947096102866e-08,
+    "worst_bone": "leg_joint_L_3",
+    "max_position_m": 0.003987944607912837,
+    "rms_position_m": 0.001853335557975141
+   },
+   "bone_length_drift_m": 8.326672684688674e-16,
+   "hips_y_m": [
+    0.8765324076678038,
+    0.9713869751796622
+   ],
+   "min_toe_y_m": -0.04953487179212243
+  },
+  "ue": {
+   "label": "UE 5.7 mannequin: SK_Mannequin + ThirdPersonWalk",
+   "rig_bones": 68,
+   "clip_frames": 29,
+   "rate_hz": 29.0,
+   "map_id": "ue-mannequin",
+   "map_from": "spec/skeleton/canonical-humanoid-v1.json",
+   "bound_bones": 22,
+   "solved_scale": 0.9905202469586115,
+   "solved_rotation_wxyz": [
+    4.4738077228587915e-07,
+    3.465942393435033e-07,
+    0.6841589682125692,
+    0.7293329186414067
+   ],
+   "calibration": {
+    "source": "rest-pose",
+    "scanned": 30,
+    "direction_rms_rad": 0.42856608465532176
+   },
+   "calibration_direction_rms_rad": 0.42856608465532176,
+   "calibration_direction_max_rad": 0.8699842310388737,
+   "calibration_position_rms_m": 0.14982512608997384,
+   "scan": {
+    "candidates": 30,
+    "best": 0.42856608465532176,
+    "median": 0.6588514209438135,
+    "worst": 0.7280123582936107
+   },
+   "frame_invariance": {
+    "frames": 29,
+    "adjacent": {
+     "pairs": 21,
+     "rms_rad": 0.4285660846553212,
+     "max_rad": 0.8699842310388735,
+     "spread_rad": 3.025704686798747e-14
+    },
+    "interposed": null,
+    "interposed_bones": []
+   },
+   "wkac_bytes": 11568,
+   "scan_best_over_median": 0.6504745547052097,
+   "wrong_pose_damage_rad": 0.7080177011334357,
+   "roundtrip": {
+    "bones": 22,
+    "frames": 29,
+    "max_rad": 5.217229941910844e-08,
+    "rms_rad": 1.7302444691414086e-08,
+    "worst_bone": "foot_l",
+    "max_position_m": 5.1095155021958464e-08,
+    "rms_position_m": 1.1580524049884895e-08
+   },
+   "bone_length_drift_m": 9.43689570931383e-16,
+   "hips_y_m": [
+    0.8373536754305537,
+    0.9456922425196971
+   ],
+   "min_toe_y_m": -0.015606903953907736
+  },
+  "cmu": {
+   "label": "CMU mocap: take 02_01 (BVH)",
+   "rig_bones": 31,
+   "clip_frames": 344,
+   "rate_hz": 120.00048000192001,
+   "map_id": "cmu-bvh",
+   "map_from": "<repo>\\retarget\\maps\\cmu-bvh.json",
+   "bound_bones": 22,
+   "solved_scale": 0.06152304256882133,
+   "solved_rotation_wxyz": [
+    -0.0024548077936895427,
+    -0.0008001820699285983,
+    0.9995991326784271,
+    -0.028194105339365363
+   ],
+   "calibration": {
+    "source": "clip-frame",
+    "clip": "cmu-02-01",
+    "frame": 0,
+    "t_s": 0.0,
+    "scanned": 345,
+    "direction_rms_rad": 0.15895621565046925
+   },
+   "calibration_direction_rms_rad": 0.15895621565046925,
+   "calibration_direction_max_rad": 0.3365222444166915,
+   "calibration_position_rms_m": 0.06726212404581308,
+   "scan": {
+    "candidates": 345,
+    "best": 0.15895621565046925,
+    "median": 0.7885823844481529,
+    "worst": 0.8707321479308493
+   },
+   "frame_invariance": {
+    "frames": 344,
+    "adjacent": {
+     "pairs": 14,
+     "rms_rad": 0.1231533890349241,
+     "max_rad": 0.25361387659493495,
+     "spread_rad": 7.602772578163552e-14
+    },
+    "interposed": {
+     "pairs": 3,
+     "rms_rad": 0.2948842026892606,
+     "max_rad": 0.33652224441669454,
+     "spread_rad": 0.22165782361109593
+    },
+    "interposed_bones": [
+     "hips->l-thigh",
+     "hips->r-thigh",
+     "neck->head"
+    ]
+   },
+   "wkac_bytes": 131280,
+   "scan_best_over_median": 0.2015721106447315,
+   "wrong_pose_damage_rad": 0.8039070895188944,
+   "roundtrip": {
+    "bones": 22,
+    "frames": 344,
+    "max_rad": 8.803083409534075e-08,
+    "rms_rad": 1.492267397767995e-08,
+    "worst_bone": "RightToeBase",
+    "max_position_m": 0.5698923496622671,
+    "rms_position_m": 0.02743557544316753
+   },
+   "bone_length_drift_m": 1.3322676295501878e-15,
+   "hips_y_m": [
+    0.9343630822057434,
+    1.0919844044672793
+   ],
+   "min_toe_y_m": 0.03423559340523055
+  }
+ },
+ "transits": [
+  {
+   "from": "cesium",
+   "to": "ue",
+   "shared": [
+    "head",
+    "hips",
+    "l-foot",
+    "l-forearm",
+    "l-hand",
+    "l-shin",
+    "l-thigh",
+    "l-toe",
+    "l-upperarm",
+    "neck",
+    "r-foot",
+    "r-forearm",
+    "r-hand",
+    "r-shin",
+    "r-thigh",
+    "r-toe",
+    "r-upperarm",
+    "spine1",
+    "spine3"
+   ],
+   "lost": [],
+   "result": {
+    "bones": 19,
+    "frames": 48,
+    "max_rad": 5.156756642456305e-08,
+    "rms_rad": 1.3587076350358295e-08,
+    "worst_bone": "l-foot",
+    "max_position_m": 4.604870949227585e-08,
+    "rms_position_m": 1.0131236847367329e-08
+   },
+   "bytes": 18800
+  },
+  {
+   "from": "cesium",
+   "to": "cmu",
+   "shared": [
+    "head",
+    "hips",
+    "l-foot",
+    "l-forearm",
+    "l-hand",
+    "l-shin",
+    "l-thigh",
+    "l-toe",
+    "l-upperarm",
+    "neck",
+    "r-foot",
+    "r-forearm",
+    "r-hand",
+    "r-shin",
+    "r-thigh",
+    "r-toe",
+    "r-upperarm",
+    "spine1",
+    "spine3"
+   ],
+   "lost": [],
+   "result": {
+    "bones": 19,
+    "frames": 48,
+    "max_rad": 5.156756642456305e-08,
+    "rms_rad": 1.3587076351005238e-08,
+    "worst_bone": "l-foot",
+    "max_position_m": 4.604870949227585e-08,
+    "rms_position_m": 1.0131236846748502e-08
+   },
+   "bytes": 18800
+  },
+  {
+   "from": "ue",
+   "to": "cesium",
+   "shared": [
+    "head",
+    "hips",
+    "l-foot",
+    "l-forearm",
+    "l-hand",
+    "l-shin",
+    "l-thigh",
+    "l-toe",
+    "l-upperarm",
+    "neck",
+    "r-foot",
+    "r-forearm",
+    "r-hand",
+    "r-shin",
+    "r-thigh",
+    "r-toe",
+    "r-upperarm",
+    "spine1",
+    "spine3"
+   ],
+   "lost": [
+    "l-clavicle",
+    "r-clavicle",
+    "spine2"
+   ],
+   "result": {
+    "bones": 19,
+    "frames": 29,
+    "max_rad": 5.2749681183685474e-08,
+    "rms_rad": 1.7842579094024215e-08,
+    "worst_bone": "r-hand",
+    "max_position_m": 0.03810232962245896,
+    "rms_position_m": 0.014860972780209042
+   },
+   "bytes": 11584
+  },
+  {
+   "from": "ue",
+   "to": "cmu",
+   "shared": [
+    "head",
+    "hips",
+    "l-clavicle",
+    "l-foot",
+    "l-forearm",
+    "l-hand",
+    "l-shin",
+    "l-thigh",
+    "l-toe",
+    "l-upperarm",
+    "neck",
+    "r-clavicle",
+    "r-foot",
+    "r-forearm",
+    "r-hand",
+    "r-shin",
+    "r-thigh",
+    "r-toe",
+    "r-upperarm",
+    "spine1",
+    "spine2",
+    "spine3"
+   ],
+   "lost": [],
+   "result": {
+    "bones": 22,
+    "frames": 29,
+    "max_rad": 5.217229929431643e-08,
+    "rms_rad": 1.7634785000726304e-08,
+    "worst_bone": "l-foot",
+    "max_position_m": 5.002549510491542e-08,
+    "rms_position_m": 1.1853917780055555e-08
+   },
+   "bytes": 11568
+  },
+  {
+   "from": "cmu",
+   "to": "cesium",
+   "shared": [
+    "head",
+    "hips",
+    "l-foot",
+    "l-forearm",
+    "l-hand",
+    "l-shin",
+    "l-thigh",
+    "l-toe",
+    "l-upperarm",
+    "neck",
+    "r-foot",
+    "r-forearm",
+    "r-hand",
+    "r-shin",
+    "r-thigh",
+    "r-toe",
+    "r-upperarm",
+    "spine1",
+    "spine3"
+   ],
+   "lost": [
+    "l-clavicle",
+    "r-clavicle",
+    "spine2"
+   ],
+   "result": {
+    "bones": 19,
+    "frames": 344,
+    "max_rad": 8.803083402539664e-08,
+    "rms_rad": 1.6252154828988583e-08,
+    "worst_bone": "r-toe",
+    "max_position_m": 0.006712541803685954,
+    "rms_position_m": 0.0030971244297802792
+   },
+   "bytes": 131280
+  },
+  {
+   "from": "cmu",
+   "to": "ue",
+   "shared": [
+    "head",
+    "hips",
+    "l-clavicle",
+    "l-foot",
+    "l-forearm",
+    "l-hand",
+    "l-shin",
+    "l-thigh",
+    "l-toe",
+    "l-upperarm",
+    "neck",
+    "r-clavicle",
+    "r-foot",
+    "r-forearm",
+    "r-hand",
+    "r-shin",
+    "r-thigh",
+    "r-toe",
+    "r-upperarm",
+    "spine1",
+    "spine2",
+    "spine3"
+   ],
+   "lost": [],
+   "result": {
+    "bones": 22,
+    "frames": 344,
+    "max_rad": 8.803083402539664e-08,
+    "rms_rad": 1.5121803404873075e-08,
+    "worst_bone": "r-toe",
+    "max_position_m": 1.365527842495622e-07,
+    "rms_position_m": 4.983566967990428e-08
+   },
+   "bytes": 131280
+  }
+ ],
+ "fixture": {
+  "path": "<repo>\\fixtures\\humanoid-retarget-v1.werk",
+  "size": 1251512,
+  "sha256": "b0f361a1f24bd2d72550ca236be02e2b71c4eb6229385dd56bbaef2ee1ad1f2c",
+  "werk_core": "2 report entries, 0 error(s)",
+  "werk_read": "55/55 files verified over 8 resolved node(s)"
+ },
+ "result": "PASSED",
+ "rows": [
+  {
+   "status": "PASS",
+   "name": "canonical skeleton recomposes",
+   "detail": "1.119e-10 m worst local->model disagreement (schema asks for 1e-5); 23 bones, status draft"
+  },
+  {
+   "status": "PASS",
+   "name": "source hash: cesium",
+   "detail": "438044 B, sha256 b7001eaeea8254bd"
+  },
+  {
+   "status": "PASS",
+   "name": "source present: ue",
+   "detail": "2753648 B, sha256 d184d8f2579b0823 (produced on this box, not pinned)"
+  },
+  {
+   "status": "PASS",
+   "name": "source hash: cmu",
+   "detail": "260091 B, sha256 cf56db43157acc3d"
+  },
+  {
+   "status": "PASS",
+   "name": "cesium: scan finds a distinguished pose",
+   "detail": "best/median 0.485 <= 0.70 over 49 candidates; winner \"rest-pose\""
+  },
+  {
+   "status": "PASS",
+   "name": "cesium: a wrong calibration pose breaks it",
+   "detail": "binding on the worst candidate moves the pose by 0.8878 rad (50.9 deg) at r-toe, threshold >= 0.30"
+  },
+  {
+   "status": "PASS",
+   "name": "cesium: per-bone error is frame-invariant",
+   "detail": "15 adjacent pairs, spread across 48 frames 2.35e-06 rad <= 1e-05"
+  },
+  {
+   "status": "PASS",
+   "name": "cesium: round trip through core.anim.clip",
+   "detail": "5.157e-08 rad max over 19 bones x 48 frames (worst leg_joint_L_3), rms 1.352e-08; 18800 B of f32 payload crossed"
+  },
+  {
+   "status": "PASS",
+   "name": "cesium: retarget moves rotations only",
+   "detail": "worst canonical bone-length drift over the clip 8.33e-16 m <= 1e-09"
+  },
+  {
+   "status": "PASS",
+   "name": "cesium: retargeted figure is plausible",
+   "detail": "hips 0.877..0.971 m above the declared floor (window 0.60..1.30), lowest toe -0.050 m; stature scale 1.35696 was SOLVED, not declared"
+  },
+  {
+   "status": "PASS",
+   "name": "ue: scan finds a distinguished pose",
+   "detail": "best/median 0.650 <= 0.70 over 30 candidates; winner \"rest-pose\""
+  },
+  {
+   "status": "PASS",
+   "name": "ue: a wrong calibration pose breaks it",
+   "detail": "binding on the worst candidate moves the pose by 0.7080 rad (40.6 deg) at l-shin, threshold >= 0.30"
+  },
+  {
+   "status": "PASS",
+   "name": "ue: per-bone error is frame-invariant",
+   "detail": "21 adjacent pairs, spread across 29 frames 3.03e-14 rad <= 1e-05"
+  },
+  {
+   "status": "PASS",
+   "name": "ue: round trip through core.anim.clip",
+   "detail": "5.217e-08 rad max over 22 bones x 29 frames (worst foot_l), rms 1.730e-08; 11568 B of f32 payload crossed"
+  },
+  {
+   "status": "PASS",
+   "name": "ue: retarget moves rotations only",
+   "detail": "worst canonical bone-length drift over the clip 9.44e-16 m <= 1e-09"
+  },
+  {
+   "status": "PASS",
+   "name": "ue: retargeted figure is plausible",
+   "detail": "hips 0.837..0.946 m above the declared floor (window 0.60..1.30), lowest toe -0.016 m; stature scale 0.99052 was SOLVED, not declared"
+  },
+  {
+   "status": "PASS",
+   "name": "cmu: scan finds a distinguished pose",
+   "detail": "best/median 0.202 <= 0.70 over 345 candidates; winner \"clip-frame\" frame 0"
+  },
+  {
+   "status": "PASS",
+   "name": "cmu: a wrong calibration pose breaks it",
+   "detail": "binding on the worst candidate moves the pose by 0.8039 rad (46.1 deg) at r-upperarm, threshold >= 0.30"
+  },
+  {
+   "status": "PASS",
+   "name": "cmu: per-bone error is frame-invariant",
+   "detail": "14 adjacent pairs, spread across 344 frames 7.60e-14 rad <= 1e-05; 3 interposed pair(s) ['hips->l-thigh', 'hips->r-thigh', 'neck->head'] spread 0.2217 rad, NOT averaged in"
+  },
+  {
+   "status": "PASS",
+   "name": "cmu: round trip through core.anim.clip",
+   "detail": "8.803e-08 rad max over 22 bones x 344 frames (worst RightToeBase), rms 1.492e-08; 131280 B of f32 payload crossed"
+  },
+  {
+   "status": "PASS",
+   "name": "cmu: retarget moves rotations only",
+   "detail": "worst canonical bone-length drift over the clip 1.33e-15 m <= 1e-09"
+  },
+  {
+   "status": "PASS",
+   "name": "cmu: retargeted figure is plausible",
+   "detail": "hips 0.934..1.092 m above the declared floor (window 0.60..1.30), lowest toe 0.034 m; stature scale 0.06152 was SOLVED, not declared"
+  },
+  {
+   "status": "PASS",
+   "name": "transit cesium -> ue -> canonical",
+   "detail": "5.157e-08 rad max over 19 shared bones (worst l-foot); 0 bone(s) - cannot cross and are named, not averaged away"
+  },
+  {
+   "status": "PASS",
+   "name": "transit cesium -> cmu -> canonical",
+   "detail": "5.157e-08 rad max over 19 shared bones (worst l-foot); 0 bone(s) - cannot cross and are named, not averaged away"
+  },
+  {
+   "status": "PASS",
+   "name": "transit ue -> cesium -> canonical",
+   "detail": "5.275e-08 rad max over 19 shared bones (worst r-hand); 3 bone(s) ['l-clavicle', 'r-clavicle', 'spine2'] cannot cross and are named, not averaged away"
+  },
+  {
+   "status": "PASS",
+   "name": "transit ue -> cmu -> canonical",
+   "detail": "5.217e-08 rad max over 22 shared bones (worst l-foot); 0 bone(s) - cannot cross and are named, not averaged away"
+  },
+  {
+   "status": "PASS",
+   "name": "transit cmu -> cesium -> canonical",
+   "detail": "8.803e-08 rad max over 19 shared bones (worst r-toe); 3 bone(s) ['l-clavicle', 'r-clavicle', 'spine2'] cannot cross and are named, not averaged away"
+  },
+  {
+   "status": "PASS",
+   "name": "transit cmu -> ue -> canonical",
+   "detail": "8.803e-08 rad max over 22 shared bones (worst r-toe); 0 bone(s) - cannot cross and are named, not averaged away"
+  },
+  {
+   "status": "PASS",
+   "name": "fixture present",
+   "detail": "1251512 B, sha256 b0f361a1f24bd2d7"
+  },
+  {
+   "status": "PASS",
+   "name": "fixture: werk-core verify",
+   "detail": "2 report entries, 0 error(s)"
+  },
+  {
+   "status": "PASS",
+   "name": "fixture: werk_read.py standalone",
+   "detail": "55/55 files verified over 8 resolved node(s) (exit 0)"
+  },
+  {
+   "status": "PASS",
+   "name": "fixture: WKAC binary and JSON agree",
+   "detail": "22 bones x 344 frames at 120.0005 Hz, duration 2.866655 s, root 'root'; the layout says the binary is authoritative and the two statements match"
+  },
+  {
+   "status": "PASS",
+   "name": "fixture: clip rotations are unit quaternions",
+   "detail": "worst |q|-1 = 4.16e-08 over 22 x 344 stored rotations"
+  }
+ ]
+}
