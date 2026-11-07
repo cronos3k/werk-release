@@ -56,6 +56,7 @@ from pipeline.common import Ctx, jbytes, sha256, uuid_from, write_zip   # noqa: 
 from pipeline import package as PKG                                     # noqa: E402
 from pipeline import p_tool                                             # noqa: E402
 from tools.payload_file import annotate_payload_files                   # noqa: E402
+from tools.edge_targets import refuse_dangling_edges                    # noqa: E402
 
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 from spec_sha256 import spec_sha256_of_files                            # noqa: E402
@@ -206,6 +207,7 @@ def build_manifest(ctx, files, preview_prefix, license_block, summary):
 
 def assemble(ctx, license_block, summary):
     annotate_payload_files(ctx.nodes)
+    refuse_dangling_edges(ctx.nodes)        # SPEC section 5
     preview = 0
     for _round in range(8):
         manifest_bytes = jbytes(build_manifest(ctx, ctx.files, preview,

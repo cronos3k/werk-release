@@ -10,8 +10,9 @@ severity error), and degrades an `enhances` edge to one (`edge-dangling`,
 warn). This module is the check every Python fixture builder and
 `pipeline/package.py` run before they hash a manifest, so the refusal is in
 one place. werk-core has the same check (`werk::manifest::dangling_edges`,
-`refuse_dangling_requires`), used by `werkc build-fixture` and
-`Package::add_node`.
+`refuse_dangling_edges`), used by `werkc build-fixture` and
+`Package::add_node`. Both refuse an edge of EITHER kind: the specification's
+MUST NOT is for every edge, and the code says what the text says.
 
 The first package that broke the rule was gauntlet/roundOW/mini-v1.werk: its
 builder dropped a node and kept an edge into it.
@@ -34,20 +35,15 @@ def dangling_edges(nodes):
     return out
 
 
-def refuse_dangling_requires(nodes):
-    """Raise SystemExit if any `requires` edge points at an absent node.
-
-    An `enhances` edge to an absent node is not refused here, because readers
-    degrade it to one lost feature. It is still a writer bug, and
-    `dangling_edges` lists it.
-    """
-    bad = [(s, t) for s, t, k in dangling_edges(nodes) if k == "requires"]
+def refuse_dangling_edges(nodes):
+    """Raise SystemExit if any edge, `requires` or `enhances`, points at a
+    node that is not in `nodes` (SPEC section 5: a writer MUST NOT emit one)."""
+    bad = dangling_edges(nodes)
     if bad:
         raise SystemExit(
-            "refusing to write a package with a `requires` edge to a node that "
-            "is not in nodes[] (SPEC section 5): %s. Drop the edge, or drop the "
-            "dependent node too."
-            % ", ".join("`%s` requires `%s`" % st for st in bad))
+            "refusing to write a package with an edge to a node that is not in "
+            "nodes[] (SPEC section 5): %s. Drop the edge, or drop the dependent "
+            "node too." % ", ".join("`%s` %s `%s`" % (s, k, t) for s, t, k in bad))
 
 
 def _main(argv):
@@ -66,7 +62,7 @@ def _main(argv):
         print("%s --%s--> %s: target is not in nodes[]" % (s, k, t))
     print("%d dangling edge(s), %d of them `requires`"
           % (len(bad), sum(1 for _, _, k in bad if k == "requires")))
-    return 1 if any(k == "requires" for _, _, k in bad) else 0
+    return 1 if bad else 0
 
 
 if __name__ == "__main__":

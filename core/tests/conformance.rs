@@ -695,7 +695,7 @@ fn a_version_without_a_work_note_is_refused() {
 
 #[test]
 fn a_requires_edge_to_an_absent_node_is_refused_by_the_writer() {
-    // SPEC section 5: a writer MUST NOT emit a dangling `requires` edge.
+    // SPEC section 5: a writer MUST NOT emit a dangling edge, of either kind.
     let mut p = Package::open(fixture_zip()).unwrap();
     let node = |id: &str, edges: serde_json::Value| werk::NewNode {
         node_id: id.into(),
@@ -711,6 +711,11 @@ fn a_requires_edge_to_an_absent_node_is_refused_by_the_writer() {
         .unwrap_err();
     assert!(err.to_string().contains("ghost-node"), "{err}");
     assert!(p.node("notes").is_none(), "a refused node is not half-added");
+    let err = p
+        .add_node(node("notes", serde_json::json!([{"to": "ghost-node", "kind": "enhances"}])))
+        .unwrap_err();
+    assert!(err.to_string().contains("ghost-node"), "an enhances edge is refused too: {err}");
+    assert!(p.node("notes").is_none(), "a refused node is not half-added");
     // The same edge into a node that exists is fine.
     p.add_node(node("notes", serde_json::json!([{"to": "readme", "kind": "requires"}])))
         .unwrap();
@@ -720,9 +725,9 @@ fn a_requires_edge_to_an_absent_node_is_refused_by_the_writer() {
         {"node_id": "c", "edges": [{"to": "d", "kind": "enhances"}]}
     ]});
     assert_eq!(werk::manifest::dangling_edges(&m).len(), 2);
-    let err = werk::manifest::refuse_dangling_requires(&m).unwrap_err();
+    let err = werk::manifest::refuse_dangling_edges(&m).unwrap_err();
     assert!(err.to_string().contains("`a` requires `b`"), "{err}");
-    assert!(!err.to_string().contains("`d`"), "enhances is listed, not refused");
+    assert!(err.to_string().contains("`c` enhances `d`"), "enhances is refused too: {err}");
 }
 
 #[test]

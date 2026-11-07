@@ -77,7 +77,7 @@ from build_crate_tex import (height_field, albedo_rows, normal_rows,  # noqa: E4
                              mr_rows, write_png, TEX_SIZE)
 from spec_sha256 import spec_sha256_of_files                          # noqa: E402
 from payload_file import annotate_payload_files                       # noqa: E402
-from edge_targets import refuse_dangling_requires                     # noqa: E402
+from edge_targets import refuse_dangling_edges                     # noqa: E402
 from pipeline.glb import build_glb                                    # noqa: E402
 
 SRC_DEFAULT = os.path.join(HERE, "sources", "crate-cc0")
@@ -829,7 +829,7 @@ def build_manifest(variant, files, nodes, preview_prefix, extra_summary=""):
 def assemble(variant, files, nodes, extra_summary=""):
     annotate_payload_files(nodes)
     # SPEC 5: never write a `requires` edge to a node not in nodes[].
-    refuse_dangling_requires(nodes)
+    refuse_dangling_edges(nodes)
     pset = preview_set(variant)
     preview = 0
     for _round in range(8):

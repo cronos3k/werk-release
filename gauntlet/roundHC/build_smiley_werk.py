@@ -59,6 +59,7 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 
 import build_golden as BG                                    # noqa: E402
 from spec_sha256 import spec_sha256_over                     # noqa: E402
+from edge_targets import refuse_dangling_edges               # noqa: E402
 
 import make_smiley                                           # noqa: E402
 
@@ -200,6 +201,8 @@ def build():
             "signature_file": "SIGNATURE.json",
             "nodes": nodes,
         }
+
+    refuse_dangling_edges(nodes)       # SPEC section 5
 
     # converge preview_prefix_bytes to its fixed point, as build_golden does
     preview = 0

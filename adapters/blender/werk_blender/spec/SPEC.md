@@ -1751,7 +1751,8 @@ node. The source node's files are still size- and hash-checked and reported
 (§10 step 6). An `enhances` edge to an absent node costs one feature, as one
 into a dead node does, and is reported `edge-dangling` at severity `warn`. A
 node that is *skipped* (§10 step 8) is not dead: its bytes are intact, so a
-`requires` edge into it kills nothing.
+`requires` edge into it kills nothing. A skipped node whose own `requires`
+edge kills it is reported both ways, `node-skipped-unknown-type` and dead.
 
 | edge target | `requires` | `enhances` |
 |---|---|---|
@@ -2159,7 +2160,7 @@ to this table in the same change; an extension's own codes begin with `x-`.
 | `version-fallback`, `version-compacted` | warn / info | node | `active` was unusable and an earlier version was used; a version's bytes were compacted away |
 | `node-dead` | error | node | no usable version; the reason is in the entry |
 | `node-skipped-unknown-type` | warn | node | a type this reader does not interpret; bytes verified, nothing else lost |
-| `requires-dead-node`, `enhances-dead-node`, `edge-dangling` | error / warn / warn | node | §5 |
+| `requires-dead-node`, `requires-missing-node`, `enhances-dead-node`, `edge-dangling` | error / error / warn / warn | node | §5 |
 | `floating-file` | warn | package | a file no node declares |
 | `payload-schema-invalid` | error | node | a JSON payload fails the schema `schemas` names for its type |
 | `payload-file-ambiguous` | warn | node | §2.1 rule 5 |

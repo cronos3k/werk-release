@@ -1296,8 +1296,21 @@ _SCHEMA_FOR = {
 _LAYOUT_FOR = {"core.anim.clip": "spec/layouts/animclip.layout.txt"}
 
 
+def _refuse_dangling_edges(nodes):
+    """SPEC section 5: a writer MUST NOT emit an edge, `requires` or
+    `enhances`, to a node that is not in nodes[]. Same rule as
+    tools/edge_targets.py and werk::manifest::refuse_dangling_edges."""
+    ids = {n.get("node_id") for n in nodes}
+    bad = ["`%s` %s `%s`" % (n.get("node_id"), e.get("kind"), e.get("to"))
+           for n in nodes for e in (n.get("edges") or []) if e.get("to") not in ids]
+    if bad:
+        raise ValueError("refusing to write a package with an edge to a node that "
+                         "is not in nodes[] (SPEC section 5): " + ", ".join(bad))
+
+
 def _build_manifest(blobs, nodes, parts, materials, primary, lic_f,
                     entity_uuid, name, created, summary, preview_prefix):
+    _refuse_dangling_edges(nodes)
     present = {n["type"] for n in nodes}
     # S10-1, ruled 2026-08-08: `schemas` maps only the node types actually
     # present that HAVE a schema, and an EMPTY MAP IS CONFORMANT. This used to

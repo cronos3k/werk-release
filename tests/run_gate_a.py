@@ -150,11 +150,11 @@ DANGLING_EXPECT = {
         ("material-wood edge-dangling", "node=material-wood reason=edge-dangling"),
     ],
 }
-# Each loader's DOCUMENTED exit convention (its usage text): 0 with dead
-# nodes; with --strict, py 1, c 1, rs 3. These differ from each other and
-# from the SPEC section 10.1 table. That is a separate, known finding, so
-# this clause checks each loader against its own documentation, not the table.
-DANGLING_EXIT = {"werk_read.py": (0, 1), "werk_read.rs": (0, 3), "werk_read.c": (0, 1)}
+# Each loader's exit convention: 0 with dead nodes; with --strict, 1. Ruling 9
+# of 2026-10-13 (docs/RULINGS-2026-10-13.md) unified the bootstrap loaders'
+# exit statuses, so the Rust loader's --strict exit is 1 on this lineage, not
+# the 3 it was when PR #11 was written against the public snapshot.
+DANGLING_EXIT = {"werk_read.py": (0, 1), "werk_read.rs": (0, 1), "werk_read.c": (0, 1)}
 
 
 def dangling_edges_clause(werkpy, loaders, rs_exe, c_exe):

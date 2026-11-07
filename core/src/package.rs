@@ -1458,6 +1458,25 @@ impl Package {
         }
     }
 
+    /// SPEC section 5: a node skipped for its type that then dies through a
+    /// `requires` edge is reported BOTH ways, skipped and dead, so the report
+    /// shape is the same in the core and in the three bootstrap loaders. The
+    /// final per-node pass reports only the final status, so the skip entry
+    /// is written here, just before the status moves.
+    fn report_skip_before_death(&mut self, i: usize) {
+        if let NodeStatus::Skipped(r) = self.nodes[i].status.clone() {
+            let id = self.nodes[i].view.node_id.clone();
+            self.report.push(
+                Severity::Warn,
+                Code::NodeSkippedUnknownType,
+                Some(&id),
+                None,
+                None,
+                r,
+            );
+        }
+    }
+
     fn propagate_edges(&mut self) {
         let index: BTreeMap<String, usize> = self
             .nodes
@@ -1481,6 +1500,7 @@ impl Package {
         for (i, target) in missing {
             let id = self.nodes[i].view.node_id.clone();
             if !self.nodes[i].status.is_dead() {
+                self.report_skip_before_death(i);
                 self.nodes[i].status = NodeStatus::Dead(format!(
                     "requires `{target}`, which is not a node in this manifest"
                 ));
@@ -1518,6 +1538,7 @@ impl Package {
             for (i, target) in kills {
                 if !self.nodes[i].status.is_dead() {
                     let id = self.nodes[i].view.node_id.clone();
+                    self.report_skip_before_death(i);
                     self.nodes[i].status = NodeStatus::Dead(format!(
                         "requires `{target}`, which is dead"
                     ));
@@ -1689,10 +1710,11 @@ impl Package {
         if let Some(m) = &spec.meta {
             node.insert("meta".into(), m.clone());
         }
-        // SPEC section 5: a writer MUST NOT emit a `requires` edge to a node
-        // that is not in nodes[]. Checked against the manifest as it would be,
-        // before anything is staged, and only for the node being added, so a
-        // package that already carries such an edge can still be edited.
+        // SPEC section 5: a writer MUST NOT emit an edge (of either kind) to
+        // a node that is not in nodes[]. Checked against the manifest as it
+        // would be, before anything is staged, and only for the node being
+        // added, so a package that already carries such an edge can still be
+        // edited.
         {
             let mut candidate = self.manifest.raw.clone();
             if let Some(arr) = candidate.get_mut("nodes").and_then(Value::as_array_mut) {
@@ -1700,15 +1722,15 @@ impl Package {
             }
             let bad: Vec<String> = crate::manifest::dangling_edges(&candidate)
                 .into_iter()
-                .filter(|(src, _, kind)| *src == spec.node_id && kind == "requires")
-                .map(|(_, to, _)| to)
+                .filter(|(src, _, _)| *src == spec.node_id)
+                .map(|(_, to, kind)| format!("{kind} `{to}`"))
                 .collect();
             if !bad.is_empty() {
                 return Err(Error::Rejected(format!(
-                    "node `{}` has a `requires` edge to {}, which is not a node in this \
+                    "node `{}` has an edge ({}) to a node that is not in this \
                      manifest (SPEC section 5); add the target first or drop the edge",
                     spec.node_id,
-                    bad.iter().map(|t| format!("`{t}`")).collect::<Vec<_>>().join(", ")
+                    bad.join(", ")
                 )));
             }
         }

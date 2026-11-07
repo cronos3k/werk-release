@@ -448,22 +448,20 @@ pub fn dangling_edges(raw: &Value) -> Vec<(String, String, String)> {
     out
 }
 
-/// A writer MUST NOT emit a package with a `requires` edge to an absent node
-/// (SPEC section 5): every conformant reader would kill the source node. This
-/// is the refusal every werk-core write path shares. An `enhances` edge to an
-/// absent node is not refused here, because readers degrade it to one lost
-/// feature; it is still a writer bug and `dangling_edges` lists it.
-pub fn refuse_dangling_requires(raw: &Value) -> Result<()> {
+/// A writer MUST NOT emit a package with an edge to an absent node, of either
+/// kind (SPEC section 5): every conformant reader would kill the source of a
+/// `requires` edge and drop a feature for an `enhances` edge. This is the
+/// refusal every werk-core write path shares.
+pub fn refuse_dangling_edges(raw: &Value) -> Result<()> {
     let bad: Vec<String> = dangling_edges(raw)
         .into_iter()
-        .filter(|(_, _, kind)| kind == "requires")
-        .map(|(src, to, _)| format!("`{src}` requires `{to}`"))
+        .map(|(src, to, kind)| format!("`{src}` {kind} `{to}`"))
         .collect();
     if bad.is_empty() {
         return Ok(());
     }
     Err(Error::Rejected(format!(
-        "refusing to write a package with a `requires` edge to a node that is not in \
+        "refusing to write a package with an edge to a node that is not in \
          nodes[] (SPEC section 5): {}. Drop the edge, or drop the dependent node too.",
         bad.join(", ")
     )))

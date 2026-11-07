@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 from spec_sha256 import spec_sha256_of_files          # noqa: E402
 from payload_file import annotate_payload_files       # noqa: E402
 from loader_caps import loader_capabilities        # noqa: E402
-from edge_targets import refuse_dangling_requires     # noqa: E402
+from edge_targets import refuse_dangling_edges     # noqa: E402
 
 import hashlib                                        # noqa: E402
 
@@ -342,7 +342,7 @@ def assemble(ctx, license_block, summary):
     # payload, so a consumer following primary.* never has to take files[0].
     annotate_payload_files(ctx.nodes)
     # SPEC 5: never write a `requires` edge to a node not in nodes[].
-    refuse_dangling_requires(ctx.nodes)
+    refuse_dangling_edges(ctx.nodes)
     preview = 0
     for _round in range(8):
         manifest_bytes = jbytes(build_manifest(ctx, ctx.files, preview,

@@ -80,7 +80,7 @@ from build_image_fixture import (sha256, jbytes, input_hash,        # noqa: E402
 import labhog                                                        # noqa: E402
 from spec_sha256 import spec_sha256_of_files                        # noqa: E402
 from payload_file import annotate_payload_files                     # noqa: E402
-from edge_targets import refuse_dangling_requires                   # noqa: E402
+from edge_targets import refuse_dangling_edges                   # noqa: E402
 from werkstore.signature import build_chain                         # noqa: E402
 
 SRC_DEFAULT = os.path.join(HERE, "sources", "image-cc0")
@@ -631,7 +631,7 @@ def sign(manifest_bytes):
 def assemble(files, nodes):
     annotate_payload_files(nodes)
     # SPEC 5: never write a `requires` edge to a node not in nodes[].
-    refuse_dangling_requires(nodes)
+    refuse_dangling_edges(nodes)
     preview = 0
     for _round in range(8):
         manifest_bytes = jbytes(build_manifest(files, nodes, preview))
