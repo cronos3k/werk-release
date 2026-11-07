@@ -53,7 +53,7 @@ machine with Python. No `gamedev.tech`, no private tree, no host.
 
 ## Validation
 
-- `tests/run_gate_cc0_public.py` — **14 PASS, 0 FAIL, 0 SKIP**: binding load
+- `tests/run_gate_cc0_public.py` — **20 PASS, 0 FAIL, 0 SKIP** (release measurement, 2026-11-07): binding load
   (exact node/alive/skip counts, signed-and-valid, 0 dead), round-trip byte
   identity, `loaders/werk_read.py --verify --strict`, mesh extraction, and
   `primary.mesh` resolution; the damaged variants assert the exact dead/skipped
@@ -81,7 +81,7 @@ The public-domain counterpart to the golden `ista-varun-v1.werk` (which is
 model-generated and carries a recipe; this one is not — `ai_generated=false`).
 Build: `python fixtures/build_image_cc0.py [--check-determinism]` (byte-exact
 reproduction needs the pinned Pillow — see `fixtures/requirements-build.txt`).
-Gate: `tests/run_gate_cc0_image.py` — **9 PASS**.
+Gate: `tests/run_gate_cc0_image.py` — **11 PASS** (release measurement).
 
 | fixture | bytes | sha256 |
 |---|---|---|
@@ -94,7 +94,7 @@ Profile `3d-entity/1`, 10 nodes. Source: a **synthetic** Gaussian splat
 the research-only licences on the usual 3DGS scenes), fed through the real
 `pipeline/p_gsplat` + `p_pointcloud` machinery (WKGS + WKPC payloads). Build:
 `python fixtures/build_gsplat_cc0.py [--check-determinism]`. Gate:
-`tests/run_gate_cc0_gsplat.py` — **8 PASS**.
+`tests/run_gate_cc0_gsplat.py` — **11 PASS** (release measurement).
 
 | fixture | bytes | sha256 |
 |---|---|---|
