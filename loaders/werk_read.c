@@ -1921,9 +1921,11 @@ probe_done:
         klen     = rd16(cd + off + 32);
         e.lho    = rd32(cd + off + 42);
 
-        if (off + 46 + (size_t)nlen + mlen + klen > (size_t)cd_size) {
-            snprintf(err, errsz, "bad-container: central directory record at %lu "
-                     "runs past its own end", (unsigned long)off);
+        /* Only the name is read; the extra field and the comment are
+           skipped, not bounds-checked (MINI-SPECS.md section 5.4). */
+        if (off + 46 + (size_t)nlen > (size_t)cd_size) {
+            snprintf(err, errsz, "bad-container: central directory name at %lu "
+                     "runs past the end of the file", (unsigned long)off);
             goto fail;
         }
         e.name = (char *)xmalloc((size_t)nlen + 1);

@@ -282,6 +282,10 @@ class ZipContainer(Container):
             mlen = struct.unpack_from("<H", d, p + 30)[0]
             klen = struct.unpack_from("<H", d, p + 32)[0]
             lho = struct.unpack_from("<I", d, p + 42)[0]
+            if p + 46 + nlen > n:
+                raise ContainerRefusal(
+                    "bad-container", "central directory name at %d runs past the end "
+                    "of the file" % p)
             name = d[p + 46:p + 46 + nlen].decode("utf-8", "replace")
             if 0xFFFFFFFF in (comp, uncomp, lho):
                 # MINI-SPECS 5.5 step 5: the per-entry sentinel.
@@ -329,6 +333,8 @@ class ZipContainer(Container):
         nlen = struct.unpack_from("<H", d, lho + 26)[0]
         mlen = struct.unpack_from("<H", d, lho + 28)[0]
         start = lho + 30 + nlen + mlen
+        if start + comp > len(d):
+            raise EntryInvalid("entry %r runs past the end of the file" % path)
         raw = d[start:start + comp]
         if method == 0:
             return raw
