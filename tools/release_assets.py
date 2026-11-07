@@ -31,6 +31,9 @@ ASSETS = [
     ("gauntlet/roundHC/pages/scanned/page-01.jpg", "hardcopy round: degraded page scan"),
     ("gauntlet/roundHC/pages/scanned/page-02.jpg", "hardcopy round: degraded page scan"),
     ("gauntlet/roundHC/pages/scanned/page-03.jpg", "hardcopy round: degraded page scan"),
+    ("evidence/second-lab/roundNC-binaries.tar.gz",
+     "second-lab negative-control round (PR #8): reproducible run outputs and logs, "
+     "listed in evidence/second-lab/roundNC/OUT-OF-GIT.txt"),
 ]
 
 

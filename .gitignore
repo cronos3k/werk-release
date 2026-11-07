@@ -56,3 +56,20 @@ data/
 /gauntlet/roundHC/pages/scanned/page-01.jpg
 /gauntlet/roundHC/pages/scanned/page-02.jpg
 /gauntlet/roundHC/pages/scanned/page-03.jpg
+/evidence/second-lab/roundNC-binaries.tar.gz
+# Negative-control run outputs kept out of git (evidence/second-lab/roundNC/OUT-OF-GIT.txt)
+/evidence/second-lab/roundNC/runs/**/*.obj
+/evidence/second-lab/roundNC/runs/**/*.usdc
+/evidence/second-lab/roundNC/runs/**/*.raw
+/evidence/second-lab/roundNC/runs/**/*.bin
+/evidence/second-lab/roundNC/runs/**/*.f32
+/evidence/second-lab/roundNC/runs/**/*.f64le
+/evidence/second-lab/roundNC/runs/**/*.wav
+/evidence/second-lab/roundNC/runs/**/*.glb
+/evidence/second-lab/roundNC/runs/**/*.log
+/evidence/second-lab/roundNC/grading/**/*.log
+/evidence/second-lab/roundNC/grading/**/*.obj
+/evidence/second-lab/roundNC/dryrun/**/*.log
+/evidence/second-lab/roundNC/dryrun/**/*.obj
+/evidence/second-lab/roundNC/dryrun/**/*.raw
+/evidence/second-lab/roundNC/dryrun/**/*.f32
