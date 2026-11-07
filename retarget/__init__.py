@@ -43,6 +43,11 @@ def load_map(name, path=None):
                        % (name, MAPS_DIR))
     with open(p, "r", encoding="utf-8") as fh:
         m = json.load(fh)
-    return m["map"], {"map_id": m.get("map_id", name), "from": p,
+    # Recorded as the path INSIDE THE REPOSITORY, never the absolute path of
+    # the checkout: the provenance travels in packages, and an absolute path
+    # leaked the builder's directory and made the fixture's bytes depend on
+    # where the repository was cloned (release finding N5).
+    rel = os.path.relpath(p, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return m["map"], {"map_id": m.get("map_id", name), "from": rel.replace(os.sep, "/"),
                       "description": m.get("description"),
                       "derivation": m.get("derivation")}
