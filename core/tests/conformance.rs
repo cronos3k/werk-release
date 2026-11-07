@@ -560,6 +560,33 @@ fn a_zip_with_two_entries_of_one_name_is_refused() {
     }
 }
 
+/// SPEC section 12.1: a node whose own structure is unusable (here: its
+/// `active` key damaged) is dead, under its id, and stays in the census.
+#[test]
+fn a_node_with_a_damaged_active_key_is_dead_not_dropped() {
+    let clean = Package::open(fixture_zip()).unwrap();
+    let n = clean.nodes.len();
+    let victim = clean.nodes[n - 1].view.node_id.clone();
+    let dest = tmp("damaged-active.werk");
+    let v2 = victim.clone();
+    rebuild(&dest, move |name, data| {
+        if name != "MANIFEST.json" {
+            return Some(data);
+        }
+        let mut m: serde_json::Value = serde_json::from_slice(&data).unwrap();
+        let nodes = m["nodes"].as_array_mut().unwrap();
+        let node = nodes.iter_mut().find(|x| x["node_id"] == v2.as_str()).unwrap();
+        let a = node.as_object_mut().unwrap().remove("active").unwrap();
+        node["activd"] = a;
+        Some(serde_json::to_vec_pretty(&m).unwrap())
+    });
+    let p = Package::open(&dest).unwrap();
+    assert_eq!(p.nodes.len(), n, "the malformed node must stay in the census");
+    let st = &p.nodes.iter().find(|x| x.view.node_id == victim).unwrap().status;
+    assert!(st.is_dead(), "{victim}: {st:?}");
+    assert!(p.report.has(Code::NodeDead), "{}", p.report);
+}
+
 #[test]
 fn signing_strips_and_resigns() {
     let mut p = Package::open(fixture_zip()).unwrap();

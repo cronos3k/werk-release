@@ -452,8 +452,34 @@ impl Package {
         for r in self.manifest.nodes() {
             match r {
                 Err((i, msg)) => {
-                    self.report.push(Severity::Error, Code::NodeDead, None, None, None, msg.clone());
-                    let _ = i;
+                    // SPEC section 12.1: a node whose own structure is
+                    // unusable is DEAD -- it stays in the census under its
+                    // id (when it has one) and is reported by the dead-node
+                    // loop below, exactly as the loaders and the libraries
+                    // report it. It used to vanish from `nodes` with an
+                    // anonymous report entry: 17 nodes, 0 dead, where every
+                    // other reader said 18 nodes, 1 dead.
+                    let node_id = self
+                        .manifest
+                        .raw
+                        .pointer(&format!("/nodes/{i}/node_id"))
+                        .and_then(Value::as_str)
+                        .map(str::to_string)
+                        .unwrap_or_else(|| format!("<node {i}>"));
+                    let view = crate::manifest::NodeView {
+                        index: i,
+                        node_id,
+                        ntype: "<malformed>".into(),
+                        active: 0,
+                        versions: Vec::new(),
+                        edges: Vec::new(),
+                        meta: None,
+                    };
+                    states.push(NodeState {
+                        view,
+                        status: NodeStatus::Dead(format!("malformed node: {msg}")),
+                        resolved: None,
+                    });
                 }
                 Ok(view) => {
                     let mut status = NodeStatus::Alive;
