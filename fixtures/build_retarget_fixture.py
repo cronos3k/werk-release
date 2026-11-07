@@ -167,6 +167,24 @@ def jbytes(v):
     return (json.dumps(v, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
 
 
+def measured(v, sig=12):
+    """The measurement records, with every float rounded to `sig` significant
+    digits. The residuals are statistics over arccos/sqrt of the solve, and
+    the C maths library under numpy differs in the last bit between Windows
+    and Linux (measured: scan_median_rad 0.7885823844481529 on Windows,
+    ...528 on two Linux machines), which made the fixture's bytes depend on
+    the OS that built it (finding N3/N5 of the release evidence). Twelve
+    digits is far below what any of these numbers means and far above the
+    last-bit noise."""
+    if isinstance(v, float):
+        return float("%.*g" % (sig, v))
+    if isinstance(v, dict):
+        return {k: measured(x, sig) for k, x in v.items()}
+    if isinstance(v, list):
+        return [measured(x, sig) for x in v]
+    return v
+
+
 def input_hash(paths, files):
     h = hashlib.sha256()
     for p in paths:
@@ -438,6 +456,7 @@ def collect():
 
     spec_files = []
     for dirpath, _dirs, names in os.walk(os.path.join(ROOT, "spec")):
+        _dirs.sort()  # else the filesystem's order (ext4: hash order)
         if "__pycache__" in dirpath:
             continue
         for nm in sorted(names):
@@ -500,7 +519,7 @@ def collect():
                                           "cmu-bvh.json"), encoding="utf-8"))
     map_f = put("x/bone-map-cmu-bvh.json", jbytes(map_doc),
                 "application/json")
-    rep_f = put("x/retarget-report.json", jbytes(report),
+    rep_f = put("x/retarget-report.json", jbytes(measured(report)),
                 "application/json")
     bind_f = put("retarget/bind-cmu-02-01.json", jbytes(bind_doc),
                  "application/json")
@@ -564,7 +583,7 @@ def collect():
                    report["solved"]["stature_scale"])),
         }],
     }
-    prov_f = put("provenance/retarget-run.json", jbytes(prov_doc),
+    prov_f = put("provenance/retarget-run.json", jbytes(measured(prov_doc)),
                  "application/json")
     node("retarget-measurement", "core.provenance",
          [version(1, [prov_f, bvh_f, cmu_f],
