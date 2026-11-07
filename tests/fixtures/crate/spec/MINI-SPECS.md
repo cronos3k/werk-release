@@ -39,10 +39,12 @@ uses**, and werk writers MUST stay inside that subset.
 
 * **Little-endian** for every werk custom binary payload. The least
   significant byte comes first: the u32 `0x12345678` is stored `78 56 34 12`.
-* **Big-endian** appears in exactly three imported places, and each is
-  called out where it occurs: MessagePack's internal integers, PNG's chunk
-  lengths and CRCs, and the zip format's *nothing* (zip is little-endian).
-  If you find yourself byte-swapping anywhere else, you have a bug.
+* **Big-endian** appears only inside imported formats, and each place is
+  called out where it occurs: MessagePack's integers and floats (§4), PNG's
+  chunk lengths, CRCs, `IHDR` fields and 16-bit samples (§8), the zlib
+  wrapper's Adler-32 (§7), and SHA-256/SHA-512's words and length field
+  (§11). Zip is little-endian throughout, and so is every werk binary. If you
+  find yourself byte-swapping anywhere else, you have a bug.
 * IEEE-754 binary32 ("f32", 4 bytes) and binary64 ("f64", 8 bytes) are the
   only float encodings. No NaN and no infinity may appear in a core payload.
 * Signed integers are two's complement.
@@ -260,7 +262,7 @@ Signature `50 4B 01 02` (`0x02014b50`):
 | 36 | 2 | internal attributes |
 | 38 | 4 | external attributes |
 | 42 | 4 | **offset of the local file header** |
-| 46 | *n* | file name (UTF-8 when flag bit 11 is set; werk always sets it) |
+| 46 | *n* | file name, UTF-8 (flag bit 11: see §5.4) |
 | 46+*n* | *m* | extra field |
 | 46+*n*+*m* | *k* | comment |
 
@@ -318,8 +320,46 @@ name — `zip-entry-unsupported` — and its bytes are never returned.
 * General purpose flag bit 3 (sizes in a trailing data descriptor) MUST NOT
   be set by a werk writer, because it makes a ranged read of the preview
   prefix impossible.
-* Entry order is the preview-first order declared in
-  `MANIFEST.json` → `container.entry_order`.
+* Names are UTF-8. General purpose flag bit 11 ("the name is UTF-8") MUST be
+  set on an entry whose name holds a byte above 0x7F. For an all-ASCII name
+  the bit changes nothing — ASCII is UTF-8 — and MAY be clear: the zip
+  library route above is conformant as it stands (Python's `zipfile` leaves
+  the bit clear for ASCII names; werk's own writers always set it). A reader
+  decodes every name as UTF-8 whatever the bit says and MUST NOT reject an
+  entry for a clear bit 11.
+* No two entries have the same name.
+* Entry order SHOULD be the preview-first order declared in
+  `MANIFEST.json` → `container.entry_order` (`SPEC.md` §1; a reader never
+  depends on it). An element of `entry_order` that matches no entry —
+  `SIGNATURE.json` in an unsigned package, say — matches nothing and is
+  skipped; it is not an error.
+
+**Reader rules for a damaged container — so that independent readers agree.**
+The four reference readers apply exactly these, and a damage campaign holds
+them to one verdict per damaged byte:
+
+1. The EOCD is the record at the **highest** offset of the §5.1 window whose
+   signature matches **and** whose comment length accounts for exactly the
+   rest of the file. None → `bad-container`.
+2. Exactly *total central directory records* (EOCD offset 10) records are
+   read, one after another from the central-directory offset. The
+   directory's byte size (EOCD offset 12) and the per-disk count (offset 8)
+   are not used to walk it; they matter only as the zip64 sentinels of §5.5.
+   A record whose signature is not `50 4B 01 02`, or whose name runs past the
+   end of the file, → `bad-container`. Each record's extra field and comment
+   are skipped by their lengths, not read.
+3. A name is decoded as UTF-8 with every invalid sequence replaced (U+FFFD).
+   A damaged name is then a name no manifest path matches — that file is
+   missing, its node is dead (`file-missing`) — never a malformed directory.
+4. Flag bit 3 set → `bad-container`. Flag bit 0 set → that entry is
+   `zip-entry-unsupported`. No other flag bit is consulted.
+5. Two records with one name (after step 3) → `bad-container`.
+6. The central directory is the authority on method, sizes, CRC-32 and
+   offset. Of the local header only its signature and its name and extra
+   lengths are read; a bad local signature, or data that runs past the end of
+   the file, is `zip-entry-invalid` for that entry. Method 0 data is
+   `compressed size` bytes verbatim, checked by the manifest's `size` and
+   `sha256`, not by the directory's CRC-32.
 
 ### 5.5 Zip64 — how to RECOGNISE it, and what to do
 
@@ -1202,7 +1242,9 @@ package in front of you is almost certainly fine.
 
 A conformant tool reports one of four words, and `SPEC.md` §10 step 4 fixes
 them: **`signed-and-valid`**, **`absent`**, **`present-and-invalid`**,
-**`unverified`**.
+**`unverified`**. A package is in one of the three states of `SPEC.md` §6;
+`unverified` is the fourth word because it describes the reader ("I did not
+check"), not the package.
 
 `unverified` is the correct verdict whenever you did not perform the check —
 no Ed25519 available, no time budget for it, or a deliberate decision to scope

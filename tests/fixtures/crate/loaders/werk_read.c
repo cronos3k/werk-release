@@ -959,16 +959,55 @@ static jval *j_value(jparser *ps)
     return NULL;
 }
 
+/* Is p[0..n) well-formed UTF-8 (MINI-SPECS.md section 2): no overlong
+   form, no surrogate, nothing above U+10FFFF?  Returns the offset of the
+   first bad byte, or n when every byte is good.  werk JSON is UTF-8, and
+   SPEC.md section 10.1's `text_encoding` row makes a manifest that is not a
+   container-scoped refusal -- a reader that walks the bytes anyway reads a
+   different document from the one every other reader refuses (finding N7:
+   this loader used to verify such a package and exit 0). */
+static size_t utf8_bad_at(const unsigned char *p, size_t n)
+{
+    size_t i = 0;
+    while (i < n) {
+        unsigned c = p[i];
+        size_t   k, need;
+        unsigned long cp;
+        if (c < 0x80) { i++; continue; }
+        if (c >= 0xc2 && c <= 0xdf)      { need = 1; cp = c & 0x1f; }
+        else if (c >= 0xe0 && c <= 0xef) { need = 2; cp = c & 0x0f; }
+        else if (c >= 0xf0 && c <= 0xf4) { need = 3; cp = c & 0x07; }
+        else return i;
+        for (k = 1; k <= need; k++) {
+            if (i + k >= n || (p[i + k] & 0xc0) != 0x80) return i;
+            cp = (cp << 6) | (p[i + k] & 0x3f);
+        }
+        if ((need == 2 && cp < 0x800) || (need == 3 && cp < 0x10000) ||
+            (cp >= 0xd800 && cp <= 0xdfff) || cp > 0x10ffff)
+            return i;
+        i += need + 1;
+    }
+    return n;
+}
+
 /* Parse a whole document.  err (size >= 256) receives a message on
    failure.  A UTF-8 BOM is rejected, never stripped: stripping it would
    change the file's sha256, and sha256 is the store key
-   (MINI-SPECS.md section 2). */
+   (MINI-SPECS.md section 2).  Bytes that are not UTF-8 are rejected too. */
 static jval *json_parse(const char *text, size_t len, char *err, size_t errsz)
 {
     jparser ps;
     jval   *v;
+    size_t  bad;
 
     err[0] = '\0';
+
+    bad = utf8_bad_at((const unsigned char *)text, len);
+    if (bad != len) {
+        snprintf(err, errsz, "not valid UTF-8 at byte %lu (werk JSON is UTF-8, "
+                 "spec/MINI-SPECS.md section 2)", (unsigned long)bad);
+        return NULL;
+    }
 
     if (len >= 3 && (unsigned char)text[0] == 0xef &&
                     (unsigned char)text[1] == 0xbb &&
@@ -1799,8 +1838,10 @@ probe_done:
         if (tail[at] == 0x50 && tail[at + 1] == 0x4b &&
             tail[at + 2] == 0x05 && tail[at + 3] == 0x06) {
             uint16_t clen = rd16(tail + at + 20);
+            /* MINI-SPECS.md section 5.4, reader rules: the EOCD is the
+               highest record whose comment length accounts for exactly the
+               rest of the file. */
             if (at + 22 + (size_t)clen == tail_n) { eocd = (long)at; break; }
-            if (eocd < 0) eocd = (long)at;   /* tolerate a padded tail */
         }
     }
     if (eocd < 0) {
@@ -1832,25 +1873,38 @@ probe_done:
             goto fail;
         }
     }
-    if ((long)cd_off + (long)cd_size > fsz) {
-        snprintf(err, errsz, "bad-container: central directory (offset %lu, size %lu) "
-                 "runs past the end of a %ld byte file",
-                 (unsigned long)cd_off, (unsigned long)cd_size, fsz);
+    /* MINI-SPECS.md section 5.4, reader rules: exactly `total records`
+       (EOCD offset 10) records are read from the central directory offset;
+       the directory's byte size (offset 12) is not used to walk it, so it
+       is not trusted either.  Everything from the directory offset to the
+       end of the file is read and every record is bounds-checked in it. */
+    (void)cd_size;
+    if ((long)cd_off > fsz) {
+        snprintf(err, errsz, "bad-container: central directory offset %lu lies past "
+                 "the end of a %ld byte file", (unsigned long)cd_off, fsz);
         goto fail;
     }
-
-    cd = (unsigned char *)xmalloc(cd_size ? cd_size : 1);
-    if (fseek(f, (long)cd_off, SEEK_SET) != 0 ||
-        fread(cd, 1, cd_size, f) != cd_size) {
-        snprintf(err, errsz, "bad-container: short read of the central directory");
-        goto fail;
-    }
-
-    off = 0;
-    while (off + 46 <= (size_t)cd_size) {
+    {
+        size_t cd_avail = (size_t)(fsz - (long)cd_off);
+        uint16_t rec;
+        cd = (unsigned char *)xmalloc(cd_avail ? cd_avail : 1);
+        if (fseek(f, (long)cd_off, SEEK_SET) != 0 ||
+            fread(cd, 1, cd_avail, f) != cd_avail) {
+            snprintf(err, errsz, "bad-container: short read of the central directory");
+            goto fail;
+        }
+        cd_size = (uint32_t)cd_avail;
+        off = 0;
+        for (rec = 0; rec < n_rec; rec++) {
         uint16_t nlen, mlen, klen;
         zentry   e;
+        size_t   q;
 
+        if (off + 46 > (size_t)cd_size) {
+            snprintf(err, errsz, "bad-container: truncated central directory "
+                     "(record %u of %u)", (unsigned)rec + 1u, (unsigned)n_rec);
+            goto fail;
+        }
         if (rd32(cd + off) != 0x02014b50u) {
             snprintf(err, errsz,
                      "bad-container: bad central directory signature at "
@@ -1867,9 +1921,11 @@ probe_done:
         klen     = rd16(cd + off + 32);
         e.lho    = rd32(cd + off + 42);
 
-        if (off + 46 + (size_t)nlen + mlen + klen > (size_t)cd_size) {
-            snprintf(err, errsz, "bad-container: central directory record at %lu "
-                     "runs past its own end", (unsigned long)off);
+        /* Only the name is read; the extra field and the comment are
+           skipped, not bounds-checked (MINI-SPECS.md section 5.4). */
+        if (off + 46 + (size_t)nlen > (size_t)cd_size) {
+            snprintf(err, errsz, "bad-container: central directory name at %lu "
+                     "runs past the end of the file", (unsigned long)off);
             goto fail;
         }
         e.name = (char *)xmalloc((size_t)nlen + 1);
@@ -1884,6 +1940,26 @@ probe_done:
             free(e.name);
             goto fail;
         }
+        if (e.flags & 0x0008u) {
+            snprintf(err, errsz,
+                     "bad-container: entry '%.200s' sets general purpose flag bit 3 "
+                     "(data descriptor), which a werk writer MUST NOT set "
+                     "(MINI-SPECS.md section 5.4)", e.name);
+            free(e.name);
+            goto fail;
+        }
+        for (q = 0; q < pk->nent; q++) {
+            if (strcmp(pk->ent[q].name, e.name) == 0) {
+                /* Which bytes ARE that file cannot be decided, and readers
+                   that pick different records disagree about one package. */
+                snprintf(err, errsz,
+                         "bad-container: the zip holds two entries named '%.200s'; "
+                         "which bytes are that file cannot be decided, so the "
+                         "container is refused", e.name);
+                free(e.name);
+                goto fail;
+            }
+        }
 
         if (pk->nent == cap) {
             cap = cap ? cap * 2 : 64;
@@ -1892,14 +1968,7 @@ probe_done:
         pk->ent[pk->nent++] = e;
 
         off += 46u + (size_t)nlen + mlen + klen;
-    }
-
-    if (pk->nent != (size_t)n_rec) {
-        /* Not fatal: the record count is a hint and the walk above is the
-           authority.  Worth a line on stderr so it is never silent. */
-        fprintf(stderr,
-                "werk_read: note: EOCD claims %u central directory records, "
-                "%lu were parsed\n", (unsigned)n_rec, (unsigned long)pk->nent);
+        }
     }
 
     free(tail);
@@ -2143,6 +2212,8 @@ typedef struct {
     int      n_skipped;
     int      n_fallback;
     int      sig_present;
+    int      sig_invalid;    /* present-and-invalid: an error (SPEC 10.1) */
+    int      n_rejected;     /* fallbacks away from a FAILING active version */
     int      n_envelopes;    /* envelope frames validated during the walk */
 } wmanifest;
 
@@ -2590,8 +2661,12 @@ static void resolve_node(wpkg *pk, wnode *nd, strlist *rep)
         /* Say WHY the author's version was rejected before saying what was
            used instead: a fallback without a cause is indistinguishable
            from a reader that simply ignored `active`. */
-        if (act_ix >= 0)
+        if (act_ix >= 0) {
+            /* The node lives; the failing file of the active version is
+               still an error (SPEC.md section 10.1, exit status 1). */
+            nd->fallback = 2;
             (void)report_version_failures(nd, &nd->ver[act_ix], rep, "REJECTED");
+        }
         else
             sl_addf(rep, "REJECTED  node=%s active=v%lld is not present in "
                          "versions[] at all", nd->id, nd->active);
@@ -2743,6 +2818,7 @@ static int manifest_load(wpkg *pk, wmanifest *m, char *err, size_t errsz)
     char           jerr[256];
     const jval    *nodes;
     size_t         i;
+    char           mhash[65];
 
     memset(m, 0, sizeof *m);
     sl_init(&m->report);
@@ -2755,13 +2831,10 @@ static int manifest_load(wpkg *pk, wmanifest *m, char *err, size_t errsz)
         return 0;
     }
     m->root = json_parse((const char *)raw, rawlen, jerr, sizeof jerr);
-    {
-        char mhash[65];
-        sha256_hex(raw, rawlen, mhash);
-        if (m->root)
-            sl_addf(&m->report, "MANIFEST  %lu bytes, sha256 %s",
-                    (unsigned long)rawlen, mhash);
-    }
+    sha256_hex(raw, rawlen, mhash);
+    if (m->root)
+        sl_addf(&m->report, "MANIFEST  %lu bytes, sha256 %s",
+                (unsigned long)rawlen, mhash);
     free(raw);
     if (!m->root) {
         snprintf(err, errsz, "manifest-unparseable: MANIFEST.json is not valid werk JSON: %s", jerr);
@@ -2810,17 +2883,45 @@ static int manifest_load(wpkg *pk, wmanifest *m, char *err, size_t errsz)
         int            sst;
         unsigned char *sig = pkg_read(pk, "SIGNATURE.json", &slen, &sst);
         if (sig) {
-            char sh[65];
+            /* What can be checked without Ed25519 is checked: a JSON object
+               whose manifest_sha256 is this manifest's.  Damage to a present
+               signature is present-and-invalid, never absent and never
+               unverified (SPEC.md section 6). */
+            char        sh[65], serr[256];
+            jval       *sj = json_parse((const char *)sig, slen, serr, sizeof serr);
+            const char *declared = (sj && sj->t == J_OBJ)
+                                   ? jstr_of(sj, "manifest_sha256") : NULL;
             sha256_hex(sig, slen, sh);
             free(sig);
             m->sig_present = 1;
+            if (!sj || sj->t != J_OBJ) {
+                m->sig_invalid = 1;
+                sl_addf(&m->report,
+                        "signature: present-and-invalid -- SIGNATURE.json is not a "
+                        "JSON object (%s)", sj ? "another JSON value" : serr);
+            } else if (!declared || strcmp(declared, mhash) != 0) {
+                m->sig_invalid = 1;
+                sl_addf(&m->report,
+                        "signature: present-and-invalid -- manifest_sha256 is %s but "
+                        "MANIFEST.json hashes to %s: the manifest changed under an "
+                        "existing signature", declared ? declared : "(absent)", mhash);
+            } else {
+                sl_addf(&m->report,
+                        "signature: unverified -- SIGNATURE.json is present "
+                        "(%lu bytes, sha256 %s) and its manifest_sha256 matches, but "
+                        "this loader carries no ed25519 and has NOT checked the "
+                        "mathematics. `unverified` is the fourth state word: it is "
+                        "not `signed-and-valid` and it is not `absent` (SPEC.md "
+                        "section 6 and section 10 step 4).",
+                        (unsigned long)slen, sh);
+            }
+            if (sj) json_free(sj);
+        } else if (sst != PKF_MISSING) {
+            m->sig_present = 1;
+            m->sig_invalid = 1;
             sl_addf(&m->report,
-                    "signature: unverified -- SIGNATURE.json is present "
-                    "(%lu bytes, sha256 %s) but this loader carries no ed25519 "
-                    "and has NOT checked the mathematics. `unverified` is the "
-                    "fourth state word: it is not `signed-and-valid` and it is "
-                    "not `absent` (SPEC.md section 6 and section 10 step 4).",
-                    (unsigned long)slen, sh);
+                    "signature: present-and-invalid -- SIGNATURE.json is present but "
+                    "cannot be read (%s)", pkf_name(sst));
         } else {
             sl_addf(&m->report,
                     "signature: absent -- this package is anonymous, and "
@@ -2830,13 +2931,13 @@ static int manifest_load(wpkg *pk, wmanifest *m, char *err, size_t errsz)
     }
 
     nodes = jget(m->root, "nodes");
-    if (!nodes || nodes->t != J_ARR || nodes->nitem == 0) {
+    if (!nodes || nodes->t != J_ARR) {
         snprintf(err, errsz, "manifest-structurally-invalid: MANIFEST.json has no nodes[] array");
         return 0;
     }
 
     m->nnode = nodes->nitem;
-    m->node  = (wnode *)xmalloc(m->nnode * sizeof(wnode));
+    m->node  = (wnode *)xmalloc((m->nnode ? m->nnode : 1) * sizeof(wnode));
 
     for (i = 0; i < m->nnode; i++) {
         const jval *jn = nodes->item[i];
@@ -2927,6 +3028,7 @@ static int manifest_load(wpkg *pk, wmanifest *m, char *err, size_t errsz)
         if (m->node[i].dead)         m->n_dead++;
         else if (m->node[i].unknown_type) m->n_skipped++;
         if (m->node[i].fallback)     m->n_fallback++;
+        if (m->node[i].fallback == 2 && !m->node[i].dead) m->n_rejected++;
     }
 
     sl_addf(&m->report, "ENVELOPES %d frame(s) validated", m->n_envelopes);
@@ -3197,7 +3299,9 @@ static void usage(FILE *f)
 "  werk_read --selftest\n"
 "      run the SHA-256 test vectors of spec/MINI-SPECS.md section 11\n"
 "\n"
-"  --strict   exit nonzero when any node is dead (for test harnesses)\n"
+"  --strict   exit 1 when the load found an error: a dead node, a hash\n"
+"             mismatch (also one a version fallback recovered from), an\n"
+"             invalid signature\n"
 "\n"
 "exit (SPEC.md section 10.1): 0 when the container and manifest were read\n"
 "      (dead nodes and all); 1 when they were read and --strict tripped or\n"
@@ -3631,8 +3735,10 @@ int main(int argc, char **argv)
     if (envpath)    rc |= cmd_envelope(&pk, &m, envpath);
     if (catpath)    rc |= cmd_cat(&pk, &m, catpath);
 
-    if (strict && m.n_dead > 0) {
-        fprintf(stderr, "werk_read: --strict: %d node(s) are dead\n", m.n_dead);
+    if (strict && (m.n_dead > 0 || m.n_rejected > 0 || m.sig_invalid)) {
+        fprintf(stderr, "werk_read: --strict: %d node(s) dead, %d resolved past a "
+                        "failing active version, signature %s\n", m.n_dead,
+                m.n_rejected, m.sig_invalid ? "present-and-invalid" : "not invalid");
         rc = 1;
     }
 
