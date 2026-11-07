@@ -3406,6 +3406,14 @@ static void cmd_verify(const wmanifest *m)
         }
     }
 
+    /* Every dead node by name, whatever killed it: a node can be dead with
+       no failing file at all (a malformed record, a requires edge into a
+       dead node), and a reader that reports a death without naming the node
+       has reported nothing anyone can act on (SPEC.md section 10.1). */
+    for (i = 0; i < m->nnode; i++)
+        if (m->node[i].dead)
+            printf("DEAD      node=%s status=%s\n", m->node[i].id, node_status(&m->node[i]));
+
     printf("\nverify: %d file(s) PASS, %d FAIL, across %lu node(s) "
            "(%d dead, %d skipped, %d fallback)\n",
            pass, fail, (unsigned long)m->nnode,
