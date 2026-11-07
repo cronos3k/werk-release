@@ -241,9 +241,14 @@ def main():
         print("\n=== RE-RUN in clean dir %s ===" % out)
         print("run status: %s; exit: %s; seconds: %s" %
               (result["status"], result["exit"], result["secs"]))
-        print(result["stdout"])
-        if result["stderr"]:
-            print(result["stderr"], file=sys.stderr)
+        # The child's text may not be encodable on this console (cp1252 on
+        # Windows, also under a redirect): replace, never crash (review B
+        # finding 3; the guard the earlier grader had).
+        for text, stream in ((result["stdout"], sys.stdout), (result["stderr"], sys.stderr)):
+            if not text:
+                continue
+            enc = getattr(stream, "encoding", None) or "utf-8"
+            stream.write(text.encode(enc, "replace").decode(enc, "replace") + "\n")
         if result["status"] != "completed" or result["exit"] != 0:
             print("TASK: " + ("HOST-ERROR" if result["status"] == "host-error" else "FAIL"))
             return

@@ -154,6 +154,12 @@ def main():
          (), "FAIL", "PASS"),
         ("same, index column",
          {"REPORT.md": rep, "points.csv": evidence(gt, index_column=True)[1]}, (), "FAIL", "PASS"),
+        ("same, trailing text column (linear-srgb)",
+         {"REPORT.md": rep,
+          "points.csv": "\n".join(l + ",linear-srgb" for l in csv.splitlines()) + "\n"},
+         (), "FAIL", "PASS"),
+        ("tool names only in grade.json and run.json (grader/harness output)",
+         {"REPORT.md": "done", "grade.json": rep, "run.json": rep}, (), "FAIL", "FAIL"),
     ]
 
     # Without --rerun, clause 1 is never established, so the committed-mode

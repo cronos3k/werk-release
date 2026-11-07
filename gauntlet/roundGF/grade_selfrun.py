@@ -54,6 +54,10 @@ def main():
     ap.add_argument("--fixture", required=True)
     ap.add_argument("--rundir", required=True)
     ap.add_argument("--json-out", default="")
+    ap.add_argument("--scratch", default="",
+                    help="folder for the per-vector run directories (default: "
+                         "a _selfrun-scratch folder beside --rundir; never the "
+                         "user's temp directory)")
     ap.add_argument("--no-exec", action="store_true",
                     help="skip grade B (do not invoke a binary the run built)")
     args = ap.parse_args()
@@ -106,7 +110,9 @@ def main():
     if exes and not args.no_exec:
         # Use a separate directory for each vector. Keep the original run read-only.
         for v in vectors:
-            with tempfile.TemporaryDirectory(prefix="werk-selfrun-") as scratch:
+            base = args.scratch or os.path.join(os.path.dirname(root), "_selfrun-scratch")
+            os.makedirs(base, exist_ok=True)
+            with tempfile.TemporaryDirectory(prefix="werk-selfrun-", dir=base) as scratch:
                 exe = os.path.join(scratch, os.path.basename(exes[0]))
                 shutil.copy2(os.path.join(root, exes[0]), exe)
                 shutil.copy2(args.fixture, os.path.join(scratch, os.path.basename(args.fixture)))

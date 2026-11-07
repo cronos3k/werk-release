@@ -19,11 +19,20 @@ The grader never removes an existing output directory. Use a fresh path for each
 
 Inspect each program before execution. Check network calls, child processes, deletion, and paths outside the scratch directory.
 Copy only the fixture and the reviewed program into that directory.
-Python reruns use isolated mode and UTF-8 text output.
+Python reruns use isolated mode and UTF-8 text output (`python -I -X utf8`).
+That changes some exit codes against the historical reruns: a program that
+crashed on its own non-ASCII output on a cp1252 console now completes (for
+example `roundDS/runs/dsv4__envel`, exit 1 before, 0 now). It removes a host
+artefact; it is still a change, and a rerun record says which mode it used.
+
+The full-task verdicts of `roundGF/grade_gsplat.py` and `roundOW/grade.py
+--require-primary` are post-hoc re-grades, stricter than the criteria the
+rounds declared before they ran. They are reported beside the recorded
+verdicts and never replace them.
 
 A launch failure is a host error. A timeout is a program failure.
 A completed program with a nonzero exit cannot receive PASS.
 Keep the original verdict beside every post-hoc verdict.
 
 The frozen negative-control grader at `504a9ac` keeps its original interface.
-The revised grader is in PR #8 (branch `roundnc-negative-control`), after the freeze.
+The revised grader is in `evidence/second-lab/roundNC/` (PR #8), after the freeze.

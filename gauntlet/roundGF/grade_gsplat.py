@@ -46,7 +46,12 @@ Files whose bytes equal any entry of the package (an unpacked copy of the
 fixture, with any name or suffix, MANIFEST.json and SIGNATURE.json
 included) are not evidence either: they are the input, not an output.
 
-TWO VERDICTS. `verdict` is the FULL-TASK verdict: clause 1 needs a
+TWO VERDICTS. `verdict` is the FULL-TASK verdict. It is a POST-HOC,
+STRICTER re-grade (criteria of 2026-10-12, written after the runs): it is
+reported BESIDE each round's recorded verdict and never replaces it. For a
+committed run whose record dropped outputs, a clause-2 failure means "not
+established by the committed artefacts", not that the run failed it.
+`verdict_numeric` is the rule the rounds were graded by. clause 1 needs a
 verification verdict in the clean run AND, under --rerun, the DAMAGE CHECK:
 the same program is run on a copy of the fixture in which one byte of one
 declared file is flipped (the zip is rewritten self-consistent, so only
@@ -336,6 +341,10 @@ def source_names(prog):
 
 SOURCE_EXT = (".py", ".pyc", ".sh", ".ps1", ".bat", ".cmd")
 NOT_EVIDENCE = re.compile(r"(?i)^(prompt|task|transcript|context_package)")
+# A committed run folder also holds the earlier grader's own output
+# (grade*.json) and the harness's metadata (run.json). Neither is the
+# agent's work (review B finding 2).
+NOT_EVIDENCE_FILE = re.compile(r"(?i)^(grade[^/]*\.json|run\.json)$")
 
 
 def harvest(scan, prog=None, package_digests=()):
@@ -361,6 +370,9 @@ def harvest(scan, prog=None, package_digests=()):
                 continue
             if prog and (rel.lower().endswith(SOURCE_EXT) or NOT_EVIDENCE.search(name)):
                 skipped.append(rel)
+                continue
+            if NOT_EVIDENCE_FILE.match(name):
+                skipped.append(rel + " (grader/harness output)")
                 continue
             if pkg and os.path.getsize(fp) <= 64 << 20 and sha256_file(fp) in pkg:
                 skipped.append(rel + " (package copy)")
@@ -456,6 +468,32 @@ def colour_form(ix, rgb):
 
 POINT_TABLE_EXT = (".csv", ".txt", ".xyz", ".tsv", ".dat")
 NOT_ROW = re.compile(r"[A-DF-Za-df-z_#]")
+FIELD_SEP = re.compile(r"[,;\t |]+")
+IS_NUMBER = re.compile(r"^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?$")
+
+
+def row_numbers(line):
+    """The numeric fields of one table line, or None if the line is not a
+    data row. Text fields are tolerated only at the ends of the row: a
+    constant label column such as `linear-srgb` after the numbers (the
+    cross-vendor openai run, review B finding 1) or a name before them. A
+    line whose fields are all text, such as a header `x,y,z,r_u8,g_u8,b_u8`,
+    or with text between numbers, is not a row."""
+    fields = [f for f in FIELD_SEP.split(line.strip()) if f]
+    num = [bool(IS_NUMBER.match(f)) for f in fields]
+    if not any(num):
+        return None
+    lo = num.index(True)
+    hi = len(num) - 1 - num[::-1].index(True)
+    if not all(num[lo:hi + 1]):
+        return None
+    vals = []
+    for f in fields[lo:hi + 1]:
+        v = float(f)
+        if not math.isfinite(v):
+            return None
+        vals.append(v)
+    return vals
 
 
 def colour_at(nums, rgb):
@@ -483,13 +521,11 @@ def check_point_table(text, positions, colors, tol):
     pos_ok = col_ok = 0
     first_bad = None
     for line in text.splitlines():
-        # A data row holds numbers and separators only. A header such as
-        # "x,y,z,r_u8,g_u8,b_u8" contains digits but is not a row; any letter
-        # other than the exponent marker makes the line a header or comment.
-        if NOT_ROW.search(line):
-            continue
-        nums = numbers(line)
-        if len(nums) < 3:
+        # A data row holds numeric fields, optionally with text fields at its
+        # ends (row_numbers). A header such as "x,y,z,r_u8,g_u8,b_u8" contains
+        # digits but no numeric field, so it is not a row.
+        nums = row_numbers(line)
+        if nums is None or len(nums) < 3:
             continue
         if rows >= count:
             rows += 1
@@ -714,6 +750,7 @@ def main():
            "verdict": verdict,
            "verdict_rule": "full-task-2026-10-12",
            "full_task_failing": failing,
+           "verdict_kind": "full-task verdict is a post-hoc re-grade (criteria of 2026-10-12); verdict_numeric is the recorded rule",
            "verdict_numeric": "PASS" if numeric else "FAIL",
            "artifacts": [n for n, _ in texts]}
     if args.json_out:
