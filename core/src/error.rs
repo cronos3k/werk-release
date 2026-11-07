@@ -37,6 +37,10 @@ pub enum Error {
     /// `manifest-absent`. Same numeric code as `BadManifest` on the C ABI,
     /// whose header has always said "absent or not JSON" for it.
     ManifestAbsent(String),
+    /// MANIFEST.json parses but has no `nodes` array (SPEC.md section 12.1,
+    /// `manifest-structurally-invalid`): there is no graph to walk. A node
+    /// whose OWN structure is unusable is not this: it dies, the rest loads.
+    ManifestStructure(String),
     /// A caller asked for a node/version/file that is not in the manifest.
     NoSuchItem(String),
     /// A signing or verification input was malformed (bad hex, wrong length).
@@ -59,6 +63,7 @@ impl fmt::Display for Error {
             | Error::BadEntry(m)
             | Error::BadManifest(m)
             | Error::ManifestAbsent(m)
+            | Error::ManifestStructure(m)
             | Error::NoSuchItem(m)
             | Error::BadKey(m)
             | Error::Write(m)
@@ -83,7 +88,7 @@ impl Error {
             Error::NotFound(_) => -1,
             Error::Io(_) => -2,
             Error::BadContainer(_) => -3,
-            Error::BadManifest(_) | Error::ManifestAbsent(_) => -4,
+            Error::BadManifest(_) | Error::ManifestAbsent(_) | Error::ManifestStructure(_) => -4,
             Error::NoSuchItem(_) => -5,
             Error::BadKey(_) => -6,
             Error::Write(_) => -7,
@@ -107,6 +112,7 @@ impl Error {
             Error::BadContainer(_) => "bad-container",
             Error::BadManifest(_) => "manifest-unparseable",
             Error::ManifestAbsent(_) => "manifest-absent",
+            Error::ManifestStructure(_) => "manifest-structurally-invalid",
             Error::NoSuchItem(_) => "no-such-item",
             Error::BadKey(_) => "bad-key",
             Error::Write(_) => "write",
@@ -127,6 +133,7 @@ impl Error {
                 | Error::BadContainer(_)
                 | Error::BadManifest(_)
                 | Error::ManifestAbsent(_)
+                | Error::ManifestStructure(_)
                 | Error::Zip64Unsupported(_)
         )
     }

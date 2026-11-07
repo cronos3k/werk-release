@@ -55,8 +55,11 @@ NOT implemented, deliberately, and reported rather than faked:
       form, which is the same format.
 
 Exit status (SPEC section 10.1): 0 the container opened; 2 container-scoped
-refusal (not a zip, zip64, no or unparseable MANIFEST.json) — nothing loaded.
-With --strict, 1 when a node ended up dead.
+refusal (not a zip, zip64, two zip entries with one name, no or unparseable
+MANIFEST.json) — nothing loaded. With --strict, 1 when the report holds an
+`error` entry: a dead node, a hash mismatch (also the one a version fallback
+recovered from), an invalid signature. This reader never ends in a traceback:
+a manifest it cannot interpret is a refusal with a code, not a crash.
 
 Dependencies: the Python standard library, nothing else (`hashlib`, `struct`,
 `json`, `os`, `sys`, `zlib`). Python >= 3.8.
@@ -291,6 +294,13 @@ class ZipContainer(Container):
                     "bad-container",
                     "entry %r sets flag bit 3 (data descriptor), which a werk "
                     "writer MUST NOT set" % name)
+            if name in self.entries:
+                # Which bytes ARE that file cannot be decided, and readers
+                # that pick different records disagree about one package.
+                raise ContainerRefusal(
+                    "bad-container",
+                    "the zip holds two entries named %r; which bytes are that "
+                    "file cannot be decided, so the container is refused" % name)
             self.entries[name] = (method, comp, uncomp, lho, flags, crc)
             self.order.append(name)
             p += 46 + nlen + mlen + klen
@@ -312,7 +322,7 @@ class ZipContainer(Container):
                 "(store) and 8 (deflate) and will not return wrong bytes"
                 % (path, method))
         d = self.data
-        if d[lho:lho + 4] != b"PK\x03\x04":
+        if d[lho:lho + 4] != b"PK\x03\x04" or lho + 30 > len(d):
             raise EntryInvalid("bad local header signature for %r" % path)
         # The local header's name/extra lengths may differ from the central
         # directory's; MINI-SPECS §5.3 says always re-read them here.
@@ -422,6 +432,15 @@ class Package:
         except Exception as e:  # noqa: BLE001 - a bad manifest IS fatal
             raise ContainerRefusal(
                 "manifest-unparseable", "%s is not valid JSON: %s" % (MANIFEST, e))
+        if not isinstance(self.manifest, dict):
+            raise ContainerRefusal(
+                "manifest-unparseable", "%s is not a JSON object" % MANIFEST)
+        if not isinstance(self.manifest.get("nodes"), list):
+            # SPEC section 12.1: no graph to walk is a structural failure of
+            # the manifest itself, container-scoped. One malformed NODE is not.
+            raise ContainerRefusal(
+                "manifest-structurally-invalid",
+                "%s has no `nodes` array: there is no graph to walk" % MANIFEST)
 
         self.manifest_sha256 = hashlib.sha256(raw).hexdigest()
         self.envelopes_validated = 0
@@ -484,7 +503,14 @@ class Package:
     def _signature_state(self):
         try:
             raw = self.container.read(SIGNATURE)
-        except (KeyError, ValueError):
+        except ValueError as e:
+            # Present, but its entry cannot be read: damage to a present
+            # signature is present-and-invalid, never absent (SPEC section 6).
+            self.signature = "present-and-invalid"
+            self.report.add("error", "signature-invalid",
+                            "SIGNATURE.json is present but cannot be read: %s" % e)
+            return
+        except KeyError:
             self.signature = "absent"
             self.report.add("info", "signature-absent",
                             "no SIGNATURE.json: this package is anonymous, which is a "
@@ -496,6 +522,11 @@ class Package:
             self.signature = "present-and-invalid"
             self.report.add("error", "signature-invalid",
                             "SIGNATURE.json is not valid JSON: %s" % e)
+            return
+        if not isinstance(sig, dict):
+            self.signature = "present-and-invalid"
+            self.report.add("error", "signature-invalid",
+                            "SIGNATURE.json is not a JSON object")
             return
         declared = sig.get("manifest_sha256")
         if declared != self.manifest_sha256:
@@ -517,18 +548,64 @@ class Package:
             "chain of %d entry/entries is present and its manifest hash matches, but "
             "this bootstrap loader does NOT implement Ed25519 and has NOT verified the "
             "signatures; use the full reader for a trust verdict"
-            % len(sig.get("chain", [])))
+            % (len(sig["chain"]) if isinstance(sig.get("chain"), list) else 0))
 
     # -- checklist steps 5, 6, 8 ---------------------------------------
+    @staticmethod
+    def _node_shape_error(n):
+        """What a node needs for this reader to walk it at all, checked BEFORE
+        it is walked: the structural minimum the reference core requires too
+        (node_id and type strings, an integer `active`, a non-empty versions[]
+        of objects with an integer `v` and a files[] of objects). A node that
+        fails is dead, with the reason; the package is not refused and the
+        reader does not crash (a bit flip turning `active` into `acthve` used
+        to end in a TypeError traceback, finding N7b)."""
+        def is_int(x):
+            return isinstance(x, int) and not isinstance(x, bool)
+        if not isinstance(n, dict):
+            return "is not a JSON object"
+        if not isinstance(n.get("node_id"), str):
+            return "no node_id"
+        if not isinstance(n.get("type"), str):
+            return "no type"
+        if not is_int(n.get("active")):
+            return "no active"
+        vs = n.get("versions")
+        if not isinstance(vs, list) or not vs:
+            return "no versions array"
+        for v in vs:
+            if not isinstance(v, dict) or not is_int(v.get("v")):
+                return "a version has no v"
+            fs = v.get("files")
+            if not isinstance(fs, list):
+                return "a version has no files[]"
+            for f in fs:
+                if not isinstance(f, dict):
+                    return "a files[] entry is not an object"
+        return None
+
     def _walk_nodes(self):
-        for i, n in enumerate(self.manifest.get("nodes", [])):
+        for i, n in enumerate(self.manifest["nodes"]):
+            bad = self._node_shape_error(n)
+            if bad is not None:
+                nid = n.get("node_id") if isinstance(n, dict) else None
+                nid = nid if isinstance(nid, str) else "<node %d>" % i
+                self.nodes.append({
+                    "index": i, "node_id": nid, "type": "<malformed>",
+                    "active": None, "versions": [], "edges": [], "resolved": None,
+                    "status": "dead", "reason": "malformed node: %s" % bad})
+                self.report.add("error", "node-dead",
+                                "%s: nodes[%d]: %s; the node is dead, the package is "
+                                "not" % (nid, i, bad))
+                continue
             node = {
                 "index": i,
                 "node_id": n.get("node_id", "<node %d>" % i),
                 "type": n.get("type", "<untyped>"),
                 "active": n.get("active"),
                 "versions": n.get("versions", []),
-                "edges": n.get("edges", []),
+                "edges": [e for e in n.get("edges", []) if isinstance(e, dict)]
+                         if isinstance(n.get("edges", []), list) else [],
                 "resolved": None,
                 "status": "ok",
                 "reason": "",
@@ -610,7 +687,7 @@ class Package:
                     % (node["node_id"], node["type"]))
 
             if node["type"] == "core.loader":
-                meta = n.get("meta") or {}
+                meta = n.get("meta") if isinstance(n.get("meta"), dict) else {}
                 if meta.get("form") == "prebuilt":
                     self.report.add(
                         "info", "prebuilt-not-executed",
@@ -634,8 +711,9 @@ class Package:
         defined foreign format (SPEC section 3.18): `meta.payload_format` for
         the payload file, `meta.file_formats` by role. A declaration beats a
         sniff: such a file is not an envelope, whatever its first bytes are."""
-        meta = node_raw.get("meta") or {}
-        files = ver.get("files", [])
+        meta = node_raw.get("meta")
+        meta = meta if isinstance(meta, dict) else {}
+        files = [f for f in ver.get("files", []) if isinstance(f, dict)]
         out = set()
         if isinstance(meta.get("payload_format"), str):
             payload = ver.get("payload_file")
@@ -674,7 +752,7 @@ class Package:
                 continue
             if "size" in f and len(data) != f["size"]:
                 problems.append(("error", "size-mismatch",
-                                 "%s v%s: %s declares %d bytes, container holds %d"
+                                 "%s v%s: %s declares %s bytes, container holds %d"
                                  % (node["node_id"], ver.get("v"), path,
                                     f["size"], len(data))))
             got = hashlib.sha256(data).hexdigest()
@@ -1170,6 +1248,27 @@ def selftest():
 
 
 def main(argv):
+    try:
+        return _main(argv)
+    except ContainerRefusal as e:
+        sys.stderr.write("[error] %s: %s\n" % (e.code, e.message))
+        sys.stderr.write("container-scoped refusal: nothing was loaded; "
+                         "exit status 2\n")
+        return 2
+    except Exception as e:  # noqa: BLE001
+        # The last line of SPEC section 10.1: what this reader failed to
+        # interpret is reported under a code with exit status 2, never as a
+        # Python traceback (whose status 1 would be indistinguishable from "a
+        # node is dead").
+        sys.stderr.write("[error] manifest-structurally-invalid: this reader could "
+                         "not interpret the package (%s: %s)\n"
+                         % (type(e).__name__, e))
+        sys.stderr.write("container-scoped refusal: nothing was loaded; "
+                         "exit status 2\n")
+        return 2
+
+
+def _main(argv):
     if "--selftest" in argv:
         return 0 if selftest() else 1
     if len(argv) < 2:
@@ -1223,24 +1322,27 @@ def main(argv):
         cmd_extract(pkg, node_id, out_dir)
         return 0
 
+    # --strict: 1 when the report holds an `error` entry (SPEC section 10.1's
+    # status 1), which includes the hash mismatch a version fallback recovered
+    # from: the node is alive, the damage is still damage. Warnings are not
+    # promoted.
+    def strict_status(good=True):
+        bad = (not good or pkg.report.errors() > 0
+               or any(n["status"] == "dead" for n in pkg.nodes))
+        return 1 if (strict and bad) else 0
+
     if "--verify" in flags:
         good = cmd_verify(pkg)
         print()
         pkg.report.dump()
-        if strict:
-            return 0 if good and not any(n["status"] == "dead" for n in pkg.nodes) else 1
-        return 0
+        return strict_status(good)
     if "--report" in flags:
         pkg.report.dump()
         print("%d report entries, %d error(s)" % (len(pkg.report.lines), pkg.report.errors()))
-        if strict:
-            return 1 if any(n["status"] == "dead" for n in pkg.nodes) else 0
-        return 0
+        return strict_status()
 
     cmd_list(pkg)
-    if strict:
-        return 1 if any(n["status"] == "dead" for n in pkg.nodes) else 0
-    return 0
+    return strict_status()
 
 
 if __name__ == "__main__":

@@ -165,6 +165,11 @@ impl Manifest {
         if !raw.is_object() {
             return Err(Error::BadManifest("MANIFEST.json is not a JSON object".into()));
         }
+        if !raw.get("nodes").map_or(false, Value::is_array) {
+            return Err(Error::ManifestStructure(
+                "MANIFEST.json has no `nodes` array: there is no graph to walk".into(),
+            ));
+        }
         Ok(Manifest { bytes, raw })
     }
 
