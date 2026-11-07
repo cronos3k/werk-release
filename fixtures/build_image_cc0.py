@@ -38,10 +38,13 @@ embedded LICENSE is CC0 1.0 with a courtesy NOTICE crediting Poly Haven.
 Determinism
 -----------
 A fixed CREATED timestamp, no wall clock in any payload, byte-identical across
-two runs on one machine. `--check-determinism` builds twice and compares. (The
-derived PNGs are Pillow's deterministic encoding and the descriptor is over the
-JPEG's decoded pixels, so cross-*machine* byte-identity additionally assumes the
-same Pillow/libjpeg; this is stated rather than overclaimed.)
+two runs on one machine. `--check-determinism` builds twice and compares. The
+derived PNGs are encoded by `pipeline/det_png.py` (pure-Python deflate, a fixed
+algorithm), not by Pillow's zlib, so their bytes depend on the pixels alone;
+the pixels are Pillow's Lanczos-3 resample of the JPEG's decoded pixels, and
+the descriptor is over those, so cross-*machine* byte-identity assumes the
+pinned Pillow (and the libjpeg-turbo in its wheel) — measured identical on
+Windows and two Linux machines.
 
 This file reuses `build_image_fixture.py`'s zip framing, hashing, WKEM writer
 and helpers rather than re-deriving them, so the two image builders cannot
@@ -50,9 +53,10 @@ disagree, exactly as `build_crate_cc0.py` reuses `build_golden.py`.
 DEPENDENCIES: Pillow==12.3.0 (decode/resample) and numpy (the labhog
 descriptor); pinned in fixtures/requirements-build.txt. Neither travels inside
 the package — law 1's ban is about what ships in the file, and a builder is not
-a `core.loader`. The preview PNG is Pillow-version-sensitive (a resample/encode
-byte difference across Pillow releases), so the version is pinned for byte-exact
-reproduction of the shipped fixture; a mismatch is warned, not silently drifted.
+a `core.loader`. The resampled pixels are Pillow-version-sensitive (Lanczos
+arithmetic changed between Pillow releases), so the version is pinned for
+byte-exact reproduction of the shipped fixture; a mismatch is warned, not
+silently drifted.
 """
 
 import argparse
@@ -78,6 +82,7 @@ from build_image_fixture import (sha256, jbytes, input_hash,        # noqa: E402
                                  derived_height, linear_to_hex,
                                  build_wkem, matches, DEV_SK)
 import labhog                                                        # noqa: E402
+from pipeline import det_png                                         # noqa: E402
 from spec_sha256 import spec_sha256_of_files                        # noqa: E402
 from payload_file import annotate_payload_files                     # noqa: E402
 from edge_targets import refuse_dangling_edges                   # noqa: E402
@@ -229,8 +234,8 @@ def collect(src_dir):
 
     if PIL.__version__ != "12.3.0":
         print("warning: Pillow %s != pinned 12.3.0 (fixtures/requirements-build.txt); "
-              "the preview PNG is version-sensitive, so the rebuilt fixture may "
-              "differ from the shipped bytes." % PIL.__version__, file=sys.stderr)
+              "the Lanczos resample is version-sensitive, so the rebuilt fixture "
+              "may differ from the shipped bytes." % PIL.__version__, file=sys.stderr)
 
     files, nodes = {}, []
 
@@ -289,9 +294,10 @@ def collect(src_dir):
     def derive(width):
         dh = derived_height(w, h, width)
         im = src_img.convert("RGB").resize((width, dh), Image.LANCZOS)
-        buf = io.BytesIO()
-        im.save(buf, format="PNG", optimize=False, compress_level=6)
-        return dh, buf.getvalue()
+        # Pillow supplies the pixels; the PNG stream is pipeline/det_png.py's,
+        # the same bytes on every OS (finding N3: Pillow's own stream depends
+        # on the zlib its wheel links).
+        return dh, det_png.encode_pil(im)
 
     prev_h, prev_png = derive(PREVIEW_W)
     thumb_h, thumb_png = derive(THUMB_W)

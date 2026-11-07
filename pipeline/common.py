@@ -434,18 +434,19 @@ class Stage(object):
 # ---------------------------------------------------------------------------
 
 def png_bytes(arr, mode):
-    """arr: numpy array. mode in {'RGBA','RGB','L16'}. Deterministic PNG."""
-    import io
+    """arr: numpy array. mode in {'RGBA','RGB','L16'}. Deterministic PNG.
+
+    Encoded by pipeline/det_png.py, never by Pillow: Pillow hands the stream
+    to whichever zlib its wheel links (zlib-ng on Windows, stock zlib on
+    Linux) and the bytes differed between the two (release finding N3)."""
     import numpy as np
-    from PIL import Image
+    from . import det_png
+    h, w = arr.shape[:2]
     if mode == "L16":
-        img = Image.fromarray(np.ascontiguousarray(arr.astype("<u2")), mode="I;16")
-    else:
-        img = Image.fromarray(np.ascontiguousarray(arr.astype("u1")), mode=mode)
-    buf = io.BytesIO()
-    # optimize=False + fixed compress_level keeps two runs byte-identical.
-    img.save(buf, format="PNG", optimize=False, compress_level=6)
-    return buf.getvalue()
+        return det_png.encode_png(np.ascontiguousarray(arr.astype(">u2")).tobytes(),
+                                  w, h, 0, 16)
+    ct = {"RGBA": 6, "RGB": 2, "L": 0}[mode]
+    return det_png.encode_png(np.ascontiguousarray(arr.astype("u1")).tobytes(), w, h, ct)
 
 
 def png_info(b):

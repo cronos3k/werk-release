@@ -130,9 +130,6 @@ IMAGE_SUBSTITUTIONS = [
     "cannot be regenerated",
     "nanobanana_client.py stubbed from its evidence excerpts, to satisfy the "
     "builder's three content asserts",
-    "preview PNGs re-deflated with the interpreter's stock zlib (level 6, "
-    "memLevel 9, Z_FILTERED, 65536-byte IDAT chunks): the fixture was written "
-    "by a stock-zlib Pillow, current Pillow wheels link zlib-ng",
 ]
 
 
