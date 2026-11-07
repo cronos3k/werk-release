@@ -2,8 +2,8 @@
 
 // Findings B5 -- and read that entry before trusting this file.
 //
-// The Stage 10 brief cites `FScopedDisableNoisyValidators` at
-// ContentMoverAction.cpp:30-79 of the production plugin: an RAII CDO-flipper
+// An internal note describes `FScopedDisableNoisyValidators` in an earlier
+// private plugin: an RAII CDO-flipper
 // that silences validators during batch saves, because the Localization
 // validator opens a MODAL in UE 5.7 and a modal in a commandlet is a hang with
 // no timeout.

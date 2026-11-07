@@ -8,8 +8,8 @@
 // scope allowed to be empty-handed.
 //
 // Findings B11: geometry is built as an FMeshDescription directly rather than
-// handed to Interchange. The justification is in adapters/unreal/README.md and
-// in docs/UE-CONTENTMOVER-FINDINGS.md; the short form is that werk's manifest
+// handed to Interchange. The justification is in adapters/unreal/README.md;
+// the short form is that werk's manifest
 // is the authority on materials (SPEC.md 10.2 makes taking them from the GLB
 // non-conformant), and a translator pipeline that helpfully builds materials
 // out of the GLB is actively wrong here.
