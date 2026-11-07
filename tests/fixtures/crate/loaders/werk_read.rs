@@ -2880,6 +2880,19 @@ fn cmd_verify(load: &Load) {
             println!("FAIL {}  {}", n.node_id, n.dead_reason);
         }
     }
+    // Every dead node by name, whatever killed it: a node can be dead with no
+    // failing file (a malformed record, a requires edge into a dead node),
+    // and a death reported without the node's name is not actionable.
+    for n in &load.nodes {
+        if n.health == Health::Dead {
+            let why = if n.dead_reason.is_empty() {
+                "no version of this node verified"
+            } else {
+                n.dead_reason.as_str()
+            };
+            println!("node {}: DEAD — {}", n.node_id, why);
+        }
+    }
     let dead = load.nodes.iter().filter(|n| n.health == Health::Dead).count();
     println!("signature : {}", load.signature);
     println!(

@@ -588,6 +588,18 @@ class Package:
             for f in fs:
                 if not isinstance(f, dict):
                     return "a files[] entry is not an object"
+                # A file record must say WHAT the bytes are: its path, its
+                # sha256 and its size. One that lost a key cannot be
+                # verified, so the node is dead -- as in the core (schema),
+                # the Rust and C loaders and the libraries. This reader used
+                # to skip the size check when `size` was absent and keep the
+                # node alive (W2 damage_agree, finding b).
+                if not isinstance(f.get("path"), str):
+                    return "a files[] entry has no path"
+                if not isinstance(f.get("sha256"), str):
+                    return "a files[] entry has no sha256"
+                if not is_int(f.get("size")) or f["size"] < 0:
+                    return "a files[] entry has no integer size"
         return None
 
     def _walk_nodes(self):
