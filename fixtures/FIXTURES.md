@@ -19,7 +19,7 @@ Recorded: **2026-10-13**
 |---|---:|---|---:|---:|---:|---|
 | `fixtures/crate-v1.werk` | 13 963 551 | `21aa05b1f00d4a3c3132c3a091ed10d432c8b230e03a679e2aac9b33c7c5ddc9` | 188 | 186 | 36 | `3d-entity/1` |
 | `fixtures/crate-v1-damaged.werk` | 13 964 703 | `a903a11849b83c158cae2098aec7e1fd8fe7f97c95af4fcead7c28e5e98a0614` | 189 | 187 | 37 | `3d-entity/1` |
-| `fixtures/crate-tex-v1.werk` | 1 163 857 | `3f44bed14aabf26896004e45e7cb6011d3f80fde70c357eb2b3860ea7192cd50` | 75 | 74 | 11 | `3d-entity/1` |
+| `fixtures/crate-tex-v1.werk` | 1 163 865 | `f4a0dddec506e4ee18833851bf707feea961da324fd697f6b34f9f746da3be19` | 75 | 74 | 11 | `3d-entity/1` |
 | `fixtures/ista-varun-v1.werk` | 10 879 246 | `65db976617a393bc0ac77e3d33d7549c2a24ed6e94d01979b59e2d61e0837733` | 85 | 83 | 15 | `image/1` |
 | `fixtures/humanoid-retarget-v1.werk` | 1 792 239 | `a997b1532c8d5e588a1c78d2943b177747c320228cff8a3cad532f06cd971cf2` | 80 | 78 | 9 | `3d-entity/1` |
 | `fixtures/gsplat-v1.werk` | 30 517 635 | `6dbcd7f5ed005e2e31f0e76a763bcbc0e51cae2d0636f4f9941351eb50d1e350` | 91 | 89 | 17 | `3d-entity/1` |
@@ -64,7 +64,7 @@ The golden sample with one flipped byte in a WAV and one unknown node type, so a
 The TEXTURED fixture: three generated maps and their material slots, built through the gate-proven Blender exporter so the texture path has a measured input.
 
 * built by `fixtures/build_crate_tex.py`
-* manifest sha256 `0bcb55dbe1b59fa4625edc5e27bb54abb9a9768452e7b82b8fa8d70bbfa70bce`
+* manifest sha256 `e9fbbe1505c0b65bd782920da1e76a67299323c096b3bdbdf59e4661cd5394c4`
 * `spec_sha256` `12b0e574e00e6d5fc78625ee750ae8517058ace68481cdfd3e26917b4d3e600a`
 
 ### `fixtures/ista-varun-v1.werk`

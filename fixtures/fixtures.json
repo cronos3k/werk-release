@@ -30,13 +30,13 @@
     },
     "crate-tex-v1": {
       "path": "fixtures/crate-tex-v1.werk",
-      "size_bytes": 1163857,
-      "sha256": "3f44bed14aabf26896004e45e7cb6011d3f80fde70c357eb2b3860ea7192cd50",
+      "size_bytes": 1163865,
+      "sha256": "f4a0dddec506e4ee18833851bf707feea961da324fd697f6b34f9f746da3be19",
       "zip_entries": 75,
       "declared_files": 74,
       "nodes": 11,
       "profile": "3d-entity/1",
-      "manifest_sha256": "0bcb55dbe1b59fa4625edc5e27bb54abb9a9768452e7b82b8fa8d70bbfa70bce",
+      "manifest_sha256": "e9fbbe1505c0b65bd782920da1e76a67299323c096b3bdbdf59e4661cd5394c4",
       "spec_sha256": "12b0e574e00e6d5fc78625ee750ae8517058ace68481cdfd3e26917b4d3e600a",
       "builder": "fixtures/build_crate_tex.py",
       "purpose": "The TEXTURED fixture: three generated maps and their material slots, built through the gate-proven Blender exporter so the texture path has a measured input."
