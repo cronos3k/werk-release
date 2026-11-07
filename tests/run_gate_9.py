@@ -50,12 +50,23 @@ def record(name, status, detail=""):
     print("[%s] %-40s %s" % (status, name, detail))
 
 
-def run(cmd, cwd=None):
+def compiler_env(cc):
+    """The compiler's own bin directory first on PATH, so a MinGW gcc loads
+    its own DLLs rather than another MinGW's (finding N2; see
+    tests/gate_common.py)."""
+    env = dict(os.environ)
+    if cc:
+        env["PATH"] = os.path.dirname(os.path.abspath(cc)) + os.pathsep + env.get("PATH", "")
+    return env
+
+
+def run(cmd, cwd=None, env=None):
     # A host that refuses to start a freshly built executable (Windows
     # Smart App Control: OSError WinError 4551) must be recorded as a
     # FAIL with the reason, not crash the gate with a traceback.
     try:
-        p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True)
+        p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True,
+                           env=env)
     except OSError as e:
         return 1, "could not start %s (host refused or missing): %r" % (cmd[0], e)
     return p.returncode, (p.stdout or "") + (p.stderr or "")
@@ -421,7 +432,7 @@ def main(argv=None):
     built = False
     if cc:
         rc, out = run([cc, "-std=c99", "-O2", "-o", c_exe,
-                       os.path.join(loaders, "werk_read.c")])
+                       os.path.join(loaders, "werk_read.c")], env=compiler_env(cc))
         built = rc == 0
     if not built:
         built = build_c_with_msvc(os.path.join(loaders, "werk_read.c"), c_exe)
