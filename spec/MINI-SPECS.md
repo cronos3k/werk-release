@@ -39,10 +39,12 @@ uses**, and werk writers MUST stay inside that subset.
 
 * **Little-endian** for every werk custom binary payload. The least
   significant byte comes first: the u32 `0x12345678` is stored `78 56 34 12`.
-* **Big-endian** appears in exactly three imported places, and each is
-  called out where it occurs: MessagePack's internal integers, PNG's chunk
-  lengths and CRCs, and the zip format's *nothing* (zip is little-endian).
-  If you find yourself byte-swapping anywhere else, you have a bug.
+* **Big-endian** appears only inside imported formats, and each place is
+  called out where it occurs: MessagePack's integers and floats (§4), PNG's
+  chunk lengths, CRCs, `IHDR` fields and 16-bit samples (§8), the zlib
+  wrapper's Adler-32 (§7), and SHA-256/SHA-512's words and length field
+  (§11). Zip is little-endian throughout, and so is every werk binary. If you
+  find yourself byte-swapping anywhere else, you have a bug.
 * IEEE-754 binary32 ("f32", 4 bytes) and binary64 ("f64", 8 bytes) are the
   only float encodings. No NaN and no infinity may appear in a core payload.
 * Signed integers are two's complement.
@@ -1240,7 +1242,9 @@ package in front of you is almost certainly fine.
 
 A conformant tool reports one of four words, and `SPEC.md` §10 step 4 fixes
 them: **`signed-and-valid`**, **`absent`**, **`present-and-invalid`**,
-**`unverified`**.
+**`unverified`**. A package is in one of the three states of `SPEC.md` §6;
+`unverified` is the fourth word because it describes the reader ("I did not
+check"), not the package.
 
 `unverified` is the correct verdict whenever you did not perform the check —
 no Ed25519 available, no time budget for it, or a deliberate decision to scope

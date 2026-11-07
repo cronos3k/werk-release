@@ -247,9 +247,10 @@ Single source of structure. Schema: **`spec/schemas/manifest.schema.json`**.
   here.** It is the sum of the `size` fields of every **distinct path**
   declared in `nodes[].versions[].files[]`: payload bytes only, excluding
   `MANIFEST.json`, `SIGNATURE.json` and all container framing, so it is the
-  same number in the directory form and in the zip. **A path listed by several
-  versions of one node counts once** — the S-18 reading of what a file belongs
-  to, applied arithmetically. It exists so a store can size a fetch before
+  same number in the directory form and in the zip — so it is **not** the size
+  of the `.werk` file, which is larger by the manifest, the signature and the
+  zip framing. **A path listed by several versions of one node counts once** —
+  the S-18 reading of what a file belongs to, applied arithmetically. It exists so a store can size a fetch before
   parsing the graph, it is optional, and it is advisory: a reader that needs
   the number computes it. The field previously had a definition only inside a
   schema `description`, and a gauntlet reader lost minutes to it *after* that
@@ -451,10 +452,11 @@ Single source of structure. Schema: **`spec/schemas/manifest.schema.json`**.
 
 ### 2.1 Which file in a node is THE payload — `payload_file`
 
-**S-XV-4 / S-OW-2, and the successor to S-13. Status: PROPOSED, pending
-Gregor's ruling; implemented in the schema, the writers and the fixtures
+**S-XV-4 / S-OW-2, and the successor to S-13. The field is PROPOSED, pending
+Gregor's ruling, and implemented in the schema, the writers and the fixtures
 because it is purely additive and a package built without it stays
-conformant.**
+conformant. The resolution order below is NORMATIVE now, field or no field:
+it is what a consumer does whenever it needs one payload file.**
 
 The measured failure this answers, because it is the sharpest kind — a
 program that produced a **wrong artifact while believing it had succeeded**:
@@ -507,6 +509,12 @@ that answers:
    the node and every candidate — and MUST NOT silently take `files[0]`.
    Taking the first entry is exactly the failure above and it is now
    explicitly forbidden rather than merely unmentioned.
+
+   The report belongs to the consumer that **asked** for one payload file. A
+   node whose files are a set with no single payload — `core.spec`,
+   `core.loader` — is not ambiguous for being several files, and a reader
+   that merely verifies a package does not report `payload-file-ambiguous`
+   for nodes nobody asked the payload of.
 
 **Reserved `role` values, which a reader may rely on.** `role` stays an open
 kebab-case vocabulary (law 12), and these three values are reserved with
@@ -926,6 +934,16 @@ splat-foley's real production output rather than designed fresh: `slug`,
 block with `kept`, `cut`, `events`, `heard` and the roll-back `reason`. The
 roll-back record is kept deliberately: a format that only records successes
 cannot be audited.
+
+**Not measured is a value.** `clap_score` is `null` when no similarity was
+measured, and `prompt_used` is `null` when the sound did not come from a
+prompt — a recorded or synthesised sound is a `core.audio.effect` like any
+other. Writing `0` for a measurement that was never made is a fabricated
+measurement, which is exactly what an epistemic stamp exists to rule out
+(found when four agent-written packages each described a synthesised tone
+differently, two of them with `clap_score: 0`). The node's payload is the WAV
+(§2.1 rule 4: role `best`); the JSON sidecar has role `descriptor` and is
+never the payload.
 
 **Two vocabularies, one value — read this before writing code against either.**
 `core.audio.package` was adopted verbatim from splat-foley's production

@@ -190,8 +190,10 @@ Directory form: you are done; the tree is the package.
 Single-file form: zip the tree (`MINI-SPECS.md` §5) with
 
 * **method 0** (store) for every entry — do not compress;
-* **UTF-8 names** with general-purpose flag bit 11 set, forward slashes, no
-  leading slash, no `..`;
+* **UTF-8 names**, forward slashes, no leading slash, no `..`, no name
+  twice. Set general-purpose flag bit 11; it MUST be set on a name with a
+  non-ASCII byte and MAY be clear on an all-ASCII one, so a stock zip library
+  that clears it for ASCII names is fine (`MINI-SPECS.md` §5.4);
 * **no data descriptors** (flag bit 3 clear): sizes and CRC-32 go in the
   local header;
 * **no zip64**: every entry and the whole file below 4 GiB, at most 65 534
@@ -220,11 +222,46 @@ With the reader you copied in step 1:
     python loaders/werk_read.py <your package> --verify --strict
 
 Exit status 0 and `N/N files verified` means every byte is where the manifest
-says, with the hash it says. For the example: **6 nodes, every one live**, and
-`N` is 4 plus the number of `spec/` and `loaders/` files you copied. A full
-reader additionally validates the manifest and the bounds payload against
-their schemas, recomputes `spec_sha256` and `input_hash`, and reports no
-error.
+says, with the hash it says. For the example: **6 nodes, every one live**
+when the donor carries one `core.loader` node (`crate-cc0-lean-v1` carries
+only the Python reader), one more per further reader it carries — 8 from a
+donor with all three — and `N` is 4 plus the number of `spec/` and
+`loaders/` files you copied. A full reader additionally validates the
+manifest and the bounds payload against their schemas, recomputes
+`spec_sha256` and `input_hash`, and reports no error.
+
+**What "valid" means, as rules you can check yourself.** Running a reader is
+a convenient check, not the definition. A valid package satisfies all of
+these, and a conformant reader reports every one that breaks:
+
+1. **Container.** Directory form, or a zip per §6: method 0, no flag bit 3,
+   no zip64, no name twice, no name with a leading `/`, a `\` or a `..`
+   segment.
+2. **Manifest bytes.** `MANIFEST.json` is UTF-8 without a BOM and is one
+   JSON object with a `nodes` array.
+3. **Schema.** The manifest is valid against the schema its
+   `manifest_schema` names, which is a file of the `core.spec` node; every
+   JSON payload is valid against `schemas[<its node type>]`.
+4. **Nodes.** Every `node_id` is unique and kebab-case; `active` names a
+   version in `versions[]`; every version has `v`, `files`, `note`,
+   `producer`, `epistemic` and `created`.
+5. **Bytes.** Every path in every version's `files[]` is in the container
+   with exactly its `size` and `sha256`, and every file in the container
+   except `MANIFEST.json` and `SIGNATURE.json` is in some version's
+   `files[]` (nothing floats).
+6. **Edges.** Every `edges[].to` names a node in `nodes[]`.
+7. **Recomputed values.** `spec_sha256` is the digest of §5's construction;
+   `license.sha256` is the sha256 of `LICENSE`; every `input_hash` is the
+   construction of `SPEC.md` §2 over its `input_files`.
+8. **Conventions.** `conventions` holds exactly the profile's values.
+9. **Signature**, if there is one: `SPEC.md` §6 verifies every link and the
+   last entry's `manifest_sha256` is the manifest's sha256.
+
+The bundled loader checks what it walks — 1, 2, `active`, 5 and 6 — and
+does not validate schemas, recompute 7's values or verify Ed25519;
+`werkc verify` (the reference core) additionally validates the schemas,
+recomputes 7 and verifies the chain.
+
 
 ## 8. What "minimal" left out, and where it is
 

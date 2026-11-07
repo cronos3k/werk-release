@@ -38,9 +38,10 @@ because SPEC.md section 8 requires an extension binary to ship its own
   ---------  -------------  --------------------------------------------
   "WKX0"     57 4B 58 30    extension binary, slot 0
 
-  ENVELOPE.layout.txt section 2 reserves "WKX0".."WKX9" for extension
-  binaries and forbids a bespoke magic, so the four bytes do not identify
-  this payload on their own. The header's mandatory "kind" key does:
+  ENVELOPE.layout.txt section 2 gives "WKX0".."WKX9" to every binary the
+  base specification does not define (a profile's own core.* binaries and
+  x.* binaries alike) and forbids a bespoke magic, so the four bytes do not
+  identify this payload on their own. The header's mandatory "kind" key does:
 
       kind == "x.cub.v1.geom.baked"
 
