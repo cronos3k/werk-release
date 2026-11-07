@@ -2434,7 +2434,8 @@ Exactly three triggers, and a reader MUST report which one fired:
 
 A **node** whose own structure is unusable — no string `node_id` or `type`,
 no integer `active`, no non-empty `versions[]`, a version without an integer
-`v` or a `files` array — is not a recovery trigger either: that node is dead
+`v` or a `files` array, a `files[]` entry without a string `path`, a string
+`sha256` or an integer `size` — is not a recovery trigger either: that node is dead
 (`node-dead`, with the reason), the rest loads (law 3), exactly as for a node
 that fails its schema. A manifest that parses and is structurally sound but
 fails **schema** validation, or names a file that is not in the container, or
