@@ -102,6 +102,14 @@ zip64 container refuses it whole, by name (`zip64-unsupported`), with exit
 status 2, having read nothing but the container's last 64 KiB — `MINI-SPECS.md`
 §5.5 says how it is recognised, and that part is mandatory for every reader.
 
+**One name, one entry.** A zip whose central directory names one path twice
+is refused whole (`bad-container`, exit status 2): which bytes *are* that
+file cannot be decided, and readers that pick different records give
+different verdicts on one package (measured: one reader took the last record,
+two took the first). A writer never emits a name twice; the reader rules that
+make independent readers agree on a damaged container are `MINI-SPECS.md`
+§5.4.
+
 **Preview-first byte layout (law 9) — SHOULD, S-14, RULING, implemented.**
 When zipping, a writer **SHOULD** write entries in this physical order:
 `MANIFEST.json`, `SIGNATURE.json`, `LICENSE`, `loaders/`, `spec/`,
@@ -2145,7 +2153,7 @@ to this table in the same change; an extension's own codes begin with `x-`.
 
 | code | usual severity | scope | meaning |
 |---|---|---|---|
-| `bad-container` | error | container | not a zip and not a directory, or the zip directory is malformed |
+| `bad-container` | error | container | not a zip and not a directory, the zip directory is malformed, or it names one entry twice (§1, `MINI-SPECS.md` §5.4) |
 | `zip64-unsupported` | error | container | a zip64 container; nothing was read (§1, `MINI-SPECS.md` §5.5) |
 | `manifest-absent`, `manifest-unparseable`, `manifest-structurally-invalid` | error | container | §12.1; a reader that implements §12 enters recovery instead |
 | `schema-invalid` | error | package or node | the manifest fails a schema it was held against (§2.2) |
@@ -2189,6 +2197,16 @@ Until ruling 9 of 2026-10-13 they did not agree: the core and two loaders
 returned 1 for an unreadable container, and one loader returned 3 for
 `--strict`. Status 2 is also what the reference tools return for a command
 line they cannot act on; no package was loaded then either.
+
+**A version fallback is not a clean load.** The node is alive
+(`version-fallback`, `warn`), and the file of the passed-over version that
+failed is still reported under its own code (`hash-mismatch`,
+`size-mismatch`, `file-missing`, `zip-entry-invalid`, …, severity `error`), so
+the status is **1** — for a bootstrap loader, under `--strict`. An `active`
+that names a version which does not exist falls back with the warning alone
+(nothing failed) and the status stays 0. A bootstrap loader's `--strict`
+returns 1 exactly when the report holds an `error` entry, the core's status
+without a flag is the same rule, and neither promotes a warning.
 
 A `--strict` mode MAY promote `warn` to `error`, and MUST say that it did.
 A load is never failed by damage alone: `open()` succeeds on a package with
@@ -2384,11 +2402,15 @@ Exactly three triggers, and a reader MUST report which one fired:
 |---|---|
 | `MANIFEST.json` absent from the container | `manifest-absent` |
 | `MANIFEST.json` present but not parseable as UTF-8 JSON | `manifest-unparseable` |
-| `MANIFEST.json` parses, but a **structural** key a reader needs is absent or of the wrong type (`nodes` missing, `nodes` not an array, `files` not an array) | `manifest-structurally-invalid` |
+| `MANIFEST.json` parses, but is not a JSON object, or the **structural** key a reader needs to walk the graph is absent or of the wrong type (`nodes` missing, `nodes` not an array) | `manifest-structurally-invalid` |
 
-A manifest that parses and is structurally sound but fails **schema**
-validation, or names a file that is not in the container, or carries a hash
-that does not match, is **not** a recovery trigger. That is ordinary damage and
+A **node** whose own structure is unusable — no string `node_id` or `type`,
+no integer `active`, no non-empty `versions[]`, a version without an integer
+`v` or a `files` array — is not a recovery trigger either: that node is dead
+(`node-dead`, with the reason), the rest loads (law 3), exactly as for a node
+that fails its schema. A manifest that parses and is structurally sound but
+fails **schema** validation, or names a file that is not in the container, or
+carries a hash that does not match, is **not** a recovery trigger. That is ordinary damage and
 §10.1's node scope handles it: refuse the affected nodes, load the rest, and
 keep using the manifest for everything else. Entering recovery there would
 discard good declared knowledge in favour of guesses, which is strictly worse.
