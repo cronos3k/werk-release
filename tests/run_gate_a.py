@@ -88,6 +88,7 @@ def build_c_with_msvc(src, exe):
     if not vcvars:
         return False
     bat = os.path.join(WORK, "_msvc_c.bat")
+    os.makedirs(os.path.dirname(bat), exist_ok=True)
     with open(bat, "w") as fh:
         fh.write("@echo off\r\n")
         fh.write('call "%s"\r\n' % vcvars)
@@ -505,10 +506,21 @@ def main(argv=None):
         else:
             same = all(sha256_file(os.path.join(orig, os.path.basename(p)))
                        == sha256_file(p) for p in (CLEAN, DAMAGED))
-            record(n3, "PASS" if same else "FAIL",
-                   "both fixtures rebuilt from the original tree, identical "
-                   "sha256" if same else "a rebuild from the original tree "
-                   "produced different bytes")
+            if same:
+                record(n3, "PASS", "both fixtures rebuilt from the original "
+                       "tree, identical sha256")
+            else:
+                import package_rebuild as pr
+                parts = []
+                for p in (CLEAN, DAMAGED):
+                    a, _o = pr.read_zip(p)
+                    b, _o = pr.read_zip(os.path.join(orig, os.path.basename(p)))
+                    d = sorted(n for n in set(a) | set(b) if a.get(n) != b.get(n))
+                    parts.append("%s: %d/%d entries differ%s"
+                                 % (os.path.basename(p), len(d), len(set(a) | set(b)),
+                                    (" (" + ", ".join(d[:12]) + ")") if d else ""))
+                record(n3, "FAIL", "a rebuild from the original tree produced "
+                       "different bytes; " + "; ".join(parts))
 
     print()
     print("manifest sha256 %s" % clean_manifest)

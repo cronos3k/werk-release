@@ -279,11 +279,36 @@ def main(argv=None):
             with open(ev_path, "wb") as fh:
                 fh.write(shipped[pr.IMAGE_EVIDENCE])
             stock, zdesc = pr.zlib_is_stock()
-            rc, log = run([sys.executable,
-                           os.path.join(ROOT, "tests", "package_rebuild.py"),
-                           "image", root, src, out, ev_path]
-                          + (["--restock"] if stock else []))
-            rebuilt_path = os.path.join(out, "ista-varun-v1.werk")
+            # Which deflater wrote the pinned preview PNGs is a property of
+            # the pin, not of this host: a pin built through a Pillow linked
+            # against zlib-ng carries zlib-ng streams, one re-deflated with
+            # stock zlib carries stock streams. Try Pillow's own stream first,
+            # then (where this interpreter's zlib is stock) the stock
+            # re-deflate, and keep the attempt that reproduces the pin
+            # (review B, PR #6 problem 2).
+            pin_sha = sha256_file(IMAGE_WERK)
+            attempts = [("pillow", [])]
+            if stock:
+                attempts.append(("stock", ["--restock"]))
+            matched = False
+            for label, extra in attempts:
+                out_a = out + "-" + label
+                shutil.rmtree(out_a, ignore_errors=True)
+                rc, log = run([sys.executable,
+                               os.path.join(ROOT, "tests", "package_rebuild.py"),
+                               "image", root, src, out_a, ev_path] + extra)
+                rebuilt_path = os.path.join(out_a, "ista-varun-v1.werk")
+                matched = (rc == 0 and os.path.isfile(rebuilt_path)
+                           and sha256_file(rebuilt_path) == pin_sha)
+                if matched:
+                    break
+            if matched:
+                zdesc += "; the pin's preview PNGs are reproduced by: " + (
+                    "Pillow's own deflate stream" if label == "pillow"
+                    else "a stock-zlib re-deflate")
+            else:
+                zdesc += ("; no deflater tried (%s) reproduces the pin"
+                          % ", ".join(l for l, _ in attempts))
             if rc != 0 or not os.path.isfile(rebuilt_path):
                 for nm in (n1, n2):
                     record(nm, "FAIL", "builder exit %d: %s"
@@ -293,7 +318,7 @@ def main(argv=None):
                 pngs = [nm for nm in shipped if nm.startswith("image/")
                         and nm.endswith(".png") and nm not in inputs]
                 c = pr.compare(shipped, again, inputs, png_by_pixels=pngs)
-                subs = pr.IMAGE_SUBSTITUTIONS if stock else \
+                subs = pr.IMAGE_SUBSTITUTIONS if label == "stock" else \
                     pr.IMAGE_SUBSTITUTIONS[:-1]
                 measured = {
                     "entries_total": c["total"],
@@ -371,11 +396,17 @@ def main(argv=None):
                "output) is outside any rebuild. " + out.strip()[-120:])
     else:
         same = sha256_file(rebuilt) == sha256_file(IMAGE_WERK)
-        record(n3, "PASS" if same else "FAIL",
-               "rebuilt from the original tree, identical sha256" if same
-               else "a rebuild from the original tree produced different "
-               "bytes (with a zlib-ng Pillow the preview PNGs differ, "
-               "unavailable-audit finding A1)")
+        if same:
+            record(n3, "PASS", "rebuilt from the original tree, identical sha256")
+        else:
+            import package_rebuild as pr
+            a, _o = pr.read_zip(IMAGE_WERK)
+            b, _o = pr.read_zip(rebuilt)
+            differ = sorted(n for n in set(a) | set(b) if a.get(n) != b.get(n))
+            record(n3, "FAIL",
+                   "a rebuild from the original tree produced different "
+                   "bytes; %d/%d entries differ: %s"
+                   % (len(differ), len(set(a) | set(b)), ", ".join(differ)))
 
     # -- 4. the three bootstrap loaders, standalone -----------------------
     loaders = os.path.join(ROOT, "loaders")

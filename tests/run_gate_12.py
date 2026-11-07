@@ -633,8 +633,12 @@ def main(argv=None):
     # step input or output, plus the target files. Whole-file identity is not
     # required: the shipped fixture carries the R1 spec snapshot
     # (docs/RULINGS-2026-09-09.md) and recorded host metadata in the tool run
-    # configs, which a rebuild on another host does not reproduce.
-    name8 = "round trip: rebuild is byte-identical"
+    # configs, which a rebuild on another host does not reproduce. Whole-file
+    # identity is therefore its own clause (name8w), reported beside the
+    # payload clause rather than folded into it: a payload-only PASS must not
+    # be read as "the rebuild is byte-identical" (review B, PR #6 problem 1).
+    name8 = "round trip: rebuild reproduces the payload entries"
+    name8w = "round trip: whole-file rebuild is byte-identical"
     try:
         recipe8 = json.loads(entries["recipe/recipe.json"])
         payload = set(f["path"] for f in recipe8["target"]["files"])
@@ -649,18 +653,20 @@ def main(argv=None):
         src_entries = sorted(p for p in payload
                              if p.startswith("recipe/inputs/"))
         if not src_entries or src_entries[0] not in entries:
-            record(name8, "SKIP",
-                   "the package does not embed its builder source under "
-                   "recipe/inputs/, so there is nothing to rebuild from")
+            for nm in (name8, name8w):
+                record(nm, "SKIP",
+                       "the package does not embed its builder source under "
+                       "recipe/inputs/, so there is nothing to rebuild from")
         else:
             src_entry = src_entries[0]
             src_bytes = entries[src_entry]
             src_sha = sha256_bytes(src_bytes)
             if declared.get(src_entry) != src_sha:
-                record(name8, "FAIL",
-                       "embedded %s sha256 %s does not match the manifest "
-                       "declaration %s" % (src_entry, src_sha[:16],
-                                           str(declared.get(src_entry))[:16]))
+                for nm in (name8, name8w):
+                    record(nm, "FAIL",
+                           "embedded %s sha256 %s does not match the manifest "
+                           "declaration %s" % (src_entry, src_sha[:16],
+                                               str(declared.get(src_entry))[:16]))
             else:
                 rb = os.path.join(WORK, "rebuild")
                 os.makedirs(rb, exist_ok=True)
@@ -673,7 +679,8 @@ def main(argv=None):
                                "--source", src_path,
                                "--out", rb, "--scratch", rb])
                 if rc != 0:
-                    record(name8, "FAIL", out.strip()[-300:])
+                    for nm in (name8, name8w):
+                        record(nm, "FAIL", out.strip()[-300:])
                 else:
                     again, _order = zip_read(os.path.join(rb, "gsplat-v1.werk"))
                     names = sorted(set(entries) | set(again))
@@ -702,8 +709,18 @@ def main(argv=None):
                                   + detail)
                     record(name8, "FAIL" if (bad or missing) else "PASS",
                            detail)
+                    w_new = sha256_file(os.path.join(rb, "gsplat-v1.werk"))
+                    w_pin = sha256_file(GSPLAT_WERK)
+                    if w_new == w_pin:
+                        record(name8w, "PASS", "sha256 %s, %d/%d entries"
+                               % (w_new[:16], len(names), len(names)))
+                    else:
+                        record(name8w, "FAIL",
+                               "rebuild %s vs pin %s; entries that differ: %s"
+                               % (w_new[:16], w_pin[:16], ", ".join(differ)))
     except Exception as e:  # noqa: BLE001
-        record(name8, "FAIL", repr(e))
+        for nm in (name8, name8w):
+            record(nm, "FAIL", repr(e))
 
     # -- 9. damaged variant: one flipped byte kills one node, not the file --
     try:
