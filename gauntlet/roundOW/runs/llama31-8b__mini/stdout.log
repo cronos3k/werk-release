@@ -1,0 +1,365 @@
+model=llama-3.1-8b-lexi-uncensored ctx=131072 package_ctx=65536 budget=121896 chars package=91059 chars included=17 omitted=0
+preflight: prompt_tokens=28233 cold prefill=81.6s (346 tok/s), chars/token=3.31
+
+--- iteration 1 (141s, finish=stop, 2596 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    return json.loads(manifest_data.decode('utf-8'))
+
+def verify_hashes(ma
+  >> running solution.py (2583 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=497B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 75, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 53, in main
+      manifest_data = read_file(manifest_path)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 8, in read_file
+      with open(path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'MANIFEST.json'
+  
+
+--- iteration 2 (207s, finish=stop, 2733 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    return json.loads(manifest_data.decode('utf-8'))
+
+def verify_hashes(ma
+  >> running solution.py (2720 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=583B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 78, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 56, in main
+      manifest_data = read_file(os.path.join(cwd, manifest_path))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 8, in read_file
+      with open(path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'F:\\ow-gauntlet\\llama31-8b__mini\\mini-v1.werk/MANIFEST.json'
+  
+
+--- iteration 3 (274s, finish=stop, 2733 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    return json.loads(manifest_data.decode('utf-8'))
+
+def verify_hashes(ma
+  >> running solution.py (2720 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=583B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 78, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 56, in main
+      manifest_data = read_file(os.path.join(cwd, manifest_path))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 8, in read_file
+      with open(path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'F:\\ow-gauntlet\\llama31-8b__mini\\mini-v1.werk/MANIFEST.json'
+  
+
+--- iteration 4 (341s, finish=stop, 2676 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    return json.loads(manifest_data.decode('utf-8'))
+
+def verify_hashes(ma
+  >> running solution.py (2663 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=404B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 79, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 60, in main
+      manifest = json.loads(manifest_data.decode('utf-8'))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0x9a in position 15: invalid start byte
+  
+
+--- iteration 5 (411s, finish=stop, 2710 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    return json.loads(manifest_data.decode('utf-8', errors='ignore'))
+
+def
+  >> running solution.py (2697 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=915B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 79, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 60, in main
+      manifest = json.loads(manifest_data.decode('utf-8', errors='ignore'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 346, in loads
+      return _default_decoder.decode(s)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\decoder.py", line 338, in decode
+      obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\decoder.py", line 356, in raw_decode
+      raise JSONDecodeError("E
+
+--- iteration 6 (483s, finish=stop, 2712 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    return json.loads(manifest_data.decode('utf-8', errors='replace'))
+
+de
+  >> running solution.py (2699 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=917B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 79, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 60, in main
+      manifest = json.loads(manifest_data.decode('utf-8', errors='replace'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 346, in loads
+      return _default_decoder.decode(s)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\decoder.py", line 338, in decode
+      obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\decoder.py", line 356, in raw_decode
+      raise JSONDecodeError(
+
+--- iteration 7 (559s, finish=stop, 2782 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    try:
+        return json.loads(manifest_data.decode('utf-8'))
+    exce
+  >> running solution.py (2769 chars)
+  << exit=1 in 0.1s  stdout=97B stderr=304B
+  Error parsing manifest: 'utf-8' codec can't decode byte 0x9a in position 15: invalid start byte
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 83, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__mini\solution.py", line 67, in main
+      files = manifest['container']['entry_order']
+              ~~~~~~~~^^^^^^^^^^^^^
+  KeyError: 'container'
+  
+
+--- iteration 8 (644s, finish=stop, 3175 chars) ---
+```python
+import hashlib
+import os
+import struct
+from typing import Dict, List
+
+def read_file(path: str) -> bytes:
+    """Read a file into memory."""
+    with open(path, 'rb') as f:
+        return f.read()
+
+def crc32(data: bytes) -> int:
+    """Compute the CRC-32 of a byte string."""
+    crc = 0xFFFFFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+
+def sha256(data: bytes) -> str:
+    """Compute the SHA-256 of a byte string."""
+    return hashlib.sha256(data).hexdigest()
+
+def read_manifest(manifest_path: str, manifest_data: bytes) -> Dict[str, any]:
+    """Read and parse the manifest file."""
+    import json
+    try:
+        return json.loads(manifest_data.decode('utf-8'))
+    exce
+  >> running solution.py (3162 chars)
+  << exit=0 in 0.1s  stdout=131B stderr=0B
+  Error parsing manifest: 'utf-8' codec can't decode byte 0x9a in position 15: invalid start byte
+  Container not found in manifest.
+  
+
+=== outcome=iteration-cap (used all 8 feedback iterations) iters=8 first_clean_run=8 wall=644.4s ===
+{"model": "llama-3.1-8b-lexi-uncensored", "quant": "unlisted", "context": 131072, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "llama31-8b-mini", "protocol": "inline-context + error-feedback", "outcome": "iteration-cap", "detail": "used all 8 feedback iterations", "iterations": 8, "first_clean_run": 8, "wall_s": 644.4, "preflight_s": 81.6, "wall_s_excl_preflight": 562.8, "prompt_tokens": 28233, "package_ctx": 65536, "package_chars": 91059, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\llama31-8b__mini"}

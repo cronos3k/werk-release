@@ -1,0 +1,82 @@
+{
+ "model": "qwen/qwen3-coder-30b",
+ "quant": "Q4_K_M",
+ "context": 65536,
+ "task": "selfrun-adapted",
+ "kind": "selfrun",
+ "label": "qwen3-coder-30b-selfrun",
+ "protocol": "inline-context + HARNESS-EXECUTED bash + error-feedback",
+ "harness": "roundGF/driver_selfrun.py",
+ "outcome": "iteration-cap",
+ "detail": "used all 6 feedback iterations",
+ "iterations": 6,
+ "first_clean_run": null,
+ "wall_s": 140.6,
+ "preflight_s": 7.2,
+ "prompt_tokens": 29920,
+ "package_chars": 97181,
+ "items": [
+  "README.txt",
+  "ZIP ENTRY LISTING (all 85 entries)",
+  "tools/llama2c/BUILD-AND-RUN.md (complete)",
+  "tools/llama2c/tool.json",
+  "tools/llama2c-testvector-run.config.json",
+  "tools/llama2c/win.h (complete)",
+  "tools/llama2c/win.c (complete)",
+  "tools/llama2c/run.c (complete)",
+  "spec/layouts/llama2c-checkpoint.layout.txt (complete)",
+  "spec/layouts/llama2c-tokenizer.layout.txt (complete)",
+  "testvectors/vectors.json (complete)",
+  "testvectors/generate-once-upon-a-time.stdout.txt",
+  "testvectors/generate-the-little-robot.stdout.txt",
+  "HEX DUMP -- first 256 bytes of model/stories15M.bin",
+  "HEX DUMP -- first 256 bytes of model/tokenizer.bin"
+ ],
+ "bash": "C:/msys64/usr/bin/bash.exe",
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 971,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 2,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 993,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 3,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 1161,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 4,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 1129,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 5,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 1341,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 6,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 1799,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\gf-gauntlet\\qwen3-coder-30b__selfrun"
+}

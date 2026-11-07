@@ -1,0 +1,64 @@
+{
+ "model": "ebai3.6-27b-unscensored",
+ "quant": "unlisted",
+ "context": 65536,
+ "task": "PROMPT-round1task-mini.txt",
+ "kind": "mini",
+ "label": "ebai27b-mini-retry",
+ "protocol": "inline-context + error-feedback",
+ "outcome": "model-finished",
+ "detail": "declared TASK COMPLETE after a clean run",
+ "iterations": 4,
+ "first_clean_run": 2,
+ "wall_s": 724.6,
+ "preflight_s": 15.5,
+ "wall_s_excl_preflight": 709.1,
+ "prompt_tokens": 33044,
+ "package_ctx": 65536,
+ "package_chars": 91059,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,5,6,11",
+  "ENVELOPE 0-7",
+  "spec/layouts/restposes.layout.txt",
+  "hex:geometry/game.glb",
+  "hex:audio/sfx/crate-impact-hard-surface.wav",
+  "hex:poses/rest.wkrp",
+  "hex:x/splat-foley/segments/seg_00.png",
+  "MINI-SPECS 9,10",
+  "MINI-SPECS 12",
+  "MINI-SPECS 8",
+  "spec/README.md",
+  "spec/conventions-map.json",
+  "SIGNATURE.json",
+  "LICENSE"
+ ],
+ "omitted": [],
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 831,
+   "stderr_bytes": 610
+  },
+  {
+   "iter": 2,
+   "exit": 0,
+   "secs": 0.1,
+   "stdout_bytes": 11971,
+   "stderr_bytes": 328
+  },
+  {
+   "iter": 3,
+   "exit": 0,
+   "secs": 0.1,
+   "stdout_bytes": 11971,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\ow-gauntlet\\ebai27b__mini__retry"
+}

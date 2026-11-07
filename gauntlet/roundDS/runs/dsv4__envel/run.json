@@ -1,0 +1,52 @@
+{
+ "model": "DeepSeek-V4-Flash-0731",
+ "quant": "MXFP4",
+ "context": 1048576,
+ "task": "PROMPT-envelopetask-mini.txt",
+ "kind": "mini",
+ "label": "dsv4-envel",
+ "protocol": "inline-context + error-feedback",
+ "harness": "roundDS/driver.py (roundGF/driver.py -- which is roundOW's + GF-1 gsplatmini packer + GF-2 PYTHONIOENCODING=utf-8 per S-SFX-4 + GF-4, the S-GF-1 section-picker fix -- plus DS-1, an --api flag for a non-localhost endpoint, and DS-2, the selfrun packer)",
+ "outcome": "no-program",
+ "detail": "3 replies with no ```python block",
+ "iterations": 4,
+ "first_clean_run": 1,
+ "wall_s": 3718.8,
+ "preflight_s": 165.2,
+ "wall_s_excl_preflight": 3553.6,
+ "prompt_tokens": 39337,
+ "package_ctx": 131072,
+ "package_chars": 127814,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,5,6,11",
+  "ENVELOPE 0-7",
+  "spec/layouts/restposes.layout.txt",
+  "spec/examples/restposes.example.hex.txt",
+  "hex:geometry/game.glb",
+  "hex:audio/sfx/crate-impact-hard-surface.wav",
+  "hex:poses/rest.wkrp",
+  "hex:x/splat-foley/segments/seg_00.png",
+  "MINI-SPECS 9,10",
+  "MINI-SPECS 12",
+  "MINI-SPECS 8",
+  "spec/README.md",
+  "spec/conventions-map.json",
+  "SIGNATURE.json",
+  "LICENSE"
+ ],
+ "omitted": [],
+ "truncated_replies": 3,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 0,
+   "secs": 0.1,
+   "stdout_bytes": 15456,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\ds-gauntlet\\dsv4__envel"
+}

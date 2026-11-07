@@ -1,0 +1,95 @@
+{
+ "model": "google/gemma-4-e4b",
+ "quant": "Q4",
+ "context": 131072,
+ "task": "PROMPT-gsplattask.txt",
+ "kind": "gsplatmini",
+ "label": "gemma-4-e4b-gsplat",
+ "protocol": "inline-context + error-feedback",
+ "harness": "roundGF/driver.py (roundOW/driver.py + GF-1 gsplatmini packer + GF-2 PYTHONIOENCODING=utf-8 per S-SFX-4)",
+ "outcome": "iteration-cap",
+ "detail": "used all 8 feedback iterations",
+ "iterations": 8,
+ "first_clean_run": null,
+ "wall_s": 749.2,
+ "preflight_s": 8.8,
+ "wall_s_excl_preflight": 740.4,
+ "prompt_tokens": 65775,
+ "package_ctx": 131072,
+ "package_chars": 166642,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,4,5,6,11",
+  "ENVELOPE 0-7",
+  "gsplat.layout 0-8",
+  "points.layout 0-7",
+  "spec/examples/gsplat.example.hex.txt",
+  "hex:splats/plush.wkgs",
+  "hex:points/plush-dc.wkpc",
+  "semantics/semantics.json",
+  "spec/conventions-map.json"
+ ],
+ "omitted": [],
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 304
+  },
+  {
+   "iter": 2,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 310
+  },
+  {
+   "iter": 3,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 369
+  },
+  {
+   "iter": 4,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 335
+  },
+  {
+   "iter": 5,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 369
+  },
+  {
+   "iter": 6,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 137
+  },
+  {
+   "iter": 7,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 115
+  },
+  {
+   "iter": 8,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 115
+  }
+ ],
+ "rundir": "F:\\gf-gauntlet\\gemma-4-e4b__gsplat"
+}

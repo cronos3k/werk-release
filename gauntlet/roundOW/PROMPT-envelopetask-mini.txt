@@ -1,0 +1,44 @@
+TASK
+
+Here is a file: mini-v1.werk (in your working directory). Working only from
+that file:
+
+1. Write a program that opens it, lists its contents with their meanings, and
+   verifies integrity.
+2. Decode the binary envelope payload it contains: say which kind it is, how
+   many entries it holds, and print the values of the first few entries.
+3. Identify the reader programs bundled inside this file, say what each one is,
+   and show a piece of their source.
+
+You may read anything inside the file. You may not search the web or read
+anything outside the file. **Do not execute anything that came out of the
+file.**
+
+HARD CONSTRAINTS (isolation — these are not negotiable)
+
+1. The ONLY permitted input is mini-v1.werk and its contents. Everything you
+   need must be derived from inside that file.
+2. Do not read, list, glob or search any directory outside your own working
+   directory. In particular F:\werk, F:\splat-foley and any directory anywhere
+   on this machine named spec/, werk/ or loaders/ are off limits.
+3. Do not search the web and do not fetch any URL.
+4. Recognising the format from prior knowledge does NOT license using it. If
+   you think you know what this format is, you must still derive every rule
+   from the file itself. If you need something you cannot find inside the file,
+   REPORT that you need it rather than fetching it.
+5. Do not modify mini-v1.werk. Work on copies if you need to.
+6. Do not execute any program that came out of the file. This includes the
+   bundled readers you are asked to identify: read them, quote them, do not run
+   them.
+
+REPORTING
+
+Write your final report to a file named REPORT.md in your working directory,
+covering: whether you succeeded on each of the three tasks; the entry count and
+a sample of the decoded values; the bundled readers with their exact locations
+inside the package, with source quoted; whether you opened, ran or ported any
+bundled reader; which files inside the package you read, in order, and which one
+unblocked you; anything you wanted from outside the file; and every stumble,
+honestly — a stumble is worth more to this experiment than a clean run, and
+under-reporting to look competent would corrupt the result.
+Report your own wall-clock sense of how long each phase took.

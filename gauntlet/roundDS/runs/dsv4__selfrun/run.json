@@ -1,0 +1,54 @@
+{
+ "model": "DeepSeek-V4-Flash-0731",
+ "quant": "MXFP4",
+ "context": 1048576,
+ "task": "selfrun-adapted",
+ "kind": "selfrun",
+ "label": "dsv4-selfrun",
+ "protocol": "inline-context + HARNESS-EXECUTED bash + error-feedback",
+ "harness": "roundGF/driver_selfrun.py",
+ "outcome": "wall-cap",
+ "detail": "hit the 2700 s wall cap",
+ "iterations": 4,
+ "first_clean_run": 1,
+ "wall_s": 2813.5,
+ "preflight_s": 112.2,
+ "prompt_tokens": 28833,
+ "package_chars": 97181,
+ "items": [
+  "README.txt",
+  "ZIP ENTRY LISTING (all 85 entries)",
+  "tools/llama2c/BUILD-AND-RUN.md (complete)",
+  "tools/llama2c/tool.json",
+  "tools/llama2c-testvector-run.config.json",
+  "tools/llama2c/win.h (complete)",
+  "tools/llama2c/win.c (complete)",
+  "tools/llama2c/run.c (complete)",
+  "spec/layouts/llama2c-checkpoint.layout.txt (complete)",
+  "spec/layouts/llama2c-tokenizer.layout.txt (complete)",
+  "testvectors/vectors.json (complete)",
+  "testvectors/generate-once-upon-a-time.stdout.txt",
+  "testvectors/generate-the-little-robot.stdout.txt",
+  "HEX DUMP -- first 256 bytes of model/stories15M.bin",
+  "HEX DUMP -- first 256 bytes of model/tokenizer.bin"
+ ],
+ "bash": "C:/msys64/usr/bin/bash.exe",
+ "truncated_replies": 3,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 0,
+   "secs": 0.0,
+   "stdout_bytes": 0,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 3,
+   "exit": 1,
+   "secs": 0.6,
+   "stdout_bytes": 1150,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\ds-gauntlet\\dsv4__selfrun"
+}

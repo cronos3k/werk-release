@@ -1,0 +1,141 @@
+model=nvidia/nemotron-3-nano-4b ctx=131072 package_ctx=65536 budget=121896 chars package=103573 chars included=18 omitted=0
+preflight: prompt_tokens=37834 cold prefill=3.9s (9701 tok/s), chars/token=2.80
+
+--- iteration 1 (19s, finish=stop, 4564 chars) ---
+
+```python
+#!/usr/bin/env python3
+"""
+Solution for mini-v1.werk
+
+The program:
+  1. Opens the .werk file (a zip archive) and extracts the primary mesh
+     (geometry/game.glb) and the primary sound (audio/sfx/crate-impact-hard-surface.wav).
+  2. Verifies that each extracted file's SHA‑256 matches the value declared in MANIFEST.json.
+  3. Reads the node graph from MANIFEST.json, printing each node_id and its type.
+  4. Writes a REPORT.md containing all findings.
+
+Only the Python standard library is used; no external code or network access.
+"""
+
+import json
+import hashlib
+import zipfile
+import tempfile
+import os
+
+# ----------------------------------------------------------------------
+# Helper: compute SHA‑256 of a file on disk
+# ---------------------------------------------------------------
+  >> running solution.py (4535 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=450B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-nemotron4b__mini__retry\solution.py", line 37, in <module>
+      with zipfile.ZipFile(ZIP_NAME, "r") as zf:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\zipfile\__init__.py", line 1331, in __init__
+      self.fp = io.open(file, filemode)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'mini-v1.zip'
+  
+
+--- iteration 2 (28s, finish=stop, 4034 chars) ---
+
+```python
+#!/usr/bin/env python3
+"""
+Solution for mini-v1.werk
+
+The program:
+  1. Opens the .werk file (a zip archive) and extracts the primary mesh
+     (geometry/game.glb) and the primary sound (audio/sfx/crate-impact-hard-surface.wav).
+  2. Verifies that each extracted file's SHA‑256 matches the value declared in MANIFEST.json.
+  3. Reads the node graph from MANIFEST.json, printing each node_id and its type.
+  4. Writes a REPORT.md containing all findings.
+
+Only the Python standard library is used; no external code or network access.
+"""
+
+import json
+import hashlib
+import zipfile
+import os
+
+# ----------------------------------------------------------------------
+# Helper: compute SHA‑256 of raw bytes
+# ----------------------------------------------------------------------
+def sha256_by
+  >> running solution.py (4020 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=535B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-nemotron4b__mini__retry\solution.py", line 39, in <module>
+      mesh_data = zf.open(primary_mesh_path).read()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\zipfile\__init__.py", line 1604, in open
+      zinfo = self.getinfo(name)
+              ^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\zipfile\__init__.py", line 1532, in getinfo
+      raise KeyError(
+  KeyError: "There is no item named 'geom-game' in the archive"
+  
+
+--- iteration 3 (38s, finish=stop, 3951 chars) ---
+
+```python
+#!/usr/bin/env python3
+"""
+Solution for mini-v1.werk
+
+The program:
+  1. Opens the .werk file (a zip archive) and extracts the primary mesh
+     (geometry/game.glb) and the primary sound (audio/sfx/crate-impact-hard-surface.wav).
+  2. Verifies that each extracted file's SHA‑256 matches the value declared in MANIFEST.json.
+  3. Reads the node graph from MANIFEST.json, printing each node_id and its type.
+  4. Writes a REPORT.md containing all findings.
+
+Only the Python standard library is used; no external code or network access.
+"""
+
+import json
+import hashlib
+import zipfile
+import os
+
+# ----------------------------------------------------------------------
+# Helper: compute SHA‑256 of raw bytes
+# ----------------------------------------------------------------------
+def sha256_by
+  >> running solution.py (3937 chars)
+  << exit=0 in 0.1s  stdout=622B stderr=0B
+  Node graph:
+  - geom-game: core.geom.game
+  - material-wood: core.material
+  - bounds: core.phys.bounds
+  - semantics: core.semantics
+  - provenance: core.provenance
+  - audio-crate-impact-hard-surface: core.audio.effect
+  - spec: core.spec
+  - loader-python: core.loader
+  - loader-rust: core.loader
+  - loader-c: core.loader
+  - license: core.license
+  - readme: core.readme
+  - evidence-segments: x.splat-foley.segments
+  - rest-poses: core.pose.rest
+  
+  --- Summary ---
+  Mesh hash OK: True computed eee8b3cb ... declared eee8b3cb ...
+  
+  Sound hash OK: True computed 1e634f03 ... declared 1e634f03 ...
+  
+  Report written to REPORT.md
+  
+
+--- iteration 4 (39s, finish=stop, 14 chars) ---
+
+TASK COMPLETE
+
+=== outcome=model-finished (declared TASK COMPLETE after a clean run) iters=4 first_clean_run=3 wall=38.6s ===
+{"model": "nvidia/nemotron-3-nano-4b", "quant": "unlisted", "context": 131072, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "postfix-nemotron4b-mini-retry", "protocol": "inline-context + error-feedback", "outcome": "model-finished", "detail": "declared TASK COMPLETE after a clean run", "iterations": 4, "first_clean_run": 3, "wall_s": 38.6, "preflight_s": 3.9, "wall_s_excl_preflight": 34.7, "prompt_tokens": 37834, "package_ctx": 65536, "package_chars": 103573, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "spec/examples/restposes.example.hex.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\postfix-nemotron4b__mini__retry"}

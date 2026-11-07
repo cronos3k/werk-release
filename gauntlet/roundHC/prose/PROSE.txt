@@ -1,0 +1,202 @@
+WERK HARDCOPY / 1                                                                 SHEET 1 OF 3
+
+WHAT THIS DOCUMENT IS
+
+This document is a computer file, printed on paper. Sheet 3 carries nine square black-and-white
+symbols, and between them they hold every byte of that file. This sheet and the next tell you
+completely, and without reference to any other document, how to turn photographs of sheet 3 back
+into the file. No standard and no software library is needed, and no prior knowledge of any
+barcode: the code printed here was designed to be describable in two pages, and this is them.
+
+The recovered file is 8168 bytes long. Its SHA-256 digest is
+
+    b0823016 712e4770 e01870f7 09b10a0f d3d4aaf0 8753d714 092038d8 4d7617a6
+
+printed in eight groups of eight hexadecimal digits for legibility; join them with no spaces. If
+what you recover hashes to that, your recovery is exact, and you need trust nothing else here.
+
+----------------------------------------------------------------------------------------------
+1. THE SYMBOL
+
+Every symbol on sheet 3 is a square grid of 99 by 99 small squares. One small square is called a
+MODULE, and a module is either black or white. Rows are numbered r = 0 at the top down to r = 98
+at the bottom; columns c = 0 at the left across to c = 98 at the right. Around the grid is a
+margin of white paper at least four modules wide, which is not part of the grid. Three parts:
+
+  RING 0 -- THE FRAME. Every module with r = 0, or r = 98, or c = 0, or c = 98 is BLACK. The
+  frame is an unbroken black square outline one module thick, and it is what lets you find a
+  symbol on the page at all.
+
+  RING 1 -- THE SEPARATOR AND THE ORIENTATION MARK. Every module with r = 1, or r = 97, or
+  c = 1, or c = 97 is WHITE, with exactly three exceptions: the modules at (r=1,c=1), (r=1,c=2)
+  and (r=2,c=1) are BLACK. Those three form a small black elbow tucked into ONE corner of the
+  ring and into no other, and that corner is the TOP-LEFT corner of the symbol. The elbow is the
+  only thing telling you which way up a symbol is: the frame alone is four-fold symmetric, so
+  without it a symbol read upside down would look perfectly valid.
+
+  THE DATA AREA -- everything else: rows 2 to 96 and columns 2 to 96 inclusive. That is 95 by 95
+  = 9025 module positions, and that is where the file's bytes are.
+
+2. FROM MODULES TO BYTES
+
+Read the data area in reading order: row r = 2 from left to right, then row 3, and so on down to
+row 96. That yields the 9025 modules in a definite order. Turn each one into a bit: a BLACK
+module is the bit 1, a WHITE module is the bit 0.
+
+Take the bits eight at a time and make a byte of each, MOST SIGNIFICANT BIT FIRST. So the first
+module read supplies the value 128 of the first byte, the second module supplies 64, and the
+eighth supplies 1. 9025 bits give 1128 whole bytes and one bit left over; the leftover module is
+printed white and MUST be ignored. Those 1128 bytes are this symbol's CODEWORD. Sheet 2 says
+what is inside a codeword.
+
+3. FINDING AND READING A SYMBOL IN A PHOTOGRAPH
+
+What follows is enough for a photograph taken by hand. It tolerates a degree or so of rotation,
+softness, sensor noise, and a lighting gradient across the page. It assumes no perspective
+distortion worth the name, so hold the camera roughly parallel to the paper.
+
+  (a) TURN THE PHOTOGRAPH INTO BLACK AND WHITE. One threshold for the whole page fails when one
+      side of the page is lit more brightly than the other, so use a local one. Divide the image
+      into square tiles of about 64 by 64 pixels; for each tile find the darkest and the
+      lightest pixel value in it and let that tile's threshold be their midpoint. If those two
+      values are within about 40 levels of each other the tile is all paper or all ink and has
+      no edge in it, so give it instead the average of the thresholds of the tiles that do have
+      contrast. A pixel is INK if it is darker than the threshold of the tile it falls in.
+
+  (b) FIND THE SYMBOLS. Group the ink pixels into connected regions: two ink pixels belong to
+      the same region if you can walk from one to the other through ink pixels, moving only up,
+      down, left or right. Discard every region whose bounding box is smaller than about half a
+      symbol, and every region whose bounding box is not roughly square (width and height within
+      a third of each other). What survives is roughly one region per symbol -- the frame, plus
+      whatever ink inside the symbol happens to touch it. Printed text elsewhere on the page
+      fails both tests and does not survive.
+
+  (c) FIND THE FOUR CORNERS. Take that region's bounding box, widen it by a dozen pixels, and
+      look at the ink inside it. Ignore every connected group smaller than a few hundred pixels:
+      a printed character is smaller than that and a piece of the frame is far larger, so this
+      one rule discards both stray noise specks and any caption text that strayed into the box.
+      Over all the ink that survives, keep the four pixels where the quantities (x + y) and
+      (x - y) reach their extremes:
+
+          A = where x + y is SMALLEST        C = where x + y is LARGEST
+          B = where x - y is LARGEST         D = where x - y is SMALLEST
+
+      For a square rotated by a small angle those four pixels are its four corners in clockwise
+      order, beginning at the one nearest the top-left of the page.
+\f
+WERK HARDCOPY / 1                                                                 SHEET 2 OF 3
+
+      TWO WARNINGS ABOUT (c), both learned the hard way. Do NOT instead take the topmost, the
+      rightmost, the bottommost and the leftmost pixels: at a rotation of one degree an edge 600
+      pixels long and 6 pixels thick has some hundreds of pixels sharing the same smallest
+      column, so any tie-break among them lands most of the way down that edge and the sampling
+      grid collapses. And do NOT assume that the frame is a single
+      connected piece: an illumination gradient can break it into several, which is why the rule
+      above gathers every large group in the box rather than only the largest one.
+
+  (d) SAMPLE THE MODULES. Treat A as grid position (r=0,c=0), B as (r=0,c=98), C as (r=98,c=98)
+      and D as (r=98,c=0), and interpolate between them. For the module at (r,c) let
+      u = (c + 0.5) / 99 and v = (r + 0.5) / 99, and let the module's centre be the point
+
+          P = (1-u)(1-v)A + u(1-v)B + u.v.C + (1-u)v.D
+
+      computed separately for the x and the y coordinate. Look at the nine pixels in the 3 by 3
+      block centred on the pixel nearest P: the module is BLACK if five or more of those nine
+      are ink, and WHITE otherwise. Voting over nine pixels rather than trusting one absorbs
+      noise and print speckle.
+
+  (e) CHECK, THEN TURN IT THE RIGHT WAY UP. Ring 0 should now be at least 90 per cent black. If
+      it is not, the region was not a symbol or the corners were wrong, and the result must be
+      discarded rather than guessed at. Then look at the four corners of ring 1 for the
+      three-module elbow of section 1 and rotate the whole grid in 90-degree steps until the
+      elbow sits at the top-left. Now read it as section 2 says.
+
+4. WHAT IS IN A CODEWORD
+
+Each symbol yields 1128 bytes. They are laid out as follows. Byte positions count from 0.
+Multi-byte numbers are unsigned and BIG-ENDIAN, meaning the most significant byte comes first:
+the two bytes 0x01 0x2C are the number 300, and the four bytes 0x00 0x00 0x1F 0xE8 are 8168.
+
+    bytes 0-1      0x57 0x4B        a fixed marker; in ASCII the letters "WK". If these two
+                                    bytes are anything else you have not read a codeword.
+    byte  2        0x01             format version. This document is version 1.
+    byte  3        0x00 or 0x01     KIND. 0x00 = a DATA symbol, 0x01 = a PARITY symbol.
+    bytes 4-5      16-bit number    SEQ: this symbol's position in the document, counting from
+                                    0, counting both kinds.
+    bytes 6-7      16-bit number    TOTAL: how many symbols the document has, both kinds
+                                    together. In this document, 9.
+    bytes 8-11     32-bit number    FILE_LEN: the length in bytes of the file being recovered.
+                                    In this document, 8168.
+    bytes 12-15    32-bit number    CRC: a checksum over the rest, described in section 5.
+    bytes 16-1127  1112 bytes       the PAYLOAD.
+
+SEQ, TOTAL and the CRC are also printed in plain text beneath every symbol on sheet 3, so you
+can check what you decoded against what was printed and tell whether a symbol is missing.
+
+5. THE CHECKSUM
+
+The CRC in bytes 12-15 is computed over 1124 bytes: bytes 0 to 11 of the codeword followed by
+bytes 16 to 1127 -- everything except the four CRC bytes themselves, in that order. The
+algorithm is the ordinary CRC-32 used by ZIP archives and PNG images, in full so that you need
+not look it up:
+
+    let crc = 0xFFFFFFFF
+    for each byte B of the input, in order:
+        crc = crc XOR B                          (B affects only the low 8 bits)
+        repeat 8 times:
+            if crc has its lowest bit set:   crc = (crc >> 1) XOR 0xEDB88320
+            else:                            crc = crc >> 1
+    the answer is crc XOR 0xFFFFFFFF
+
+All arithmetic is on unsigned 32-bit values, and ">>" is a shift right that brings in zeros.
+TEST IT BEFORE YOU TRUST IT: the CRC-32 of the nine ASCII bytes 123456789 is 0xCBF43926. If your
+implementation gives that, it is correct.
+
+A codeword whose computed CRC does not equal its stored CRC has been misread and MUST be thrown
+away entirely; do not salvage part of it. One wrong module anywhere fails this check, which is
+exactly what the check is for.
+
+6. REPAIRING A SYMBOL YOU COULD NOT READ
+
+Symbols are printed in groups: up to eight DATA symbols followed by one PARITY symbol, then the
+next eight, and so on. SEQ runs 0, 1, 2 upward straight through the document, so in a document
+of nine symbols SEQ 0 to 7 are data and SEQ 8 is the parity symbol of that one group.
+
+A parity symbol's 1112-byte payload is the exclusive-or (XOR), byte by byte, of the payloads of
+the data symbols in its group. So if exactly one symbol of a group is missing or failed its CRC,
+rebuild it: XOR together the payloads of all the OTHER symbols of that group, parity included,
+and the result is the missing payload. Two or more missing in one group cannot be repaired.
+
+Continued on sheet 3, which says how to put the file back together, what the file is, and
+carries the nine symbols themselves.
+\f
+WERK HARDCOPY / 1                                                                 SHEET 3 OF 3
+
+7. PUTTING THE FILE BACK TOGETHER
+
+Sort the DATA symbols by SEQ ascending and ignore the parity symbols. Join their payloads end to
+end in that order. The result is a whole number of 1112-byte blocks and is therefore usually
+longer than the file: keep the first FILE_LEN bytes and discard the rest, because the file was
+padded with zero bytes to fill the last symbol. What you now hold is the file.
+
+Check it. Compute the SHA-256 digest of those FILE_LEN bytes and compare it with the digest
+printed on sheet 1 and again at the foot of this sheet. SHA-256 is not described here, because
+unlike the code below it is a published standard (FIPS 180-4) implemented in the standard
+library of every programming language in use; call the one you have. If the digests match, the
+recovery is byte-exact. If they do not, something above went wrong and no part of the result
+should be trusted.
+
+8. WHAT THE FILE IS
+
+The recovered file is a WERK PACKAGE. That format's rule is that a file explains itself, so most
+of the explanation is inside the bytes you just recovered rather than here. A werk package is a
+ZIP archive whose entries are STORED rather than compressed, so any zip tool opens it. Its first
+entry is MANIFEST.json, a UTF-8 JSON document describing every other entry -- a path, a size, a
+media type and a SHA-256 digest each -- grouped into NODES saying what each thing is and where
+it came from. Verify every entry against the digest the manifest declares for it. README.txt is
+written for whoever opens the package. SIGNATURE.json holds an Ed25519 signature chain over the
+manifest, made with a published key, so a valid signature is evidence of integrity and not of
+authorship. The package carries one payload of substance: extract it, open it in any image
+viewer, and you will know at once whether this exercise worked.
+
+THE NINE SYMBOLS

@@ -1,0 +1,24 @@
+{
+ "fixture": "gauntlet/roundSR/selfrun-v1.werk",
+ "rundir": "F:\\gf-gauntlet\\qwen3-coder-30b__selfrun",
+ "executables": [],
+ "grade_A": {
+  "once-upon-a-time": {
+   "text_present": true,
+   "sha_lf_quoted": true,
+   "want_sha256_lf": "32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5",
+   "want_bytes_lf": 234
+  },
+  "the-little-robot": {
+   "text_present": true,
+   "sha_lf_quoted": true,
+   "want_sha256_lf": "eeeb4eb0a7f1f3b2f6a213a03317338c3ddf6de738b4aeaf0a55ceb5dd22540c",
+   "want_bytes_lf": 140
+  }
+ },
+ "grade_B": {},
+ "A_matched": 2,
+ "B_matched": 0,
+ "vectors": 2,
+ "verdict": "FAIL"
+}

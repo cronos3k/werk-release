@@ -1,0 +1,213 @@
+model=ebai3.6-27b-unscensored ctx=65536 package_ctx=65536 budget=121896 chars package=91059 chars included=17 omitted=0
+preflight: prompt_tokens=33044 cold prefill=15.5s (2132 tok/s), chars/token=2.83
+
+--- iteration 1 (250s, finish=stop, 29218 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py — Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound to disk, and write REPORT.md.
+
+All knowledge is derived from MANIFEST.json inside the ZIP container.
+Only Python standard library is used (zipfile, json, hashlib, os, time).
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+import time
+from datetime import datetime
+
+
+def sha256_bytes(data: bytes) -> str:
+    """Return lowercase hex SHA-256 of raw bytes."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: str) -> str:
+    """Return lowercase hex SHA-256 of a file on disk."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while True:
+            chunk = f.read(1 << 16)
+            if no
+  >> running solution.py (29203 chars)
+  << exit=1 in 0.1s  stdout=831B stderr=610B
+  ======================================================================
+  PHASE 1: Opening container and reading manifest
+  ======================================================================
+    Container opened successfully (ZIP, 34 entries)
+    MANIFEST.json read: 22819 bytes
+    Profile: 3d-entity/1
+    Entity name: Wooden crate (small-context fixture)
+    Time: 0.001s
+  
+  ======================================================================
+  PHASE 2: Listing node graph with meanings
+  ======================================================================
+  
+    Node: geom-game
+      Type: core.geom.game
+      Epistemic status: measured
+      Note: Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPE...
+      File: geometry/game.glb (role=payload, size=16736)
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\ebai27b__mini__retry\solution.py", line 680, in <module>
+      main()
+    File "F:\ow-gauntlet\ebai27b__mini__retry\solution.py", line 120, in main
+      print(f"    Edge \u2192 {ei['to']} ({ei['kind']}/{ei['role']})")
+    File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+      return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeEncodeError: 'charmap' codec can't encode character '\u2192' in position 9: character maps to <undefined>
+  
+
+--- iteration 2 (473s, finish=stop, 29684 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py — Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound to disk, and write REPORT.md.
+
+All knowledge is derived from MANIFEST.json inside the ZIP container.
+Only Python standard library is used (zipfile, json, hashlib, os, time).
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+import time
+from datetime import datetime
+
+
+def sha256_bytes(data: bytes) -> str:
+    """Return lowercase hex SHA-256 of raw bytes."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: str) -> str:
+    """Return lowercase hex SHA-256 of a file on disk."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while True:
+            chunk = f.read(1 << 16)
+            if no
+  >> running solution.py (29669 chars)
+  << exit=0 in 0.1s  stdout=11971B stderr=328B
+  ======================================================================
+  PHASE 1: Opening container and reading manifest
+  ======================================================================
+    Container opened successfully (ZIP, 34 entries)
+    MANIFEST.json read: 22819 bytes
+    Profile: 3d-entity/1
+    Entity name: Wooden crate (small-context fixture)
+    Time: 0.000s
+  
+  ======================================================================
+  PHASE 2: Listing node graph with meanings
+  ======================================================================
+  
+    Node: geom-game
+      Type: core.geom.game
+      Epistemic status: measured
+      Note: Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPE...
+      File: geometry/game.glb (role=payload, size=16736)
+      Edge -> geom-source (enhances/derived-from)
+  
+    Node: material-wood
+      Type: core.material
+      Epistemic status: authored
+      Note: Authored PBR parameters for the crate's only material.
+      File: materials/wood.json (role=payload, size=525)
+      Edge -> geom-game (enhances/shades)
+  
+    Node: bounds
+      Type: core.phys.bounds
+      Epistemic status: measure
+  STDERR: F:\ow-gauntlet\ebai27b__mini__retry\solution.py:416: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    report_lines.append(f"Generated: {datetime.utcnow().isoformat()}Z")
+  
+
+--- iteration 3 (709s, finish=stop, 29724 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py — Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound to disk, and write REPORT.md.
+
+All knowledge is derived from MANIFEST.json inside the ZIP container.
+Only Python standard library is used (zipfile, json, hashlib, os, time).
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+import time
+from datetime import datetime, timezone
+
+
+def sha256_bytes(data: bytes) -> str:
+    """Return lowercase hex SHA-256 of raw bytes."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def sha256_file(path: str) -> str:
+    """Return lowercase hex SHA-256 of a file on disk."""
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        while True:
+            chunk = f.read(1 << 16)
+       
+  >> running solution.py (29709 chars)
+  << exit=0 in 0.1s  stdout=11971B stderr=0B
+  ======================================================================
+  PHASE 1: Opening container and reading manifest
+  ======================================================================
+    Container opened successfully (ZIP, 34 entries)
+    MANIFEST.json read: 22819 bytes
+    Profile: 3d-entity/1
+    Entity name: Wooden crate (small-context fixture)
+    Time: 0.000s
+  
+  ======================================================================
+  PHASE 2: Listing node graph with meanings
+  ======================================================================
+  
+    Node: geom-game
+      Type: core.geom.game
+      Epistemic status: measured
+      Note: Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPE...
+      File: geometry/game.glb (role=payload, size=16736)
+      Edge -> geom-source (enhances/derived-from)
+  
+    Node: material-wood
+      Type: core.material
+      Epistemic status: authored
+      Note: Authored PBR parameters for the crate's only material.
+      File: materials/wood.json (role=payload, size=525)
+      Edge -> geom-game (enhances/shades)
+  
+    Node: bounds
+      Type: core.phys.bounds
+      Epistemic status: measure
+
+--- iteration 4 (725s, finish=stop, 15 chars) ---
+
+
+TASK COMPLETE
+
+=== outcome=model-finished (declared TASK COMPLETE after a clean run) iters=4 first_clean_run=2 wall=724.6s ===
+{"model": "ebai3.6-27b-unscensored", "quant": "unlisted", "context": 65536, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "ebai27b-mini-retry", "protocol": "inline-context + error-feedback", "outcome": "model-finished", "detail": "declared TASK COMPLETE after a clean run", "iterations": 4, "first_clean_run": 2, "wall_s": 724.6, "preflight_s": 15.5, "wall_s_excl_preflight": 709.1, "prompt_tokens": 33044, "package_ctx": 65536, "package_chars": 91059, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\ebai27b__mini__retry"}

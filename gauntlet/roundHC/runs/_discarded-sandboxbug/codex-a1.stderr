@@ -1,0 +1,45 @@
+Reading additional input from stdin...
+2026-08-09T04:51:41.506214Z ERROR codex_models_manager::cache: failed to load models cache: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:52:01.336115Z ERROR codex_core::tools::router: error=unable to locate image at `F:\werkHC-run\attempt1\workspace\page-01.jpg`: failed to prepare fs sandbox: failed to prepare windows sandbox wrapper: windows unelevated restricted-token sandbox cannot enforce split writable root sets directly; refusing to run unsandboxed
+2026-08-09T04:52:01.343737Z ERROR codex_core::tools::router: error=unable to locate image at `F:\werkHC-run\attempt1\workspace\page-02.jpg`: failed to prepare fs sandbox: failed to prepare windows sandbox wrapper: windows unelevated restricted-token sandbox cannot enforce split writable root sets directly; refusing to run unsandboxed
+2026-08-09T04:52:08.914495Z ERROR codex_core::tools::router: error=Exit code: 1
+Wall time: 0.4 seconds
+Output:
+New-Item : Access to the path 'doc-recovery' is denied.
+At line:2 char:32
++ ... oc-recovery'; New-Item -ItemType Directory -Force -Path $dest | Out-N ...
++                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (F:\tmp\doc-recovery:String) [New-Item], UnauthorizedAccessException
+    + FullyQualifiedErrorId : CreateDirectoryUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand
+ 
+Copy-Item : Access to the path 'F:\tmp\doc-recovery' is denied.
+At line:2 char:92
++ ... | Out-Null; Copy-Item -LiteralPath 'F:\werkHC-run\attempt1\workspace\ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (F:\werkHC-run\a...ace\page-01.jpg:FileInfo) [Copy-Item], Unauthorized 
+   AccessException
+    + FullyQualifiedErrorId : CopyFileInfoItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.CopyItemCommand
+ 
+Copy-Item : Access to the path 'F:\tmp\doc-recovery' is denied.
+At line:2 char:92
++ ... | Out-Null; Copy-Item -LiteralPath 'F:\werkHC-run\attempt1\workspace\ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Copy-Item], UnauthorizedAccessException
+    + FullyQualifiedErrorId : System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.CopyItemCommand
+ 
+Get-ChildItem : Cannot find path 'F:\tmp\doc-recovery' because it does not exist.
+At line:2 char:283
++ ... ' -Destination $dest -Force; Get-ChildItem -LiteralPath $dest | Selec ...
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (F:\tmp\doc-recovery:String) [Get-ChildItem], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+ 
+
+2026-08-09T04:52:29.643631Z ERROR codex_core::tools::router: error=unable to locate image at `F:\werkHC-run\attempt1\workspace\page-01.jpg`: failed to prepare fs sandbox: failed to prepare windows sandbox wrapper: windows unelevated restricted-token sandbox cannot enforce split writable root sets directly; refusing to run unsandboxed
+2026-08-09T04:53:41.634752Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:53:44.083483Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:53:48.801145Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:53:51.469110Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:53:57.120094Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:54:03.381547Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5
+2026-08-09T04:54:10.885821Z ERROR codex_models_manager::manager: failed to renew cache TTL: missing field `supports_reasoning_summaries` at line 86 column 5

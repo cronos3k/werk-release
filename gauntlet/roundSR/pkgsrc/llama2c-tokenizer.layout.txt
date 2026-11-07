@@ -1,0 +1,125 @@
+werk layout grammar — llama2c-tokenizer/1
+=========================================
+
+The binary layout of the file this package carries as `model/tokenizer.bin`.
+Derived from `build_tokenizer`, `encode` and `decode` in `tools/llama2c/run.c`,
+and checked against the file: the walk in §3 consumes exactly 433 869 bytes and
+yields exactly 32 000 entries, with nothing left over.
+
+1. SCALARS
+----------
+
+  i32  signed 32-bit integer, LITTLE-ENDIAN
+  f32  IEEE 754 binary32, LITTLE-ENDIAN
+  u8   raw byte
+
+No magic number, no version, no checksum, and — the important omission — NO
+VOCABULARY SIZE. See §4.
+
+2. HEADER — 4 bytes at offset 0
+-------------------------------
+
+  off  type  name               value in model/tokenizer.bin
+  ---  ----  -----------------  ----------------------------
+    0  i32   max_token_length             27
+
+`max_token_length` is the length in bytes of the longest token string in the
+file. It is a buffer hint for the encoder, not a structural field. MEASURED over
+this file: the longest entry is 27 bytes, so the declared value is correct. A
+reader SHOULD check it rather than trust it; a wrong value here overflows a
+fixed buffer in a naive encoder and nothing else in the file contradicts it.
+
+3. ENTRIES — 32 000 records, packed, starting at offset 4
+---------------------------------------------------------
+
+Each record, with no padding between records and none at the end:
+
+  type       name    meaning
+  ---------  ------  --------------------------------------------------------
+  f32        score   the BPE merge score. Higher wins. See §5.
+  i32        len     length of `bytes` in bytes. NOT null-terminated in file.
+  u8[len]    bytes   the token's UTF-8 text, verbatim
+
+The token's ID is its ORDINAL POSITION in this sequence, counting from 0. The
+file never writes an id down. This is the same property the checkpoint's tensor
+order has and it has the same consequence: order is load-bearing and a reader
+that skips a malformed record silently renumbers every token after it.
+
+  MUST: a conformant reader walks all `vocab_size` records and REFUSES the file
+  (node-scoped refusal, SPEC.md §10.1) if the walk does not land exactly on the
+  end of the file. For this file that landing point is byte 433 869.
+
+The first eight entries of model/tokenizer.bin, as a test vector for the walk:
+
+  id  score  len  bytes
+  --  -----  ---  --------------
+   0    0.0    5  "<unk>"
+   1    0.0    5  "\n<s>\n"
+   2    0.0    6  "\n</s>\n"
+   3    0.0    6  "<0x00>"
+   4    0.0    6  "<0x01>"
+   5    0.0    6  "<0x02>"
+   6    0.0    6  "<0x03>"
+   7    0.0    6  "<0x04>"
+
+Ids 1 and 2 are BOS and EOS. Ids 3..258 are the 256 single-byte fallback
+tokens, written as the six-character text "<0xNN>" — the text is the LITERAL
+angle-bracket spelling, not the byte itself, and `decode` in run.c recognises
+that spelling and substitutes the raw byte. A reader that emits "<0x0A>" where a
+newline was meant has read the file correctly and decoded it wrongly.
+
+4. THE MISSING FIELD, AND WHERE THE COUNT COMES FROM
+----------------------------------------------------
+
+THE NUMBER OF ENTRIES IS NOT IN THIS FILE. run.c carries the author's own note
+about it:
+
+    // i should have written the vocab_size into the tokenizer file... sigh
+
+The count is passed in from the CHECKPOINT's header: `build_tokenizer` is called
+with `transformer.config.vocab_size`. So `model/tokenizer.bin` cannot be read
+without `model/stories15M.bin`, and the two files are only jointly meaningful.
+
+That is a cross-file dependency inside one package, and werk states it rather
+than leaving a reader to discover it:
+
+  * the manifest's `x.model.tokenizer` node carries `meta.vocab_size = 32000`
+    and `meta.vocab_size_source = "checkpoint header field 6"`, so a consumer
+    holding only this node still knows the number;
+  * `MUST`: where the two disagree, a reader reports the disagreement and does
+    not pick one. The checkpoint's value is what the runtime will use, and a
+    tokenizer walk that does not terminate on the file's last byte is the
+    symptom.
+
+A reader that has ONLY this file, and no checkpoint, can still recover the count
+by walking to EOF and counting — which is what makes §3's "MUST land exactly on
+the end" worth stating. It works for this file. It is not a general recovery:
+any prefix of a valid record stream is also a valid record stream.
+
+5. WHAT THE SCORES ARE FOR
+--------------------------
+
+`encode` in run.c is a greedy merging BPE: it first maps the input string to
+single-byte and single-character tokens by exact lookup, then repeatedly finds
+the adjacent pair whose CONCATENATION exists in the vocabulary with the highest
+`score`, and merges it, until no pair merges. The scores are therefore a merge
+PRIORITY, not a probability and not a log-likelihood, and nothing in the file or
+the runtime normalises them.
+
+Two details a re-implementation gets wrong and this package's test vectors
+catch (`testvectors/vectors.json`):
+
+  * a BOS token (id 1) is prepended by `generate()`;
+  * SentencePiece encodes a leading space as U+2581, and run.c emulates that by
+    prepending a "dummy prefix" space token to a non-empty prompt before
+    merging. Drop it and the first generated token changes.
+
+6. DECISIONS
+------------
+
+D-L2T-1  Carried byte-identical to upstream, for the reason D-L2C-1 gives.
+
+D-L2T-2  `vocab_size` is duplicated into the node's `meta` rather than into the
+         payload. Editing the payload to add the field the author wishes he had
+         written would have broken the upstream hash — and law 9 says the
+         manifest is where a consumer looks before opening a payload anyway.

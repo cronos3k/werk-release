@@ -1,0 +1,7 @@
+report_lines.append("")
+report_lines.append("### What each tool does (from source and tool.json)")
+report_lines.append("")
+report_lines.append("- **splat-to-ply**: Converts an INRIA-convention `.splat` binary (the original input) into a binary_little_endian PLY with the standard Gaussian-splatting properties (x,y,z, f_dc_*, f_rest_*, opacity, scale_*, rot_*). It reads the `.splat` format and writes a PLY.")
+report_lines.append("- **werk-gsplat**: Converts that PLY into the WKGS envelope: reads the PLY, applies `exp` to scales, `sigmoid` to opacity, reorders quaternions to wxyz, transposes SH coefficients from channel-major to coefficient-major, and writes the six-section WKGS payload.")
+report_lines.append("- **werk-pointcloud**: Derives the WKPC point cloud from the WKGS: takes the means and the DC band, applies `clamp(0.5 + C0*dc, 0, 1)`, quantises to u8, and writes the two-section WKPC payload.")
+report_lines.append("")

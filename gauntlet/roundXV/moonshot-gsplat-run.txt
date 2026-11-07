@@ -1,0 +1,163 @@
+Opening gsplat-v1.werk ...
+ZIP integrity: OK (all CRCs match)
+
+Profile: 3d-entity/1
+Entity:  plush (5b052490-f871-4336-9d9c-19a3fb076796)
+Manifest schema: spec/schemas/manifest.schema.json
+
+--- Contents (77 zip entries) ---
+
+[(root)]
+  MANIFEST.json                                            34829 bytes  -> container framing / not declared
+  SIGNATURE.json                                            1047 bytes  -> container framing / not declared
+  LICENSE                                                   2859 bytes  -> core.license node 'license' v1 (active=1)
+  README.txt                                                2682 bytes  -> core.readme node 'readme' v1 (active=1)
+
+[loaders]
+  loaders/werk_read.c                                     111051 bytes  -> core.loader node 'loader-c' v1 (active=1)
+  loaders/werk_read.py                                     42226 bytes  -> core.loader node 'loader-python' v1 (active=1)
+  loaders/werk_read.rs                                     98761 bytes  -> core.loader node 'loader-rust' v1 (active=1)
+
+[points]
+  points/plush-dc.wkpc                                   4223440 bytes  -> core.geom.points node 'points-dc' v1 (active=1)
+
+[provenance]
+  provenance/provenance.json                                1047 bytes  -> core.provenance node 'provenance' v1 (active=1)
+
+[recipe]
+  recipe/recipe.json                                        6171 bytes  -> core.recipe node 'recipe' v1 (active=1)
+  recipe/inputs/plush.splat                              9007936 bytes  -> core.recipe node 'recipe' v1 (active=1)
+
+[semantics]
+  semantics/semantics.json                                  2381 bytes  -> core.semantics node 'semantics' v1 (active=1)
+
+[spec]
+  spec/MINI-SPECS.md                                       33241 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/PROFILE-IMAGE.md                                    12698 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/README.md                                           10319 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/SPEC.md                                             99291 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/X-C2PA-EXPORT.md                                     7461 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/conventions-map.image.json                           2416 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/conventions-map.json                                 9269 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/examples/MANIFEST.example.json                      20608 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/examples/make-examples.py                           26764 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/examples/restposes.example.hex.txt                   4415 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/examples/restposes.example.wkrp                       560 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/extensions/x.cub.v1.baked.layout.txt                 9359 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/extensions/x.cub.v1.md                               8783 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/facets.json                                         11978 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/ENVELOPE.layout.txt                         25287 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/animclip.layout.txt                         16800 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/embedding.layout.txt                        13909 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/flowfield.layout.txt                         6263 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/gsplat.layout.txt                           23310 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/imposter.layout.txt                         10446 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/points.layout.txt                           16663 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/restposes.layout.txt                         5958 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/layouts/skeleton.layout.txt                          5964 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/conventions-map.schema.json                  4614 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.anim.clip.schema.json                   9585 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.audio.effect.schema.json                8628 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.audio.package.schema.json               7320 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.destruct.schema.json                    6319 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.disclosure.schema.json                 11515 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.imposter.schema.json                    6708 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.material.schema.json                    4823 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.phys.body.schema.json                   6157 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.phys.bounds.schema.json                 3164 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.phys.colliders.schema.json              4116 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.props.schema.json                      11666 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.provenance.schema.json                  6140 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.recipe.schema.json                     26485 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.retarget.bind.schema.json              13337 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.semantics.schema.json                   6917 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.skeleton.schema.json                   11464 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.tool.config.schema.json                 7321 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/core.tool.schema.json                       10894 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/facets.schema.json                           3593 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/manifest.image.schema.json                  27420 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/manifest.schema.json                        44155 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/signature.schema.json                       11209 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/schemas/x.c2pa.export.schema.json                    4935 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/skeleton/canonical-humanoid-v1.json                 22429 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/skeleton/core.hands.v1.json                         26112 bytes  -> core.spec node 'spec' v1 (active=1)
+  spec/skeleton/derive-canonical-humanoid.py               19852 bytes  -> core.spec node 'spec' v1 (active=1)
+
+[splats]
+  splats/plush.wkgs                                     15764784 bytes  -> core.geom.gsplat node 'gsplat' v1 (active=1)
+
+[tools]
+  tools/splat-to-ply-run.config.json                        2007 bytes  -> core.tool.config node 'tool-config-splat-to-ply-run' v1 (active=1)
+  tools/splat-to-ply/ply.py                                21847 bytes  -> core.tool node 'tool-splat-to-ply' v1 (active=1)
+  tools/splat-to-ply/splat_to_ply.py                        8353 bytes  -> core.tool node 'tool-splat-to-ply' v1 (active=1)
+  tools/splat-to-ply/tool.json                              1818 bytes  -> core.tool node 'tool-splat-to-ply' v1 (active=1)
+  tools/werk-gsplat-run.config.json                         1824 bytes  -> core.tool.config node 'tool-config-werk-gsplat-run' v1 (active=1)
+  tools/werk-gsplat/common.py                              16849 bytes  -> core.tool node 'tool-werk-gsplat' v1 (active=1)
+  tools/werk-gsplat/p_gsplat.py                            12942 bytes  -> core.tool node 'tool-werk-gsplat' v1 (active=1)
+  tools/werk-gsplat/ply.py                                 21847 bytes  -> core.tool node 'tool-werk-gsplat' v1 (active=1)
+  tools/werk-gsplat/tool.json                               1936 bytes  -> core.tool node 'tool-werk-gsplat' v1 (active=1)
+  tools/werk-pointcloud-run.config.json                     1547 bytes  -> core.tool.config node 'tool-config-werk-pointcloud-run' v1 (active=1)
+  tools/werk-pointcloud/common.py                          16849 bytes  -> core.tool node 'tool-werk-pointcloud' v1 (active=1)
+  tools/werk-pointcloud/p_pointcloud.py                    13791 bytes  -> core.tool node 'tool-werk-pointcloud' v1 (active=1)
+  tools/werk-pointcloud/ply.py                             21847 bytes  -> core.tool node 'tool-werk-pointcloud' v1 (active=1)
+  tools/werk-pointcloud/tool.json                           1692 bytes  -> core.tool node 'tool-werk-pointcloud' v1 (active=1)
+
+--- File hash verification ---
+Declared files: 75 OK, 0 bad
+No floating entries besides MANIFEST.json and SIGNATURE.json
+
+spec_sha256 declared: 331519c8d96aca0f8ea31200c68a6b28d62205f8458038a06cf2057fa5734575
+spec_sha256 computed: 331519c8d96aca0f8ea31200c68a6b28d62205f8458038a06cf2057fa5734575
+spec_sha256: OK
+
+MANIFEST.json sha256: e197af7f85988819e46bb5cee6849e7cc914f98d5dab7ac744922516d7785c7e
+SIGNATURE.json manifest_sha256: e197af7f85988819e46bb5cee6849e7cc914f98d5dab7ac744922516d7785c7e
+Manifest hash matches signature record: OK
+
+=== Point cloud (points/plush-dc.wkpc) ===
+count: 281498
+fields:
+  position  semantic=position  dtype=f32  components=3
+  color  semantic=color  dtype=u8  components=3
+
+First 5 positions (metres):
+  [0]  -0.060075  +1.625257  +0.935071
+  [1]  -0.035026  +1.578063  +1.032170
+  [2]  -0.109434  +1.615720  +1.005387
+  [3]  -0.025732  +1.576227  +1.033759
+  [4]  -0.011812  +1.612853  +0.940788
+
+First 5 colours (u8, linear-srgb):
+  [0]   39   19    6
+  [1]   60   30   29
+  [2]  109   71   26
+  [3]   65   43   46
+  [4]   51   18    9
+
+=== Gaussian splat (splats/plush.wkgs) ===
+Gaussian count: 281498
+sh_degree: 0
+
+First 5 splat means (metres):
+  [0]  -0.060075  +1.625257  +0.935071
+  [1]  -0.035026  +1.578063  +1.032170
+  [2]  -0.109434  +1.615720  +1.005387
+  [3]  -0.025732  +1.576227  +1.033759
+  [4]  -0.011812  +1.612853  +0.940788
+
+First 5 splat DC colours (linear-srgb, 0..1):
+  [0]  0.152941  0.074510  0.023529
+  [1]  0.235294  0.117647  0.113725
+  [2]  0.427451  0.278431  0.101961
+  [3]  0.254902  0.168627  0.180392
+  [4]  0.200000  0.070588  0.035294
+
+Spot-check: first 281498 positions match between WKPC and WKGS
+
+--- SUMMARY ---
+points: 281498
+gsplat Gaussians: 281498
+file hashes OK: 75
+file hashes bad: 0
+spec_sha256 OK: True
+manifest hash OK: True

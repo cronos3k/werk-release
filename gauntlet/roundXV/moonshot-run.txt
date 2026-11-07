@@ -1,0 +1,592 @@
+======================================================================
+Archive: crate-v1.werk (13611141 bytes)
+Format:  werk 1.0
+Profile: 3d-entity/1
+Entity:  4f2a1c86-7b3d-4e59-9a02-6d1e8c4b0f37 - Wooden crate
+Primary mesh:  geom-game
+Primary sound: audio-crate-impact-hard-surface
+======================================================================
+
+NODE GRAPH (36 nodes)
+----------------------------------------------------------------------
+  node_id : geom-source
+  type    : core.geom.source
+  meaning : The mesh exactly as the splat-foley run produced it: positions, u8 vertex colours, no normals. Kept verbatim because it is the anchor every derivation is checked against, and a rewritten source is not a source.
+  files   : 1
+            - geometry/source.glb (10192 bytes)
+  edges   : none
+
+  node_id : geom-game
+  type    : core.geom.game
+  meaning : Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPEC 3.10 requires NORMAL and requires COLOR_0 to be linear.
+  files   : 1
+            - geometry/game.glb (16736 bytes)
+  edges   : enhances->geom-source (derived-from)
+
+  node_id : material-wood
+  type    : core.material
+  meaning : Authored PBR parameters for the crate's only material.
+  files   : 1
+            - materials/wood.json (525 bytes)
+  edges   : enhances->geom-game (shades)
+
+  node_id : bounds
+  type    : core.phys.bounds
+  meaning : Measured bounds for culling, placement and LOD selection maths.
+  files   : 1
+            - physics/bounds.json (654 bytes)
+  edges   : requires->geom-game (bounds-of)
+
+  node_id : evidence-views
+  type    : x.splat-foley.views
+  meaning : Six orbit views rendered from the source mesh. They are the pixels the vision model actually saw, kept so the inferred description can be audited rather than trusted.
+  files   : 6
+            - x/splat-foley/views/view_00.png (38511 bytes)
+            - x/splat-foley/views/view_01.png (17858 bytes)
+            - x/splat-foley/views/view_02.png (43078 bytes)
+            - x/splat-foley/views/view_03.png (37718 bytes)
+            - x/splat-foley/views/view_04.png (18703 bytes)
+            - x/splat-foley/views/view_05.png (42934 bytes)
+  edges   : enhances->geom-source (rendered-from)
+
+  node_id : evidence-segments
+  type    : x.splat-foley.segments
+  meaning : SAM segment crops: the sub-object regions the description and the sound plan were derived from.
+  files   : 10
+            - x/splat-foley/segments/seg_00.png (37183 bytes)
+            - x/splat-foley/segments/seg_01.png (2198 bytes)
+            - x/splat-foley/segments/seg_02.png (40526 bytes)
+            - x/splat-foley/segments/seg_03.png (2390 bytes)
+            - x/splat-foley/segments/seg_04.png (2493 bytes)
+            - x/splat-foley/segments/seg_05.png (1912 bytes)
+            - x/splat-foley/segments/seg_06.png (1992 bytes)
+            - x/splat-foley/segments/seg_07.png (2959 bytes)
+            - x/splat-foley/segments/seg_08.png (17851 bytes)
+            - x/splat-foley/segments/seg_09.png (2683 bytes)
+  edges   : requires->evidence-views (cropped-from)
+
+  node_id : audio-package
+  type    : core.audio.package
+  meaning : The sound world index: what was described, what was planned, which takes exist and which gate scores they earned - including the ones that were rolled back.
+  files   : 1
+            - audio/package.json (44158 bytes)
+  edges   : enhances->evidence-views (described-from), enhances->geom-game (sounds-for)
+
+  node_id : audio-crate-dragged-rough-concrete
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate': dragged across rough concrete. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/crate-dragged-rough-concrete.json (2028 bytes)
+            - audio/sfx/crate-dragged-rough-concrete.wav (192044 bytes)
+            - audio/sfx/crate-dragged-rough-concrete.var2.wav (192044 bytes)
+            - audio/sfx/crate-dragged-rough-concrete.var3.wav (192044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-impact-hard-surface
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate': hit by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/crate-impact-hard-surface.json (1783 bytes)
+            - audio/sfx/crate-impact-hard-surface.wav (17644 bytes)
+            - audio/sfx/crate-impact-hard-surface.raw.wav (96044 bytes)
+            - audio/sfx/crate-impact-hard-surface.var2.wav (96044 bytes)
+            - audio/sfx/crate-impact-hard-surface.var3.wav (96044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-kicked-hard
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/crate-kicked-hard.json (1764 bytes)
+            - audio/sfx/crate-kicked-hard.wav (64044 bytes)
+            - audio/sfx/crate-kicked-hard.var2.wav (64044 bytes)
+            - audio/sfx/crate-kicked-hard.var3.wav (64044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-scraped-edge
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate': scraped along edge. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/crate-scraped-edge.json (1701 bytes)
+            - audio/sfx/crate-scraped-edge.wav (160044 bytes)
+            - audio/sfx/crate-scraped-edge.var2.wav (160044 bytes)
+            - audio/sfx/crate-scraped-edge.var3.wav (160044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-tipped-over
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate': tipped over onto side. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/crate-tipped-over.json (1784 bytes)
+            - audio/sfx/crate-tipped-over.wav (106286 bytes)
+            - audio/sfx/crate-tipped-over.raw.wav (128044 bytes)
+            - audio/sfx/crate-tipped-over.var2.wav (128044 bytes)
+            - audio/sfx/crate-tipped-over.var3.wav (128044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-set-down-hard
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate': set down firmly. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/crate-set-down-hard.json (1653 bytes)
+            - audio/sfx/crate-set-down-hard.wav (21164 bytes)
+            - audio/sfx/crate-set-down-hard.raw.wav (64044 bytes)
+            - audio/sfx/crate-set-down-hard.var2.wav (64044 bytes)
+            - audio/sfx/crate-set-down-hard.var3.wav (64044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-plank-dragged-wood-floor
+  type    : core.audio.effect
+  meaning : Sound for 'wooden plank': dragged across wooden floor. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/plank-dragged-wood-floor.json (1637 bytes)
+            - audio/sfx/plank-dragged-wood-floor.wav (160044 bytes)
+            - audio/sfx/plank-dragged-wood-floor.var2.wav (160044 bytes)
+            - audio/sfx/plank-dragged-wood-floor.var3.wav (160044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-plank-impact-hard-surface
+  type    : core.audio.effect
+  meaning : Sound for 'wooden plank': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/plank-impact-hard-surface.json (2246 bytes)
+            - audio/sfx/plank-impact-hard-surface.wav (13802 bytes)
+            - audio/sfx/plank-impact-hard-surface.raw.wav (96044 bytes)
+            - audio/sfx/plank-impact-hard-surface.var2.wav (96044 bytes)
+            - audio/sfx/plank-impact-hard-surface.var3.wav (96044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-plank-kicked-hard
+  type    : core.audio.effect
+  meaning : Sound for 'wooden plank': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/plank-kicked-hard.json (2093 bytes)
+            - audio/sfx/plank-kicked-hard.wav (128044 bytes)
+            - audio/sfx/plank-kicked-hard.var2.wav (128044 bytes)
+            - audio/sfx/plank-kicked-hard.var3.wav (128044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-plank-scraped-edge
+  type    : core.audio.effect
+  meaning : Sound for 'wooden plank': scraped along edge. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/plank-scraped-edge.json (2010 bytes)
+            - audio/sfx/plank-scraped-edge.wav (51244 bytes)
+            - audio/sfx/plank-scraped-edge.raw.wav (160044 bytes)
+            - audio/sfx/plank-scraped-edge.var2.wav (160044 bytes)
+            - audio/sfx/plank-scraped-edge.var3.wav (160044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-corner-joined-beams
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate corner': pressed under load. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/corner-joined-beams.json (1621 bytes)
+            - audio/sfx/corner-joined-beams.wav (89964 bytes)
+            - audio/sfx/corner-joined-beams.raw.wav (192044 bytes)
+            - audio/sfx/corner-joined-beams.var2.wav (192044 bytes)
+            - audio/sfx/corner-joined-beams.var3.wav (192044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-beam-impact-hard-surface
+  type    : core.audio.effect
+  meaning : Sound for 'wooden beam': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/beam-impact-hard-surface.json (1740 bytes)
+            - audio/sfx/beam-impact-hard-surface.wav (38124 bytes)
+            - audio/sfx/beam-impact-hard-surface.raw.wav (96044 bytes)
+            - audio/sfx/beam-impact-hard-surface.var2.wav (96044 bytes)
+            - audio/sfx/beam-impact-hard-surface.var3.wav (96044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-beam-kicked-hard
+  type    : core.audio.effect
+  meaning : Sound for 'wooden beam': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/beam-kicked-hard.json (1878 bytes)
+            - audio/sfx/beam-kicked-hard.wav (79084 bytes)
+            - audio/sfx/beam-kicked-hard.raw.wav (128044 bytes)
+            - audio/sfx/beam-kicked-hard.var2.wav (128044 bytes)
+            - audio/sfx/beam-kicked-hard.var3.wav (128044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-dowel-impact-hard-surface
+  type    : core.audio.effect
+  meaning : Sound for 'wooden dowel': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/dowel-impact-hard-surface.json (1850 bytes)
+            - audio/sfx/dowel-impact-hard-surface.wav (15404 bytes)
+            - audio/sfx/dowel-impact-hard-surface.raw.wav (96044 bytes)
+            - audio/sfx/dowel-impact-hard-surface.var2.wav (96044 bytes)
+            - audio/sfx/dowel-impact-hard-surface.var3.wav (96044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-dowel-kicked-hard
+  type    : core.audio.effect
+  meaning : Sound for 'wooden dowel': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/dowel-kicked-hard.json (1786 bytes)
+            - audio/sfx/dowel-kicked-hard.wav (57644 bytes)
+            - audio/sfx/dowel-kicked-hard.raw.wav (128044 bytes)
+            - audio/sfx/dowel-kicked-hard.var2.wav (128044 bytes)
+            - audio/sfx/dowel-kicked-hard.var3.wav (128044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-front-face-impact-hard-surface
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate front': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/front-face-impact-hard-surface.json (1922 bytes)
+            - audio/sfx/front-face-impact-hard-surface.wav (13164 bytes)
+            - audio/sfx/front-face-impact-hard-surface.raw.wav (96044 bytes)
+            - audio/sfx/front-face-impact-hard-surface.var2.wav (96044 bytes)
+            - audio/sfx/front-face-impact-hard-surface.var3.wav (96044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-front-face-kicked-hard
+  type    : core.audio.effect
+  meaning : Sound for 'wooden crate front': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/front-face-kicked-hard.json (1855 bytes)
+            - audio/sfx/front-face-kicked-hard.wav (128044 bytes)
+            - audio/sfx/front-face-kicked-hard.var2.wav (128044 bytes)
+            - audio/sfx/front-face-kicked-hard.var3.wav (128044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-wind-forest
+  type    : core.audio.ambience
+  meaning : Sound for 'wooden crate': wind blowing through gaps. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/crate-wind-forest.json (1436 bytes)
+            - audio/sfx/crate-wind-forest.wav (473004 bytes)
+            - audio/sfx/crate-wind-forest.raw.wav (480044 bytes)
+            - audio/sfx/crate-wind-forest.var2.wav (480044 bytes)
+            - audio/sfx/crate-wind-forest.var3.wav (480044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-wind-desert
+  type    : core.audio.ambience
+  meaning : Sound for 'wooden crate': wind blowing across open surface. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 5
+            - audio/sfx/crate-wind-desert.json (1703 bytes)
+            - audio/sfx/crate-wind-desert.wav (473004 bytes)
+            - audio/sfx/crate-wind-desert.raw.wav (480044 bytes)
+            - audio/sfx/crate-wind-desert.var2.wav (480044 bytes)
+            - audio/sfx/crate-wind-desert.var3.wav (480044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : audio-crate-wind-forest-dense
+  type    : core.audio.ambience
+  meaning : Sound for 'wooden crate': wind blowing through dense forest. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+  files   : 4
+            - audio/sfx/crate-wind-forest-dense.json (1529 bytes)
+            - audio/sfx/crate-wind-forest-dense.wav (480044 bytes)
+            - audio/sfx/crate-wind-forest-dense.var2.wav (480044 bytes)
+            - audio/sfx/crate-wind-forest-dense.var3.wav (480044 bytes)
+  edges   : enhances->audio-package (sounds-for)
+
+  node_id : semantics
+  type    : core.semantics
+  meaning : Hand-authored facet tags, palette and search text. This node alone renders a browser listing (law 9).
+  files   : 1
+            - semantics/semantics.json (2589 bytes)
+  edges   : enhances->geom-game (describes)
+
+  node_id : props
+  type    : core.props
+  meaning : Authored simulation properties for the crate's wood, with every value carrying its own unit and stamp.
+  files   : 1
+            - properties/properties.json (3470 bytes)
+  edges   : enhances->material-wood (properties-of)
+
+  node_id : provenance
+  type    : core.provenance
+  meaning : Who made what, from what, with which models, and which gates it had to pass.
+  files   : 1
+            - provenance/provenance.json (4264 bytes)
+  edges   : none
+
+  node_id : spec
+  type    : core.spec
+  meaning : The format specification, its schemas and its binary layout grammars, travelling inside the file it describes (law 2).
+  files   : 50
+            - spec/MINI-SPECS.md (33241 bytes)
+            - spec/PROFILE-IMAGE.md (12698 bytes)
+            - spec/README.md (10319 bytes)
+            - spec/SPEC.md (99291 bytes)
+            - spec/X-C2PA-EXPORT.md (7461 bytes)
+            - spec/conventions-map.image.json (2416 bytes)
+            - spec/conventions-map.json (9269 bytes)
+            - spec/examples/MANIFEST.example.json (20608 bytes)
+            - spec/examples/make-examples.py (26764 bytes)
+            - spec/examples/restposes.example.hex.txt (4415 bytes)
+            - spec/examples/restposes.example.wkrp (560 bytes)
+            - spec/extensions/x.cub.v1.baked.layout.txt (9359 bytes)
+            - spec/extensions/x.cub.v1.md (8783 bytes)
+            - spec/facets.json (11978 bytes)
+            - spec/layouts/ENVELOPE.layout.txt (25287 bytes)
+            - spec/layouts/animclip.layout.txt (16800 bytes)
+            - spec/layouts/embedding.layout.txt (13909 bytes)
+            - spec/layouts/flowfield.layout.txt (6263 bytes)
+            - spec/layouts/gsplat.layout.txt (23310 bytes)
+            - spec/layouts/imposter.layout.txt (10446 bytes)
+            - spec/layouts/points.layout.txt (16663 bytes)
+            - spec/layouts/restposes.layout.txt (5958 bytes)
+            - spec/layouts/skeleton.layout.txt (5964 bytes)
+            - spec/schemas/conventions-map.schema.json (4614 bytes)
+            - spec/schemas/core.anim.clip.schema.json (9585 bytes)
+            - spec/schemas/core.audio.effect.schema.json (8628 bytes)
+            - spec/schemas/core.audio.package.schema.json (7320 bytes)
+            - spec/schemas/core.destruct.schema.json (6319 bytes)
+            - spec/schemas/core.disclosure.schema.json (11515 bytes)
+            - spec/schemas/core.imposter.schema.json (6708 bytes)
+            - spec/schemas/core.material.schema.json (4823 bytes)
+            - spec/schemas/core.phys.body.schema.json (6157 bytes)
+            - spec/schemas/core.phys.bounds.schema.json (3164 bytes)
+            - spec/schemas/core.phys.colliders.schema.json (4116 bytes)
+            - spec/schemas/core.props.schema.json (11666 bytes)
+            - spec/schemas/core.provenance.schema.json (6140 bytes)
+            - spec/schemas/core.recipe.schema.json (26485 bytes)
+            - spec/schemas/core.retarget.bind.schema.json (13337 bytes)
+            - spec/schemas/core.semantics.schema.json (6917 bytes)
+            - spec/schemas/core.skeleton.schema.json (11464 bytes)
+            - spec/schemas/core.tool.config.schema.json (7321 bytes)
+            - spec/schemas/core.tool.schema.json (10894 bytes)
+            - spec/schemas/facets.schema.json (3593 bytes)
+            - spec/schemas/manifest.image.schema.json (27420 bytes)
+            - spec/schemas/manifest.schema.json (44155 bytes)
+            - spec/schemas/signature.schema.json (11209 bytes)
+            - spec/schemas/x.c2pa.export.schema.json (4935 bytes)
+            - spec/skeleton/canonical-humanoid-v1.json (22429 bytes)
+            - spec/skeleton/core.hands.v1.json (26112 bytes)
+            - spec/skeleton/derive-canonical-humanoid.py (19852 bytes)
+  edges   : none
+
+  node_id : loader-python
+  type    : core.loader
+  meaning : A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+  files   : 1
+            - loaders/werk_read.py (42226 bytes)
+  edges   : none
+
+  node_id : loader-rust
+  type    : core.loader
+  meaning : A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+  files   : 1
+            - loaders/werk_read.rs (98761 bytes)
+  edges   : none
+
+  node_id : loader-c
+  type    : core.loader
+  meaning : A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+  files   : 1
+            - loaders/werk_read.c (111051 bytes)
+  edges   : none
+
+  node_id : license
+  type    : core.license
+  meaning : The full licence text, embedded, never a link (law 7).
+  files   : 1
+            - LICENSE (2132 bytes)
+  edges   : none
+
+  node_id : readme
+  type    : core.readme
+  meaning : One page for a human who opened this file and wants to know what it is.
+  files   : 1
+            - README.txt (1264 bytes)
+  edges   : none
+
+======================================================================
+INTEGRITY CHECK (sha256)
+----------------------------------------------------------------------
+  [OK] geom-source                              geometry/source.glb
+  [OK] geom-game                                geometry/game.glb
+  [OK] material-wood                            materials/wood.json
+  [OK] bounds                                   physics/bounds.json
+  [OK] evidence-views                           x/splat-foley/views/view_00.png
+  [OK] evidence-views                           x/splat-foley/views/view_01.png
+  [OK] evidence-views                           x/splat-foley/views/view_02.png
+  [OK] evidence-views                           x/splat-foley/views/view_03.png
+  [OK] evidence-views                           x/splat-foley/views/view_04.png
+  [OK] evidence-views                           x/splat-foley/views/view_05.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_00.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_01.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_02.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_03.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_04.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_05.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_06.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_07.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_08.png
+  [OK] evidence-segments                        x/splat-foley/segments/seg_09.png
+  [OK] audio-package                            audio/package.json
+  [OK] audio-crate-dragged-rough-concrete       audio/sfx/crate-dragged-rough-concrete.json
+  [OK] audio-crate-dragged-rough-concrete       audio/sfx/crate-dragged-rough-concrete.wav
+  [OK] audio-crate-dragged-rough-concrete       audio/sfx/crate-dragged-rough-concrete.var2.wav
+  [OK] audio-crate-dragged-rough-concrete       audio/sfx/crate-dragged-rough-concrete.var3.wav
+  [OK] audio-crate-impact-hard-surface          audio/sfx/crate-impact-hard-surface.json
+  [OK] audio-crate-impact-hard-surface          audio/sfx/crate-impact-hard-surface.wav
+  [OK] audio-crate-impact-hard-surface          audio/sfx/crate-impact-hard-surface.raw.wav
+  [OK] audio-crate-impact-hard-surface          audio/sfx/crate-impact-hard-surface.var2.wav
+  [OK] audio-crate-impact-hard-surface          audio/sfx/crate-impact-hard-surface.var3.wav
+  [OK] audio-crate-kicked-hard                  audio/sfx/crate-kicked-hard.json
+  [OK] audio-crate-kicked-hard                  audio/sfx/crate-kicked-hard.wav
+  [OK] audio-crate-kicked-hard                  audio/sfx/crate-kicked-hard.var2.wav
+  [OK] audio-crate-kicked-hard                  audio/sfx/crate-kicked-hard.var3.wav
+  [OK] audio-crate-scraped-edge                 audio/sfx/crate-scraped-edge.json
+  [OK] audio-crate-scraped-edge                 audio/sfx/crate-scraped-edge.wav
+  [OK] audio-crate-scraped-edge                 audio/sfx/crate-scraped-edge.var2.wav
+  [OK] audio-crate-scraped-edge                 audio/sfx/crate-scraped-edge.var3.wav
+  [OK] audio-crate-tipped-over                  audio/sfx/crate-tipped-over.json
+  [OK] audio-crate-tipped-over                  audio/sfx/crate-tipped-over.wav
+  [OK] audio-crate-tipped-over                  audio/sfx/crate-tipped-over.raw.wav
+  [OK] audio-crate-tipped-over                  audio/sfx/crate-tipped-over.var2.wav
+  [OK] audio-crate-tipped-over                  audio/sfx/crate-tipped-over.var3.wav
+  [OK] audio-crate-set-down-hard                audio/sfx/crate-set-down-hard.json
+  [OK] audio-crate-set-down-hard                audio/sfx/crate-set-down-hard.wav
+  [OK] audio-crate-set-down-hard                audio/sfx/crate-set-down-hard.raw.wav
+  [OK] audio-crate-set-down-hard                audio/sfx/crate-set-down-hard.var2.wav
+  [OK] audio-crate-set-down-hard                audio/sfx/crate-set-down-hard.var3.wav
+  [OK] audio-plank-dragged-wood-floor           audio/sfx/plank-dragged-wood-floor.json
+  [OK] audio-plank-dragged-wood-floor           audio/sfx/plank-dragged-wood-floor.wav
+  [OK] audio-plank-dragged-wood-floor           audio/sfx/plank-dragged-wood-floor.var2.wav
+  [OK] audio-plank-dragged-wood-floor           audio/sfx/plank-dragged-wood-floor.var3.wav
+  [OK] audio-plank-impact-hard-surface          audio/sfx/plank-impact-hard-surface.json
+  [OK] audio-plank-impact-hard-surface          audio/sfx/plank-impact-hard-surface.wav
+  [OK] audio-plank-impact-hard-surface          audio/sfx/plank-impact-hard-surface.raw.wav
+  [OK] audio-plank-impact-hard-surface          audio/sfx/plank-impact-hard-surface.var2.wav
+  [OK] audio-plank-impact-hard-surface          audio/sfx/plank-impact-hard-surface.var3.wav
+  [OK] audio-plank-kicked-hard                  audio/sfx/plank-kicked-hard.json
+  [OK] audio-plank-kicked-hard                  audio/sfx/plank-kicked-hard.wav
+  [OK] audio-plank-kicked-hard                  audio/sfx/plank-kicked-hard.var2.wav
+  [OK] audio-plank-kicked-hard                  audio/sfx/plank-kicked-hard.var3.wav
+  [OK] audio-plank-scraped-edge                 audio/sfx/plank-scraped-edge.json
+  [OK] audio-plank-scraped-edge                 audio/sfx/plank-scraped-edge.wav
+  [OK] audio-plank-scraped-edge                 audio/sfx/plank-scraped-edge.raw.wav
+  [OK] audio-plank-scraped-edge                 audio/sfx/plank-scraped-edge.var2.wav
+  [OK] audio-plank-scraped-edge                 audio/sfx/plank-scraped-edge.var3.wav
+  [OK] audio-corner-joined-beams                audio/sfx/corner-joined-beams.json
+  [OK] audio-corner-joined-beams                audio/sfx/corner-joined-beams.wav
+  [OK] audio-corner-joined-beams                audio/sfx/corner-joined-beams.raw.wav
+  [OK] audio-corner-joined-beams                audio/sfx/corner-joined-beams.var2.wav
+  [OK] audio-corner-joined-beams                audio/sfx/corner-joined-beams.var3.wav
+  [OK] audio-beam-impact-hard-surface           audio/sfx/beam-impact-hard-surface.json
+  [OK] audio-beam-impact-hard-surface           audio/sfx/beam-impact-hard-surface.wav
+  [OK] audio-beam-impact-hard-surface           audio/sfx/beam-impact-hard-surface.raw.wav
+  [OK] audio-beam-impact-hard-surface           audio/sfx/beam-impact-hard-surface.var2.wav
+  [OK] audio-beam-impact-hard-surface           audio/sfx/beam-impact-hard-surface.var3.wav
+  [OK] audio-beam-kicked-hard                   audio/sfx/beam-kicked-hard.json
+  [OK] audio-beam-kicked-hard                   audio/sfx/beam-kicked-hard.wav
+  [OK] audio-beam-kicked-hard                   audio/sfx/beam-kicked-hard.raw.wav
+  [OK] audio-beam-kicked-hard                   audio/sfx/beam-kicked-hard.var2.wav
+  [OK] audio-beam-kicked-hard                   audio/sfx/beam-kicked-hard.var3.wav
+  [OK] audio-dowel-impact-hard-surface          audio/sfx/dowel-impact-hard-surface.json
+  [OK] audio-dowel-impact-hard-surface          audio/sfx/dowel-impact-hard-surface.wav
+  [OK] audio-dowel-impact-hard-surface          audio/sfx/dowel-impact-hard-surface.raw.wav
+  [OK] audio-dowel-impact-hard-surface          audio/sfx/dowel-impact-hard-surface.var2.wav
+  [OK] audio-dowel-impact-hard-surface          audio/sfx/dowel-impact-hard-surface.var3.wav
+  [OK] audio-dowel-kicked-hard                  audio/sfx/dowel-kicked-hard.json
+  [OK] audio-dowel-kicked-hard                  audio/sfx/dowel-kicked-hard.wav
+  [OK] audio-dowel-kicked-hard                  audio/sfx/dowel-kicked-hard.raw.wav
+  [OK] audio-dowel-kicked-hard                  audio/sfx/dowel-kicked-hard.var2.wav
+  [OK] audio-dowel-kicked-hard                  audio/sfx/dowel-kicked-hard.var3.wav
+  [OK] audio-front-face-impact-hard-surface     audio/sfx/front-face-impact-hard-surface.json
+  [OK] audio-front-face-impact-hard-surface     audio/sfx/front-face-impact-hard-surface.wav
+  [OK] audio-front-face-impact-hard-surface     audio/sfx/front-face-impact-hard-surface.raw.wav
+  [OK] audio-front-face-impact-hard-surface     audio/sfx/front-face-impact-hard-surface.var2.wav
+  [OK] audio-front-face-impact-hard-surface     audio/sfx/front-face-impact-hard-surface.var3.wav
+  [OK] audio-front-face-kicked-hard             audio/sfx/front-face-kicked-hard.json
+  [OK] audio-front-face-kicked-hard             audio/sfx/front-face-kicked-hard.wav
+  [OK] audio-front-face-kicked-hard             audio/sfx/front-face-kicked-hard.var2.wav
+  [OK] audio-front-face-kicked-hard             audio/sfx/front-face-kicked-hard.var3.wav
+  [OK] audio-crate-wind-forest                  audio/sfx/crate-wind-forest.json
+  [OK] audio-crate-wind-forest                  audio/sfx/crate-wind-forest.wav
+  [OK] audio-crate-wind-forest                  audio/sfx/crate-wind-forest.raw.wav
+  [OK] audio-crate-wind-forest                  audio/sfx/crate-wind-forest.var2.wav
+  [OK] audio-crate-wind-forest                  audio/sfx/crate-wind-forest.var3.wav
+  [OK] audio-crate-wind-desert                  audio/sfx/crate-wind-desert.json
+  [OK] audio-crate-wind-desert                  audio/sfx/crate-wind-desert.wav
+  [OK] audio-crate-wind-desert                  audio/sfx/crate-wind-desert.raw.wav
+  [OK] audio-crate-wind-desert                  audio/sfx/crate-wind-desert.var2.wav
+  [OK] audio-crate-wind-desert                  audio/sfx/crate-wind-desert.var3.wav
+  [OK] audio-crate-wind-forest-dense            audio/sfx/crate-wind-forest-dense.json
+  [OK] audio-crate-wind-forest-dense            audio/sfx/crate-wind-forest-dense.wav
+  [OK] audio-crate-wind-forest-dense            audio/sfx/crate-wind-forest-dense.var2.wav
+  [OK] audio-crate-wind-forest-dense            audio/sfx/crate-wind-forest-dense.var3.wav
+  [OK] semantics                                semantics/semantics.json
+  [OK] props                                    properties/properties.json
+  [OK] provenance                               provenance/provenance.json
+  [OK] spec                                     spec/MINI-SPECS.md
+  [OK] spec                                     spec/PROFILE-IMAGE.md
+  [OK] spec                                     spec/README.md
+  [OK] spec                                     spec/SPEC.md
+  [OK] spec                                     spec/X-C2PA-EXPORT.md
+  [OK] spec                                     spec/conventions-map.image.json
+  [OK] spec                                     spec/conventions-map.json
+  [OK] spec                                     spec/examples/MANIFEST.example.json
+  [OK] spec                                     spec/examples/make-examples.py
+  [OK] spec                                     spec/examples/restposes.example.hex.txt
+  [OK] spec                                     spec/examples/restposes.example.wkrp
+  [OK] spec                                     spec/extensions/x.cub.v1.baked.layout.txt
+  [OK] spec                                     spec/extensions/x.cub.v1.md
+  [OK] spec                                     spec/facets.json
+  [OK] spec                                     spec/layouts/ENVELOPE.layout.txt
+  [OK] spec                                     spec/layouts/animclip.layout.txt
+  [OK] spec                                     spec/layouts/embedding.layout.txt
+  [OK] spec                                     spec/layouts/flowfield.layout.txt
+  [OK] spec                                     spec/layouts/gsplat.layout.txt
+  [OK] spec                                     spec/layouts/imposter.layout.txt
+  [OK] spec                                     spec/layouts/points.layout.txt
+  [OK] spec                                     spec/layouts/restposes.layout.txt
+  [OK] spec                                     spec/layouts/skeleton.layout.txt
+  [OK] spec                                     spec/schemas/conventions-map.schema.json
+  [OK] spec                                     spec/schemas/core.anim.clip.schema.json
+  [OK] spec                                     spec/schemas/core.audio.effect.schema.json
+  [OK] spec                                     spec/schemas/core.audio.package.schema.json
+  [OK] spec                                     spec/schemas/core.destruct.schema.json
+  [OK] spec                                     spec/schemas/core.disclosure.schema.json
+  [OK] spec                                     spec/schemas/core.imposter.schema.json
+  [OK] spec                                     spec/schemas/core.material.schema.json
+  [OK] spec                                     spec/schemas/core.phys.body.schema.json
+  [OK] spec                                     spec/schemas/core.phys.bounds.schema.json
+  [OK] spec                                     spec/schemas/core.phys.colliders.schema.json
+  [OK] spec                                     spec/schemas/core.props.schema.json
+  [OK] spec                                     spec/schemas/core.provenance.schema.json
+  [OK] spec                                     spec/schemas/core.recipe.schema.json
+  [OK] spec                                     spec/schemas/core.retarget.bind.schema.json
+  [OK] spec                                     spec/schemas/core.semantics.schema.json
+  [OK] spec                                     spec/schemas/core.skeleton.schema.json
+  [OK] spec                                     spec/schemas/core.tool.config.schema.json
+  [OK] spec                                     spec/schemas/core.tool.schema.json
+  [OK] spec                                     spec/schemas/facets.schema.json
+  [OK] spec                                     spec/schemas/manifest.image.schema.json
+  [OK] spec                                     spec/schemas/manifest.schema.json
+  [OK] spec                                     spec/schemas/signature.schema.json
+  [OK] spec                                     spec/schemas/x.c2pa.export.schema.json
+  [OK] spec                                     spec/skeleton/canonical-humanoid-v1.json
+  [OK] spec                                     spec/skeleton/core.hands.v1.json
+  [OK] spec                                     spec/skeleton/derive-canonical-humanoid.py
+  [OK] loader-python                            loaders/werk_read.py
+  [OK] loader-rust                              loaders/werk_read.rs
+  [OK] loader-c                                 loaders/werk_read.c
+  [OK] license                                  LICENSE
+  [OK] readme                                   README.txt
+
+======================================================================
+EXTRACTION
+----------------------------------------------------------------------
+  Extracted mesh: geometry/game.glb -> game.glb (16736 bytes)
+  Extracted sound: audio/sfx/crate-impact-hard-surface.wav -> crate-impact-hard-surface.wav (17644 bytes)
+
+======================================================================
+SUMMARY
+----------------------------------------------------------------------
+Files checked: 172
+Files OK:      172
+Files FAIL:    0
+All declared hashes verified successfully.
+Extracted 2 primary asset(s).
+  game.glb: declared=eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce computed=eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce
+  crate-impact-hard-surface.wav: declared=1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e computed=1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e
+Wall time: 0.024s

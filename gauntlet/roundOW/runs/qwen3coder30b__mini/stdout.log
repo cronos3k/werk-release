@@ -1,0 +1,200 @@
+model=qwen/qwen3-coder-30b ctx=65536 package_ctx=65536 budget=121896 chars package=91059 chars included=17 omitted=0
+preflight: prompt_tokens=31490 cold prefill=7.5s (4199 tok/s), chars/token=2.97
+
+--- iteration 1 (28s, finish=stop, 8300 chars) ---
+```python
+import zipfile
+import json
+import hashlib
+import os
+import struct
+from collections import defaultdict
+
+def compute_sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+def read_zip_file(filename):
+    with zipfile.ZipFile(filename, 'r') as zip_ref:
+        # Read the central directory to get file info
+        file_info = {}
+        for info in zip_ref.infolist():
+            file_info[info.filename] = {
+                'size': info.file_size,
+                'crc32': info.CRC,
+                'offset': info.header_offset,
+                'compression': info.compress_type
+            }
+        
+        # Read all files
+        files_content = {}
+        for name in file_info:
+            try:
+                content = zip_ref.read(name)
+                files_content[name] = 
+  >> running solution.py (8287 chars)
+  << exit=1 in 0.1s  stdout=3537B stderr=594B
+  Opening and analyzing werk file...
+  Verifying file integrity...
+  All files verified successfully
+  
+  === FILE CONTENTS WITH MEANINGS ===
+  MANIFEST.json (22819 bytes, CRC32: 542a9a4a)
+  SIGNATURE.json (988 bytes, CRC32: 0ebcaa82)
+  LICENSE (2132 bytes, CRC32: 83d0e669)
+  README.txt (1264 bytes, CRC32: b21d8bc1)
+  loaders/werk_read.c (111051 bytes, CRC32: 66522126)
+  loaders/werk_read.py (42226 bytes, CRC32: 83e8fb3a)
+  loaders/werk_read.rs (98761 bytes, CRC32: acc58bf8)
+  spec/MINI-SPECS.md (33241 bytes, CRC32: cd1a0512)
+  spec/README.md (10319 bytes, CRC32: 532e2f65)
+  spec/SPEC.md (99291 bytes, CRC32: 3c48e5a9)
+  spec/conventions-map.json (9269 bytes, CRC32: 03cf1658)
+  spec/facets.json (11978 bytes, CRC32: 5821a228)
+  spec/layouts/ENVELOPE.layout.txt (25287 bytes, CRC32: 5ea0d951)
+  spec/layouts/restposes.layout.txt (5958 bytes, CRC32: 04f2574c)
+  spec/schemas/conventions-map.schema.json (4614 bytes, CRC32: d26e67c0)
+  spec/schemas/core.audio.effect.schema.json (8628 bytes, CRC32: 413e376a)
+  spec/schemas/core.material.schema.json (4823 bytes, CRC32: e57448b5)
+  spec/schemas/core.phys.bounds.schema.json (3164 bytes, CRC32: 832ef93b)
+  spec/schemas/core.provenance.schema.json (6140 bytes, CRC32: f3a
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\qwen3coder30b__mini\solution.py", line 244, in <module>
+      main()
+    File "F:\ow-gauntlet\qwen3coder30b__mini\solution.py", line 199, in main
+      mesh, sound = extract_primary_mesh_and_sound(manifest, file_info, files_content)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\qwen3coder30b__mini\solution.py", line 135, in extract_primary_mesh_and_sound
+      'sha256': file_info['sha252']  # This should be correct
+                ~~~~~~~~~^^^^^^^^^^
+  KeyError: 'sha252'
+  
+
+--- iteration 2 (50s, finish=stop, 8297 chars) ---
+```python
+import zipfile
+import json
+import hashlib
+import os
+import struct
+from collections import defaultdict
+
+def compute_sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+def read_zip_file(filename):
+    with zipfile.ZipFile(filename, 'r') as zip_ref:
+        # Read the central directory to get file info
+        file_info = {}
+        for info in zip_ref.infolist():
+            file_info[info.filename] = {
+                'size': info.file_size,
+                'crc32': info.CRC,
+                'offset': info.header_offset,
+                'compression': info.compress_type
+            }
+        
+        # Read all files
+        files_content = {}
+        for name in file_info:
+            try:
+                content = zip_ref.read(name)
+                files_content[name] = 
+  >> running solution.py (8284 chars)
+  << exit=1 in 0.1s  stdout=4215B stderr=595B
+  Opening and analyzing werk file...
+  Verifying file integrity...
+  All files verified successfully
+  
+  === FILE CONTENTS WITH MEANINGS ===
+  MANIFEST.json (22819 bytes, CRC32: 542a9a4a)
+  SIGNATURE.json (988 bytes, CRC32: 0ebcaa82)
+  LICENSE (2132 bytes, CRC32: 83d0e669)
+  README.txt (1264 bytes, CRC32: b21d8bc1)
+  loaders/werk_read.c (111051 bytes, CRC32: 66522126)
+  loaders/werk_read.py (42226 bytes, CRC32: 83e8fb3a)
+  loaders/werk_read.rs (98761 bytes, CRC32: acc58bf8)
+  spec/MINI-SPECS.md (33241 bytes, CRC32: cd1a0512)
+  spec/README.md (10319 bytes, CRC32: 532e2f65)
+  spec/SPEC.md (99291 bytes, CRC32: 3c48e5a9)
+  spec/conventions-map.json (9269 bytes, CRC32: 03cf1658)
+  spec/facets.json (11978 bytes, CRC32: 5821a228)
+  spec/layouts/ENVELOPE.layout.txt (25287 bytes, CRC32: 5ea0d951)
+  spec/layouts/restposes.layout.txt (5958 bytes, CRC32: 04f2574c)
+  spec/schemas/conventions-map.schema.json (4614 bytes, CRC32: d26e67c0)
+  spec/schemas/core.audio.effect.schema.json (8628 bytes, CRC32: 413e376a)
+  spec/schemas/core.material.schema.json (4823 bytes, CRC32: e57448b5)
+  spec/schemas/core.phys.bounds.schema.json (3164 bytes, CRC32: 832ef93b)
+  spec/schemas/core.provenance.schema.json (6140 bytes, CRC32: f3a
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\qwen3coder30b__mini\solution.py", line 244, in <module>
+      main()
+    File "F:\ow-gauntlet\qwen3coder30b__mini\solution.py", line 234, in main
+      print("\u2713 Primary mesh extracted and verified")
+    File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+      return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeEncodeError: 'charmap' codec can't encode character '\u2713' in position 0: character maps to <undefined>
+  
+
+--- iteration 3 (73s, finish=stop, 8325 chars) ---
+```python
+import zipfile
+import json
+import hashlib
+import os
+import struct
+from collections import defaultdict
+
+def compute_sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+def read_zip_file(filename):
+    with zipfile.ZipFile(filename, 'r') as zip_ref:
+        # Read the central directory to get file info
+        file_info = {}
+        for info in zip_ref.infolist():
+            file_info[info.filename] = {
+                'size': info.file_size,
+                'crc32': info.CRC,
+                'offset': info.header_offset,
+                'compression': info.compress_type
+            }
+        
+        # Read all files
+        files_content = {}
+        for name in file_info:
+            try:
+                content = zip_ref.read(name)
+                files_content[name] = 
+  >> running solution.py (8312 chars)
+  << exit=0 in 0.1s  stdout=4308B stderr=0B
+  Opening and analyzing werk file...
+  Verifying file integrity...
+  All files verified successfully
+  
+  === FILE CONTENTS WITH MEANINGS ===
+  MANIFEST.json (22819 bytes, CRC32: 542a9a4a)
+  SIGNATURE.json (988 bytes, CRC32: 0ebcaa82)
+  LICENSE (2132 bytes, CRC32: 83d0e669)
+  README.txt (1264 bytes, CRC32: b21d8bc1)
+  loaders/werk_read.c (111051 bytes, CRC32: 66522126)
+  loaders/werk_read.py (42226 bytes, CRC32: 83e8fb3a)
+  loaders/werk_read.rs (98761 bytes, CRC32: acc58bf8)
+  spec/MINI-SPECS.md (33241 bytes, CRC32: cd1a0512)
+  spec/README.md (10319 bytes, CRC32: 532e2f65)
+  spec/SPEC.md (99291 bytes, CRC32: 3c48e5a9)
+  spec/conventions-map.json (9269 bytes, CRC32: 03cf1658)
+  spec/facets.json (11978 bytes, CRC32: 5821a228)
+  spec/layouts/ENVELOPE.layout.txt (25287 bytes, CRC32: 5ea0d951)
+  spec/layouts/restposes.layout.txt (5958 bytes, CRC32: 04f2574c)
+  spec/schemas/conventions-map.schema.json (4614 bytes, CRC32: d26e67c0)
+  spec/schemas/core.audio.effect.schema.json (8628 bytes, CRC32: 413e376a)
+  spec/schemas/core.material.schema.json (4823 bytes, CRC32: e57448b5)
+  spec/schemas/core.phys.bounds.schema.json (3164 bytes, CRC32: 832ef93b)
+  spec/schemas/core.provenance.schema.json (6140 bytes, CRC32: f3a
+
+--- iteration 4 (74s, finish=stop, 13 chars) ---
+TASK COMPLETE
+
+=== outcome=model-finished (declared TASK COMPLETE after a clean run) iters=4 first_clean_run=3 wall=74.0s ===
+{"model": "qwen/qwen3-coder-30b", "quant": "Q4_K_M", "context": 65536, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "qwen3coder30b-mini", "protocol": "inline-context + error-feedback", "outcome": "model-finished", "detail": "declared TASK COMPLETE after a clean run", "iterations": 4, "first_clean_run": 3, "wall_s": 74.0, "preflight_s": 7.5, "wall_s_excl_preflight": 66.5, "prompt_tokens": 31490, "package_ctx": 65536, "package_chars": 91059, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\qwen3coder30b__mini"}

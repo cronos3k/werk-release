@@ -1,0 +1,495 @@
+model=qwen3.8_4b_distilled_gguf ctx=131072 package_ctx=65536 budget=121896 chars package=103573 chars included=18 omitted=0
+preflight: prompt_tokens=37032 cold prefill=205.7s (180 tok/s), chars/token=2.86
+
+--- iteration 1 (279s, finish=stop, 6230 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6200 chars)
+  << exit=1 in 0.1s  stdout=2486B stderr=388B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 174, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 57, in main
+      for node_id, node_data in manifest["nodes"].items():
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+  AttributeError: 'list' object has no attribute 'items'
+  
+
+--- iteration 2 (322s, finish=stop, 6287 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6272 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=516B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 172, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 67, in main
+      result = verify_sha256(
+               ^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 9, in verify_sha256
+      with open(file_path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'geometry\\game.tmp'
+  
+
+--- iteration 3 (368s, finish=stop, 6368 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6353 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=515B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 173, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 68, in main
+      result = verify_sha256(
+               ^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 9, in verify_sha256
+      with open(file_path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'geometry/game.tmp'
+  
+
+--- iteration 4 (416s, finish=stop, 6381 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6366 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=515B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 173, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 68, in main
+      result = verify_sha256(
+               ^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 9, in verify_sha256
+      with open(file_path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'geometry/game.tmp'
+  
+
+--- iteration 5 (465s, finish=stop, 6381 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6366 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=515B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 173, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 68, in main
+      result = verify_sha256(
+               ^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 9, in verify_sha256
+      with open(file_path, 'rb') as f:
+           ^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'geometry/game.tmp'
+  
+
+--- iteration 6 (515s, finish=stop, 6587 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6572 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=609B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 177, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 77, in main
+      print(f"  {node_id} ({version.get('v', 'N/A')}) "
+    File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+      return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeEncodeError: 'charmap' codec can't encode character '\u2717' in position 35: character maps to <undefined>
+  
+
+--- iteration 7 (567s, finish=stop, 6605 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6590 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=609B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 177, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 77, in main
+      print(f"  {node_id} ({version.get('v', 'N/A')}) "
+    File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+      return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeEncodeError: 'charmap' codec can't encode character '\u2717' in position 35: character maps to <undefined>
+  
+
+--- iteration 8 (620s, finish=stop, 6605 chars) ---
+
+
+```python
+import zipfile
+import hashlib
+import json
+from pathlib import Path
+
+
+def verify_sha256(file_path: str, expected_hash: str) -> bool:
+    """Verify that a file's SHA-256 hash matches the expected value."""
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    computed_hash = hashlib.sha256(data).hexdigest().lower()
+    return computed_hash == expected_hash
+
+
+def extract_file(zip_path: str, entry_path: str) -> tuple[str, bytes]:
+    """Extract a file from a zip archive and return its path and contents."""
+    with zipfile.ZipFile(zip_path, 'r') as zf:
+        # Find the entry in the central directory
+        for entry in zf.infolist():
+            if entry.filename == entry_path:
+                # Read the local header to get the offset
+                local_header = zf
+  >> running solution.py (6590 chars)
+  << exit=1 in 0.1s  stdout=2508B stderr=609B
+  ============================================================
+  STEP 1: Listing contents of mini-v1.werk
+  ============================================================
+    1. MANIFEST.json (size=23311, sha256=b'')
+    2. SIGNATURE.json (size=988, sha256=b'')
+    3. LICENSE (size=2132, sha256=b'')
+    4. README.txt (size=1264, sha256=b'')
+    5. loaders/werk_read.c (size=111051, sha256=b'')
+    6. loaders/werk_read.py (size=42226, sha256=b'')
+    7. loaders/werk_read.rs (size=98761, sha256=b'')
+    8. spec/MINI-SPECS.md (size=40147, sha256=b'')
+    9. spec/README.md (size=10855, sha256=b'')
+    10. spec/SPEC.md (size=104388, sha256=b'')
+    11. spec/conventions-map.json (size=9269, sha256=b'')
+    12. spec/examples/restposes.example.hex.txt (size=4308, sha256=b'')
+    13. spec/examples/restposes.example.wkrp (size=560, sha256=b'')
+    14. spec/facets.json (size=11978, sha256=b'')
+    15. spec/layouts/ENVELOPE.layout.txt (size=26372, sha256=b'')
+    16. spec/layouts/restposes.layout.txt (size=5958, sha256=b'')
+    17. spec/schemas/conventions-map.schema.json (size=4614, sha256=b'')
+    18. spec/schemas/core.audio.effect.schema.json (size=8628, sha256=b'')
+    19. spec/schemas/core.material.schema.json (si
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 177, in <module>
+      main()
+    File "F:\ow-gauntlet\postfix-qwen4b__mini__retry\solution.py", line 77, in main
+      print(f"  {node_id} ({version.get('v', 'N/A')}) "
+    File "C:\Program Files\Python312\Lib\encodings\cp1252.py", line 19, in encode
+      return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeEncodeError: 'charmap' codec can't encode character '\u2717' in position 35: character maps to <undefined>
+  
+
+=== outcome=iteration-cap (used all 8 feedback iterations) iters=8 first_clean_run=None wall=620.5s ===
+{"model": "qwen3.8_4b_distilled_gguf", "quant": "Q8_0", "context": 131072, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "postfix-qwen4b-mini-retry", "protocol": "inline-context + error-feedback", "outcome": "iteration-cap", "detail": "used all 8 feedback iterations", "iterations": 8, "first_clean_run": null, "wall_s": 620.5, "preflight_s": 205.7, "wall_s_excl_preflight": 414.8, "prompt_tokens": 37032, "package_ctx": 65536, "package_chars": 103573, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "spec/examples/restposes.example.hex.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\postfix-qwen4b__mini__retry"}

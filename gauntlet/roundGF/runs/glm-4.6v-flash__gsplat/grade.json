@@ -1,0 +1,34 @@
+{
+ "fixture": "fixtures/gsplat-v1.werk",
+ "fixture_sha256": "ede0aee6cc5659af741059b747dc3f3459db220234e7ffb95c4437c02337090a",
+ "rundir": "F:/gf-gauntlet/glm-4.6v-flash__gsplat",
+ "scanned": "F:/gf-gauntlet/glm-4.6v-flash__gsplat",
+ "rerun": null,
+ "count_ok": false,
+ "pos0_ok": false,
+ "col0_ok": false,
+ "positions_present": 0,
+ "colors_present": 0,
+ "sample_rows": 8,
+ "integrity_ok": false,
+ "tool_named": {
+  "werk-gsplat": false,
+  "werk-pointcloud": false,
+  "splat-to-ply": false
+ },
+ "tool_path": {
+  "werk-gsplat": false,
+  "werk-pointcloud": false,
+  "splat-to-ply": false
+ },
+ "tool_quoted": {
+  "werk-gsplat": false,
+  "werk-pointcloud": false,
+  "splat-to-ply": false
+ },
+ "verdict": "FAIL",
+ "artifacts": [
+  "solution.py",
+  "_harness/stdout.log"
+ ]
+}

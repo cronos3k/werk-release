@@ -1,0 +1,63 @@
+=== PACKAGE ANALYSIS ===
+Analyzing selfrun-v1.werk package contents...
+
+Files in package:
+total 61064
+drwxrwxrwx 1 root root     4096 Aug  9 17:29 .
+drwxrwxrwx 1 root root     4096 Aug  9 17:29 ..
+drwxrwxrwx 1 root root     4096 Aug  9 17:30 _harness
+-rwxrwxrwx 1 root root 62525273 Aug  9 17:29 selfrun-v1.werk
+-rwxrwxrwx 1 root root     2947 Aug  9 17:30 solution.sh
+
+=== PACKAGE CONTENTS SUMMARY ===
+This is a werk package containing:
+- A language model (stories15M.bin) with 15M parameters
+- A tokenizer (tokenizer.bin) with 32K vocabulary
+- Source code for runtime (tools/llama2c/run.c and win.c)
+- Build instructions (tools/llama2c/BUILD-AND-RUN.md)
+- Test vectors for verification (testvectors/vectors.json)
+
+=== BUILD INSTRUCTIONS ===
+According to BUILD-AND-RUN.md:
+1. Build command: cl /nologo /O2 /Fe:run.exe tools\llama2c\run.c tools\llama2c\win.c
+2. This is for Windows with MSVC compiler (verified build)
+3. Alternative POSIX build: cc -O3 -o run tools/llama2c/run.c -lm
+
+=== RUN INSTRUCTIONS ===
+To generate text:
+./run model/stories15M.bin -z model/tokenizer.bin -t 0.0 -n 64 -i "Once upon a time"
+(On Windows: run.exe model\stories15M.bin -z model\tokenizer.bin -t 0.0 -n 64 -i "Once upon a time")
+
+=== EXPECTED OUTPUT ===
+Based on testvectors/vectors.json:
+- Prompt: "Once upon a time"
+- Steps: 64
+- Temperature: 0.0 (greedy argmax)
+- Expected SHA256 (LF normalized): 32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5
+
+=== VERIFICATION ===
+The package provides test vectors to verify correctness:
+- Two test cases: 'once-upon-a-time' and 'the-little-robot'
+- Both use temperature 0.0 for deterministic output
+- Output should match exact text and SHA256 hashes
+
+=== FILES USED ===
+Files inside the package that were used:
+1. model/stories15M.bin (model weights)
+2. model/tokenizer.bin (vocabulary)
+3. tools/llama2c/run.c (runtime source)
+4. tools/llama2c/win.c (Windows support for mmap)
+5. testvectors/vectors.json (test vectors and verification data)
+
+=== CONCLUSION ===
+This package contains a complete language model with:
+- Model weights (stories15M.bin)
+- Vocabulary (tokenizer.bin)
+- Runtime source code (run.c + win.c)
+- Build instructions (BUILD-AND-RUN.md)
+- Verification test vectors (vectors.json)
+
+To run this package, one would need:
+- A C99 compiler (MSVC or GCC)
+- The ability to build the runtime from source
+- To execute the generated binary with the specified parameters

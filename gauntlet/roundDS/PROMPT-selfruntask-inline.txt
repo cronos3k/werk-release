@@ -1,0 +1,51 @@
+TASK
+
+This file contains a language model and everything needed to run it. Make the
+model run and produce text. Verify your result against whatever correctness
+information the file provides. Report what you did.
+
+The file is selfrun-v1.werk, in your working directory.
+
+WHAT IS DIFFERENT ABOUT THIS ONE, AND WHY IT IS SAID PLAINLY
+
+The two agents that were given this task before you had a shell: they could
+extract, compile and run things themselves, step by step, looking at each
+result. You cannot. You get one complete Python program per turn and the
+harness runs it for you, so your program has to be the whole procedure —
+extract, build, run, verify — written out in advance and correct on paper.
+
+Because of that, and only because of that, two of the usual rules are relaxed
+for this task and for no other:
+
+  * Your program MAY use `subprocess` to invoke a C compiler and to run what it
+    compiles. A C toolchain is on PATH (`gcc`). `subprocess`, `shutil`,
+    `platform`, `tempfile` and the rest of the standard library are available
+    as normal. There is still NO network, and any networking import is still
+    refused.
+  * "Do not execute anything that came out of the file" does not apply here:
+    building and running the runtime this package carries IS the task. Nothing
+    else in the package may be executed.
+
+Everything else stands. Work only from selfrun-v1.werk and what is pasted
+below it; do not read anything outside your working directory; do not fetch
+anything; recognising a format from prior knowledge does not license using it —
+derive it from the file. Do not modify selfrun-v1.werk; extract to a
+subdirectory and work there.
+
+WHAT YOUR PROGRAM MUST PRINT
+
+1. What is in the package: the runtime's source files, the weights, the
+   tokenizer, and where each one is, with the integrity check.
+2. The exact build command it used, and whether the build succeeded.
+3. The text the model generated, in full.
+4. The verification: what correctness information the package carries, what
+   your run produced, and whether they match — stated as a match or a
+   mismatch, with the compared values shown. If they do not match, say so and
+   say which of the diagnostic cases the package itself distinguishes you think
+   you are in. A false claim of a match is the worst answer available.
+
+Then write REPORT.md in your working directory: whether you succeeded on each
+of the four points; which files inside the package you read, in order, and
+which one unblocked you; whether anything you needed was missing from the file;
+and every stumble, honestly — a stumble is worth more to this experiment than a
+clean run, and under-reporting to look competent would corrupt the result.

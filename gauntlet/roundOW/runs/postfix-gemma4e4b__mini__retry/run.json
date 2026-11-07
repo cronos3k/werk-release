@@ -1,0 +1,51 @@
+{
+ "model": "google/gemma-4-e4b",
+ "quant": "unlisted",
+ "context": 131072,
+ "task": "PROMPT-round1task-mini.txt",
+ "kind": "mini",
+ "label": "postfix-gemma4e4b-mini-retry",
+ "protocol": "inline-context + error-feedback",
+ "outcome": "model-finished",
+ "detail": "declared TASK COMPLETE after a clean run",
+ "iterations": 2,
+ "first_clean_run": 1,
+ "wall_s": 48.2,
+ "preflight_s": 5.1,
+ "wall_s_excl_preflight": 43.1,
+ "prompt_tokens": 39767,
+ "package_ctx": 65536,
+ "package_chars": 103573,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,5,6,11",
+  "ENVELOPE 0-7",
+  "spec/layouts/restposes.layout.txt",
+  "spec/examples/restposes.example.hex.txt",
+  "hex:geometry/game.glb",
+  "hex:audio/sfx/crate-impact-hard-surface.wav",
+  "hex:poses/rest.wkrp",
+  "hex:x/splat-foley/segments/seg_00.png",
+  "MINI-SPECS 9,10",
+  "MINI-SPECS 12",
+  "MINI-SPECS 8",
+  "spec/README.md",
+  "spec/conventions-map.json",
+  "SIGNATURE.json",
+  "LICENSE"
+ ],
+ "omitted": [],
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 0,
+   "secs": 0.1,
+   "stdout_bytes": 10631,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\ow-gauntlet\\postfix-gemma4e4b__mini__retry"
+}

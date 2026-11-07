@@ -1,0 +1,203 @@
+model=google/gemma-4-e4b ctx=131072 package_ctx=65536 budget=121896 chars package=103573 chars included=18 omitted=0
+preflight: prompt_tokens=39767 cold prefill=4.9s (8116 tok/s), chars/token=2.66
+
+--- iteration 1 (61s, finish=stop, 23123 chars) ---
+This program reads the `mini-v1.werk` file as a ZIP archive. It parses the `MANIFEST.json` to list all contained nodes and their associated files, providing context on what each node type represents based on the provided specification documents. It then verifies the integrity of every declared file hash against the actual contents read from the zip container. Finally, it extracts the primary mesh (`geometry/game.glb`) and one sound asset (`audio/sfx/crate-impact-hard-surface.wav`), calculates their SHA-256 hashes, compares them to the manifest's declarations, and compiles a detailed report in `REPORT.md`.
+
+```python
+import zipfile
+import json
+import hashlib
+import os
+from typing import Dict, Any, List, Tuple
+
+# --- Constants and Setup ---
+WORK_FILE = "mini-v1.werk"
+REPORT_FILE = "REPORT.md
+  >> running solution.py (22496 chars)
+  << exit=1 in 0.1s  stdout=239B stderr=476B
+  Successfully opened mini-v1.werk.
+  Successfully loaded MANIFEST.json.
+  
+  --- Running Integrity Checks ---
+  
+  --- Node Graph Listing & Meaning ---
+  
+  [CRITICAL ERROR] An unexpected error occurred during processing: name 'v' is not defined
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-gemma4e4b__mini\solution.py", line 460, in <module>
+      process_werk_package()
+    File "F:\ow-gauntlet\postfix-gemma4e4b__mini\solution.py", line 457, in process_werk_package
+      generate_report(report)
+    File "F:\ow-gauntlet\postfix-gemma4e4b__mini\solution.py", line 245, in generate_report
+      for n in node['nodes']:
+               ~~~~^^^^^^^^^
+  TypeError: string indices must be integers, not 'str'
+  
+
+--- iteration 2 (98s, finish=stop, 13747 chars) ---
+This error occurred because in the `generate_report` function, when iterating over the nodes list, I incorrectly assumed each node object contained a key named `'nodes'` itself (`for n in node['nodes']:`). In reality, the variable `node` *was* the node object we needed to process directly.
+
+I have corrected the iteration logic within `generate_report` to correctly access and process the list of nodes stored in the manifest dictionary. I also restructured the code slightly for clarity while maintaining the single-block requirement.
+
+```python
+import zipfile
+import json
+import hashlib
+import os
+from typing import Dict, Any, List, Tuple
+
+# --- Constants and Setup ---
+WORK_FILE = "mini-v1.werk"
+REPORT_FILE = "REPORT.md"
+
+def sha256_hash(data: bytes) -> str:
+    """Calculates the SHA-256 hash o
+  >> running solution.py (13196 chars)
+  << exit=1 in 0.1s  stdout=199B stderr=540B
+  Successfully opened mini-v1.werk.
+  Successfully loaded MANIFEST.json.
+  
+  --- Running Integrity Checks ---
+  
+  [CRITICAL ERROR] An unexpected error occurred during processing: name 'v' is not defined
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-gemma4e4b__mini\solution.py", line 283, in <module>
+      process_werk_package()
+    File "F:\ow-gauntlet\postfix-gemma4e4b__mini\solution.py", line 279, in process_werk_package
+      generate_report(report)
+    File "F:\ow-gauntlet\postfix-gemma4e4b__mini\solution.py", line 77, in generate_report
+      "files": [f['path'] for f in v.get('files', [])] if 'versions' in node and node['versions'] else []
+                                   ^
+  NameError: name 'v' is not defined
+  
+
+--- iteration 3 (132s, finish=stop, 13534 chars) ---
+```python
+import zipfile
+import json
+import hashlib
+import os
+from typing import Dict, Any, List, Tuple
+
+# --- Constants and Setup ---
+WORK_FILE = "mini-v1.werk"
+REPORT_FILE = "REPORT.md"
+
+def sha256_hash(data: bytes) -> str:
+    """Calculates the SHA-256 hash of given bytes."""
+    return hashlib.sha256(data).hexdigest()
+
+def load_json_from_zip(z: zipfile.ZipFile, filename: str) -> Dict[str, Any] | None:
+    """Loads and parses a JSON file from the zip archive."""
+    try:
+        with z.open(filename) as f:
+            content = f.read()
+            return json.loads(content.decode('utf-8'))
+    except KeyError:
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON from {filename}: {e}")
+        return None
+
+def generate_report(report: Dict[str, An
+  >> running solution.py (13521 chars)
+  << exit=0 in 0.1s  stdout=3931B stderr=0B
+  Successfully opened mini-v1.werk.
+  Successfully loaded MANIFEST.json.
+  
+  --- Running Integrity Checks ---
+  Extracted Mesh: geometry/game.glb. Hash verified.
+  Extracted Sound: audio/sfx/crate-impact-hard-surface.wav. Hash verified.
+  
+  ================================================================================
+  GENERATING FINAL REPORT.md
+  ================================================================================
+  # Werk Package Analysis Report
+  ========================================
+  
+  ## Overall Success: SUCCESS
+  Did the program succeed? Yes. The analysis covered opening the container, listing nodes, verifying hashes, and extracting primary assets.
+  
+  ## Extracted Primary Assets
+  
+  ### geometry/game.glb
+  * **Status:** MATCH
+  * **Declared SHA256:** `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce`
+  * **Computed SHA256:** `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce`
+  
+  ### audio/sfx/crate-impact-hard-surface.wav
+  * **Status:** MATCH
+  * **Declared SHA256:** `1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e`
+  * **Computed SHA256:** `1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e`
+  
+  ## Node Graph Listi
+
+--- iteration 4 (168s, finish=stop, 13444 chars) ---
+```python
+import zipfile
+import json
+import hashlib
+import os
+from typing import Dict, Any, List, Tuple
+
+# --- Constants and Setup ---
+WORK_FILE = "mini-v1.werk"
+REPORT_FILE = "REPORT.md"
+
+def sha256_hash(data: bytes) -> str:
+    """Calculates the SHA-256 hash of given bytes."""
+    return hashlib.sha256(data).hexdigest()
+
+def load_json_from_zip(z: zipfile.ZipFile, filename: str) -> Dict[str, Any] | None:
+    """Loads and parses a JSON file from the zip archive."""
+    try:
+        with z.open(filename) as f:
+            content = f.read()
+            return json.loads(content.decode('utf-8'))
+    except KeyError:
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON from {filename}: {e}")
+        return None
+
+def generate_report(report: Dict[str, An
+  >> running solution.py (13431 chars)
+  << exit=0 in 0.1s  stdout=3931B stderr=0B
+  Successfully opened mini-v1.werk.
+  Successfully loaded MANIFEST.json.
+  
+  --- Running Integrity Checks ---
+  Extracted Mesh: geometry/game.glb. Hash verified.
+  Extracted Sound: audio/sfx/crate-impact-hard-surface.wav. Hash verified.
+  
+  ================================================================================
+  GENERATING FINAL REPORT.md
+  ================================================================================
+  # Werk Package Analysis Report
+  ========================================
+  
+  ## Overall Success: SUCCESS
+  Did the program succeed? Yes. The analysis covered opening the container, listing nodes, verifying hashes, and extracting primary assets.
+  
+  ## Extracted Primary Assets
+  
+  ### geometry/game.glb
+  * **Status:** MATCH
+  * **Declared SHA256:** `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce`
+  * **Computed SHA256:** `eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce`
+  
+  ### audio/sfx/crate-impact-hard-surface.wav
+  * **Status:** MATCH
+  * **Declared SHA256:** `1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e`
+  * **Computed SHA256:** `1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e`
+  
+  ## Node Graph Listi
+
+--- iteration 5 (171s, finish=stop, 13 chars) ---
+TASK COMPLETE
+
+=== outcome=model-finished (declared TASK COMPLETE after a clean run) iters=5 first_clean_run=3 wall=171.3s ===
+{"model": "google/gemma-4-e4b", "quant": "unlisted", "context": 131072, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "postfix-gemma4e4b-mini", "protocol": "inline-context + error-feedback", "outcome": "model-finished", "detail": "declared TASK COMPLETE after a clean run", "iterations": 5, "first_clean_run": 3, "wall_s": 171.3, "preflight_s": 4.9, "wall_s_excl_preflight": 166.4, "prompt_tokens": 39767, "package_ctx": 65536, "package_chars": 103573, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "spec/examples/restposes.example.hex.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\postfix-gemma4e4b__mini"}

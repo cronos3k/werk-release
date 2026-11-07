@@ -1,0 +1,64 @@
+{
+ "model": "qwen/qwen3-coder-30b",
+ "quant": "Q4_K_M",
+ "context": 65536,
+ "task": "PROMPT-round1task-mini.txt",
+ "kind": "mini",
+ "label": "qwen3coder30b-mini",
+ "protocol": "inline-context + error-feedback",
+ "outcome": "model-finished",
+ "detail": "declared TASK COMPLETE after a clean run",
+ "iterations": 4,
+ "first_clean_run": 3,
+ "wall_s": 74.0,
+ "preflight_s": 7.5,
+ "wall_s_excl_preflight": 66.5,
+ "prompt_tokens": 31490,
+ "package_ctx": 65536,
+ "package_chars": 91059,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,5,6,11",
+  "ENVELOPE 0-7",
+  "spec/layouts/restposes.layout.txt",
+  "hex:geometry/game.glb",
+  "hex:audio/sfx/crate-impact-hard-surface.wav",
+  "hex:poses/rest.wkrp",
+  "hex:x/splat-foley/segments/seg_00.png",
+  "MINI-SPECS 9,10",
+  "MINI-SPECS 12",
+  "MINI-SPECS 8",
+  "spec/README.md",
+  "spec/conventions-map.json",
+  "SIGNATURE.json",
+  "LICENSE"
+ ],
+ "omitted": [],
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 3537,
+   "stderr_bytes": 594
+  },
+  {
+   "iter": 2,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 4215,
+   "stderr_bytes": 595
+  },
+  {
+   "iter": 3,
+   "exit": 0,
+   "secs": 0.1,
+   "stdout_bytes": 4308,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\ow-gauntlet\\qwen3coder30b__mini"
+}

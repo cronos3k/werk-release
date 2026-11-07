@@ -1,0 +1,30 @@
+[
+ {
+  "role": "system",
+  "content": "You are a systems programmer. You write one complete, self-contained Python 3 program that solves the task below, and you write it in full every time.\n\nRules of this environment:\n  * Your program will be run as `python solution.py` in a directory that contains exactly one other thing: the file named in the task. It has no network. Only the Python standard library is installed.\n  * You cannot run commands yourself and you cannot look at anything. Everything you are allowed to see has already been extracted from inside that file and is pasted below the task.\n  * Reply with ONE fenced ```python block containing the ENTIRE program. No diffs, no fragments, no \"rest unchanged\". If you want to explain something, put it in comments inside the program or in one short paragraph before the block.\n  * Your program must print its findings to stdout. It must not require any input.\n\nAfter each attempt you will be shown exactly what your program printed and any traceback it produced, and you may revise. When the program does everything the task asks and you are satisfied with its output, reply with the single line TASK COMPLETE and nothing else.\n"
+ },
+ {
+  "role": "user",
+  "content": "TASK\n\nHere is a file: mini-v1.werk (in your working directory). Write a program in\nPython that opens it, lists its contents with their meanings, verifies\nintegrity, and extracts the primary mesh and one sound to disk. You may read\nanything inside the file. You may not search the web or read anything outside\nthe file.\n\nHARD CONSTRAINTS (isolation \u2014 these are not negotiable)\n\n1. The ONLY permitted input is mini-v1.werk and its contents. Everything you\n   need must be derived from inside that file.\n2. Do not read, list, glob or search any directory outside your own working\n   directory. In particular F:\\werk, F:\\splat-foley and any directory anywhere\n   on this machine named spec/, werk/ or loaders/ are off limits.\n3. Do not search the web and do not fetch any URL.\n4. Recognising the format from prior knowledge does NOT license using it. If\n   you think you know what this format is, you must still derive every rule\n   from the file itself. If you need something you cannot find inside the file,\n   REPORT that you need it rather than fetching it.\n5. Do not modify mini-v1.werk. Work on copies if you need to.\n6. Do not execute any program that came out of the file.\n\nREPORTING\n\nWrite your final report to a file named REPORT.md in your working directory.\nIt must contain:\n\n* Whether you succeeded: did your program open the container, list the node\n  graph with meanings, verify every declared hash, extract the primary mesh\n  and one sound, and do the extracted bytes hash to the values the manifest\n  declares?\n* What you extracted, with the declared and computed sha256 of each extracted\n  file.\n* Whether you ever opened, ran or ported any reader program bundled INSIDE the\n  file, and if so at what point and why.\n* Which files inside the package you read, in the order you read them, and\n  which one unblocked you.\n* Everything you wanted from outside the file and could not get.\n* Every stumble, honestly. A stumble is worth more to this experiment than a\n  clean run; under-reporting to look competent would corrupt the result.\n  List each place the documentation inside the file was ambiguous, wrong,\n  missing or cost you time, even if you worked it out in the end.\n* Anything you did about damaged or corrupted data, if you tried that.\n\nReport your own wall-clock sense of how long each phase took if you can.\n\n\n[CONTEXT PACKAGE ELIDED - identical for every run, committed once as gauntlet/roundOW/context_package.mini.txt]"
+ },
+ {
+  "role": "assistant",
+  "content": ""
+ },
+ {
+  "role": "user",
+  "content": "I did not find a ```python block. Reply with ONE fenced ```python block containing the entire program, or the single line TASK COMPLETE."
+ },
+ {
+  "role": "assistant",
+  "content": ""
+ },
+ {
+  "role": "user",
+  "content": "I did not find a ```python block. Reply with ONE fenced ```python block containing the entire program, or the single line TASK COMPLETE."
+ },
+ {
+  "role": "assistant",
+  "content": ""
+ }
+]

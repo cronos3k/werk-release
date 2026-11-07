@@ -1,0 +1,389 @@
+================================================================
+  werk reader — artifact.werk
+  9973037 bytes on disk
+================================================================
+
+---- 1. WHAT THIS PACKAGE IS -----------------------------------
+  werk version   : 1.0
+  profile        : image/1
+  manifest schema: spec/schemas/manifest.image.schema.json
+  entity         : Ista Varun — character design plate
+  uuid           : b9c4e0d1-5a68-4f2b-8c73-1e0a95d7f4a6
+  created        : 2026-08-08T12:00:00Z
+  licence        : CC-BY-4.0 (embedded as LICENSE)
+  primary image  : node "image-source"   thumbnail: node "image-thumb"
+  summary        : werk conformance fixture #2, profile image/1: one genuinely AI-generated image with its genuinely recorded recipe. A character design plate for the 5D6 Space setting, produced by a hosted image model from a human-written subject description and one attached style plate, which is embedded here by hash. The recipe is graded DESCRIPTIVE and says why; its unrecorded[] array names six facts nobody capt… (694 chars total)
+
+  conventions this package declares (a reader must support all of them):
+    endianness             = "le"
+    color_space_default    = "srgb"
+    pixel_origin           = "top-left"
+    alpha_mode             = "straight"
+    alignment_bytes        = 16
+    text_encoding          = "utf-8"
+    id_case                = "kebab-case"
+    hash_algorithm         = "sha256"
+    signature_algorithm    = "ed25519"
+
+---- 2. CONTENTS, WITH MEANINGS --------------------------------
+  63 zip entries, all stored (no compression) as container.zip_compression declares.
+
+  --- (root)/
+    MANIFEST.json                                    33332  the manifest: the graph, the conventions, every file's sha256. The signature covers its bytes.
+    SIGNATURE.json                                    1051  the signature chain over MANIFEST.json (ed25519, hex)
+    LICENSE                                           2140  the full licence text, embedded (never a link) — node license@v1 (core.license)
+    README.txt                                        2636  human orientation text — node readme@v1 (core.readme)
+  --- loaders/
+    loaders/werk_read.c                             110979  a single-file zero-dependency reference reader — node loader-c@v1 (core.loader)
+    loaders/werk_read.py                             33628  a single-file zero-dependency reference reader — node loader-python@v1 (core.loader)
+    loaders/werk_read.rs                             98673  a single-file zero-dependency reference reader — node loader-rust@v1 (core.loader)
+  --- spec/
+    spec/MINI-SPECS.md                               33241  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/PROFILE-IMAGE.md                            12698  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/README.md                                    9456  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/SPEC.md                                     56070  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/X-C2PA-EXPORT.md                             7461  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/examples/MANIFEST.example.json              20608  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/examples/make-examples.py                   26764  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/examples/restposes.example.hex.txt           4415  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/examples/restposes.example.wkrp               560  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/extensions/x.cub.v1.baked.layout.txt         9359  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/extensions/x.cub.v1.md                       8783  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/facets.json                                 11978  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/ENVELOPE.layout.txt                 20948  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/animclip.layout.txt                  8553  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/embedding.layout.txt                13909  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/flowfield.layout.txt                 6263  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/imposter.layout.txt                  9813  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/restposes.layout.txt                 5958  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/layouts/skeleton.layout.txt                  5964  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.anim.clip.schema.json           6859  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.audio.effect.schema.json        8628  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.audio.package.schema.json       7320  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.destruct.schema.json            6319  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.disclosure.schema.json         11515  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.imposter.schema.json            6708  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.material.schema.json            4823  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.phys.body.schema.json           4948  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.phys.bounds.schema.json         3164  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.phys.colliders.schema.json      4116  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.props.schema.json              11666  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.provenance.schema.json          6140  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.recipe.schema.json             22002  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.semantics.schema.json           6917  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/core.skeleton.schema.json           10108  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/facets.schema.json                   3593  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/manifest.image.schema.json          25111  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/manifest.schema.json                36204  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/signature.schema.json               11209  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/schemas/x.c2pa.export.schema.json            4935  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/skeleton/canonical-humanoid-v1.json         21685  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/skeleton/core.hands.v1.json                 25721  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+    spec/skeleton/derive-canonical-humanoid.py       17634  the format's own specification, schemas and layout grammars — node spec@v1 (core.spec)
+  --- semantics/
+    semantics/semantics.json                          3712  facet tags, palette, keywords, description — node semantics@v1 (core.semantics)
+    semantics/style-embedding.wkem                    1120  style descriptor vector + palette, custom WKEM binary — node style-embedding@v1 (core.embedding)
+  --- disclosure/
+    disclosure/disclosure.json                        3417  machine-readable AI-generation disclosure — node disclosure@v1 (core.disclosure)
+  --- recipe/
+    recipe/recipe.json                                7164  the reproduction record: how the image was made — node recipe@v2 [record] (core.recipe)
+    recipe/recipe@1.json                              5606  the reproduction record: how the image was made — node recipe@v1 [record] (core.recipe)
+    recipe/prompt-recorded.txt                        1716  the reproduction record: how the image was made — node recipe@v1 [prompt-recorded], recipe@v2 [prompt-recorded] (core.recipe)
+    recipe/prompt-transmitted.txt                     1816  the reproduction record: how the image was made — node recipe@v2 [prompt-transmitted] (core.recipe)
+    recipe/evidence/pipeline-source.txt              10858  the reproduction record: how the image was made — node recipe@v2 [evidence] (core.recipe)
+  --- image/
+    image/thumb-256.png                             140298  a resized rendition of the primary image — node image-thumb@v1 (core.image.derived)
+  --- recipe/
+    recipe/inputs/imperial-painterly.png           1558138  the reproduction record: how the image was made — node recipe@v1 [input-media], recipe@v2 [input-media] (core.recipe)
+  --- image/
+    image/preview-1024.png                         2005010  a resized rendition of the primary image — node image-preview@v1 (core.image.derived)
+    image/source.png                               5398364  THE PRIMARY IMAGE, as generated — node image-source@v1 (core.image.source)
+  --- provenance/
+    provenance/provenance.json                        1455  which tool run consumed and produced what, when — node provenance@v1 (core.provenance)
+  --- x/
+    x/c2pa/export.json                                3260  experimental C2PA mapping (stub: not implemented, not validated) — node c2pa-export@v1 (x.c2pa.export)
+
+  Node graph (15 nodes):
+    spec             core.spec            active v1 of 1  — the format's own specification, schemas and layout grammars
+    license          core.license         active v1 of 1  — the full licence text, embedded (never a link)
+    readme           core.readme          active v1 of 1  — human orientation text
+    loader-python    core.loader          active v1 of 1  — a single-file zero-dependency reference reader
+        meta: language="python" form="source" entrypoint="loaders/werk_read.py" toolchain="python>=3.8" dependencies=[] capabilities=["read-manifest","verify-hashes","read-envelope","materializ… (63 chars total)
+    loader-rust      core.loader          active v1 of 1  — a single-file zero-dependency reference reader
+        meta: language="rust" form="source" entrypoint="loaders/werk_read.rs" toolchain="rustc>=1.70" dependencies=[] capabilities=["read-manifest","verify-hashes","read-envelope","materializ… (63 chars total) build_command="rustc -O --edition 2021 -o werk_read loaders/werk_read.rs"
+    loader-c         core.loader          active v1 of 1  — a single-file zero-dependency reference reader
+        meta: language="c" form="source" entrypoint="loaders/werk_read.c" toolchain="c99" dependencies=[] capabilities=["read-manifest","verify-hashes","read-envelope","materializ… (63 chars total) build_command="cc -std=c99 -O2 -o werk_read loaders/werk_read.c"
+    image-source     core.image.source    active v1 of 1  — THE PRIMARY IMAGE, as generated
+        edge: image-source --enhances/made-by--> recipe
+        meta: width=1792 height=2400 channels=3 bit_depth=8 color_space="srgb" encoding="png" has_alpha=false
+        note: Requested 3:4 (0.7500); delivered 1792 x 2400 (0.7467). Hosted image models rarely return exactly the requested ratio, and this package records the difference rather than cropping it away.
+    image-preview    core.image.derived   active v1 of 1  — a resized rendition of the primary image
+        edge: image-preview --requires/derived-from--> image-source
+        meta: width=1024 height=1371 channels=3 bit_depth=8 color_space="srgb" encoding="png" has_alpha=false derived_role="preview" resample="lanczos3"
+    image-thumb      core.image.derived   active v1 of 1  — a resized rendition of the primary image
+        edge: image-thumb --requires/derived-from--> image-source
+        meta: width=256 height=343 channels=3 bit_depth=8 color_space="srgb" encoding="png" has_alpha=false derived_role="thumbnail" resample="lanczos3"
+    recipe           core.recipe          active v2 of 2  — the reproduction record: how the image was made
+        edge: recipe --requires/recipe-for--> image-source
+    disclosure       core.disclosure      active v1 of 1  — machine-readable AI-generation disclosure
+        edge: disclosure --requires/discloses--> image-source
+        edge: disclosure --enhances/backed-by--> recipe
+    style-embedding  core.embedding       active v1 of 1  — style descriptor vector + palette, custom WKEM binary
+        edge: style-embedding --requires/derived-from--> image-source
+    semantics        core.semantics       active v1 of 1  — facet tags, palette, keywords, description
+        edge: semantics --enhances/describes--> image-source
+        edge: semantics --enhances/embedding--> style-embedding
+    provenance       core.provenance      active v1 of 1  — which tool run consumed and produced what, when
+        edge: provenance --enhances/records--> image-source
+    c2pa-export      x.c2pa.export        active v1 of 1  — experimental C2PA mapping (stub: not implemented, not validated)
+        edge: c2pa-export --enhances/exports--> disclosure
+
+---- 3. INTEGRITY ----------------------------------------------
+  [ok]   container: all 63 entries match their zip CRC-32 and size
+  [ok]   61 distinct declared files: size and sha256 both match the manifest
+  [ok]   every container entry except MANIFEST/SIGNATURE is owned by a node
+  [ok]   LICENSE bytes match license.sha256
+  [ok]   7 derived versions: recomputed input_hash matches (nothing is stale)
+  [ok]   container.total_size_bytes = 9930116 matches the sum of distinct declared payload files
+  [ok]   container.preview_prefix_bytes = 1001758 is exactly the end of the preview tier in the zip
+  [ok]   physical entry order agrees with container.entry_order (S-14 two-pass matching; ruling is still PROPOSED)
+
+  signature chain:
+    algorithm     : ed25519 (hex-lowercase)
+    MANIFEST.json sha256 computed : 690b0cc9b5ee00a213c2ca578ef0d1fa8a9635bd1a4ee2871c98c995bffb322b
+    SIGNATURE top-level declares  : 690b0cc9b5ee00a213c2ca578ef0d1fa8a9635bd1a4ee2871c98c995bffb322b
+    entry 0: signer "werk dev key (publicly derived, fixtures only)" kind=service role=author uri=urn:werk:dev-key:build-image-fixture
+             signed_at        2026-08-08T12:00:00Z
+             public_key       17b9ab8630b82706b24e5847db2fe48013551b5f89a5ecfcc1b6a27053930d63
+             manifest_sha256  690b0cc9b5ee00a213c2ca578ef0d1fa8a9635bd1a4ee2871c98c995bffb322b
+             prev_entry_sha256 0000000000000000000000000000000000000000000000000000000000000000
+             signature        324dfe50913cbe79…4d52980b
+             signed message   "werk-sig/1\\n690b0cc9b5ee00a213c2ca578ef0d1fa8a9635bd1a4ee2871c98c995bffb322b\\n0000000000000000000000000000000000000000000000000000000000000000\\n2026-08-08T12:00… (211 chars total)"
+             signature length 64 bytes, public key 32 bytes (both well-formed hex)
+             prev_entry_sha256 links correctly
+  [ok]   the last chain entry (and the top-level copy) anchor the MANIFEST.json bytes actually present
+  [ok]   prev_entry_sha256 linkage is consistent across the chain
+    STATE: signature-unverified
+           (SPEC.md §10.0 step 4's fourth word. This reader carries no
+            Ed25519 implementation, so it MUST NOT say signed-and-valid.
+            Everything around the signature checks out: the chain is
+            well-formed, the anchor matches the bytes, the links hash
+            correctly. The curve arithmetic itself was not performed.
+            README.txt also warns the key is a published DEV key: even a
+            valid signature here would prove nothing about authorship.)
+  [note] ed25519 not verified — reported as signature-unverified, never as valid
+
+---- 4. EXTRACTION ---------------------------------------------
+  wrote extracted\source.png                                   5398364 bytes   sha256 15f4c330cffc16f6 (verified above)
+  wrote extracted\style-embedding.wkem                            1120 bytes   sha256 6728cb616ab2a91f (verified above)
+  wrote extracted\imperial-painterly.png                       1558138 bytes   sha256 6e7626ec4aca2cb3 (verified above)
+
+---- 5. THE CUSTOM BINARY: semantics/style-embedding.wkem ------
+  fixed prefix:
+    magic            "WKEM"  (core.embedding — style descriptor + palette)
+    version          1 (u32 LE)
+    header_len       691 (u32 LE)
+
+  header (MessagePack map, big-endian numbers inside a little-endian file):
+    colour_space    "linear-srgb"
+    dim             72
+    endianness      "le"
+    epistemic       "measured"
+    input_hash      "d18b63b52fdeb74bc1e393b1fdf21e1cc86085eb8f24e91fe88153f4f3e800fe"
+    kind            "core.embedding"
+    metric          "cosine"
+    model           "werk.descriptor.labhog/1"
+    normalized      true
+    note            "64 CIELAB histogram bins then 8 gradient-orientation bins, L2-normalised. Defined completely in spec/layouts/embedding.layout.txt section 4, so it can be recomputed from image/source.png and checked."
+    payload_origin  704
+    payload_size    416
+    producer        {2 keys}
+    sections        [2 sections, tabulated below]
+    source_path     "image/source.png"
+    swatch_count    8
+    tolerance       0.000001
+
+  what those keys mean:
+    kind="core.embedding" must match the magic; endianness="le" states the payload byte order
+    model="werk.descriptor.labhog/1"
+      -> the single most important key: a vector whose model is unknown is noise.
+         This one is an ALGORITHM defined in the package itself
+         (spec/layouts/embedding.layout.txt §4), not a neural net, which is why
+         the node can claim epistemic "measured" instead of merely asserted.
+    dim=72  normalized=true  metric="cosine"  swatch_count=8
+    epistemic="measured" tolerance=0.000001 colour_space="linear-srgb"
+
+  envelope arithmetic (two independent statements of one fact):
+    payload_origin computed 16*ceil((12+691)/16) = 704
+    payload_origin declared                      = 704
+  [ok]   WKEM: computed payload_origin equals the declared one
+    payload_origin + payload_size = 704 + 416 = 1120   file length = 1120
+  [ok]   WKEM: payload_origin + payload_size equals the file length
+    1 padding bytes between header and payload, 0 of them nonzero
+
+  payload sections (offsets are ABSOLUTE and declared, never derived):
+    name         offset     size   stride dtype    shape        consistency rule
+    vector          704      288        4 f32      [72]         1st: size == stride*prod(shape) = 288 OK
+    palette         992      128       16 f32      [8, 4]       2nd: stride>=4*4 and size == stride*prod(shape[..-1]) = 128 OK
+  [ok]   WKEM: both sections satisfy the envelope section-consistency rule (one per branch, by design)
+  [ok]   WKEM: no NaN and no infinity in the payload
+
+  VECTOR — 72 f32 components. Per the layout file, components 0..63 are a
+  4x4x4 CIELAB colour histogram over a 32x32 box-resample of the image, and
+  components 64..71 are an 8-bin Sobel gradient-orientation histogram of the
+  same grid's L plane. The whole thing is then L2-normalised.
+    L2 norm = 1.000000006  (header says normalized=true, so this must be 1.0 +/- 1e-6)
+  [ok]   WKEM: the vector really is L2-normalised, as the header claims
+
+    non-zero colour bins (index = 16*L + 4*a + b, each axis quartered):
+      bin 10  L-quarter 0 a-quarter 2 b-quarter 2   normalised weight 0.641789
+      bin 26  L-quarter 1 a-quarter 2 b-quarter 2   normalised weight 0.478795
+      bin  9  L-quarter 0 a-quarter 2 b-quarter 1   normalised weight 0.112058
+      bin 22  L-quarter 1 a-quarter 1 b-quarter 2   normalised weight 0.091684
+      bin 42  L-quarter 2 a-quarter 2 b-quarter 2   normalised weight 0.078586
+      bin 38  L-quarter 2 a-quarter 1 b-quarter 2   normalised weight 0.036383
+      bin  5  L-quarter 0 a-quarter 1 b-quarter 1   normalised weight 0.033472
+      bin  6  L-quarter 0 a-quarter 1 b-quarter 2   normalised weight 0.010187
+      bin 58  L-quarter 3 a-quarter 2 b-quarter 2   normalised weight 0.004366
+      bin 25  L-quarter 1 a-quarter 2 b-quarter 1   normalised weight 0.002911
+      -> 10 of 64 colour bins are occupied: a tightly clustered, low-chroma image.
+
+    gradient-orientation bins (0 = horizontal gradient, sweeping to pi):
+      bin 0  [  0.0deg, 22.5deg)  0.327954  ##################################################################################################
+      bin 1  [ 22.5deg, 45.0deg)  0.218895  #################################################################
+      bin 2  [ 45.0deg, 67.5deg)  0.124304  #####################################
+      bin 3  [ 67.5deg, 90.0deg)  0.118324  ###################################
+      bin 4  [ 90.0deg,112.5deg)  0.149910  ############################################
+      bin 5  [112.5deg,135.0deg)  0.112671  #################################
+      bin 6  [135.0deg,157.5deg)  0.138272  #########################################
+      bin 7  [157.5deg,180.0deg)  0.299900  #########################################################################################
+
+  PALETTE — 8 swatches of (r,g,b,weight) f32, colour space "linear-srgb",
+  sorted by weight DESCENDING so record 0 IS "the dominant colour":
+    #   R(lin)    G(lin)    B(lin)    weight     as sRGB
+    0   0.025972  0.021135  0.018694  0.4306641  #2d2825
+    1   0.104718  0.087229  0.071274  0.3212891  #5b534b
+    2   0.010643  0.010205  0.011054  0.0751953  #1b1a1b
+    3   0.116279  0.112093  0.100255  0.0615234  #605e59
+    4   0.310079  0.260130  0.207285  0.0527344  #978b7e
+    5   0.274586  0.263957  0.234927  0.0244141  #8f8c85
+    6   0.021706  0.022915  0.024104  0.0224609  #292a2b
+    7   0.030196  0.029873  0.028344  0.0068359  #31302f
+    weights sum to 0.995117
+    (NOT 1.0, and that is correct and documented: this is a TOP-8 palette over
+     ten occupied bins, so it deliberately does not cover the whole image.
+     semantics.json flags the same thing as spec finding S-24, because
+     core.semantics.schema.json describes palette weights as summing to 1.0.)
+
+  cross-check against the JSON duplicate in semantics/semantics.json:
+  [ok]   WKEM: all 8 swatches agree with the JSON duplicate in semantics.json, to 1e-6, including the sRGB hex I re-encoded from the linear values
+    semantics.json also states dominant_index=0 and average_luminance=0.069063;
+    dominant_index 0 is consistent with the binary's weight-descending sort rule.
+
+  NOT DONE, and declared rather than glossed over: the descriptor was not
+  RECOMPUTED from image/source.png. §4 of the layout file defines the whole
+  algorithm and §5 promises agreement to 1e-6 absolute, so this is checkable —
+  it just needs a PNG decoder (zlib inflate + defiltering), which this reader
+  does not carry. Everything above is what the file DECLARES, verified for
+  internal consistency; the pixels were not re-measured.
+
+---- 6. HOW THE IMAGE WAS MADE (core.recipe) -------------------
+  The recipe node carries 2 versions; version 2 is active.
+    v1: The recipe as first written, from the fields the producing pipeline actually persisted.
+    v2 (supersedes v1): Auditing the pipeline's source showed the persisted prompt is one sentence shorter than the string transmitted; v2 records the reconstructed transmitted prompt and the code excerpt it was rebuilt from. v1 stays, because law 6 does not rewrite history and because the difference is the interesting par… (302 chars total)
+
+  Reading recipe/recipe.json (the active record):
+    target            : node image-source v1
+    reproducibility   : DESCRIPTIVE
+    why               : The model is hosted: no weight file exists to hash, the API exposes no seed, and the operator may change the weights behind the id 'gemini-3.1-flash-image' without notice. Re-running this recipe would produce a different image that follows the same instructions.
+    generated_at      : 2026-07-17T03:34:31Z
+    pipeline kind     : hosted-api
+
+    step 0 "design" (role: generate)
+      model           : gemini-3.1-flash-image  (family gemini-image, hosted=true, operator Google)
+      weights         : available=false — Hosted model: the operator publishes no weight file, so there is nothing to hash. The id is not a version either - the weights behind it may change without notice.
+      reached via     : Reached through the google-genai Python SDK's models.generate_content(). The concrete HTTPS endpoint is chosen by the SDK and was not recorded, so no 'endpoint' key is given rather than a plausible one being written in.
+      tool            : visual_bible_engine design_book -> forge.design -> NanoBanana2.design (version not-recorded, repo rev not-recorded)
+      call params     : aspect_ratio="3:4"  image_size="2K"  response_modalities=["TEXT","IMAGE"]  retries=4  backoff_seconds=3
+      seed            : controlled=false — The hosted image API exposes no seed parameter; the call config carries aspect_ratio, image_size and response_modalities and nothing else.
+      input           : [style-reference] recipe/inputs/imperial-painterly.png (1558138 bytes)
+                        The house style plate, attached automatically because use_style_refs defaults to true. No identity references were passed, which is why the client took its single-style-image branch - the branch whose trailing sentence recipe v2 reconstructs.
+      output          : image/source.png (5398364 bytes, image/png)
+      prompt file     : recipe/prompt-transmitted.txt  [provenance: RECONSTRUCTED]
+      prompt caveat   : RECONSTRUCTED, not recorded. It is very probably what was sent and it is not evidence that it was.
+      reconstruction  : The pipeline persisted the assembled prompt but not the string it transmitted. The transmitted string is the persisted text (kept in this package as recipe/prompt-recorded.txt, byte for byte) followed by the sentence the client appends when it attaches style references and no identity references: ' The attached 1 image(s) are STYLE references - match their painterly rendering, palette and mood.' - with an em dash where this sentence shows a hyphen, and with the count 1 because exactly one style plate was attached. The branch taken is the else-branch of the client's style-reference block, which is reached when the identity-reference list is empty. Both source blocks are in recipe/evidence/pipeline-source.txt with the sha256 of the files they came from.
+        evidence      : recipe/evidence/pipeline-source.txt — Verbatim extracts of the five functions that assemble and send the prompt, each with the sha256 of the source file it came from.
+        evidence      : recipe/prompt-recorded.txt — The persisted text this reconstruction extends. It is the first N bytes of the transmitted string, exactly.
+      negative prompt : absent — This model has no negative-prompt field. The exclusion list was folded into the positive text by the pipeline's per-model prompt router and appears in it after 'Do NOT include:'.
+
+      ---- the prompt as this version records it, in full ----
+      | realistic detailed colour digital oil painting, ista varun, A young scholar from the outer world Drevath
+      | Secundus, junior in comparative mythology (two published papers, a third in progress); reads by hand,
+      | carries a slate for computation. The text never gives her face, hair, age or build, so infer a woman
+      | roughly late-20s to 30s, plain and alert, an academic who walks long distances rather than take transit.
+      | Recurring prop: a bound paper private journal she keeps for things she will not put on any system., A
+      | practical outer-worlds scholar's coat with a deep inner breast pocket (she carries the concordance
+      | data-carrier against her ribs there); a hand carry-case on arrival. Muted, austere, travel-worn civilian
+      | cloth. Specific garments/colors are inferred., Method-focused, rigorous, quietly observant; the one who
+      | counts the watchers and notes exact times. Physically undramatic; her signature is attention, not
+      | costume., plain layered administrator robes, discreet philosophy sigil, no militaria, austere
+      | administrative vestments, clean minimal, corporate-monastic, measured, pale institutional light, bone
+      | white, slate grey and muted bronze, centered full-body portrait, the subject fully visible, 8K
+      | masterwork, retro-futurist, in the year 3000, artist Hans Holbein the Younger. Do NOT include: no
+      | Warhammer 40000 or grimdark iconography, no aquila or eagle emblems, no skulls or skull piles, no
+      | chainswords, no Nazi/SS/Wehrmacht insignia, no swastika, no hammer-and-sickle, no Soviet or communist
+      | real-world insignia, no Star Wars, no Star Trek, no Dune, no Marvel, no real-world national flags or
+      | historical military insignia, no modern logos or text; original invented star-and-chevron insignia only.
+      | The attached 1 image(s) are STYLE references — match their painterly rendering, palette and mood.
+      ---- end of prompt (1816 bytes) ----
+      step note       : One model call. There is no second 'realize' stage in this path: the compose-then-realize chain belongs to a different entry point in the same repository and did not run here. The params above were read from the calling source, not from a record written at generation time - see unrecorded[].
+
+    postprocess "png-encode" via Pillow (PIL.Image.save) not-recorded
+      The API returns pixels; the pipeline wrote them with PIL Image.save(). The PNG byte stream is therefore Pillow's encoding of the model's output rather than bytes the model produced. The pixels are the model's; the file is Pillow's, and a reader comparing hashes needs to know that.
+
+    NOT RECORDED — 6 facts this package refuses to invent:
+      * the google-genai client library version, and the Python version, at generation time
+      * the call parameters as SENT: aspect_ratio, image_size, response_modalities, retries and backoff are read from the calling source as it stands today, not from a record written at generation time
+      * the repository revision of the producing pipeline: the writing script and the image were both untracked in that repository when this image was made, and its HEAD at the time predates the script
+      * the Pillow version that encoded the PNG
+      * whether the API call was retried: the client retries up to four times on an empty response and does not record whether it did
+      * which of the client's up-to-four attempts produced the saved pixels, and therefore whether the transmitted string was byte-identical to the reconstruction on the attempt that succeeded
+
+    The two prompt files differ by exactly 101 bytes appended at the end;
+    the first 1715 bytes are byte-identical, so the persisted prompt really is
+    a prefix of the reconstructed transmitted string:
+      appended: " The attached 1 image(s) are STYLE references — match their painterly rendering, palette and mood."
+
+---- 7. WHAT THE FILE DECLARES ABOUT THAT (core.disclosure) ----
+    ai_generated      : true
+    ai_modified       : false
+    generation_scope  : whole-work
+    declared_by       : werk fixture builder (fixtures/build_image_fixture.py) (urn:werk:dev-key:build-image-fixture)
+    declared_at       : 2026-08-08T12:00:00Z
+    backed by node    : recipe
+    model             : gemini-3.1-flash-image (role generate, operator Google, hosted true)
+                        A hosted model id is not a version. The weights behind this id may have changed since the image was made, and nothing in this package can detect that.
+    human authorship  : claimed=true
+                        A human wrote the character's subject description, chose the style register, and authored the exclusion list that the prompt was assembled from. A human did not draw the pixels and no human retouched them.
+                        Gregor Hubert Max Koch — subject description, style register, exclusion list, and the decision to publish this image as a conformance fixture
+    synthetic markers : c2pa_manifest_present=false embedded_metadata_stripped=true
+    training data     : not-disclosed-by-operator — No training-data statement for this model was obtained by the declarer. This field records that absence rather than implying anything from it.
+    subject           : real person=false real event=false universe=5D6 Space
+                        Ista Varun is a fictional character. No living or historical person was used as a reference, and the only image attached to the generation was a house style plate.
+    statements:
+      [watermark-unverified] (authored)
+          No detector has been run over these bytes, so this package makes no claim either way about an invisible watermark. synthetic_markers deliberately carries no declared_watermarks array: an empty array would read as 'checked and found none', which nobody did.
+      [png-metadata-measured] (measured, confidence 1)
+          The source PNG carries no tEXt, iTXt, zTXt or eXIf chunk. This was measured by walking the chunk list at build time, not assumed; it is why embedded_metadata_stripped is true.
+      [copyright-unsettled] (authored)
+          Whether copyright subsists in a wholly AI-generated image, and in whom, is unsettled in several jurisdictions. The embedded LICENSE grants what the licensor has to grant and says so rather than overclaiming.
+      [no-enforcement] (authored)
+          Nothing in this node obliges any viewer to do anything. The format ships facts; the viewer applies jurisdiction; see spec/SPEC.md section 3.12. A viewer that ignores every field here is conformant.
+    jurisdiction note : Written with transparency-of-synthetic-content regimes in mind. This is NOT a compliance claim, it binds no viewer, and no tool may report this package as compliant with anything on the strength of it.
+
+    x.c2pa.export     : present, and it is a STUB. status=intent note=This node is x.* on purpose. A reader that does not know it skips it and reports the skip, and nothing in core depends on it - which is the whole argument for keeping another consortium's schema out of a constitution.
+
+---- 8. RESULT -------------------------------------------------
+  checks passed 16   failed 0   notes 1
+  signature state: signature-unverified (no ed25519 in this reader)
+  Every hash, size, CRC and declared arithmetic in this package agrees.

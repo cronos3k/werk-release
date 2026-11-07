@@ -1,0 +1,18 @@
+--- tools/llama2c/run.c
++++ tools/llama2c/run.c (instrumented for test-vector capture)
+@@ -743,6 +743,7 @@
+     long start = 0;  // used to time our code, only initialized after first iteration
+     int next;        // will store the next token in the sequence
+     int token = prompt_tokens[0]; // kick off with the first token in the prompt
++    fprintf(stderr, "TOKEN %d\n", token);   /* werk test-vector instrumentation */
+     int pos = 0;     // position in the sequence
+     while (pos < steps) {
+ 
+@@ -760,6 +761,7 @@
+         pos++;
+ 
+         // data-dependent terminating condition: the BOS (=1) token delimits sequences
++        fprintf(stderr, "TOKEN %d\n", next);   /* werk test-vector instrumentation */
+         if (next == 1) { break; }
+ 
+         // print the token as string, decode it with the Tokenizer object

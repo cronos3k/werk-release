@@ -1,0 +1,18 @@
+Entity: Wooden crate (36 nodes, 174 entries)
+Signature: signed-and-valid
+archive-crc32: 174/174 passed
+convention: 21/21 passed
+ed25519-signature: 1/1 passed
+global-spec-sha256: 1/1 passed
+input-hash: 25/25 passed
+license-sha256: 1/1 passed
+manifest-file-sha256: 172/172 passed
+manifest-file-size: 172/172 passed
+provenance-consumed-sha256: 1/1 passed
+signature-manifest-sha256: 2/2 passed
+signature-prev-entry-sha256: 1/1 passed
+All structural checks and declared current-package hashes passed.
+Extracted mesh: geometry/game.glb -> primary_mesh.glb sha256=eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce
+Extracted sound: audio/sfx/crate-impact-hard-surface.wav -> primary_sound.wav sha256=1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e
+Node listing: CONTENTS.md
+Machine-readable audit: verification.json

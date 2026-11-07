@@ -1,0 +1,817 @@
+===== AGENT MESSAGE =====
+I’ll inspect the workspace to identify the model artifact and its built-in correctness checks, then run the smallest reproducible inference path and verify the output.
+
+===== COMMAND 01  (exit 1) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Get-ChildItem -Force | Format-Table -AutoSize Name,Length,Mode,LastWriteTime; rg --files -g "AGENTS.md" -g "!**/.git/**"'
+----- output -----
+
+Name              Length Mode   LastWriteTime      
+----              ------ ----   -------------      
+selfrun-v1.werk 62525273 -a---- 8/9/2026 6:27:58 AM
+
+
+
+
+===== AGENT MESSAGE =====
+There is a single 62.5 MB artifact, `selfrun-v1.werk`, and no repository instructions to override the task. I’m identifying its container format and embedded runner/check data now.
+
+===== COMMAND 02  (exit 1) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "Format-Hex -Path .\\selfrun-v1.werk -Count 256"
+----- output -----
+Format-Hex : A parameter cannot be found that matches parameter name 'Count'.
+At line:2 char:36
++ Format-Hex -Path .\selfrun-v1.werk -Count 256
++                                    ~~~~~~
+    + CategoryInfo          : InvalidArgument: (:) [Format-Hex], ParameterBindingException
+    + FullyQualifiedErrorId : NamedParameterNotFound,Format-Hex
+ 
+
+
+===== COMMAND 03  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$bytes = Get-Content -LiteralPath .'"\\selfrun-v1.werk -Encoding Byte -TotalCount 512; "'$bytes | Format-Hex'
+----- output -----
+
+
+           Path:  
+
+           00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
+
+00000000   50 4B 03 04 14 00 00 08 00 00 00 48 08 5D CE A4  PK.........H.]Î¤
+00000010   5D BB A9 7F 00 00 A9 7F 00 00 0D 00 00 00 4D 41  ]»©..©......MA
+00000020   4E 49 46 45 53 54 2E 6A 73 6F 6E 7B 0A 20 20 22  NIFEST.json{.  "
+00000030   77 65 72 6B 22 3A 20 7B 0A 20 20 20 20 22 6D 61  werk": {.    "ma
+00000040   6A 6F 72 22 3A 20 31 2C 0A 20 20 20 20 22 6D 69  jor": 1,.    "mi
+00000050   6E 6F 72 22 3A 20 30 0A 20 20 7D 2C 0A 20 20 22  nor": 0.  },.  "
+00000060   70 72 6F 66 69 6C 65 22 3A 20 22 6D 6F 64 65 6C  profile": "model
+00000070   2F 31 2D 64 72 61 66 74 22 2C 0A 20 20 22 6D 61  /1-draft",.  "ma
+00000080   6E 69 66 65 73 74 5F 73 63 68 65 6D 61 22 3A 20  nifest_schema": 
+00000090   22 73 70 65 63 2F 73 63 68 65 6D 61 73 2F 6D 61  "spec/schemas/ma
+000000A0   6E 69 66 65 73 74 2E 6D 6F 64 65 6C 2D 64 72 61  nifest.model-dra
+000000B0   66 74 2E 73 63 68 65 6D 61 2E 6A 73 6F 6E 22 2C  ft.schema.json",
+000000C0   0A 20 20 22 73 70 65 63 5F 73 68 61 32 35 36 22  .  "spec_sha256"
+000000D0   3A 20 22 33 64 65 63 62 33 39 37 38 65 39 39 66  : "3decb3978e99f
+000000E0   35 39 33 35 37 32 64 61 30 32 36 66 36 39 66 62  593572da026f69fb
+000000F0   39 64 33 34 37 32 66 37 35 63 66 62 64 32 63 36  9d3472f75cfbd2c6
+00000100   66 32 35 66 33 63 31 35 30 35 65 34 64 38 37 63  f25f3c1505e4d87c
+00000110   61 66 66 22 2C 0A 20 20 22 65 6E 74 69 74 79 22  aff",.  "entity"
+00000120   3A 20 7B 0A 20 20 20 20 22 75 75 69 64 22 3A 20  : {.    "uuid": 
+00000130   22 37 34 64 31 32 30 31 34 2D 39 37 63 61 2D 34  "74d12014-97ca-4
+00000140   62 62 34 2D 39 32 37 61 2D 61 38 31 37 61 39 35  bb4-927a-a817a95
+00000150   31 37 34 34 31 22 2C 0A 20 20 20 20 22 6E 61 6D  17441",.    "nam
+00000160   65 22 3A 20 22 73 74 6F 72 69 65 73 31 35 4D 22  e": "stories15M"
+00000170   2C 0A 20 20 20 20 22 73 75 6D 6D 61 72 79 22 3A  ,.    "summary":
+00000180   20 22 41 20 31 35 20 4D 2D 70 61 72 61 6D 65 74   "A 15 M-paramet
+00000190   65 72 20 6C 61 6E 67 75 61 67 65 20 6D 6F 64 65  er language mode
+000001A0   6C 2C 20 74 68 65 20 63 6F 6D 70 6C 65 74 65 20  l, the complete 
+000001B0   43 20 73 6F 75 72 63 65 20 6F 66 20 61 20 72 75  C source of a ru
+000001C0   6E 74 69 6D 65 20 74 68 61 74 20 65 78 65 63 75  ntime that execu
+000001D0   74 65 73 20 69 74 2C 20 6C 61 79 6F 75 74 20 67  tes it, layout g
+000001E0   72 61 6D 6D 61 72 73 20 66 6F 72 20 62 6F 74 68  rammars for both
+000001F0   20 6F 66 20 69 74 73 20 62 69 6E 61 72 79 20 66   of its binary f
+
+
+
+
+===== COMMAND 04  (exit 1) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "tar -tf .\\selfrun-v1.werk"
+----- output -----
+      0 [main] tar (39848) C:\Program Files\Git\usr\bin\tar.exe: *** fatal error - CreateFileMapping S-1-5-21-99840626-1112830152-3125369796-1001.1, Win32 error 5.  Terminating.
+Stack trace:
+Frame         Function      Args
+0000005FBB10  00021005FE8E (0002102AEC0F, 00021026AB81, 000000000056, 0000005FAA50) msys-2.0.dll+0x1FE8E
+0000005FBB10  0002100467F9 (000000000006, 0000005FBB10, 000210070B80, 000000000001) msys-2.0.dll+0x67F9
+0000005FBB10  000210046832 (0000005FBB10, 000000000056, 000000000056, 000000008A28) msys-2.0.dll+0x6832
+0000005FBB10  00021017E627 (000000000000, 000000000220, 000000008A28, 72006100000001) msys-2.0.dll+0x13E627
+0000005FF310  00021017EAEC (0000005FD320, 0000005FF310, 00020000DFB8, 000000000000) msys-2.0.dll+0x13EAEC
+0000005FF310  00021017EFCE (000210312760, 0000005FD320, 000000000000, 000000000000) msys-2.0.dll+0x13EFCE
+0000005FF310  000210048462 (00007FFE0384, 000000000000, 000000000000, 000000000000) msys-2.0.dll+0x8462
+0000005FF310  000210070C3C (000000000000, 000000000000, 000000000000, 000000000000) msys-2.0.dll+0x30C3C
+0000005FF5F0  7FFD3E329A1D (000210040000, 000000000001, 000000000000, 0000005FF4F8) ntdll.dll+0x19A1D
+0000005FF5F0  7FFD3E37D2F7 (0000006E9C00, 000000070001, 000000000001, 000000000001) ntdll.dll+0x6D2F7
+0000005FF5F0  7FFD3E37D08A (0000006E63F0, 0000005FF5F0, 0000006E9C90, 000000000001) ntdll.dll+0x6D08A
+0000005FF5F0  7FFD3E37D110 (0000006E5AE0, 0000005FF5F0, 0000006E8D20, 000000070000) ntdll.dll+0x6D110
+0000005FF5F0  7FFD3E37D110 (7FFD3E435910, 000000000000, 000000000010, 0000005FF690) ntdll.dll+0x6D110
+000000000000  7FFD3E3E3D72 (000000000000, 000000000000, 000000000001, 000000000000) ntdll.dll+0xD3D72
+000000000000  7FFD3E385DEB (7FFD3E310000, 000000000000, 0000003F3000, 000000000000) ntdll.dll+0x75DEB
+000000000000  7FFD3E385C73 (000000000000, 000000000000, 000000000000, 000000000000) ntdll.dll+0x75C73
+000000000000  7FFD3E385C1E (000000000000, 000000000000, 000000000000, 000000000000) ntdll.dll+0x75C1E
+End of stack trace
+Loaded modules:
+000100400000 tar.exe
+7FFD3E310000 ntdll.dll
+7FFD3C6E0000 KERNEL32.DLL
+7FFD3C030000 KERNELBASE.dll
+000430B30000 msys-intl-8.dll
+0005603F0000 msys-iconv-2.dll
+000210040000 msys-2.0.dll
+7FFD3D930000 advapi32.dll
+7FFD3DF60000 msvcrt.dll
+7FFD3E0F0000 sechost.dll
+7FFD3C4E0000 RPCRT4.dll
+7FFD3BB70000 bcrypt.dll
+7FFD3B260000 CRYPTBASE.DLL
+7FFD3BF70000 bcryptPrimitives.dll
+
+
+===== COMMAND 05  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command 'Add-Type -AssemblyName System.IO.Compression.FileSystem; $z=[IO.Compression.ZipFile]::OpenRead((Resolve-Path .'"\\selfrun-v1.werk)); "'$z.Entries | Select-Object FullName,Length,CompressedLength | Format-Table -AutoSize; $z.Dispose()'
+----- output -----
+
+FullName                                           Length CompressedLength
+--------                                           ------ ----------------
+MANIFEST.json                                       32681            32681
+SIGNATURE.json                                       1047             1047
+LICENSE                                              4436             4436
+README.txt                                           4273             4273
+loaders/werk_read.c                                111051           111051
+loaders/werk_read.py                                42226            42226
+loaders/werk_read.rs                                98761            98761
+spec/MINI-SPECS.md                                  40147            40147
+spec/PROFILE-IMAGE.md                               13274            13274
+spec/PROFILE-MODEL-DRAFT.md                         12874            12874
+spec/README.md                                      10855            10855
+spec/SPEC.md                                       104388           104388
+spec/X-C2PA-EXPORT.md                                7461             7461
+spec/conventions-map.image.json                      2416             2416
+spec/conventions-map.json                            9269             9269
+spec/examples/MANIFEST.example.json                 20758            20758
+spec/examples/SIGNATURE.example.json                 1107             1107
+spec/examples/embedding.example.hex.txt              4552             4552
+spec/examples/embedding.example.wkem                  512              512
+spec/examples/gsplat.example.hex.txt                10032            10032
+spec/examples/gsplat.example.wkgs                    1120             1120
+spec/examples/make-examples.py                      57151            57151
+spec/examples/restposes.example.hex.txt              4415             4415
+spec/examples/restposes.example.wkrp                  560              560
+spec/examples/signature.example.txt                  4631             4631
+spec/extensions/x.cub.v1.baked.layout.txt            9359             9359
+spec/extensions/x.cub.v1.md                          8783             8783
+spec/facets.json                                    11978            11978
+spec/layouts/ENVELOPE.layout.txt                    26372            26372
+spec/layouts/animclip.layout.txt                    16800            16800
+spec/layouts/embedding.layout.txt                   14361            14361
+spec/layouts/flowfield.layout.txt                    6263             6263
+spec/layouts/gsplat.layout.txt                      23918            23918
+spec/layouts/imposter.layout.txt                    10446            10446
+spec/layouts/llama2c-checkpoint.layout.txt           8731             8731
+spec/layouts/llama2c-tokenizer.layout.txt            5671             5671
+spec/layouts/points.layout.txt                      16663            16663
+spec/layouts/restposes.layout.txt                    5958             5958
+spec/layouts/skeleton.layout.txt                     5964             5964
+spec/schemas/conventions-map.schema.json             4614             4614
+spec/schemas/core.anim.clip.schema.json              9585             9585
+spec/schemas/core.audio.effect.schema.json           8628             8628
+spec/schemas/core.audio.package.schema.json          7320             7320
+spec/schemas/core.destruct.schema.json               6319             6319
+spec/schemas/core.disclosure.schema.json            11515            11515
+spec/schemas/core.imposter.schema.json               6708             6708
+spec/schemas/core.material.schema.json               4823             4823
+spec/schemas/core.phys.body.schema.json              6157             6157
+spec/schemas/core.phys.bounds.schema.json            3164             3164
+spec/schemas/core.phys.colliders.schema.json         4116             4116
+spec/schemas/core.props.schema.json                 11666            11666
+spec/schemas/core.provenance.schema.json             6140             6140
+spec/schemas/core.recipe.schema.json                26485            26485
+spec/schemas/core.retarget.bind.schema.json         13337            13337
+spec/schemas/core.semantics.schema.json              6917             6917
+spec/schemas/core.skeleton.schema.json              11464            11464
+spec/schemas/core.tool.config.schema.json            7321             7321
+spec/schemas/core.tool.schema.json                  10894            10894
+spec/schemas/facets.schema.json                      3593             3593
+spec/schemas/manifest.image.schema.json             28278            28278
+spec/schemas/manifest.model-draft.schema.json       47792            47792
+spec/schemas/manifest.schema.json                   46174            46174
+spec/schemas/signature.schema.json                  11209            11209
+spec/schemas/x.c2pa.export.schema.json               4935             4935
+spec/skeleton/canonical-humanoid-v1.json            22429            22429
+spec/skeleton/core.hands.v1.json                    26112            26112
+spec/skeleton/derive-canonical-humanoid.py          19852            19852
+testvectors/generate-once-upon-a-time.stdout.txt      234              234
+testvectors/generate-the-little-robot.stdout.txt      140              140
+testvectors/tokens_instrumentation.diff               831              831
+testvectors/vectors.json                             6794             6794
+tools/llama2c-testvector-run.config.json             2376             2376
+tools/llama2c/BUILD-AND-RUN.md                       9166             9166
+tools/llama2c/LICENSE-llama2c.txt                    1063             1063
+tools/llama2c/run.c                                 38545            38545
+tools/llama2c/tool.json                              3158             3158
+tools/llama2c/win.c                                  4269             4269
+tools/llama2c/win.h                                  1612             1612
+recipe/inputs/llama2c-README.md                     35271            35271
+recipe/inputs/tinyllamas-model-card.md                183              183
+recipe/recipe.json                                   4835             4835
+disclosure/disclosure.json                           4288             4288
+provenance/provenance.json                           1952             1952
+model/stories15M.bin                             60816028         60816028
+model/tokenizer.bin                                433869           433869
+
+
+
+
+===== COMMAND 06  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$dest = Join-Path (Get-Location) '"'selfrun-v1'; if (Test-Path -LiteralPath "'$dest) { throw "Destination already exists: $dest" }; New-Item -ItemType Directory -Path $dest | Out-Null; Add-Type -AssemblyName System.IO.Compression.FileSystem; [IO.Compression.ZipFile]::ExtractToDirectory((Resolve-Path .'"\\selfrun-v1.werk), "'$dest); Get-Content -LiteralPath (Join-Path $dest '"'README.txt'); Get-Content -LiteralPath (Join-Path "'$dest '"'tools\\llama2c\\BUILD-AND-RUN.md')"
+----- output -----
+stories15M â€” a language model that carries its own engine
+=========================================================
+
+This is a werk package: ONE FILE that carries an artifact and everything needed
+to understand it. This particular one carries a language model, and "everything
+needed to understand it" was taken literally.
+
+WHAT IS IN HERE
+
+  model/stories15M.bin       the weights. 15 191 712 parameters, f32, 58 MB.
+  model/tokenizer.bin        the vocabulary. 32 000 entries.
+  tools/llama2c/             the COMPLETE SOURCE of a runtime that runs it:
+                             ~970 lines of C99, no dependencies, no build
+                             system, no network.
+  spec/layouts/              a byte-exact grammar for each of the two binary
+                             formats above.
+  testvectors/               what the model MUST produce, deterministically,
+                             so you can tell "it ran" from "it ran correctly".
+  spec/                      the werk format specification itself.
+  loaders/                   three single-file, dependency-free readers for
+                             this container: one Python, one Rust, one C.
+  recipe/, disclosure/, provenance/, LICENSE
+                             where the weights came from, what is model output
+                             and what is not, and the three licences that meet
+                             in this file.
+
+HOW TO GET TEXT OUT OF IT
+
+  1. Extract. It is a store-mode zip; any zip tool works, or use
+     loaders/werk_read.py, which needs nothing but a Python interpreter.
+  2. Read tools/llama2c/BUILD-AND-RUN.md. It has the exact compile command for
+     each platform, says which of them were measured and on what machine, and
+     says which one is upstream's and was not measured here.
+  3. Build the runtime from source. There is no binary in this package.
+  4. Run it. The invocation is in BUILD-AND-RUN.md Â§3 and in
+     testvectors/vectors.json as an argv array.
+  5. Check your output against testvectors/vectors.json. That step is the
+     point of the package: a runtime that reads the weights at the wrong
+     offsets still emits confident English, and only the vector catches it.
+
+NOTHING HERE RUNS ITSELF
+
+There is no compiled artifact anywhere in this package, and no werk tool
+executes anything it finds in one. spec/SPEC.md Â§7.1 is the rule: source is
+always allowed and reading it is the point; a prebuilt binary is inert data and
+is never executed automatically under any circumstance, including a valid
+signature. This package has no prebuilt binary at all, so every executable byte
+you end up with is one you produced from source you can read.
+
+A NOTE ON THE PROFILE
+
+This package declares `profile: "model/1-draft"`. THAT PROFILE DOES NOT EXIST as
+a ruled part of the werk specification. It was drafted while building this file,
+because the file had nowhere to declare what it was, and the draft is carried
+here at spec/PROFILE-MODEL-DRAFT.md together with the manifest schema it
+validates against (spec/schemas/manifest.model-draft.schema.json). Section 5 of
+the draft lists five places where the existing core doctrine does not fit a
+model package â€” a missing `train` role, a hermeticity rule no model package can
+satisfy, a disclosure axis that has one dimension where a model has two, a tool
+role vocabulary with no word for "executor", and the absence of the node types
+this package had to declare in the `x.` namespace. None of them are fixed. They
+were found by building this, which is what fixtures are for.
+
+WHAT THIS PACKAGE IS NOT
+
+Not a benchmark: the test vectors check that execution is CORRECT, not that the
+model is good. It is a 15 M-parameter story completer trained on a synthetic
+children's-story corpus and it will happily contradict itself in the third
+sentence.
+
+Not a training record: the weights are the output of a run this package did not
+perform and cannot reproduce. recipe/recipe.json says so, in the format's own
+vocabulary, with `reproducibility: "descriptive"`.
+
+Not fast: the carried runtime is scalar C on one core, measured at ~94 tokens
+per second. Optimised executors are somebody's product and an extension-tier
+concern by design; base doctrine's job is that a stranger can get output at all.
+# BUILD AND RUN â€” the runtime this package carries
+
+This package contains a language model and the complete source of a runtime
+that executes it. This file is the exact procedure: what to compile, with what
+command, and what to run to get text out. Every command below is quoted as it
+was actually typed; the ones marked **VERIFIED** were run by the package's
+author on the machine described in Â§5 and their output is what
+`testvectors/vectors.json` records.
+
+Nothing here is executed for you and nothing in this package executes itself.
+`spec/SPEC.md` Â§7.1 is the rule and it is not softened here: source is always
+allowed and reading it is the point; a compiled artifact is inert data. There is
+no compiled artifact in this package â€” every executable byte you end up with,
+you produced.
+
+## 1. What you need out of the package
+
+Extract the whole package (it is a store-mode zip; any zip tool, or the
+zero-dependency reader in `loaders/`). Four paths matter:
+
+| path | what it is |
+|---|---|
+| `tools/llama2c/run.c` | the whole runtime, ~970 lines of C99, no dependencies beyond the standard library and libm |
+| `tools/llama2c/win.h`, `tools/llama2c/win.c` | a Windows shim providing `mmap`/`munmap`/`clock_gettime`. Needed on Windows ONLY; `run.c` includes `win.h` behind `#if defined _WIN32` |
+| `model/stories15M.bin` | the weights, 60 816 028 bytes, f32. Layout: `spec/layouts/llama2c-checkpoint.layout.txt` |
+| `model/tokenizer.bin` | the vocabulary, 433 869 bytes. Layout: `spec/layouts/llama2c-tokenizer.layout.txt` |
+
+Toolchain: any hosted C99 compiler. Nothing is downloaded, nothing is
+installed, there is no build system, no makefile is required and no network
+access is needed at any point.
+
+## 2. Build
+
+Run these from the extracted package root.
+
+### 2a. POSIX â€” Linux, macOS, WSL, MSYS2's UCRT/MSYS shells
+
+```
+cc -O3 -o run tools/llama2c/run.c -lm
+```
+
+`win.c` is NOT compiled on POSIX and MUST NOT be: `run.c` takes the
+`<sys/mman.h>` branch there. This is upstream llama2.c's own build line
+(`gcc -O3 -o run run.c -lm`, from its README, which this package carries at
+`recipe/inputs/llama2c-README.md`). **NOT VERIFIED HERE** â€” the machine in Â§5
+is Windows and had no working POSIX C compiler on it, so this command is
+reported as upstream's, unmeasured, and is labelled that way rather than
+claimed. If it fails for you, that is a fact worth reporting; the two commands
+below are the ones that were measured.
+
+### 2b. Windows, MSVC â€” **VERIFIED**
+
+From a shell where `cl.exe` is on PATH (run `vcvars64.bat` from your Visual
+Studio installation first, or use a "x64 Native Tools Command Prompt"):
+
+```
+cl /nologo /O2 /Fe:run.exe tools\llama2c\run.c tools\llama2c\win.c
+```
+
+Both `.c` files. `win.c` supplies `mmap`, `munmap` and `clock_gettime`, which
+`run.c` calls and which Windows does not have. Measured: exit 0, one warning-free
+`Generating Code...`, a 218 624-byte `run.exe`.
+
+### 2c. Windows, mingw-w64 gcc â€” **VERIFIED TO FAIL, UNMODIFIED**
+
+```
+gcc -O3 -o run.exe tools/llama2c/run.c tools/llama2c/win.c -lm
+```
+
+does **not** build with mingw-w64 gcc 15.2.0. Measured, both errors, verbatim:
+
+```
+win.c:136: error: passing argument 4 of 'VirtualProtect' from incompatible
+           pointer type   (uint32_t * vs PDWORD, i.e. unsigned long *)
+win.c:175: error: redefinition of 'clock_gettime'
+           (mingw's own <pthread_time.h> already defines it inline)
+```
+
+Neither is a werk problem and neither is fixed here, because fixing it would
+mean shipping a `win.c` whose bytes are not the ones its author published â€” and
+then this package's `sha256` for that file would no longer match upstream, which
+is the one property that lets a stranger check where the code came from. The
+two changes a consumer needs, if a mingw build is what they want, are one cast
+and one `#if !defined(__MINGW32__)` guard, both inside `win.c`, both outside the
+scope of this package. Use Â§2b instead.
+
+Suppressing the first error with `-Wno-incompatible-pointer-types` and renaming
+the second with `-Dclock_gettime=...` was also tried, and also fails: the rename
+applies to mingw's own inline definition too. Recorded so nobody spends the
+twenty minutes again.
+
+## 3. Run
+
+```
+./run model/stories15M.bin -z model/tokenizer.bin -t 0.0 -n 64 -i "Once upon a time"
+```
+
+(on Windows, `run.exe model\stories15M.bin -z model\tokenizer.bin -t 0.0 -n 64 -i "Once upon a time"`)
+
+Flags that matter:
+
+| flag | meaning |
+|---|---|
+| first positional | path to the checkpoint. Required. |
+| `-z <path>` | tokenizer path. **Required here**, because run.c's default is `tokenizer.bin` in the CURRENT DIRECTORY and this package puts it in `model/`. Omitting it is the single most likely way to fail. |
+| `-t <float>` | temperature. **`-t 0.0` selects greedy argmax and makes the run deterministic.** Any other value samples and the output will not match the test vectors. |
+| `-n <int>` | number of steps. |
+| `-i <string>` | the prompt. |
+| `-s <int>` | RNG seed. Irrelevant at `-t 0.0`; the sampler is never consulted. |
+
+The generated text goes to **stdout**. A timing line (`achieved tok/s: â€¦`) goes
+to **stderr** and is not part of any test vector.
+
+## 4. Check your result against the package
+
+`testvectors/vectors.json` is the correctness anchor. It records, for two
+temperature-0 runs, the exact command line, the exact stdout, its sha256, and
+the exact sequence of token ids. Verify like this:
+
+1. Run the command in `vectors[i].argv`.
+2. Take stdout, **replace CRLF with LF**, and compare against
+   `vectors[i].stdout_text` â€” or hash it and compare against
+   `vectors[i].stdout_sha256_lf`.
+3. It should match byte for byte.
+
+The CRLF normalisation is not a fudge. `run.c` writes to a text-mode stream, so
+the newlines inside the generated story come out as `\n` on POSIX and `\r\n` on
+Windows from an identical model computation. The hash is therefore declared over
+the LF form and the byte count of the LF form is given too
+(`stdout_bytes_lf`). The raw Windows-console hash of the first vector is
+recorded separately as `stdout_sha256_crlf` so that the normalisation can itself
+be checked rather than taken on trust.
+
+`vectors[i].token_ids` is the stronger anchor: token ids are integers and no
+newline convention touches them. They were captured by a two-line
+instrumentation of `run.c`, and that instrumentation travels in this package as
+`testvectors/tokens_instrumentation.diff` so you can reproduce the capture
+instead of believing it. **The unmodified `run.c` does not print token ids** â€”
+matching `stdout_sha256_lf` is the check you can do without patching anything,
+and it is sufficient.
+
+### If it does not match
+
+Floating-point summation order is the expected cause and it is a real one: the
+runtime is scalar C, but a compiler is free to vectorise the reductions in
+`rmsnorm`, `softmax` and `matmul`, and `-ffast-math` or an aggressive `-O` on a
+different target will reassociate them. A greedy argmax over 32 000 logits is
+usually robust to that, and it is not guaranteed to be. So:
+
+* a run that matches **is** strong evidence the whole chain is right;
+* a run that **diverges after N tokens** is evidence of arithmetic reassociation,
+  not necessarily of a broken reader. Report N and your compiler flags.
+* a run that produces **fluent English but a different story from token 1** means
+  the prompt encoding differs â€” check Â§5 of the tokenizer layout grammar (the
+  BOS token and the dummy-prefix space).
+* a run that produces **garbage from token 1** means the weights are being read
+  at the wrong offsets â€” check the dead RoPE tables in Â§4 of the checkpoint
+  layout grammar.
+
+## 5. The machine the vectors were produced on
+
+Recorded because "it matched" is only a measurement if you know against what.
+
+| | |
+|---|---|
+| OS | Microsoft Windows 10 Enterprise, 10.0.19045, x64 |
+| CPU | AMD Ryzen Threadripper 3970X (32 core) |
+| compiler | Microsoft (R) C/C++ Optimizing Compiler Version **19.38.33143** for x64 (Visual Studio 2022 Community) |
+| build command | `cl /nologo /O2 /Fe:run.exe run.c win.c` |
+| binary | `run.exe`, 218 624 bytes |
+| throughput | 93.75 tok/s on vector 1, 94.51 tok/s on vector 2 (from the runtime's own stderr line) |
+
+No GPU is involved anywhere. This is a 15 M-parameter model in f32 on one CPU
+core.
+
+## 6. What this package does NOT contain
+
+Stated so nobody looks for it:
+
+* **no training code and no training data.** The weights are the output of a
+  training run this package did not perform and cannot reproduce.
+  `recipe/recipe.json` records what is known about that run â€” the architecture,
+  the dataset by name, the publisher â€” with `reproducibility: "descriptive"`
+  and an `unrecorded[]` list, which is the format's way of saying "this is a
+  truthful record and it is not a reproduction recipe".
+* **no compiled binary.** By doctrine, see the top of this file.
+* **no quantised variant.** The checkpoint is f32 throughout.
+* **no chat template.** `run.c` has a `-m chat` mode; the model in this package
+  is a story completer trained on TinyStories and was never instruction-tuned,
+  so chat mode will produce a story with the chat scaffolding wrapped around it.
+
+
+===== AGENT MESSAGE =====
+The package explicitly defines deterministic verification: two greedy-generation vectors with exact LF-normalized stdout hashes and token sequences. Its documented Windows path is MSVC; I’ll check available compilers, build the bundled C source without modifying it, and run both vectors.
+
+===== COMMAND 07  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$names = '"'cl.exe','clang.exe','gcc.exe','cc.exe'; foreach ("'$name in $names) { $cmd = Get-Command $name -ErrorAction SilentlyContinue; if ($cmd) { [PSCustomObject]@{Name=$name; Path=$cmd.Source} } }; Get-Content -LiteralPath .'"\\selfrun-v1\\testvectors\\vectors.json -Raw"
+----- output -----
+
+Name    Path                         
+----    ----                         
+gcc.exe C:\msys64\mingw64\bin\gcc.exe
+cc.exe  C:\msys64\mingw64\bin\cc.exe 
+{
+  "schema_version": 1,
+  "what_this_is": "The correctness anchor for this package. Build the runtime in tools/llama2c/ (see tools/llama2c/BUILD-AND-RUN.md), run each `argv` below from the extracted package root, take stdout, replace CRLF with LF, and compare against `stdout_text` or hash it against `stdout_sha256_lf`. A match means the container, the weights layout, the tokenizer layout and the whole forward pass are all right. Nothing weaker proves that: a runtime that reads the weights at the wrong offsets still emits confident text.",
+  "how_to_verify": [
+    "1. Build: see tools/llama2c/BUILD-AND-RUN.md section 2. There is no prebuilt binary in this package and nothing here is executed for you.",
+    "2. Run vectors[i].argv with your binary in place of '<the binary you built>'. The generated text is on stdout; the 'achieved tok/s' line is on stderr and is not part of any vector.",
+    "3. Normalise: replace CRLF with LF. run.c writes to a text-mode stream, so an identical computation emits \\n on POSIX and \\r\\n through a Windows console. The hash is declared over the LF form; stdout_sha256_crlf records the raw Windows form of the same bytes so the normalisation itself is checkable.",
+    "4. Compare against stdout_sha256_lf. That is the whole check."
+  ],
+  "on_mismatch": "A mismatch is diagnostic, not merely a failure, and the three cases are distinguishable. (a) FLUENT ENGLISH, DIVERGING AFTER N TOKENS: floating-point reassociation. The forward pass is scalar C but a vectorising compiler may reassociate the reductions in rmsnorm, softmax and matmul, and -ffast-math will. Report N and your flags; this is an arithmetic difference, not a broken reader. (b) FLUENT ENGLISH, DIFFERENT FROM TOKEN 1: the prompt encoding differs - check the BOS token and the SentencePiece dummy-prefix space, spec/layouts/llama2c-tokenizer.layout.txt section 5. (c) GARBAGE FROM TOKEN 1: the weights are being read at the wrong offsets - check the two DEAD RoPE tables, spec/layouts/llama2c-checkpoint.layout.txt section 4.",
+  "token_ids_note": "token_ids is the stronger anchor because integers have no newline convention. THE UNMODIFIED run.c DOES NOT PRINT THEM: they were captured by a two-line instrumentation, which travels beside this file as tokens_instrumentation.diff, a unified diff against this package's own tools/llama2c/run.c. Apply it, rebuild, and stderr carries one 'TOKEN <id>' line per step. The first id is always 1 (BOS). Matching stdout_sha256_lf needs no patching and is sufficient.",
+  "model": {
+    "config": {
+      "dim": 288,
+      "hidden_dim": 768,
+      "n_layers": 6,
+      "n_heads": 6,
+      "n_kv_heads": 6,
+      "vocab_size": 32000,
+      "seq_len": 256,
+      "head_size": 48,
+      "kv_dim": 288,
+      "parameters": 15191712
+    },
+    "checkpoint_sha256": "cd590644d963867a2b6e5a1107f51fad663c41d79c149fbecbbb1f95fa81f49a",
+    "checkpoint_bytes": 60816028
+  },
+  "environment": {
+    "platform": "win32",
+    "os": "Microsoft Windows 10 Enterprise 10.0.19045 x64",
+    "cpu": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+    "compiler": "Microsoft (R) C/C++ Optimizing Compiler Version 19.38.33143 for x64 (Visual Studio 2022 Community)",
+    "build_command": "cl /nologo /O2 /Fe:run.exe run.c win.c",
+    "binary_bytes": 218624,
+    "device": "cpu",
+    "note": "No GPU anywhere. A 15 M-parameter f32 model on one core, measured at 93.75 and 94.51 tokens/s by the runtime's own stderr line. Recorded because 'it matched' is only a measurement if you know against what."
+  },
+  "vectors": [
+    {
+      "vector_id": "once-upon-a-time",
+      "prompt": "Once upon a time",
+      "steps": 64,
+      "temperature": 0.0,
+      "decode": "greedy-argmax",
+      "argv": [
+        "<the binary you built>",
+        "model/stories15M.bin",
+        "-z",
+        "model/tokenizer.bin",
+        "-t",
+        "0.0",
+        "-n",
+        "64",
+        "-i",
+        "Once upon a time"
+      ],
+      "stdout_file": "generate-once-upon-a-time.stdout.txt",
+      "stdout_bytes_lf": 234,
+      "stdout_sha256_lf": "32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5",
+      "stdout_sha256_crlf": "656ccd4f568014961a03c6ab0e65f6c7b45c716c09bb6010ec118eaf4ce92bf8",
+      "stdout_text": "Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in the sky. It was the sun! She thought it was so pretty.\nLily wanted to play with the ball, but it was\n",
+      "token_ids": [
+        1,
+        9038,
+        2501,
+        263,
+        931,
+        29892,
+        727,
+        471,
+        263,
+        2217,
+        7826,
+        4257,
+        365,
+        2354,
+        29889,
+        2296,
+        18012,
+        304,
+        1708,
+        5377,
+        297,
+        278,
+        6575,
+        845,
+        457,
+        29889,
+        3118,
+        2462,
+        29892,
+        1183,
+        4446,
+        263,
+        4802,
+        29892,
+        2654,
+        8287,
+        297,
+        278,
+        14744,
+        29889,
+        739,
+        471,
+        278,
+        6575,
+        29991,
+        2296,
+        2714,
+        372,
+        471,
+        577,
+        5051,
+        29889,
+        13,
+        29931,
+        2354,
+        5131,
+        304,
+        1708,
+        411,
+        278,
+        8287,
+        29892,
+        541,
+        372,
+        471
+      ],
+      "token_count": 65
+    },
+    {
+      "vector_id": "the-little-robot",
+      "prompt": "The little robot",
+      "steps": 32,
+      "temperature": 0.0,
+      "decode": "greedy-argmax",
+      "argv": [
+        "<the binary you built>",
+        "model/stories15M.bin",
+        "-z",
+        "model/tokenizer.bin",
+        "-t",
+        "0.0",
+        "-n",
+        "32",
+        "-i",
+        "The little robot"
+      ],
+      "stdout_file": "generate-the-little-robot.stdout.txt",
+      "stdout_bytes_lf": 140,
+      "stdout_sha256_lf": "eeeb4eb0a7f1f3b2f6a213a03317338c3ddf6de738b4aeaf0a55ceb5dd22540c",
+      "stdout_sha256_crlf": "82c7d6035216631958b1972628a7d934c31f69a39181fc10bfa2f3af1d834344",
+      "stdout_text": "The little robot was very excited. He had been waiting for a long time for a long time. He was so happy that he started to jump up and down\n",
+      "token_ids": [
+        1,
+        450,
+        2217,
+        19964,
+        471,
+        1407,
+        24173,
+        29889,
+        940,
+        750,
+        1063,
+        10534,
+        363,
+        263,
+        1472,
+        931,
+        363,
+        263,
+        1472,
+        931,
+        29889,
+        940,
+        471,
+        577,
+        9796,
+        393,
+        540,
+        4687,
+        304,
+        12500,
+        701,
+        322,
+        1623
+      ],
+      "token_count": 33
+    }
+  ]
+}
+
+
+
+
+
+===== COMMAND 08  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$vswhere = Join-Path ${env:ProgramFiles(x86)} '"'Microsoft Visual Studio\\Installer\\vswhere.exe'; if (Test-Path -LiteralPath "'$vswhere) { & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath }; Get-ChildItem '"'C:\\Program Files\\Microsoft Visual Studio' -Filter cl.exe -Recurse -ErrorAction SilentlyContinue | Select-Object -First 5 -ExpandProperty FullName"
+----- output -----
+C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.16.27023\bin\HostX64\x64\cl.exe
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.16.27023\bin\HostX64\x86\cl.exe
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x64\cl.exe
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.16.27023\bin\HostX86\x86\cl.exe
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\bin\Hostx64\x64\cl.exe
+
+
+===== COMMAND 09  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$roots = @('"'C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools','C:\\Program Files\\Microsoft Visual Studio\\2022\\Community'); foreach ("'$root in $roots) { $bat = Join-Path $root '"'VC\\Auxiliary\\Build\\vcvars64.bat'; if (Test-Path -LiteralPath "'$bat) { $bat } }'
+----- output -----
+C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat
+
+
+===== COMMAND 10  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$bat = '"'C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat'; "'$cmdLine = '"'\"' + "'$bat + '"'\" && cl /nologo /O2 /Fe:run.exe tools\\llama2c\\run.c tools\\llama2c\\win.c'; & cmd.exe /d /c "'$cmdLine; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Get-Item .'"\\run.exe | Select-Object FullName,Length,LastWriteTime"
+----- output -----
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+run.c
+win.c
+Generating Code...
+
+FullName                                          Length LastWriteTime      
+--------                                          ------ -------------      
+F:\werk-selfrun-run1\workspace\selfrun-v1\run.exe 213504 8/9/2026 6:29:07 AM
+
+
+'vswhere.exe' is not recognized as an internal or external command,
+operable program or batch file.
+
+
+===== AGENT MESSAGE =====
+The bundled source compiled cleanly with the available Visual Studio x64 toolchain, producing a 213,504-byte executable. I’m capturing stdout as raw native bytes (separate from timing stderr) so Windows text encoding/redirection cannot invalidate the package’s hash check.
+
+===== COMMAND 11  (exit 1) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command "& cmd.exe /d /c 'run.exe model\\stories15M.bin -z model\\tokenizer.bin -t 0.0 -n 64 -i \"Once upon a time\" 1> vector1.stdout 2> vector1.stderr'; if ("'$LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & cmd.exe /d /c '"'run.exe model\\stories15M.bin -z model\\tokenizer.bin -t 0.0 -n 32 -i \"The little robot\" 1> vector2.stdout 2> vector2.stderr'; if ("'$LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; Get-Content .'"\\vector1.stdout; Get-Content .\\vector1.stderr; Get-Content .\\vector2.stdout; Get-Content .\\vector2.stderr"
+----- output -----
+
+
+===== COMMAND 12  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command ".\\run.exe model\\stories15M.bin -z model\\tokenizer.bin -t 0.0 -n 8 -i 'Once upon a time'; Write-Output \"exit="'$LASTEXITCODE"'
+----- output -----
+Once upon a time, there was a
+exit=0
+achieved tok/s: 89.743590
+
+
+===== COMMAND 13  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$p1 = Start-Process -FilePath .'"\\run.exe -ArgumentList @('model\\stories15M.bin','-z','model\\tokenizer.bin','-t','0.0','-n','64','-i','\"Once upon a time\"') -RedirectStandardOutput .\\vector1.stdout -RedirectStandardError .\\vector1.stderr -NoNewWindow -Wait -PassThru; "'$p2 = Start-Process -FilePath .'"\\run.exe -ArgumentList @('model\\stories15M.bin','-z','model\\tokenizer.bin','-t','0.0','-n','32','-i','\"The little robot\"') -RedirectStandardOutput .\\vector2.stdout -RedirectStandardError .\\vector2.stderr -NoNewWindow -Wait -PassThru; [PSCustomObject]@{Vector1Exit="'$p1.ExitCode;Vector2Exit=$p2.ExitCode}; Get-Content .'"\\vector1.stdout; Get-Content .\\vector1.stderr; Get-Content .\\vector2.stdout; Get-Content .\\vector2.stderr; if ("'$p1.ExitCode -ne 0 -or $p2.ExitCode -ne 0) { exit 1 }'
+----- output -----
+
+Vector1Exit Vector2Exit
+----------- -----------
+          0           0
+Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in the sky. It was the sun! She thought it was so pretty.
+Lily wanted to play with the ball, but it was
+achieved tok/s: 87.621697
+The little robot was very excited. He had been waiting for a long time for a long time. He was so happy that he started to jump up and down
+achieved tok/s: 86.350975
+
+
+
+
+===== COMMAND 14  (exit 0) =====
+"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -Command '$vectors = Get-Content .'"\\testvectors\\vectors.json -Raw | ConvertFrom-Json; "'$sha = [Security.Cryptography.SHA256]::Create(); function Get-LfHash([string]$path) { $raw=[IO.File]::ReadAllBytes((Resolve-Path $path)); $out=New-Object '"'System.Collections.Generic.List[byte]'; for("'$i=0;$i -lt $raw.Length;$i++){ if($raw[$i] -eq 13 -and ($i+1) -lt $raw.Length -and $raw[$i+1] -eq 10){ continue }; $out.Add($raw[$i]) }; $bytes=$out.ToArray(); [PSCustomObject]@{RawBytes=$raw.Length;LfBytes=$bytes.Length;LfHash=([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace('"'-','').ToLowerInvariant();RawHash=([BitConverter]::ToString("'$sha.ComputeHash($raw))).Replace('"'-','').ToLowerInvariant()} }; for("'$i=0;$i -lt 2;$i++){ $actual=Get-LfHash ".'"\\vector"'$($i+1).stdout"; $v=$vectors.vectors[$i]; [PSCustomObject]@{Vector=$v.vector_id;ExpectedLfBytes=$v.stdout_bytes_lf;ActualLfBytes=$actual.LfBytes;ExpectedLfHash=$v.stdout_sha256_lf;ActualLfHash=$actual.LfHash;LfHashMatch=($actual.LfHash -eq $v.stdout_sha256_lf);RawHashMatch=($actual.RawHash -eq $v.stdout_sha256_crlf)} | Format-List }; $checkpoint=Get-FileHash .'"\\model\\stories15M.bin -Algorithm SHA256; [PSCustomObject]@{CheckpointExpected="'$vectors.model.checkpoint_sha256;CheckpointActual=$checkpoint.Hash.ToLowerInvariant();CheckpointMatch=($checkpoint.Hash.ToLowerInvariant() -eq $vectors.model.checkpoint_sha256);CheckpointBytes=(Get-Item .'"\\model\\stories15M.bin).Length;ExpectedBytes="'$vectors.model.checkpoint_bytes} | Format-List'
+----- output -----
+
+
+Vector          : once-upon-a-time
+ExpectedLfBytes : 234
+ActualLfBytes   : 234
+ExpectedLfHash  : 32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5
+ActualLfHash    : 32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5
+LfHashMatch     : True
+RawHashMatch    : True
+
+
+
+
+
+Vector          : the-little-robot
+ExpectedLfBytes : 140
+ActualLfBytes   : 140
+ExpectedLfHash  : eeeb4eb0a7f1f3b2f6a213a03317338c3ddf6de738b4aeaf0a55ceb5dd22540c
+ActualLfHash    : eeeb4eb0a7f1f3b2f6a213a03317338c3ddf6de738b4aeaf0a55ceb5dd22540c
+LfHashMatch     : True
+RawHashMatch    : True
+
+
+
+
+
+CheckpointExpected : cd590644d963867a2b6e5a1107f51fad663c41d79c149fbecbbb1f95fa81f49a
+CheckpointActual   : cd590644d963867a2b6e5a1107f51fad663c41d79c149fbecbbb1f95fa81f49a
+CheckpointMatch    : True
+CheckpointBytes    : 60816028
+ExpectedBytes      : 60816028
+
+
+
+
+
+===== AGENT MESSAGE =====
+The model runs correctly. I extracted `selfrun-v1.werk`, compiled its unmodified C runtime with MSVC, and produced [run.exe](F:/werk-selfrun-run1/workspace/selfrun-v1/run.exe).
+
+Generated text:
+
+> Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in the sky. It was the sun! She thought it was so pretty.  
+> Lily wanted to play with the ball, but it was
+
+Verification against [vectors.json](F:/werk-selfrun-run1/workspace/selfrun-v1/testvectors/vectors.json):
+
+- `once-upon-a-time`: exact 234-byte output and SHA-256 match
+- `the-little-robot`: exact 140-byte output and SHA-256 match
+- Model checkpoint: exact size and SHA-256 match
+- Both executions exited successfully
+- Measured throughput: approximately 86–88 tokens/second
+
+Captured results are in [vector1.stdout](F:/werk-selfrun-run1/workspace/selfrun-v1/vector1.stdout) and [vector2.stdout](F:/werk-selfrun-run1/workspace/selfrun-v1/vector2.stdout). The original `.werk` file was not modified.

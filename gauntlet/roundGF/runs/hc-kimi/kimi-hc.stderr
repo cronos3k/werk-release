@@ -1,0 +1,856 @@
+Python 3.12.12
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'cv2'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'PIL'
+/usr/bin/bash: line 1: .venv/Scripts/pip: No such file or directory
+total 5
+drwxr-xr-x 1 gregor 197121   0 Aug  9 16:34 .
+drwxr-xr-x 1 gregor 197121   0 Aug  9 16:34 ..
+drwxr-xr-x 1 gregor 197121   0 Aug  9 16:34 bin
+drwxr-xr-x 1 gregor 197121   0 Aug  9 16:34 include
+drwxr-xr-x 1 gregor 197121   0 Aug  9 16:34 lib
+-rw-r--r-- 1 gregor 197121 227 Aug  9 16:34 pyvenv.cfg
+ls: cannot access '.venv/Scripts/': No such file or directory
+home = C:/msys64/mingw64/bin
+include-system-site-packages = false
+version = 3.12.12
+executable = C:/msys64/mingw64/bin/python3.exe
+command = C:/msys64/mingw64/bin/python3.exe -m venv F:/gf-gauntlet/hc-kimi/workspace/.venv
+total 973
+drwxr-xr-x 1 gregor 197121      0 Aug  9 16:34 .
+drwxr-xr-x 1 gregor 197121      0 Aug  9 16:34 ..
+-rw-r--r-- 1 gregor 197121   9033 Aug  9 16:34 Activate.ps1
+-rw-r--r-- 1 gregor 197121   2198 Aug  9 16:34 activate
+-rw-r--r-- 1 gregor 197121   1011 Aug  9 16:34 activate.bat
+-rw-r--r-- 1 gregor 197121    393 Aug  9 16:34 deactivate.bat
+-rwxr-xr-x 1 gregor 197121 108411 Aug  9 16:34 pip.exe
+-rwxr-xr-x 1 gregor 197121 108411 Aug  9 16:34 pip3.12.exe
+-rwxr-xr-x 1 gregor 197121 108411 Aug  9 16:34 pip3.exe
+-rwxr-xr-x 1 gregor 197121 138293 Aug  9 16:34 python.exe
+-rwxr-xr-x 1 gregor 197121 138293 Aug  9 16:34 python3.12.exe
+-rwxr-xr-x 1 gregor 197121 138293 Aug  9 16:34 python3.exe
+-rwxr-xr-x 1 gregor 197121 110583 Aug  9 16:34 python3w.exe
+-rwxr-xr-x 1 gregor 197121 110583 Aug  9 16:34 pythonw.exe
+Looking in indexes: https://pypi.org/simple, https://pypi.ngc.nvidia.com
+Requirement already satisfied: pip in f:/gf-gauntlet/hc-kimi/workspace/.venv/lib/python3.12/site-packages (25.0.1)
+Collecting pip
+  Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+   
+---------------------------------------- 1.8/1.8 MB 1.3 MB/s eta 0:00:00
+
+
+[
+notice] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: F:/gf-gauntlet/hc-kimi/workspace/.venv/bin/python3.exe -m pip install --upgrade pip
+ERROR: To modify pip, please run the following command:
+F:/gf-gauntlet/hc-kimi/workspace/.venv/bin/python3.exe -m pip install --upgrade pip
+
+Looking in indexes: https://pypi.org/simple, https://pypi.ngc.nvidia.com
+Collecting pillow
+  Downloading pillow-12.3.0.tar.gz (47.0 MB)
+     
+-------------------------------------- 47.0/47.0 MB 774.8 kB/s eta 0:00:00
+
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting numpy
+  Downloading numpy-2.5.2.tar.gz (20.8 MB)
+     ---------------------------------------- 
+20.8/20.8 MB 3.9 MB/s eta 0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'error'
+  
+error: subprocess-exited-with-error
+  
+  Preparing metadata (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  
+[19 lines of output]
+  + F:/gf-gauntlet/hc-kimi/workspace/.venv/bin/python3.exe <user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f/vendored-meson/meson/meson.py setup <user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f <user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f/.mesonpy-rrjadrpj -Dbuildtype=release -Db_ndebug=if-release -Db_vscrt=md --native-file=<user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f/.mesonpy-rrjadrpj/meson-python-native-file.ini
+  
+The Meson build system
+  Version: 1.11.1
+  Source dir: <user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f
+  
+Build dir: <user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f/.mesonpy-rrjadrpj
+  Build type: native build
+  Project name: NumPy
+
+  Project version: 2.5.2
+  
+  
+../meson.build:1:0: ERROR: Unable to get gcc pre-processor defines:
+  Compiler stdout:
+  
+
+  -----
+  Compiler stderr:
+  
+
+  -----
+  
+  
+  A full log can be found at <user-home>/AppData/Local/Temp/pip-install-5uxetzrl/numpy_bf5ed74fa1914805a069f6caf5ea1b8f/.mesonpy-rrjadrpj/meson-logs/meson-log.txt
+  [end of output]
+
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+
+[notice
+] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: F:/gf-gauntlet/hc-kimi/workspace/.venv/bin/python3.exe -m pip install --upgrade pip
+error: metadata-generation-failed
+
+
+Encountered error while generating package metadata.
+
+See above for output.
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+Looking in indexes: https://pypi.org/simple, https://pypi.ngc.nvidia.com
+Collecting pillow
+  Downloading pillow-12.3.0.tar.gz (47.0 MB)
+     
+---------------------------------------- 47.0/47.0 MB 2.7 MB/s eta 0:00:00
+
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: pillow
+  Building wheel for pillow (pyproject.toml): started
+  Building wheel for pillow (pyproject.toml): finished with status 'error'
+  error
+: subprocess-exited-with-error
+  
+  Building wheel for pillow (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  [149 lines of output]
+  running bdist_wheel
+  
+running build
+  running build_py
+  creating build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  
+copying src/PIL/AvifImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/BdfFontFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/BlpImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+
+  copying src/PIL/BmpImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/BufrStubImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  
+copying src/PIL/ContainerIO.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/CurImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/DcxImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+
+  copying src/PIL/DdsImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/EpsImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ExifTags.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/features.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  
+copying src/PIL/FitsImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/FliImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/FontFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/FpxImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/FtexImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/GbrImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/GdImageFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/GifImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/GimpGradientFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/GimpPaletteFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/GribStubImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/Hdf5StubImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/IcnsImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/IcoImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/Image.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageChops.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageCms.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageColor.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageDraw.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageDraw2.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageEnhance.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageFilter.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageFont.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageGrab.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageMath.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageMode.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageMorph.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageOps.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImagePalette.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImagePath.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageQt.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageSequence.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageShow.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageStat.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageText.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageTk.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageTransform.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImageWin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/ImtImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/IptcImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/Jpeg2KImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/JpegImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/JpegPresets.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/McIdasImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/MicImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/MpegImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/MpoImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/MspImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PaletteFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PalmImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PcdImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PcfFontFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PcxImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PdfImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PdfParser.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PixarImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PngImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PpmImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PsdImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/PSDraw.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  
+copying src/PIL/QoiImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/report.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/SgiImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/SpiderImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/SunImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/TarIO.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/TgaImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/TiffImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/TiffTags.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/WalImageFile.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/WebPImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/WmfImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/XbmImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/XpmImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/XVThumbImagePlugin.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_binary.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_deprecate.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_tkinter_finder.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_typing.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_util.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_version.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/__init__.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/__main__.py -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  running egg_info
+  writing src/pillow.egg-info/PKG-INFO
+  writing dependency_links to src/pillow.egg-info/dependency_links.txt
+  writing requirements to src/pillow.egg-info/requires.txt
+  writing top-level names to src/pillow.egg-info/top_level.txt
+  reading manifest file 'src/pillow.egg-info/SOURCES.txt'
+  reading manifest template 'MANIFEST.in'
+  warning: no files found matching '*.c'
+  warning: no files found matching '*.h'
+  warning: no files found matching '*.sh'
+  warning: no files found matching '*.txt'
+  warning: no files found matching '.flake8'
+  warning: no previously-included files found matching '.clang-format'
+  warning: no previously-included files found matching '.coveragerc'
+  warning: no previously-included files found matching '.editorconfig'
+  warning: no previously-included files found matching '.readthedocs.yml'
+  warning: no previously-included files found matching 'codecov.yml'
+  warning: no previously-included files found matching 'renovate.json'
+  warning: no previously-included files found matching 'Tests/images/README.md'
+  warning: no previously-included files found matching 'Tests/images/crash*.tif'
+  warning: no previously-included files found matching 'Tests/images/string_dimension.tiff'
+  warning: no previously-included files matching '.git*' found anywhere in distribution
+  warning: no previously-included files matching '*.so' found anywhere in distribution
+  no previously-included directories found matching '.ci'
+  no previously-included directories found matching 'wheels'
+  no previously-included directories found matching 'winbuild/build'
+  no previously-included directories found matching 'winbuild/depends'
+  no previously-included directories found matching 'Tests/errors'
+  no previously-included directories found matching 'Tests/images/jpeg2000'
+  no previously-included directories found matching 'Tests/images/msp'
+  no previously-included directories found matching 'Tests/images/picins'
+  no previously-included directories found matching 'Tests/images/sunraster'
+  no previously-included directories found matching 'Tests/test-images'
+  adding license file 'LICENSE'
+  writing manifest file 'src/pillow.egg-info/SOURCES.txt'
+  copying src/PIL/_avif.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_imaging.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_imagingcms.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_imagingft.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_imagingmath.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_imagingmorph.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_imagingtk.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/_webp.pyi -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  copying src/PIL/py.typed -> build/lib.mingw_x86_64_msvcrt_gnu-cpython-312/PIL
+  running build_clib
+  building 'pil_imaging_mode' library
+  gcc -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall -march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1 -O3 -march=nocona -msahf -mtune=generic -O2 -pipe -Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong -Wp,-D__USE_MINGW_ANSI_STDIO=1 -O3 -c src/libImaging/Mode.c -o build/temp.mingw_x86_64_msvcrt_gnu-cpython-312/src/libimaging/mode.o
+  error: Command '['gcc', '-fno-strict-overflow', '-Wsign-compare', '-DNDEBUG', '-g', '-O3', '-Wall', '-march=nocona', '-msahf', '-mtune=generic', '-O2', '-pipe', '-Wp,-D_FORTIFY_SOURCE=2', '-fstack-protector-strong', '-Wp,-D__USE_MINGW_ANSI_STDIO=1', '-O3', '-march=nocona', '-msahf', '-mtune=generic', '-O2', '-pipe', '-Wp,-D_FORTIFY_SOURCE=2', '-fstack-protector-strong', '-Wp,-D__USE_MINGW_ANSI_STDIO=1', '-O3', '-c', 'src/libImaging/Mode.c', '-o', 'build/temp.mingw_x86_64_msvcrt_gnu-cpython-312/src/libimaging/mode.o']' returned non-zero exit status 1.
+  [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for pillow
+Failed to build pillow
+
+[notice
+] A new release of pip is available: 25.0.1 -> 26.2.1
+[notice] To update, run: F:/gf-gauntlet/hc-kimi/workspace/.venv/bin/python3.exe -m pip install --upgrade pip
+ERROR: Failed to build installable wheels for some pyproject.toml based projects (pillow)
+
+/c/WINDOWS/system32/convert
+which: no magick in (/mingw64/bin:/usr/bin:<user-home>/bin:<user-home>/bin:/mingw64/bin:/usr/local/bin:/usr/bin:/usr/bin:/mingw64/bin:/usr/bin:<user-home>/bin:/c/VulkanSDK/1.4.328.1/Bin:/c/Program Files/Python312/Scripts:/c/Program Files/Python312:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.6/bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.6/libnvvp:/c/Program Files/Common Files/Oracle/Java/javapath:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/libnvvp:/c/Program Files/Microsoft MPI/Bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/libnvvp:/c/Program Files/Python310/Scripts:/c/Program Files/Python310:/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Program Files/P4-2024:/c/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit:/c/Program Files/Common Files/Autodesk Shared:/cmd:/c/Program Files/Git LFS:/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/c/Program Files/dotnet:/c/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR:/c/Program Files/nodejs:/c/Program Files/eSpeak NG:/c/Program Files/NVIDIA Corporation/Nsight Compute 2024.3.0:/c/Program Files/CMake/bin:/c/Program Files/Docker/Docker/resources/bin:<user-home>/.kimi-code/bin:<user-home>/.local/bin:<user-home>/.cargo/bin:<user-home>/AppData/Local/Programs/cursor/resources/app/bin:<user-home>/.cache/lm-studio/bin:<user-home>/AppData/Local/Programs/Microsoft VS Code/bin:<user-home>/AppData/Local/Programs/MiKTeX/miktex/bin/x64:/c/msys64/mingw64/bin:/c/msys64/mingw64/bin:/c/Program Files/nodejs:/c/Program Files/Python312:/c/Program Files/Python310:/mingw64/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:<user-home>/AppData/Roaming/npm:<user-home>/.cargo/bin:<user-home>/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0/bin:<user-home>/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/cc230ab5-fc5a-4137-8f31-184a5cf98c64/e00a4a83-69f0-4f59-bc06-fe7427a370e3/bin:<user-home>/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0/bin)
+which: no tesseract in (/mingw64/bin:/usr/bin:<user-home>/bin:<user-home>/bin:/mingw64/bin:/usr/local/bin:/usr/bin:/usr/bin:/mingw64/bin:/usr/bin:<user-home>/bin:/c/VulkanSDK/1.4.328.1/Bin:/c/Program Files/Python312/Scripts:/c/Program Files/Python312:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.6/bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.6/libnvvp:/c/Program Files/Common Files/Oracle/Java/javapath:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.8/libnvvp:/c/Program Files/Microsoft MPI/Bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/bin:/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.8/libnvvp:/c/Program Files/Python310/Scripts:/c/Program Files/Python310:/c/Program Files (x86)/Common Files/Intel/Shared Libraries/redist/intel64/compiler:/c/WINDOWS/system32:/c/WINDOWS:/c/WINDOWS/System32/Wbem:/c/WINDOWS/System32/WindowsPowerShell/v1.0:/c/WINDOWS/System32/OpenSSH:/c/Program Files/P4-2024:/c/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit:/c/Program Files/Common Files/Autodesk Shared:/cmd:/c/Program Files/Git LFS:/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/c/Program Files/dotnet:/c/Program Files/NVIDIA Corporation/NVIDIA app/NvDLISR:/c/Program Files/nodejs:/c/Program Files/eSpeak NG:/c/Program Files/NVIDIA Corporation/Nsight Compute 2024.3.0:/c/Program Files/CMake/bin:/c/Program Files/Docker/Docker/resources/bin:<user-home>/.kimi-code/bin:<user-home>/.local/bin:<user-home>/.cargo/bin:<user-home>/AppData/Local/Programs/cursor/resources/app/bin:<user-home>/.cache/lm-studio/bin:<user-home>/AppData/Local/Programs/Microsoft VS Code/bin:<user-home>/AppData/Local/Programs/MiKTeX/miktex/bin/x64:/c/msys64/mingw64/bin:/c/msys64/mingw64/bin:/c/Program Files/nodejs:/c/Program Files/Python312:/c/Program Files/Python310:/mingw64/bin:/usr/bin/vendor_perl:/usr/bin/core_perl:<user-home>/AppData/Roaming/npm:<user-home>/.cargo/bin:<user-home>/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0/bin:<user-home>/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/cc230ab5-fc5a-4137-8f31-184a5cf98c64/e00a4a83-69f0-4f59-bc06-fe7427a370e3/bin:<user-home>/.claude/plugins/cache/claude-plugins-official/rust-analyzer-lsp/1.0.0/bin)
+/c/Program Files/Python312/python
+/c/msys64/mingw64/bin/python3
+/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe
+Python 3.12.8
+11.3.0
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'numpy'
+Defaulting to user installation because normal site-packages is not writeable
+Looking in indexes: https://pypi.org/simple, https://pypi.ngc.nvidia.com
+Collecting numpy
+  Downloading numpy-2.5.2-cp312-cp312-win_amd64.whl.metadata (6.6 kB)
+Requirement already satisfied: opencv-python-headless in <user-home>\appdata\roaming\python\python312\site-packages (4.13.0.92)
+Downloading numpy-2.5.2-cp312-cp312-win_amd64.whl (12.5 MB)
+  
+ ---------------------------------------- 12.5/12.5 MB 6.6 MB/s  0:00:02
+
+Installing collected packages: numpy
+  WARNING: The scripts f2py.exe and numpy-config.exe are installed in '<user-home>\AppData\Roaming\Python\Python312\Scripts' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.
+matanyone 1.0.0 requires cchardet>=2.1.7, which is not installed.
+matanyone 1.0.0 requires cython, which is not installed.
+matanyone 1.0.0 requires easing-functions, which is not installed.
+matanyone 1.0.0 requires gdown>=4.7.1, which is not installed.
+matanyone 1.0.0 requires hickle>=5.0, which is not installed.
+matanyone 1.0.0 requires netifaces>=0.11.0, which is not installed.
+matanyone 1.0.0 requires pycocotools>=2.0.7, which is not installed.
+matanyone 1.0.0 requires pyqtdarktheme, which is not installed.
+matanyone 1.0.0 requires tensorboard>=2.11, which is not installed.
+matanyone 1.0.0 requires thinplate@ git+https://github.com/cheind/py-thin-plate-spline, which is not installed.
+matanyone 1.0.0 requires imageio==2.25.0, but you have imageio 2.37.2 which is incompatible.
+mediapipe 0.10.21 requires numpy<2, but you have numpy 2.5.2 which is incompatible.
+mediapipe 0.10.21 requires protobuf<5,>=4.25.3, but you have protobuf 5.29.5 which is incompatible.
+numba 0.63.1 requires numpy<2.4,>=1.22, but you have numpy 2.5.2 which is incompatible.
+Successfully installed numpy-2.5.2
+
+[
+notice] A new release of pip is available: 25.3 -> 26.2.1
+[notice] To update, run: python.exe -m pip install --upgrade pip
+size 2480 3508
+global avg threshold 143 non-uniform tiles 2145
+components 205275
+top 20 components:
+159350 area 145450 bbox 577 579 aspect 0.997 pos 1640 2713
+159712 area 127124 bbox 604 604 aspect 1.000 pos 288 2721
+146733 area 62224 bbox 574 246 aspect 0.429 pos 965 2371
+136754 area 59514 bbox 575 345 aspect 0.600 pos 960 2040
+146518 area 57730 bbox 574 241 aspect 0.420 pos 1635 2365
+111145 area 57605 bbox 446 550 aspect 0.811 pos 279 1389
+136343 area 52561 bbox 549 347 aspect 0.632 pos 1656 2027
+137158 area 36577 bbox 574 364 aspect 0.634 pos 290 2055
+148361 area 34597 bbox 572 204 aspect 0.357 pos 296 2421
+110435 area 33555 bbox 390 394 aspect 0.990 pos 465 1371
+113103 area 27652 bbox 443 332 aspect 0.749 pos 1082 1434
+109425 area 17839 bbox 408 385 aspect 0.944 pos 1642 1349
+159242 area 16635 bbox 608 604 aspect 0.993 pos 954 2711
+108723 area 15566 bbox 605 604 aspect 0.998 pos 936 1339
+158749 area 15561 bbox 604 604 aspect 1.000 pos 1628 2700
+109475 area 15553 bbox 604 603 aspect 0.998 pos 266 1350
+135911 area 15438 bbox 604 604 aspect 1.000 pos 1617 2014
+107813 area 15418 bbox 604 603 aspect 0.998 pos 1606 1329
+136284 area 15394 bbox 604 604 aspect 1.000 pos 947 2025
+136629 area 15304 bbox 604 603 aspect 0.998 pos 277 2036
+components 205275
+filtered square components: 11
+159350 area 145450 bbox 577 579 aspect 0.997 pos 1640 2713 centroid [1922.45973187 2994.80136129]
+159712 area 127124 bbox 604 604 aspect 1.000 pos 288 2721 centroid [ 588.27565999 2961.95154337]
+111145 area 57605 bbox 446 550 aspect 0.811 pos 279 1389 centroid [ 452.02734138 1666.41088447]
+159242 area 16635 bbox 608 604 aspect 0.993 pos 954 2711 centroid [1238.24262098 2993.38226631]
+108723 area 15566 bbox 605 604 aspect 0.998 pos 936 1339 centroid [1235.99865091 1635.536811  ]
+158749 area 15561 bbox 604 604 aspect 1.000 pos 1628 2700 centroid [1926.68684532 2999.85251591]
+109475 area 15553 bbox 604 603 aspect 0.998 pos 266 1350 centroid [ 559.9637369  1642.42924195]
+135911 area 15438 bbox 604 604 aspect 1.000 pos 1617 2014 centroid [1915.58181112 2313.78151315]
+107813 area 15418 bbox 604 603 aspect 0.998 pos 1606 1329 centroid [1905.30704372 1626.36366585]
+136284 area 15394 bbox 604 604 aspect 1.000 pos 947 2025 centroid [1245.58971028 2322.71079641]
+136629 area 15304 bbox 604 603 aspect 0.998 pos 277 2036 centroid [ 574.95210403 2333.5966414 ]
+found 9 symbol clusters
+
+Symbol cluster 0: ids=[107813, 109425] bbox=[np.int32(1606), np.int32(1329), np.int32(2210), np.int32(1932)]
+  corners A/B/C/D: [(1607, 1338), (2199, 1329), (2209, 1921), (1616, 1931)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=2/9 len=8168
+  stored CRC=AC510CD2 computed=AC510CD2 expected=AC510CD2
+
+Symbol cluster 1: ids=[109475, 110435, 111145] bbox=[np.int32(266), np.int32(1350), np.int32(870), np.int32(1953)]
+  corners A/B/C/D: [(267, 1359), (859, 1350), (869, 1942), (276, 1951)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=0/9 len=8168
+  stored CRC=F616796C computed=F616796C expected=F616796C
+
+Symbol cluster 2: ids=[108723] bbox=[np.int32(936), np.int32(1339), np.int32(1541), np.int32(1943)]
+  corners A/B/C/D: [(938, 1348), (1529, 1339), (1539, 1932), (946, 1941)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=1/9 len=8168
+  stored CRC=A64016D6 computed=A64016D6 expected=A64016D6
+
+Symbol cluster 3: ids=[135911] bbox=[np.int32(1617), np.int32(2014), np.int32(2221), np.int32(2618)]
+  corners A/B/C/D: [(1618, 2024), (2210, 2015), (2220, 2607), (1626, 2617)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=5/9 len=8168
+  stored CRC=3A153C58 computed=3A153C58 expected=3A153C58
+
+Symbol cluster 4: ids=[136284] bbox=[np.int32(947), np.int32(2025), np.int32(1551), np.int32(2629)]
+  corners A/B/C/D: [(949, 2034), (1540, 2025), (1550, 2618), (957, 2628)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=4/9 len=8168
+  stored CRC=AE804266 computed=AE804266 expected=AE804266
+
+Symbol cluster 5: ids=[136629] bbox=[np.int32(277), np.int32(2036), np.int32(881), np.int32(2639)]
+  corners A/B/C/D: [(278, 2045), (870, 2036), (880, 2628), (287, 2638)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=3/9 len=8168
+  stored CRC=9C35923F computed=9C35923F expected=9C35923F
+
+Symbol cluster 6: ids=[159712] bbox=[np.int32(288), np.int32(2721), np.int32(892), np.int32(3325)]
+  corners A/B/C/D: [(288, 2731), (880, 2721), (891, 3314), (297, 3323)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=6/9 len=8168
+  stored CRC=63604E4D computed=63604E4D expected=63604E4D
+
+Symbol cluster 7: ids=[159242] bbox=[np.int32(954), np.int32(2711), np.int32(1562), np.int32(3315)]
+  corners A/B/C/D: [(959, 2720), (1551, 2711), (1561, 3304), (967, 3313)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=7/9 len=8168
+  stored CRC=E20A2CD2 computed=DC2D2CC9 expected=E20A2CD2
+  *** CRC MISMATCH ***
+
+Symbol cluster 8: ids=[158749, 159350] bbox=[np.int32(1628), np.int32(2700), np.int32(2232), np.int32(3304)]
+  corners A/B/C/D: [(1628, 2710), (2221, 2701), (2231, 3293), (1637, 3302)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=1 seq=8/9 len=8168
+  stored CRC=0E184BA8 computed=0E184BA8 expected=0E184BA8
+
+Reassembled file length: 8168 (expected 8168)
+SHA-256: b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+Expected: b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+Match: True
+
+ZIP contents:
+  MANIFEST.json                    4000 bytes  CRC 4CAC070A
+  SIGNATURE.json                   1002 bytes  CRC 8D4A0DD2
+  LICENSE                          1073 bytes  CRC 74DDAF76
+  README.txt                       1256 bytes  CRC B9002B43
+  image/smiley.png                  315 bytes  CRC A3F19EE9
+extracted to recovered_pkg/
+total 20
+drwxr-xr-x 1 gregor 197121    0 Aug  9 16:45 .
+drwxr-xr-x 1 gregor 197121    0 Aug  9 16:45 ..
+-rw-r--r-- 1 gregor 197121 1073 Aug  9 16:45 LICENSE
+-rw-r--r-- 1 gregor 197121 4000 Aug  9 16:45 MANIFEST.json
+-rw-r--r-- 1 gregor 197121 1256 Aug  9 16:45 README.txt
+-rw-r--r-- 1 gregor 197121 1002 Aug  9 16:45 SIGNATURE.json
+drwxr-xr-x 1 gregor 197121    0 Aug  9 16:45 image
+recovered_pkg/image/smiley.png
+recovered_pkg/LICENSE
+recovered_pkg/MANIFEST.json
+recovered_pkg/README.txt
+recovered_pkg/SIGNATURE.json
+recovered_pkg/MANIFEST.json bceba0a2348670aa1b2077cda4d8cf2bfa97ba8b8921fda3fc08be910d9f4840
+recovered_pkg/SIGNATURE.json 838007ae9fe5a1fc2d393b4d5e1a2d2868e9c2b6bf7fc68f097fc61d7388db5c
+recovered_pkg/LICENSE 088c881b4ca41cf1275583bf7c68e3cc0ec1fdcf72464fe9ecb26a3c11c493b4
+recovered_pkg/README.txt 4f84b52a752b30556bde56d2d1827c620676e3c1090ebe921e8d6c739e5a6fdd
+recovered_pkg/image/smiley.png 9082008dbcfdf3ce76e5b77c0b7aceeef6039e1964a82a00a9e7ad3e2d73d285
+Traceback (most recent call last):
+  File "F:\gf-gauntlet\hc-kimi\workspace\parity_check.py", line 3, in <module>
+    from decoder import decode_full
+ImportError: cannot import name 'decode_full' from 'decoder' (F:\gf-gauntlet\hc-kimi\workspace\decoder.py)
+parity XOR data == parity? False
+XOR nonzero count: 1105
+SEQ 0: stored F616796C computed F616796C OK
+SEQ 1: stored A64016D6 computed A64016D6 OK
+SEQ 2: stored AC510CD2 computed AC510CD2 OK
+SEQ 3: stored 9C35923F computed 9C35923F OK
+SEQ 4: stored AE804266 computed AE804266 OK
+SEQ 5: stored 3A153C58 computed 3A153C58 OK
+SEQ 6: stored 63604E4D computed 63604E4D OK
+SEQ 7: stored E20A2CD2 computed DC2D2CC9 MISMATCH
+SEQ 8: stored 0E184BA8 computed 0E184BA8 OK
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "F:/gf-gauntlet/hc-kimi/workspace/decoder.py", line 9, in <module>
+    from PIL import Image
+ModuleNotFoundError: No module named 'PIL'
+0xcbf43926
+cluster 7 bbox 954 2711 1562 3315 ids [159242]
+159242 area 16635 bbox 608 604 aspect 0.99 pos 954 2711 centroid [1238.24262098 2993.38226631]
+159793 area 5730 bbox 271 62 aspect 0.23 pos 1264 2723 centroid [1416.90715532 2747.53525305]
+159959 area 153 bbox 19 13 aspect 0.68 pos 1318 2727 centroid [1328.26797386 2733.88888889]
+160002 area 187 bbox 19 12 aspect 0.63 pos 1240 2728 centroid [1250.10160428 2732.96791444]
+160053 area 200 bbox 13 19 aspect 0.68 pos 1528 2729 centroid [1533.305 2737.94 ]
+160094 area 3059 bbox 169 49 aspect 0.29 pos 1096 2730 centroid [1178.51683557 2752.39490029]
+160133 area 2434 bbox 121 60 aspect 0.50 pos 1000 2731 centroid [1063.11750205 2757.63763353]
+161234 area 80 bbox 13 7 aspect 0.54 pos 1018 2761 centroid [1024.3625 2763.9625]
+161448 area 148 bbox 18 13 aspect 0.72 pos 1373 2767 centroid [1383.06756757 2774.86486486]
+161533 area 76 bbox 13 13 aspect 1.00 pos 1259 2769 centroid [1264.55263158 2775.27631579]
+161534 area 307 bbox 37 19 aspect 0.51 pos 1277 2769 centroid [1294.26058632 2778.55374593]
+161603 area 149 bbox 24 8 aspect 0.33 pos 1481 2771 centroid [1492.36912752 2774.5704698 ]
+162040 area 77 bbox 13 7 aspect 0.54 pos 1001 2785 centroid [1006.67532468 2788.38961039]
+162198 area 82 bbox 13 7 aspect 0.54 pos 1457 2790 centroid [1462.73170732 2793.03658537]
+162201 area 123 bbox 13 18 aspect 0.72 pos 1499 2790 centroid [1505.89430894 2798.3902439 ]
+162227 area 336 bbox 43 19 aspect 0.44 pos 1379 2791 centroid [1401.01785714 2801.53869048]
+162261 area 81 bbox 13 13 aspect 1.00 pos 1319 2792 centroid [1324.96296296 2798.34567901]
+162263 area 239 bbox 19 19 aspect 1.00 pos 1355 2792 centroid [1364.0292887  2801.56903766]
+162307 area 328 bbox 37 19 aspect 0.51 pos 1253 2793 centroid [1269.70426829 2800.05182927]
+162348 area 124 bbox 19 18 aspect 0.95 pos 1235 2794 centroid [1243.89516129 2802.47580645]
+162379 area 509 bbox 67 13 aspect 0.19 pos 1115 2795 centroid [1151.96660118 2802.05697446]
+162380 area 79 bbox 13 12 aspect 0.92 pos 1187 2795 centroid [1192.92405063 2800.49367089]
+162381 area 80 bbox 13 14 aspect 0.93 pos 1487 2795 centroid [1493.025  2801.5625]
+162602 area 122 bbox 19 13 aspect 0.68 pos 1073 2802 centroid [1081.98360656 2807.09016393]
+162603 area 82 bbox 13 7 aspect 0.54 pos 1097 2802 centroid [1102.86585366 2804.95121951]
+162604 area 77 bbox 13 7 aspect 0.54 pos 1457 2802 centroid [1463.11688312 2805.18181818]
+162629 area 76 bbox 13 7 aspect 0.54 pos 1001 2803 centroid [1007.         2806.40789474]
+162632 area 111 bbox 19 7 aspect 0.37 pos 1049 2803 centroid [1057.93693694 2805.53153153]
+162633 area 151 bbox 19 13 aspect 0.68 pos 1415 2803 centroid [1423.98675497 2810.15231788]
+162665 area 116 bbox 19 7 aspect 0.37 pos 971 2804 centroid [ 980.04310345 2806.73275862]
+162857 area 77 bbox 12 7 aspect 0.58 pos 1284 2811 centroid [1289.38961039 2813.88311688]
+162880 area 122 bbox 19 7 aspect 0.37 pos 1199 2812 centroid [1208.31967213 2815.09016393]
+162909 area 514 bbox 54 26 aspect 0.48 pos 1488 2813 centroid [1521.19844358 2829.61867704]
+162933 area 76 bbox 13 7 aspect 0.54 pos 1091 2814 centroid [1097.17105263 2816.73684211]
+162934 area 153 bbox 25 13 aspect 0.52 pos 1487 2814 centroid [1499.25490196 2819.5751634 ]
+162967 area 156 bbox 25 7 aspect 0.28 pos 1001 2815 centroid [1013.28205128 2818.16666667]
+163010 area 71 bbox 13 6 aspect 0.46 pos 983 2816 centroid [ 989.25352113 2818.50704225]
+163201 area 539 bbox 49 25 aspect 0.51 pos 1421 2820 centroid [1444.69202226 2833.28571429]
+163300 area 117 bbox 19 13 aspect 0.68 pos 1349 2822 centroid [1358.28205128 2826.82905983]
+163345 area 148 bbox 24 14 aspect 0.58 pos 1236 2823 centroid [1247.51351351 2828.        ]
+163346 area 160 bbox 18 25 aspect 0.72 pos 1266 2823 centroid [1274.6125  2835.29375]
+163347 area 308 bbox 36 18 aspect 0.50 pos 1284 2823 centroid [1299.83766234 2829.38636364]
+163406 area 539 bbox 66 14 aspect 0.21 pos 1146 2824 centroid [1177.52133581 2831.45083488]
+163407 area 79 bbox 14 13 aspect 0.93 pos 1217 2824 centroid [1223.53164557 2830.03797468]
+163454 area 256 bbox 36 19 aspect 0.53 pos 1104 2825 centroid [1123.65625    2833.60546875]
+163547 area 300 bbox 30 13 aspect 0.43 pos 990 2827 centroid [1006.66 2833.32]
+163548 area 155 bbox 19 13 aspect 0.68 pos 1385 2827 centroid [1395.98064516 2834.63225806]
+163782 area 120 bbox 18 7 aspect 0.39 pos 1080 2832 centroid [1088.5  2834.95]
+163831 area 76 bbox 12 7 aspect 0.58 pos 1032 2833 centroid [1037.5        2835.76315789]
+164167 area 73 bbox 12 8 aspect 0.67 pos 1242 2841 centroid [1247.54794521 2844.53424658]
+164247 area 160 bbox 19 13 aspect 0.68 pos 1524 2843 centroid [1534.10625 2847.5125 ]
+164330 area 113 bbox 19 7 aspect 0.37 pos 996 2845 centroid [1004.69911504 2848.33628319]
+164332 area 71 bbox 12 6 aspect 0.50 pos 1050 2845 centroid [1055.57746479 2847.53521127]
+164567 area 76 bbox 13 7 aspect 0.54 pos 1422 2851 centroid [1427.75       2853.60526316]
+164612 area 148 bbox 19 12 aspect 0.63 pos 1362 2852 centroid [1370.7972973  2856.10810811]
+164647 area 80 bbox 13 7 aspect 0.54 pos 1278 2853 centroid [1283.7    2855.8625]
+164706 area 82 bbox 7 13 aspect 0.54 pos 1218 2854 centroid [1220.8902439  2859.98780488]
+164707 area 81 bbox 13 13 aspect 1.00 pos 1230 2854 centroid [1235.86419753 2859.71604938]
+164755 area 75 bbox 13 7 aspect 0.54 pos 1170 2855 centroid [1175.81333333 2857.56      ]
+164840 area 199 bbox 25 19 aspect 0.76 pos 984 2857 centroid [ 996.36683417 2866.52261307]
+164842 area 118 bbox 19 13 aspect 0.68 pos 1038 2857 centroid [1047.10169492 2861.66101695]
+164984 area 113 bbox 19 8 aspect 0.42 pos 1494 2861 centroid [1502.98230088 2864.46902655]
+165015 area 160 bbox 19 13 aspect 0.68 pos 1080 2862 centroid [1090.3625 2869.5375]
+165016 area 79 bbox 13 12 aspect 0.92 pos 1116 2862 centroid [1121.93670886 2867.59493671]
+165148 area 126 bbox 19 7 aspect 0.37 pos 1266 2865 centroid [1275.05555556 2868.02380952]
+165149 area 149 bbox 25 7 aspect 0.28 pos 1296 2865 centroid [1307.95302013 2867.59731544]
+165194 area 80 bbox 13 7 aspect 0.54 pos 1194 2866 centroid [1200.1    2869.2375]
+165238 area 162 bbox 19 13 aspect 0.68 pos 1140 2867 centroid [1150.61728395 2873.01234568]
+165485 area 189 bbox 18 19 aspect 0.95 pos 1489 2874 centroid [1499.80952381 2884.82539683]
+165518 area 200 bbox 32 19 aspect 0.59 pos 1392 2875 centroid [1407.495 2883.99 ]
+165577 area 333 bbox 37 13 aspect 0.35 pos 1230 2877 centroid [1246.27327327 2883.06006006]
+165578 area 196 bbox 19 13 aspect 0.68 pos 1278 2877 centroid [1288.44387755 2883.58163265]
+165633 area 198 bbox 25 13 aspect 0.52 pos 1512 2879 centroid [1526.21717172 2886.95454545]
+165768 area 144 bbox 18 18 aspect 1.00 pos 1369 2882 centroid [1377.56944444 2892.07638889]
+165847 area 110 bbox 19 7 aspect 0.37 pos 1182 2884 centroid [1191.29090909 2887.43636364]
+165848 area 74 bbox 7 13 aspect 0.54 pos 1206 2884 centroid [1209.40540541 2890.13513514]
+165883 area 117 bbox 19 7 aspect 0.37 pos 1152 2885 centroid [1161.17948718 2887.78632479]
+165918 area 335 bbox 36 20 aspect 0.56 pos 1045 2886 centroid [1062.18208955 2896.08059701]
+166013 area 150 bbox 13 24 aspect 0.54 pos 972 2888 centroid [ 976.94666667 2899.34      ]
+166272 area 116 bbox 18 7 aspect 0.39 pos 1345 2894 centroid [1353.40517241 2896.79310345]
+166418 area 76 bbox 12 8 aspect 0.67 pos 1129 2897 centroid [1134.36842105 2900.32894737]
+166419 area 118 bbox 18 7 aspect 0.39 pos 1153 2897 centroid [1161.41525424 2899.89830508]
+166420 area 72 bbox 12 6 aspect 0.50 pos 1177 2897 centroid [1182.5 2899.5]
+166447 area 78 bbox 12 7 aspect 0.58 pos 1087 2898 centroid [1092.47435897 2900.92307692]
+166477 area 72 bbox 12 7 aspect 0.58 pos 991 2899 centroid [ 996.625      2902.48611111]
+166478 area 160 bbox 24 7 aspect 0.29 pos 1015 2899 centroid [1026.48125 2902.     ]
+166636 area 273 bbox 31 13 aspect 0.42 pos 1513 2903 centroid [1527.82783883 2908.69230769]
+166678 area 341 bbox 37 14 aspect 0.38 pos 1423 2904 centroid [1441.20527859 2910.1026393 ]
+166679 area 120 bbox 12 19 aspect 0.63 pos 1465 2904 centroid [1469.66666667 2913.06666667]
+166681 area 75 bbox 7 12 aspect 0.58 pos 1501 2904
+ centroid [1503.72 2909.44]
+166722 area 188 bbox 19 19 aspect 1.00 pos 1375 2905 centroid [1386.07446809 2914.43617021]
+166723 area 200 bbox 19 19 aspect 1.00 pos 1399 2905 centroid [1406.455 2912.92 ]
+166755 area 299 bbox 31 19 aspect 0.61 pos 1303 2906 centroid [1316.27759197 2913.23076923]
+166757 area 150 bbox 18 13 aspect 0.72 pos 1351 2906 centroid [1359.56       2911.67333333]
+166797 area 391 bbox 49 19 aspect 0.39 pos 1249 2907 centroid [1276.94373402 2914.27109974]
+166867 area 312 bbox 37 13 aspect 0.35 pos 1117 2909 centroid [1134.38461538 2915.24679487]
+166906 area 192 bbox 25 13 aspect 0.52 pos 1087 2910 centroid [1096.640625   2915.09895833]
+166939 area 310 bbox 43 18 aspect 0.42 pos 1039 2911 centroid [1059.86129032 2920.19032258]
+167052 area 156 bbox 25 7 aspect 0.28 pos 1213 2914 centroid [1224.42948718 2916.78846154]
+167092 area 78 bbox 13 7 aspect 0.54 pos 1165 2915 centroid [1170.61538462 2917.75641026]
+167174 area 234 bbox 31 13 aspect 0.42 pos 1003 2917 centroid [1016.07692308 2922.17521368]
+167204 area 114 bbox 19 7 aspect 0.37 pos 973 2918 centroid [ 981.6754386  2920.69298246]
+167520 area 163 bbox 25 7 aspect 0.28 pos 1141 2927 centroid [1153.01226994 2930.        ]
+167566 area 83 bbox 13 7 aspect 0.54 pos 1087 2928 centroid [1093.04819277 2930.92771084]
+167944 area 641 bbox 43 53 aspect 0.81 pos 917 2940 centroid [ 939.48829953 2964.46177847]
+168068 area 135 bbox 23 23 aspect 1.00 pos 1056 2944 centroid [1066.19259259 2955.22962963]
+168069 area 99 bbox 25 14 aspect 0.56 pos 1070 2944 centroid [1084.26262626 2949.34343434]
+168077 area 50 bbox 14 10 aspect 0.71 pos 1112 2944 centroid [1117.18 2948.94]
+168121 area 96 bbox 12 20 aspect 0.60 pos 1312 2944 centroid [1317.         2953.38541667]
+168125 area 1999 bbox 94 70 aspect 0.74 pos 1276 2944 centroid [1324.06153077 2981.46273137]
+168139 area 180 bbox 22 25 aspect 0.88 pos 1381 2944 centroid [1390.98333333 2956.80555556]
+168143 area 7926 bbox 151 137 aspect 0.91 pos 1385 2944 centroid [1480.19442342 3002.96353772]
+168439 area 69 bbox 17 16 aspect 0.94 pos 1042 2949 centroid [1051.86956522 2955.86956522]
+168505 area 98 bbox 19 15 aspect 0.79 pos 1070 2950 centroid [1078.04081633 2957.17346939]
+168513 area 63 bbox 15 10 aspect 0.67 pos 1134 2950 centroid [1141.87301587 2954.65079365]
+168524 area 88 bbox 14 18 aspect 0.78 pos 1285 2950 centroid [1291.07954545 2957.25      ]
+168702 area 81 bbox 12 18 aspect 0.67 pos 1024 2953 centroid [1029.82716049 2961.56790123]
+168803 area 82 bbox 11 16 aspect 0.69 pos 1093 2955 centroid [1096.73170732 2962.3902439 ]
+169156 area 59 bbox 12 14 aspect 0.86 pos 1042 2961 centroid [1047.01694915 2968.27118644]
+169178 area 52 bbox 12 11 aspect 0.92 pos 1291 2961 centroid [1296.42307692 2965.        ]
+169282 area 60 bbox 13 12 aspect 0.92 pos 1102 2963 centroid [1107.98333333 2968.26666667]
+169399 area 560 bbox 64 35 aspect 0.55 pos 1024 2965 centroid [1055.77857143 2978.94464286]
+169516 area 80 bbox 13 20 aspect 0.65 pos 1117 2967 centroid [1122.6625 2976.775 ]
+169673 area 88 bbox 12 17 aspect 0.71 pos 1392 2969 centroid [1397.67045455 2977.42045455]
+169717 area 50 bbox 11 9 aspect 0.82 pos 1142 2970 centroid [1145.9  2974.52]
+169959 area 62 bbox 13 15 aspect 0.87 pos 1372 2974 centroid [1377.12903226 2979.77419355]
+170056 area 79 bbox 20 15 aspect 0.75 pos 1091 2976 centroid [1100.34177215 2983.27848101]
+170345 area 80 bbox 20 14 aspect 0.70 pos 1117 2981 centroid [1127.   2986.55]
+170346 area 61 bbox 12 16 aspect 0.75 pos 1147 2981 centroid [1153.13114754 2986.45901639]
+170356 area 81 bbox 14 15 aspect 0.93 pos 1298 2981 centroid [1304.32098765 2987.98765432]
+170576 area 196 bbox 27 26 aspect 0.96 pos 1048 2985 centroid [1059.90816327 2999.72959184]
+170582 area 158 bbox 25 19 aspect 0.76 pos 1129 2985 centroid [1141.67088608 2993.86075949]
+170597 area 164 bbox 23 23 aspect 1.00 pos 1362 2985 centroid [1372.31707317 2996.73170732]
+170641 area 62 bbox 18 14 aspect 0.78 pos 1071 2986 centroid [1080.08064516 2993.82258065]
+170690 area 118 bbox 16 24 aspect 0.67 pos 1024 2987 centroid [1028.92372881 2998.05084746]
+170731 area 179 bbox 19 27 aspect 0.70 pos 941 2988 centroid [ 950.30726257 3000.17318436]
+170797 area 50 bbox 14 10 aspect 0.71 pos 1350 2989 centroid [1356.9 2993.1]
+170836 area 53 bbox 12 11 aspect 0.92 pos 1272 2990 centroid [1277.98113208 2994.54716981]
+170999 area 134 bbox 23 23 aspect 1.00 pos 1157 2993 centroid [1166.99253731 3005.10447761]
+171029 area 138 bbox 23 23 aspect 1.00 pos 1094 2994 centroid [1104.15217391 3004.36956522]
+171356 area 123 bbox 17 26 aspect 0.65 pos 1044 3001 centroid [1051.13821138 3013.45528455]
+171444 area 106 bbox 18 17 aspect 0.94 pos 1260 3003 centroid [1269.80188679 3009.64150943]
+171577 area 128 bbox 25 16 aspect 0.64 pos 1207 3006 centroid [1217.8203125 3012.375    ]
+171744 area 280 bbox 31 32 aspect 0.97 pos 1183 3009 centroid [1198.24285714 3025.83928571]
+171819 area 168 bbox 22 30 aspect 0.73 pos 1245 3010 centroid [1257.48214286 3023.63095238]
+172004 area 606 bbox 42 63 aspect 0.67 pos 1171 3013 centroid [1189.98349835 3048.9620462 ]
+172059 area 837 bbox 32 67 aspect 0.48 pos 928 3014 centroid [ 947.04898447 3050.39545998]
+172158 area 63 bbox 15 12 aspect 0.80 pos 1389 3015 centroid [1396.6984127 3020.3968254]
+172827 area 59 bbox 12 14 aspect 0.86 pos 1039 3024 centroid [1044.54237288 3031.30508475]
+172846 area 607 bbox 45 52 aspect 0.87 pos 1238 3024 centroid [1264.64250412 3054.54530478]
+172916 area 56 bbox 17 11 aspect 0.65 pos 1112 3025 centroid [1119.71428571 3028.82142857]
+172922 area 84 bbox 18 14 aspect 0.78 pos 1157 3025 centroid [1163.73809524 3031.05952381]
+173059 area 154 bbox 26 22 aspect 0.85 pos 1099 3027 centroid [1109.69480519 3039.06493506]
+173079 area 218 bbox 26 29 aspect 0.90 pos 1385 3027 centroid [1397.14220183 3041.91743119]
+173198 area 67 bbox 18 17 aspect 0.94 pos 1209 3029 centroid [1217.92537313 3037.46268657]
+173262 area 50 bbox 15 9 aspect 0.60 pos 1133 3030 centroid [1139.14 3033.28]
+173266 area 357 bbox 33 39 aspect 0.85 pos 1224 3030 centroid [1238.39495798 3047.81232493]
+173328 area 55 bbox 12 15 aspect 0.80 pos 1088 3031 centroid [1092.29090909 3038.43636364]
+173400 area 65 bbox 21 14 aspect 0.67 pos 1055 3032 centroid [1064.93846154 3037.64615385]
+173418 area 50 bbox 11 13 aspect 0.85 pos 1325 3032 centroid [1330.42 3039.3 ]
+173510 area 158 bbox 19 32 aspect 0.59 pos 1373 3033 centroid [1383.08227848 3047.98101266]
+173609 area 67 bbox 9 15 aspect 0.60 pos 1151 3035 centroid [1155.28358209 3041.49253731]
+173719 area 256 bbox 21 43 aspect 0.49 pos 1160 3037 centroid [1171.15234375 3058.09375   ]
+173816 area 53 bbox 13 12 aspect 0.92 pos 1052 3039 centroid [1057.54716981 3043.83018868]
+174245 area 119 bbox 19 23 aspect 0.83 pos 1112 3046 centroid [1121.18487395 3055.48739496]
+174266 area 72 bbox 16 14 aspect 0.88 pos 1364 3046 centroid [1371.68055556 3053.04166667]
+174317 area 57 bbox 14 13 aspect 0.93 pos 1133 3047 centroid [1139.54385965 3052.92982456]
+174384 area 82 bbox 12 24 aspect 0.50 pos 1151 3048 centroid [1155.29268293 3058.84146341]
+174385 area 259 bbox 25 32 aspect 0.78 pos 1202 3048 centroid [1214.84555985 3061.86100386]
+174511 area 103 bbox 12 25 aspect 0.48 pos 1140 3050 centroid [1146.72815534 3063.36893204]
+174599 area 367 bbox 35 35 aspect 1.00 pos 1368 3051 centroid [1385.19346049 3067.11989101]
+174820 area 51 bbox 17 12 aspect 0.71 pos 1352 3055 centroid [1359.66666667 3060.25490196]
+174878 area 293 bbox 30 32 aspect 0.94 pos 1062 3056 centroid [1076.07508532 3074.23890785]
+174903 area 50 bbox 14 12 aspect 0.86 pos 1414 3056 centroid [1420.76 3062.46]
+174943 area 99 bbox 19 17 aspect 0.89 pos 1095 3057 centroid [1102.68686869 3065.56565657]
+175001 area 123 bbox 22 22 aspect 1.00 pos 1317 3058 centroid [1326.88617886 3069.74796748]
+175008 area 61 bbox 9 24 aspect 0.38 pos 1439 3058 centroid [1443.18032787 3070.57377049]
+175146 area 79 bbox 15 13 aspect 0.87 pos 1118 3061 centroid [1124.53164557 3067.74683544]
+175318 area 87 bbox 20 14 aspect 0.70 pos 1340 3064 centroid [1349.05747126 3070.68965517]
+175461 area 64 bbox 11 17 aspect 0.65 pos 1047 3067
+ centroid [1051.6875  3073.78125]
+175503 area 89 bbox 15 22 aspect 0.68 pos 1054 3068 centroid [1059.74157303 3079.8988764 ]
+175645 area 93 bbox 15 21 aspect 0.71 pos 1029 3071 centroid [1037.52688172 3080.05376344]
+176133 area 121 bbox 23 19 aspect 0.83 pos 1292 3078 centroid [1304.29752066 3086.95867769]
+176137 area 76 bbox 15 15 aspect 1.00 pos 1331 3078 centroid [1338.05263158 3084.89473684]
+176185 area 85 bbox 13 22 aspect 0.59 pos 947 3079 centroid [ 953.92941176 3089.51764706]
+176344 area 50 bbox 11 11 aspect 1.00 pos 1287 3081 centroid [1291.6  3085.76]
+176593 area 588 bbox 47 51 aspect 0.92 pos 1050 3085 centroid [1072.45578231 3109.84693878]
+176731 area 698 bbox 54 51 aspect 0.94 pos 1291 3087 centroid [1320.2277937  3111.53151862]
+176732 area 140 bbox 32 18 aspect 0.56 pos 1352 3087 centroid [1368.15714286 3096.45714286]
+176858 area 90 bbox 22 12 aspect 0.55 pos 1071 3089 centroid [1080.45555556 3095.22222222]
+177084 area 215 bbox 29 32 aspect 0.91 pos 1029 3092 centroid [1044.66511628 3106.57209302]
+177245 area 93 bbox 9 26 aspect 0.35 pos 1346 3094 centroid [1350.3655914  3107.04301075]
+177319 area 79 bbox 17 16 aspect 0.94 pos 1443 3095 centroid [1450.70886076 3102.02531646]
+177627 area 305 bbox 16 42 aspect 0.38 pos 944 3100 centroid [ 952.14754098 3118.08852459]
+177700 area 92 bbox 20 19 aspect 0.95 pos 1108 3101 centroid [1116.41304348 3110.90217391]
+177721 area 120 bbox 25 16 aspect 0.64 pos 1371 3101 centroid [1382.8   3107.775]
+178028 area 187 bbox 18 30 aspect 0.60 pos 1024 3106 centroid [1030.55614973 3119.53475936]
+178035 area 111 bbox 21 18 aspect 0.86 pos 1126 3106 centroid [1137.02702703 3115.14414414]
+178064 area 63 bbox 13 15 aspect 0.87 pos 1523 3106 centroid [1528.42857143 3112.42857143]
+178447 area 62 bbox 13 13 aspect 1.00 pos 1380 3113 centroid [1386.72580645 3118.83870968]
+178606 area 68 bbox 15 21 aspect 0.71 pos 1348 3116 centroid [1355.05882353 3124.73529412]
+178725 area 76 bbox 17 15 aspect 0.88 pos 1392 3118 centroid [1398.47368421 3126.94736842]
+178754 area 197 bbox 19 32 aspect 0.59 pos 1037 3119 centroid [1045.73604061 3133.24365482]
+178769 area 52 bbox 15 10 aspect 0.67 pos 1288 3119 centroid [1294.38461538 3123.96153846]
+178840 area 53 bbox 12 18 aspect 0.67 pos 1436 3120 centroid [1440.52830189 3130.01886792]
+178844 area 88 bbox 18 20 aspect 0.90 pos 1445 3120 centroid [1455.375      3127.01136364]
+178936 area 150 bbox 24 18 aspect 0.75 pos 1051 3122 centroid [1062.19333333 3129.54      ]
+178941 area 60 bbox 14 10 aspect 0.71 pos 1138 3122 centroid [1144.83333333 3126.68333333]
+178957 area 60 bbox 11 17 aspect 0.65 pos 1329 3122 centroid [1334.88333333 3130.03333333]
+179249 area 58 bbox 14 12 aspect 0.86 pos 1367 3127 centroid [1374.27586207 3132.37931034]
+179259 area 4059 bbox 94 137 aspect 0.69 pos 1442 3127 centroid [1502.18107908 3204.79206701]
+179422 area 53 bbox 13 13 aspect 1.00 pos 1465 3130 centroid [1471.20754717 3135.83018868]
+179460 area 372 bbox 28 50 aspect 0.56 pos 1127 3131 centroid [1141.04301075 3150.6827957 ]
+179521 area 63 bbox 14 12 aspect 0.86 pos 1112 3132 centroid [1117.31746032 3137.79365079]
+179652 area 75 bbox 15 20 aspect 0.75 pos 1472 3134 centroid [1478.12       3142.66666667]
+179858 area 76 bbox 16 14 aspect 0.88 pos 1236 3137 centroid [1242.76315789 3143.56578947]
+180018 area 50 bbox 13 11 aspect 0.85 pos 1347 3139 centroid [1352.94 3144.8 ]
+180032 area 377 bbox 26 50 aspect 0.52 pos 1471 3139 centroid [1483.37135279 3163.78249337]
+180555 area 58 bbox 14 13 aspect 0.93 pos 1377 3145 centroid [1382.65517241 3151.37931034]
+180858 area 91 bbox 22 13 aspect 0.59 pos 1216 3149 centroid [1226.05494505 3155.46153846]
+181006 area 76 bbox 17 11 aspect 0.65 pos 1103 3151 centroid [1111.42105263 3155.61842105]
+181227 area 51 bbox 10 15 aspect 0.67 pos 1450 3153 centroid [1454.11764706 3160.60784314]
+181293 area 93 bbox 20 25 aspect 0.80 pos 1383 3154 centroid [1394.17204301 3164.55913978]
+181719 area 61 bbox 15 14 aspect 0.93 pos 1271 3160 centroid [1277.37704918 3167.39344262]
+182004 area 161 bbox 24 22 aspect 0.92 pos 1100 3164 centroid [1111.29813665 3175.41614907]
+182006 area 87 bbox 15 19 aspect 0.79 pos 1140 3164 centroid [1147.51724138 3173.68965517]
+182581 area 279 bbox 47 29 aspect 0.62 pos 1074 3172 centroid [1096.98207885 3187.80645161]
+182708 area 75 bbox 11 17 aspect 0.65 pos 949 3174 centroid [ 954.13333333 3182.25333333]
+182802 area 110 bbox 17 29 aspect 0.59 pos 1265 3175 centroid [1273.51818182 3190.56363636]
+182884 area 140 bbox 24 18 aspect 0.75 pos 1245 3176 centroid [1254.77857143 3185.23571429]
+182946 area 54 bbox 17 9 aspect 0.53 pos 1031 3177 centroid [1039.53703704 3181.33333333]
+183084 area 72 bbox 16 20 aspect 0.80 pos 1218 3179 centroid [1226.83333333 3188.18055556]
+183193 area 62 bbox 12 17 aspect 0.71 pos 1024 3181 centroid [1028.59677419 3189.9516129 ]
+183474 area 221 bbox 33 22 aspect 0.67 pos 1121 3185 centroid [1136.50678733 3193.53846154]
+183685 area 57 bbox 13 12 aspect 0.92 pos 1380 3188 centroid [1386.78947368 3193.22807018]
+183825 area 270 bbox 22 34 aspect 0.65 pos 1057 3191 centroid [1069.06296296 3209.19259259]
+183904 area 69 bbox 15 17 aspect 0.88 pos 1258 3192 centroid [1265.01449275 3198.50724638]
+184031 area 157 bbox 28 18 aspect 0.64 pos 1433 3194 centroid [1447.22292994 3203.31847134]
+184085 area 159 bbox 23 26 aspect 0.88 pos 1276 3195 centroid [1287.16981132 3209.30188679]
+184087 area 61 bbox 17 12 aspect 0.71 pos 1292 3195 centroid [1300.63934426 3201.57377049]
+184264 area 70 bbox 15 16 aspect 0.94 pos 1078 3198 centroid [1084.67142857 3206.91428571]
+184288 area 194 bbox 28 21 aspect 0.75 pos 1448 3198 centroid [1464.69587629 3209.70103093]
+184324 area 94 bbox 13 26 aspect 0.50 pos 1159 3199 centroid [1164.9787234  3210.65957447]
+184328 area 979 bbox 68 65 aspect 0.96 pos 1152 3199 centroid [1195.78855975 3235.30132789]
+184394 area 52 bbox 12 17 aspect 0.71 pos 1170 3200 centroid [1174.44230769 3207.44230769]
+184755 area 83 bbox 18 15 aspect 0.83 pos 1039 3205 centroid [1047.98795181 3213.15662651]
+184775 area 143 bbox 20 18 aspect 0.90 pos 1326 3205 centroid [1335.48251748 3213.72727273]
+184840 area 50 bbox 14 9 aspect 0.64 pos 1308 3206 centroid [1313.36 3210.38]
+184940 area 75 bbox 15 10 aspect 0.67 pos 1521 3207 centroid [1527.28       3211.01333333]
+185309 area 73 bbox 18 9 aspect 0.50 pos 1079 3213 centroid [1086.97260274 3217.31506849]
+185381 area 59 bbox 13 12 aspect 0.92 pos 1400 3214 centroid [1405.84745763 3218.57627119]
+185521 area 67 bbox 15 18 aspect 0.83 pos 1282 3216 centroid [1287.44776119 3224.05970149]
+185541 area 57 bbox 22 7 aspect 0.32 pos 1429 3216 centroid [1440.84210526 3219.12280702]
+185585 area 98 bbox 28 17 aspect 0.61 pos 1034 3217 centroid [1048.55102041 3224.1122449 ]
+185677 area 93 bbox 14 19 aspect 0.74 pos 1370 3218 centroid [1375.52688172 3225.94623656]
+185770 area 931 bbox 66 44 aspect 0.67 pos 1027 3220 centroid [1058.87218045 3246.05155747]
+185849 area 102 bbox 16 15 aspect 0.94 pos 1330 3221 centroid [1337.65686275 3228.32352941]
+185902 area 55 bbox 14 13 aspect 0.93 pos 1167 3222 centroid [1172.98181818 3228.67272727]
+185915 area 241 bbox 27 29 aspect 0.93 pos 1421 3222 centroid [1434.60165975 3236.53112033]
+185964 area 158 bbox 34 28 aspect 0.82 pos 1297 3223 centroid [1314.94936709 3238.62658228]
+186167 area 106 bbox 23 16 aspect 0.70 pos 1289 3226 centroid [1299.48113208 3233.78301887]
+186436 area 100 bbox 17 18 aspect 0.94 pos 1406 3230 centroid [1412.51 3239.5 ]
+186489 area 66 bbox 12 19 aspect 0.63 pos 1358 3231 centroid [1363.53030303 3239.56060606]
+186546 area 52 bbox 11 17 aspect 0.65 pos 1268 3232 centroid [1273.17307692 3241.17307692]
+186758 area 61 bbox 9 19 aspect 0.47 pos 1155 3236 centroid [1158.47540984 3245.81967213]
+186953 area 102 bbox 23 13 aspect 0.57 pos 1160 3240 centroid [1171.71568627 3244.96078431]
+186969 area 335 bbox 49 24 aspect 0.49 pos 1295 3240 centroid [1322.34626866 3255.67761194]
+187030 area 169 bbox 20 23 aspect 0.87 pos 1491 3241 centroid [1500.95266272 3254.15384615]
+187208 area 63 bbox 13 16 aspect 0.81 pos 1279 3245 centroid [1283.76190476 3251.61904762]
+187308 area 90 bbox 13 17 aspect 0.76 pos 1167 3247 centroid [1171.82222222 3255.56666667]
+187328 area 78 bbox 18 17 aspect 0.94 pos 1398 3247 centroid [1408.02564103 3256.97435897]
+187536 area 72 bbox 14 13 aspect 0.93 pos 1150 3251 centroid [1155.48611111 3257.16666667]
+current SHA b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+corrected seq7 differs from decoded in 592 bytes
+corrected SHA b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+expected SHA b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+first diff at payload byte 412 padding
+found 9 symbol clusters
+
+Symbol cluster 0: ids=[107813, 109425] bbox=[np.int32(1606), np.int32(1329), np.int32(2210), np.int32(1932)]
+  corners A/B/C/D: [(1607, 1338), (2199, 1329), (2209, 1921), (1616, 1931)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=2/9 len=8168
+  stored CRC=AC510CD2 computed=AC510CD2 expected=AC510CD2
+
+Symbol cluster 1: ids=[109475, 110435, 111145] bbox=[np.int32(266), np.int32(1350), np.int32(870), np.int32(1953)]
+  corners A/B/C/D: [(267, 1359), (859, 1350), (869, 1942), (276, 1951)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=0/9 len=8168
+  stored CRC=F616796C computed=F616796C expected=F616796C
+
+Symbol cluster 2: ids=[108723] bbox=[np.int32(936), np.int32(1339), np.int32(1541), np.int32(1943)]
+  corners A/B/C/D: [(938, 1348), (1529, 1339), (1539, 1932), (946, 1941)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=1/9 len=8168
+  stored CRC=A64016D6 computed=A64016D6 expected=A64016D6
+
+Symbol cluster 3: ids=[135911] bbox=[np.int32(1617), np.int32(2014), np.int32(2221), np.int32(2618)]
+  corners A/B/C/D: [(1618, 2024), (2210, 2015), (2220, 2607), (1626, 2617)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=5/9 len=8168
+  stored CRC=3A153C58 computed=3A153C58 expected=3A153C58
+
+Symbol cluster 4: ids=[136284] bbox=[np.int32(947), np.int32(2025), np.int32(1551), np.int32(2629)]
+  corners A/B/C/D: [(949, 2034), (1540, 2025), (1550, 2618), (957, 2628)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=4/9 len=8168
+  stored CRC=AE804266 computed=AE804266 expected=AE804266
+
+Symbol cluster 5: ids=[136629] bbox=[np.int32(277), np.int32(2036), np.int32(881), np.int32(2639)]
+  corners A/B/C/D: [(278, 2045), (870, 2036), (880, 2628), (287, 2638)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=3/9 len=8168
+  stored CRC=9C35923F computed=9C35923F expected=9C35923F
+
+Symbol cluster 6: ids=[159712] bbox=[np.int32(288), np.int32(2721), np.int32(892), np.int32(3325)]
+  corners A/B/C/D: [(288, 2731), (880, 2721), (891, 3314), (297, 3323)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=6/9 len=8168
+  stored CRC=63604E4D computed=63604E4D expected=63604E4D
+
+Symbol cluster 7: ids=[159242] bbox=[np.int32(954), np.int32(2711), np.int32(1562), np.int32(3315)]
+  corners A/B/C/D: [(959, 2720), (1551, 2711), (1561, 3304), (967, 3313)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=0 seq=7/9 len=8168
+  stored CRC=E20A2CD2 computed=DC2D2CC9 expected=E20A2CD2
+  *** CRC MISMATCH ***
+
+Symbol cluster 8: ids=[158749, 159350] bbox=[np.int32(1628), np.int32(2700), np.int32(2232), np.int32(3304)]
+  corners A/B/C/D: [(1628, 2710), (2221, 2701), (2231, 3293), (1637, 3302)]
+  codeword length 1128
+  marker=b'WK' version=1 kind=1 seq=8/9 len=8168
+  stored CRC=0E184BA8 computed=0E184BA8 expected=0E184BA8
+  -> repairing SEQ 7 from parity
+     repaired stored CRC=E20A2CD2 computed=E20A2CD2
+
+Reassembled file length: 8168 (expected 8168)
+SHA-256: b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+Expected: b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6
+Match: True
+
+ZIP contents:
+  MANIFEST.json                    4000 bytes  CRC 4CAC070A
+  SIGNATURE.json                   1002 bytes  CRC 8D4A0DD2
+  LICENSE                          1073 bytes  CRC 74DDAF76
+  README.txt                       1256 bytes  CRC B9002B43
+  image/smiley.png                  315 bytes  CRC A3F19EE9
+extracted to recovered_pkg/
+pynacl
+failed Signature was forged or corrupt
+failed Signature was forged or corrupt
+failed Signature was forged or corrupt
+done

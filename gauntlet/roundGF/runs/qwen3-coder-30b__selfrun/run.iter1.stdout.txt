@@ -1,0 +1,15 @@
+=== PREDICTION ===
+Files used: tools/llama2c/run.c, tools/llama2c/win.c, tools/llama2c/win.h, model/stories15M.bin, model/tokenizer.bin
+Unblocking file: tools/llama2c/BUILD-AND-RUN.md (contains build instructions)
+Build command: cl /nologo /O2 /Fe:run.exe tools\llama2c\run.c tools\llama2c\win.c
+Runner invocation: ./run.exe model/stories15M.bin -z model/tokenizer.bin -t 0.0 -n 64 -i "Once upon a time"
+Expected output text from testvectors/generate-once-upon-a-time.stdout.txt:
+Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in the sky. It was the sun! She thought it was so pretty.
+Lily wanted to play with the ball, but it was
+
+Expected SHA256 (LF): 32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5
+=== END PREDICTION ===
+MSVC not found, trying GCC
+Using GCC compiler
+Building with: gcc -O3 -o run.exe tools/llama2c/run.c tools/llama2c/win.c -lm
+Build failed with GCC

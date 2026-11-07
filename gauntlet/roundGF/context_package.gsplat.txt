@@ -1,0 +1,3608 @@
+===== CONTEXT PACKAGE =====
+Everything below was extracted from INSIDE the file named in the task and
+from nowhere else. You cannot read the file yourself, so this is what you
+have. The bundled reader programs under loaders/ were deliberately NOT
+included. Binary payloads appear only as short hex heads; your program will
+run against the real file and can read every byte itself.
+Included: 12 of 12 items.
+
+
+===== FILE README.txt =====
+plush -- a 3D Gaussian splat, its point cloud, and the code that made both
+=========================================================================
+
+This is a werk package: one file carrying an asset AND everything needed to
+understand it. spec/ is the format specification. loaders/ carries three
+single-file, dependency-free readers -- Python, Rust, C. Start with
+spec/README.md, or just run
+
+    python loaders/werk_read.py gsplat-v1.werk --verify
+
+WHAT IS IN IT
+
+  splats/plush.wkgs     281498 Gaussians, magic WKGS, SH degree 0.
+                        Six declared streams: means, scales, rotations,
+                        opacities, sh-dc, sh-rest. Grammar:
+                        spec/layouts/gsplat.layout.txt.
+
+  points/plush-dc.wkpc  the same 281498 points as a plain point cloud, magic
+                        WKPC: position + colour, nothing else. It is the
+                        splat's DC band through the line above and it is
+                        EXACT -- nothing was resampled or decimated. Grammar: spec/layouts/points.layout.txt.
+
+  The colour line in full, because a constant a reader has to get from
+  somewhere else is a promise about another file:
+
+      C0         = 0.28209479177387814          ( = 1 / (2*sqrt(pi)) )
+      rgb_linear = clamp(0.5 + C0 * sh_dc, 0, 1)
+
+IF YOU ONLY WANT POSITIONS AND COLOURS you do not need to understand Gaussian
+splatting at all. Read the WKGS header's section table, take the "means"
+section and the "sh-dc" section, skip the other four, and apply that one line.
+That path is NORMATIVE (spec/layouts/gsplat.layout.txt section 7): a reader
+that does it is a conformant consumer of the node, not a degraded one. Or read
+points/plush-dc.wkpc, which is the same answer already computed.
+
+THE PART THAT IS NEW IN THIS PACKAGE
+
+  tools/                the SOURCE CODE of the three tools that made this
+                        file, embedded as core.tool nodes with their
+                        configurations as core.tool.config nodes.
+  recipe/recipe.json    the conversion, step by step, naming those tools BY
+                        NODE ID rather than by a hash you would have to
+                        resolve somewhere else.
+  recipe/inputs/plush.splat
+                        the original file the chain started from, so the
+                        whole thing is reproducible from inside the package.
+
+The intermediate PLY is deliberately NOT here: the recipe records its sha256
+and the exact command that regenerates it from the input above using the tool
+above. See spec/SPEC.md section 3.17.
+
+NOTHING IN THIS PACKAGE IS EVER EXECUTED AUTOMATICALLY. The tools are text.
+Read them. That is what they are for.
+
+
+
+===== FILE MANIFEST.json (complete) =====
+{
+  "werk": {
+    "major": 1,
+    "minor": 0
+  },
+  "profile": "3d-entity/1",
+  "manifest_schema": "spec/schemas/manifest.schema.json",
+  "spec_sha256": "3984a5550b8a4be95501c37544d36b90ac2f3834bdddf8007597a41405450ebd",
+  "entity": {
+    "uuid": "5b052490-f871-4336-9d9c-19a3fb076796",
+    "name": "plush",
+    "summary": "A real 3D Gaussian splat, its exact point-cloud degradation, and the source code of the three tools that made them.",
+    "created": "2026-08-08T00:00:00Z"
+  },
+  "conventions": {
+    "endianness": "le",
+    "units_per_meter": 1.0,
+    "length_unit": "metre",
+    "angle_unit": "radian",
+    "time_unit": "second",
+    "mass_unit": "kilogram",
+    "up_axis": "y",
+    "forward_axis": "-z",
+    "right_axis": "+x",
+    "handedness": "right",
+    "winding": "ccw",
+    "quat_order": "wxyz",
+    "oct_encoding_pole": "y",
+    "sh_l1_order": [
+      "dc",
+      "y",
+      "z",
+      "x"
+    ],
+    "color_space_default": "srgb",
+    "uv_origin": "top-left",
+    "alignment_bytes": 16,
+    "text_encoding": "utf-8",
+    "id_case": "kebab-case",
+    "hash_algorithm": "sha256",
+    "signature_algorithm": "ed25519"
+  },
+  "container": {
+    "form": "zip",
+    "zip_compression": "store",
+    "entry_order": [
+      "MANIFEST.json",
+      "SIGNATURE.json",
+      "LICENSE",
+      "README.txt",
+      "loaders/",
+      "spec/",
+      "semantics/",
+      "tools/",
+      "recipe/recipe.json",
+      "provenance/",
+      "points/",
+      "splats/",
+      "recipe/",
+      "x/"
+    ],
+    "preview_prefix_bytes": 1231793
+  },
+  "license": {
+    "file": "LICENSE",
+    "sha256": "b176cebfeea5fafc6f000340f00ea4ed2b4cbab64dd311b622ba06d9ecb37a4c"
+  },
+  "schemas": {
+    "core.tool": "spec/schemas/core.tool.schema.json",
+    "core.tool.config": "spec/schemas/core.tool.config.schema.json",
+    "core.recipe": "spec/schemas/core.recipe.schema.json",
+    "core.semantics": "spec/schemas/core.semantics.schema.json",
+    "core.provenance": "spec/schemas/core.provenance.schema.json"
+  },
+  "layouts": {
+    "core.geom.gsplat": "spec/layouts/gsplat.layout.txt",
+    "core.geom.points": "spec/layouts/points.layout.txt"
+  },
+  "parts": [
+    {
+      "part_id": "whole",
+      "name": "plush",
+      "parent": null,
+      "transform": {
+        "translation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  ],
+  "materials": [],
+  "nodes": [
+    {
+      "node_id": "spec",
+      "type": "core.spec",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "spec/MINI-SPECS.md",
+              "sha256": "8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba",
+              "size": 40147
+            },
+            {
+              "path": "spec/PROFILE-IMAGE.md",
+              "sha256": "2bf8fcaa4650790e944b531afbea238aba97ae5a8825e162330a0e9f1a3a8c0f",
+              "size": 13274
+            },
+            {
+              "path": "spec/README.md",
+              "sha256": "3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56",
+              "size": 10855
+            },
+            {
+              "path": "spec/SPEC.md",
+              "sha256": "eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001",
+              "size": 104388
+            },
+            {
+              "path": "spec/X-C2PA-EXPORT.md",
+              "sha256": "2b3421f5dd51cc885762754d0ce865c6ee5b9cc11428d8a7945f59a2b7485306",
+              "size": 7461
+            },
+            {
+              "path": "spec/conventions-map.image.json",
+              "sha256": "ae4116c7c5c61b6342e0ecdc875ed42015179254e7012007cfe1e3c3b0b273cc",
+              "size": 2416
+            },
+            {
+              "path": "spec/conventions-map.json",
+              "sha256": "1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37",
+              "size": 9269
+            },
+            {
+              "path": "spec/examples/MANIFEST.example.json",
+              "sha256": "c421d2e85a9455f0be794ca8ee673f727a7ef67485d631e374f95c4a6d6ce61a",
+              "size": 20080
+            },
+            {
+              "path": "spec/examples/SIGNATURE.example.json",
+              "sha256": "dda875aac536e946e9d32955d41b4fbffac75d8627100b17423a0204cf4f3783",
+              "size": 1084
+            },
+            {
+              "path": "spec/examples/embedding.example.hex.txt",
+              "sha256": "355ba2b4b765c2f88f112d25fdcd000df6c3fb8bd3b8894b904b25a9e9130d2d",
+              "size": 4444
+            },
+            {
+              "path": "spec/examples/embedding.example.wkem",
+              "sha256": "eb98a370bde965b6bdd0c21d73dfefb663f445db5a6cd3d2be44272123ebf067",
+              "size": 512
+            },
+            {
+              "path": "spec/examples/gsplat.example.hex.txt",
+              "sha256": "e5cc7d5b0310543cb06b2853d3e6ca5b19f68df9474ecf916b1a256f906788a3",
+              "size": 9796
+            },
+            {
+              "path": "spec/examples/gsplat.example.wkgs",
+              "sha256": "9a3af3dfde695e34cbeb8972a8d3f2453454226ba6ab9c69a6c5a0a199fe19ee",
+              "size": 1120
+            },
+            {
+              "path": "spec/examples/make-examples.py",
+              "sha256": "9b7503dd774b7a9d68f8d42e8428353a5d98db826d408a15c37778f116b7ad40",
+              "size": 57655
+            },
+            {
+              "path": "spec/examples/restposes.example.hex.txt",
+              "sha256": "80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051",
+              "size": 4308
+            },
+            {
+              "path": "spec/examples/restposes.example.wkrp",
+              "sha256": "6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+              "size": 560
+            },
+            {
+              "path": "spec/examples/signature.example.txt",
+              "sha256": "93c516649849a8b4889d161c200e44269694ed0ef5d826c3a5ae200a87c430e5",
+              "size": 4544
+            },
+            {
+              "path": "spec/extensions/x.cub.v1.baked.layout.txt",
+              "sha256": "ba64dfd8bf845e128216e132fa05bad979f65fd66c2c3fa0eccdab7ce95aea71",
+              "size": 9359
+            },
+            {
+              "path": "spec/extensions/x.cub.v1.md",
+              "sha256": "0b36de4fa7783301d49dd20483fd43ed7a12e4f06b22c54282981391912b5f42",
+              "size": 8783
+            },
+            {
+              "path": "spec/facets.json",
+              "sha256": "f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1",
+              "size": 11978
+            },
+            {
+              "path": "spec/layouts/ENVELOPE.layout.txt",
+              "sha256": "b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce",
+              "size": 26372
+            },
+            {
+              "path": "spec/layouts/animclip.layout.txt",
+              "sha256": "ee4a9db15b32a3540fc4dabbc07cf9f91e3f24b3bdad6d0f02711da9e674b9e6",
+              "size": 16800
+            },
+            {
+              "path": "spec/layouts/embedding.layout.txt",
+              "sha256": "303b608295ef192afcc86b2f636c26736c6a8ce642835d46245bdc7e72320a87",
+              "size": 14361
+            },
+            {
+              "path": "spec/layouts/flowfield.layout.txt",
+              "sha256": "f8d2e9cc571b22fa0748dcb8cb47aa3235d8cfcea92467801a18ddf2b104903a",
+              "size": 6263
+            },
+            {
+              "path": "spec/layouts/gsplat.layout.txt",
+              "sha256": "1f42951c887259e9c69c1437792b5674e0d0c7d90595e41e207c0aac138a6195",
+              "size": 23918
+            },
+            {
+              "path": "spec/layouts/imposter.layout.txt",
+              "sha256": "29649f2aa83078fbb13731f0481eb8e26c96f9ea54a821a6dfbef805ed31236f",
+              "size": 10446
+            },
+            {
+              "path": "spec/layouts/points.layout.txt",
+              "sha256": "6b36a38432a4468655c0c176c02788b39c23db8ea33e2b3af69011a4d59c4899",
+              "size": 16663
+            },
+            {
+              "path": "spec/layouts/restposes.layout.txt",
+              "sha256": "cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5",
+              "size": 5958
+            },
+            {
+              "path": "spec/layouts/skeleton.layout.txt",
+              "sha256": "f9656db427660fd781cb7d3732013ff6958f3b816cc9ba93403e37b6e1295dc1",
+              "size": 5964
+            },
+            {
+              "path": "spec/schemas/conventions-map.schema.json",
+              "sha256": "97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f",
+              "size": 4614
+            },
+            {
+              "path": "spec/schemas/core.anim.clip.schema.json",
+              "sha256": "2e3d87f8447bd3ab21da0c0b34ad0ab24e95bcd4cfb28a4ba2edfdddadbafc36",
+              "size": 9585
+            },
+            {
+              "path": "spec/schemas/core.audio.effect.schema.json",
+              "sha256": "04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5",
+              "size": 8628
+            },
+            {
+              "path": "spec/schemas/core.audio.package.schema.json",
+              "sha256": "d45aa59c656693f9bf93c09245b9d80e6101d06e765f63215f4faa6116670545",
+              "size": 7320
+            },
+            {
+              "path": "spec/schemas/core.destruct.schema.json",
+              "sha256": "87142e399b83e6f5abffe8655302d45f27b32781766f0821826accb41e97ff32",
+              "size": 6319
+            },
+            {
+              "path": "spec/schemas/core.disclosure.schema.json",
+              "sha256": "ac1df873ac607e1bc4778f1a97bbec5fb13b7177e715b93e5ef60eb57164c785",
+              "size": 11515
+            },
+            {
+              "path": "spec/schemas/core.imposter.schema.json",
+              "sha256": "5b5c3875a91274e38e41e99a55d3041438c0471a584699290c7a6b76ce9f6306",
+              "size": 6708
+            },
+            {
+              "path": "spec/schemas/core.material.schema.json",
+              "sha256": "487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6",
+              "size": 4823
+            },
+            {
+              "path": "spec/schemas/core.phys.body.schema.json",
+              "sha256": "d0d462fc17e21805da5c075fd83eeccda4946367c5f4381651544b89555de4ac",
+              "size": 6157
+            },
+            {
+              "path": "spec/schemas/core.phys.bounds.schema.json",
+              "sha256": "acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e",
+              "size": 3164
+            },
+            {
+              "path": "spec/schemas/core.phys.colliders.schema.json",
+              "sha256": "70dd20d638bef9146588222bec3000ab9e0d2430d1dd96fbfda6a5ffacd62794",
+              "size": 4116
+            },
+            {
+              "path": "spec/schemas/core.props.schema.json",
+              "sha256": "95a8124f54346735946431d7de34cb665eec8ca7450a794831d6aee99affa2e3",
+              "size": 11666
+            },
+            {
+              "path": "spec/schemas/core.provenance.schema.json",
+              "sha256": "d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935",
+              "size": 6140
+            },
+            {
+              "path": "spec/schemas/core.recipe.schema.json",
+              "sha256": "19b723bf06c66ccf15948100350c4857e0694a5850e1e111e35a894c416e0f30",
+              "size": 26485
+            },
+            {
+              "path": "spec/schemas/core.retarget.bind.schema.json",
+              "sha256": "e8cacdd8a72e7e33100507cbe187ffe91f0ec98516bb52ea08ee6addf298f480",
+              "size": 13337
+            },
+            {
+              "path": "spec/schemas/core.semantics.schema.json",
+              "sha256": "3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f",
+              "size": 6917
+            },
+            {
+              "path": "spec/schemas/core.skeleton.schema.json",
+              "sha256": "7e0f7aec2a7616e7ab4d94c96ac82cf3496af2d3758b9bbf13d866663782c7f8",
+              "size": 11464
+            },
+            {
+              "path": "spec/schemas/core.tool.config.schema.json",
+              "sha256": "f386341239a744cf81140a79d7a780d1d2d6faebf613bceab55a7d909f750b1f",
+              "size": 7321
+            },
+            {
+              "path": "spec/schemas/core.tool.schema.json",
+              "sha256": "beb9c08f08a597c9aa8b796bdffa678d8305d9bf53aff54003b40a4a2a2b9b2e",
+              "size": 10894
+            },
+            {
+              "path": "spec/schemas/facets.schema.json",
+              "sha256": "6a5304c901b8f3c2ff30734c0784fa074a111a4312b634b74351cbe234299f87",
+              "size": 3593
+            },
+            {
+              "path": "spec/schemas/manifest.image.schema.json",
+              "sha256": "96d27c6bd7dabc4ecf3d984aff0b0e90b9db3da6ba4cda22144d5d1d64f7ce71",
+              "size": 28278
+            },
+            {
+              "path": "spec/schemas/manifest.schema.json",
+              "sha256": "d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451",
+              "size": 46174
+            },
+            {
+              "path": "spec/schemas/signature.schema.json",
+              "sha256": "cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13",
+              "size": 11209
+            },
+            {
+              "path": "spec/schemas/x.c2pa.export.schema.json",
+              "sha256": "bc1a5c7486f4c90e5331316e122d26f82680601e53bce7142d9b59576ab4600d",
+              "size": 4935
+            },
+            {
+              "path": "spec/skeleton/canonical-humanoid-v1.json",
+              "sha256": "7b5415347d0456f164b08abf5b4114f5db00215d6ed71d6f841412825a8fd481",
+              "size": 22429
+            },
+            {
+              "path": "spec/skeleton/core.hands.v1.json",
+              "sha256": "5e1b90841b8a6b701c3d9f07a9a8f09caec97c544975979f01e972464d40e15a",
+              "size": 26112
+            },
+            {
+              "path": "spec/skeleton/derive-canonical-humanoid.py",
+              "sha256": "20f5c3504c87f9c56ae82120fcdb5f006bd565194576e4b818452934069d6c35",
+              "size": 19852
+            }
+          ],
+          "note": "The format specification, its schemas and its binary layout grammars, travelling inside the file they describe (law 2).",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "loader-python",
+      "type": "core.loader",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "loaders/werk_read.py",
+              "sha256": "8274359b795405b481d535572e3ec8930c29da20140f23e356c6fef84f162b84",
+              "size": 42226
+            }
+          ],
+          "note": "A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "language": "python",
+        "form": "source",
+        "entrypoint": "loaders/werk_read.py",
+        "toolchain": "python>=3.8",
+        "dependencies": [],
+        "capabilities": [
+          "read-manifest",
+          "verify-hashes",
+          "read-envelope",
+          "materialize"
+        ]
+      }
+    },
+    {
+      "node_id": "loader-rust",
+      "type": "core.loader",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "loaders/werk_read.rs",
+              "sha256": "f2ef9ba2badd94a1312cd9a42649386e017197bdc3cb0d5106f1ae745d173e62",
+              "size": 98761
+            }
+          ],
+          "note": "A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "language": "rust",
+        "form": "source",
+        "entrypoint": "loaders/werk_read.rs",
+        "toolchain": "rustc>=1.70 --edition 2021",
+        "dependencies": [],
+        "capabilities": [
+          "read-manifest",
+          "verify-hashes",
+          "read-envelope",
+          "materialize"
+        ],
+        "build_command": "rustc -O --edition 2021 loaders/werk_read.rs -o werk_read"
+      }
+    },
+    {
+      "node_id": "loader-c",
+      "type": "core.loader",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "loaders/werk_read.c",
+              "sha256": "dcafb38877b1be2b13cbba1daedc1209ff15eb07fa9a6332e37e78ec119e4292",
+              "size": 111051
+            }
+          ],
+          "note": "A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "language": "c",
+        "form": "source",
+        "entrypoint": "loaders/werk_read.c",
+        "toolchain": "c99",
+        "dependencies": [],
+        "capabilities": [
+          "read-manifest",
+          "verify-hashes",
+          "read-envelope",
+          "materialize"
+        ],
+        "build_command": "cc -std=c99 -O2 loaders/werk_read.c -o werk_read"
+      }
+    },
+    {
+      "node_id": "license",
+      "type": "core.license",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "LICENSE",
+              "sha256": "b176cebfeea5fafc6f000340f00ea4ed2b4cbab64dd311b622ba06d9ecb37a4c",
+              "size": 2859
+            }
+          ],
+          "note": "The full licence text, embedded, never a link (law 7) -- including the part where the splat's own terms are NOT established and the package says so instead of guessing.",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "tool-splat-to-ply",
+      "type": "core.tool",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "tools/splat-to-ply/tool.json",
+              "sha256": "3419d72f0553cded501b65d88b1dd881d044d1f6ed99a8d79302965f14f9af7e",
+              "size": 1818
+            },
+            {
+              "path": "tools/splat-to-ply/splat_to_ply.py",
+              "sha256": "a7a20c5d9bc22adec0de690b3dea460cf72b57c2f0280e9c0f5722dc8cdbd54b",
+              "size": 8353
+            },
+            {
+              "path": "tools/splat-to-ply/ply.py",
+              "sha256": "7e25f50db6bb9c9d95ad379dc68f8ca7b730544b656c6fb863bd1d2a2f6bb576",
+              "size": 21847
+            }
+          ],
+          "note": "The converter that changed this content's representation, carried as SOURCE so a reader can check what it did instead of believing a producer string (SPEC.md section 3.17). 2 file(s), entrypoint tools/splat-to-ply/splat_to_ply.py. Reading it is the point; nothing in this package is ever executed automatically.",
+          "producer": {
+            "tool": "pipeline/p_tool.py",
+            "version": "1.0"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "tool_id": "splat-to-ply",
+        "role": "converter",
+        "language": "python",
+        "form": "source",
+        "file_count": 2
+      }
+    },
+    {
+      "node_id": "tool-werk-gsplat",
+      "type": "core.tool",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "tools/werk-gsplat/tool.json",
+              "sha256": "410cbe6bb7b7edeeae7185a0735eb81d728d752ff02e0229142abf4dc88b8fc0",
+              "size": 1936
+            },
+            {
+              "path": "tools/werk-gsplat/p_gsplat.py",
+              "sha256": "38ca49921ec06421a7e4ba4a7d599d1abdaa587a437672f2f1b7e80589cb7935",
+              "size": 12942
+            },
+            {
+              "path": "tools/werk-gsplat/ply.py",
+              "sha256": "7e25f50db6bb9c9d95ad379dc68f8ca7b730544b656c6fb863bd1d2a2f6bb576",
+              "size": 21847
+            },
+            {
+              "path": "tools/werk-gsplat/common.py",
+              "sha256": "3204636d25431948eae005707ff8e3f35c0a590565666c062a4e98e7c295b8f3",
+              "size": 16849
+            }
+          ],
+          "note": "The converter that changed this content's representation, carried as SOURCE so a reader can check what it did instead of believing a producer string (SPEC.md section 3.17). 3 file(s), entrypoint tools/werk-gsplat/p_gsplat.py. Reading it is the point; nothing in this package is ever executed automatically.",
+          "producer": {
+            "tool": "pipeline/p_tool.py",
+            "version": "1.0"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "tool_id": "werk-gsplat",
+        "role": "converter",
+        "language": "python",
+        "form": "source",
+        "file_count": 3
+      }
+    },
+    {
+      "node_id": "tool-werk-pointcloud",
+      "type": "core.tool",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "tools/werk-pointcloud/tool.json",
+              "sha256": "a011db6268a434d310fa95c1097bb227bd2ac422573c1ad78875df9b0e2d35bb",
+              "size": 1692
+            },
+            {
+              "path": "tools/werk-pointcloud/p_pointcloud.py",
+              "sha256": "d01f2f0620767149e0651ae1919b7ce23786672dc5761b9b310e5d929cfefc74",
+              "size": 13791
+            },
+            {
+              "path": "tools/werk-pointcloud/ply.py",
+              "sha256": "7e25f50db6bb9c9d95ad379dc68f8ca7b730544b656c6fb863bd1d2a2f6bb576",
+              "size": 21847
+            },
+            {
+              "path": "tools/werk-pointcloud/common.py",
+              "sha256": "3204636d25431948eae005707ff8e3f35c0a590565666c062a4e98e7c295b8f3",
+              "size": 16849
+            }
+          ],
+          "note": "The processor that derived something in this package, carried as SOURCE so a reader can check what it did instead of believing a producer string (SPEC.md section 3.17). 3 file(s), entrypoint tools/werk-pointcloud/p_pointcloud.py. Reading it is the point; nothing in this package is ever executed automatically.",
+          "producer": {
+            "tool": "pipeline/p_tool.py",
+            "version": "1.0"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "tool_id": "werk-pointcloud",
+        "role": "processor",
+        "language": "python",
+        "form": "source",
+        "file_count": 3
+      }
+    },
+    {
+      "node_id": "tool-config-splat-to-ply-run",
+      "type": "core.tool.config",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "tools/splat-to-ply-run.config.json",
+              "sha256": "494667a8edac64c1bda317b74331d5fb9bfe947c4efc803348a6ef1f10fe69e7",
+              "size": 2007
+            }
+          ],
+          "note": "The exact settings tool-splat-to-ply ran with for this package: 8 parameter(s), provenance 'recorded'. The keys are the tool's own and werk does not rename them.",
+          "producer": {
+            "tool": "pipeline/p_tool.py",
+            "version": "1.0"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "tool-splat-to-ply",
+          "kind": "requires",
+          "role": "configures"
+        }
+      ],
+      "meta": {
+        "config_id": "splat-to-ply-run",
+        "tool_node": "tool-splat-to-ply",
+        "params_provenance": "recorded"
+      }
+    },
+    {
+      "node_id": "tool-config-werk-gsplat-run",
+      "type": "core.tool.config",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "tools/werk-gsplat-run.config.json",
+              "sha256": "0f33ff8ef367386f2d011db4549ccd4284b6ddce8510ff9090748a07d458c3e4",
+              "size": 1824
+            }
+          ],
+          "note": "The exact settings tool-werk-gsplat ran with for this package: 10 parameter(s), provenance 'recorded'. The keys are the tool's own and werk does not rename them.",
+          "producer": {
+            "tool": "pipeline/p_tool.py",
+            "version": "1.0"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "tool-werk-gsplat",
+          "kind": "requires",
+          "role": "configures"
+        }
+      ],
+      "meta": {
+        "config_id": "werk-gsplat-run",
+        "tool_node": "tool-werk-gsplat",
+        "params_provenance": "recorded"
+      }
+    },
+    {
+      "node_id": "tool-config-werk-pointcloud-run",
+      "type": "core.tool.config",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "tools/werk-pointcloud-run.config.json",
+              "sha256": "56d13e222cccc8dc79557dcbecbc3d7100862d227acead63893b92eedb487978",
+              "size": 1547
+            }
+          ],
+          "note": "The exact settings tool-werk-pointcloud ran with for this package: 8 parameter(s), provenance 'recorded'. The keys are the tool's own and werk does not rename them.",
+          "producer": {
+            "tool": "pipeline/p_tool.py",
+            "version": "1.0"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "tool-werk-pointcloud",
+          "kind": "requires",
+          "role": "configures"
+        }
+      ],
+      "meta": {
+        "config_id": "werk-pointcloud-run",
+        "tool_node": "tool-werk-pointcloud",
+        "params_provenance": "recorded"
+      }
+    },
+    {
+      "node_id": "gsplat",
+      "type": "core.geom.gsplat",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "splats/plush.wkgs",
+              "sha256": "b4510cb2b8a738962b994a9bc010fed510db0b68f896c93a70b782943dc2869e",
+              "size": 15764784
+            }
+          ],
+          "note": "281498 Gaussians ingested from a binary_little_endian Gaussian-splatting PLY at SH degree 0. Scales are LINEAR metres (exp of the source's log scales, 0.000000..0.244545 m, median 0.001623) and opacity is LINEAR alpha (sigmoid of the source's logit, mean 0.4647) — gsplat.layout.txt section 0 argues why, and section 6 gives the exact inverses. Quaternions are wxyz, unit to 1.19e-07, w>=0; the source PLY does not declare its component order and this one was declared by the caller as 'wxyz'. SH is stored coefficient-major, transposed from the source's channel-major f_rest_*. Nothing was resampled, recentred or rescaled.",
+          "producer": {
+            "tool": "pipeline/p_gsplat.py",
+            "version": "1.0"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T00:00:00Z",
+          "input_files": [
+            "recipe/inputs/plush.splat"
+          ],
+          "input_params": {
+            "chain": [
+              "pipeline/splat_to_ply.py",
+              "pipeline/p_gsplat.py"
+            ],
+            "intermediate_ply_sha256": "6ffaf5691f3459f156607a186520b25532a42104a83d193d0a8de69f91da6d87",
+            "intermediate_ply_bytes": 15764528,
+            "alpha_clamped_count": 33401,
+            "source_convention": "inria-3dgs/1",
+            "quat_order": "wxyz",
+            "quat_order_source": "declared by the caller",
+            "activation_scale": "exp",
+            "activation_opacity": "sigmoid",
+            "sh_coeff_order": "coefficient-major (transposed from the source's channel-major f_rest_*)",
+            "resampled": false,
+            "recentred": false,
+            "rescaled": false
+          },
+          "input_hash": "0a6e711016b06f659a907e56645a5d3c683b1a2cd4e5e4aabe2a88d6c58ca5e1"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "tool-werk-gsplat",
+          "kind": "enhances",
+          "role": "made-by"
+        },
+        {
+          "to": "recipe",
+          "kind": "enhances",
+          "role": "recorded-by"
+        }
+      ],
+      "part_id": "whole",
+      "meta": {
+        "gaussian_count": 281498,
+        "sh_degree": 0,
+        "bytes_per_gaussian": 56.003
+      }
+    },
+    {
+      "node_id": "points-dc",
+      "type": "core.geom.points",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "points/plush-dc.wkpc",
+              "sha256": "fd1bac809338c70b683ca2ffbef98088915a781dfefa0087379d612e6262724a",
+              "size": 4223440
+            }
+          ],
+          "note": "281498 points: the splat's means EXACTLY, and its degree-0 SH band through clamp(0.5 + 0.28209479177387814*dc, 0, 1) quantised to 8 bits per channel, in LINEAR sRGB. Nothing was resampled and nothing was decimated -- this is the whole splat seen by a consumer that does not implement Gaussian splatting, which spec/layouts/gsplat.layout.txt section 7 makes a NORMATIVE path rather than a courtesy. A reader holding the WKGS can recompute every byte of this node and check it (law 5).",
+          "producer": {
+            "tool": "pipeline/p_pointcloud.py",
+            "version": "1.0"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T00:00:00Z",
+          "input_files": [
+            "splats/plush.wkgs"
+          ],
+          "input_params": {
+            "derivation": "gsplat-dc-band",
+            "sh_c0": 0.28209479177387814,
+            "color_dtype": "u8",
+            "color_space": "linear-srgb",
+            "decimated": false,
+            "resampled": false
+          },
+          "input_hash": "f07a91a5e073dc0c90e47bb6919ade998637db66da04069363942578a98b1a3a"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "gsplat",
+          "kind": "enhances",
+          "role": "preview"
+        },
+        {
+          "to": "tool-werk-pointcloud",
+          "kind": "enhances",
+          "role": "made-by"
+        }
+      ],
+      "part_id": "whole",
+      "meta": {
+        "point_count": 281498,
+        "fields": [
+          "position",
+          "color"
+        ],
+        "bytes_per_point": 15.003
+      }
+    },
+    {
+      "node_id": "recipe",
+      "type": "core.recipe",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "recipe/recipe.json",
+              "sha256": "1db5626694e28f1d66aad059082704bbb214405f4493efc28e49e838ca04f2d8",
+              "size": 6171
+            },
+            {
+              "path": "recipe/inputs/plush.splat",
+              "sha256": "80e0ae670ee980f166d9b00045d33710dd77e65ff004f1886ab442220e2c48fa",
+              "size": 9007936
+            }
+          ],
+          "note": "How this package's payloads were made, step by step, naming the embedded tools by node id. The source .splat travels in this node's files[] because SPEC.md section 3.11 says a recipe that names an input it does not carry is a promise about another file. The one intermediate is recorded rather than carried, by section 3.17's rule, with the exact invocation that regenerates it.",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "tool-splat-to-ply",
+          "kind": "requires",
+          "role": "step-1"
+        },
+        {
+          "to": "tool-werk-gsplat",
+          "kind": "requires",
+          "role": "step-2"
+        },
+        {
+          "to": "tool-werk-pointcloud",
+          "kind": "requires",
+          "role": "step-3"
+        }
+      ]
+    },
+    {
+      "node_id": "semantics",
+      "type": "core.semantics",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "semantics/semantics.json",
+              "sha256": "392a9ba5cf914f0506fda1ff594cbbabb5f6238834b137b30a59548c35017129",
+              "size": 2381
+            }
+          ],
+          "note": "Facet tags and a palette measured from the splat's own DC band. The two style/mood tags are x.-prefixed because spec/facets.json v1 has no tag for 'this is a capture rather than an authored asset', and inventing one in a fixture would be extending the registry by the back door.",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T00:00:00Z",
+          "input_files": [
+            "splats/plush.wkgs"
+          ],
+          "input_params": {
+            "palette_method": "histogram-4x4x4-top-8",
+            "palette_source": "sh-dc"
+          },
+          "input_hash": "1a6ca96ef6d5e1441f9c963729a9ef825fb2b517ef73904db1e3c71a84027cd2"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "gsplat",
+          "kind": "enhances",
+          "role": "describes"
+        }
+      ],
+      "part_id": "whole"
+    },
+    {
+      "node_id": "provenance",
+      "type": "core.provenance",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "provenance/provenance.json",
+              "sha256": "c6e9a78b155e6427237a545a30987287d34acf341880dc7651fd2a4a7bb23d31",
+              "size": 1047
+            }
+          ],
+          "note": "Where the source came from and what this build did with it, including the splat that was considered and rejected for size.",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "readme",
+      "type": "core.readme",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "README.txt",
+              "sha256": "a76d114dd8089b12885154a55824ae0dafc08c29a9a4b31087bd8a44ace75d96",
+              "size": 2682
+            }
+          ],
+          "note": "One page for a human who opened this file and wants to know what it is -- including the two-section shortcut for a reader that does not implement Gaussian splatting.",
+          "producer": {
+            "tool": "pipeline/enrich.py",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T00:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    }
+  ],
+  "primary": {
+    "geometry": "gsplat"
+  },
+  "conventions_map": "spec/conventions-map.json"
+}
+
+
+
+===== ZIP ENTRY LISTING (all 83 entries: name, uncompressed size, local-header offset, CRC-32, compression method; 0 = store) =====
+name                                                             size       offset      crc32 method
+MANIFEST.json                                                   36088            0   071a4657 0
+SIGNATURE.json                                                   1047        36131   1f5f9407 0
+LICENSE                                                          2859        37222   9d7b3130 0
+README.txt                                                       2682        40118   97680d12 0
+loaders/werk_read.c                                            111051        42840   66522126 0
+loaders/werk_read.py                                            42226       153940   83e8fb3a 0
+loaders/werk_read.rs                                            98761       196216   acc58bf8 0
+spec/MINI-SPECS.md                                              40147       295027   848f2f82 0
+spec/PROFILE-IMAGE.md                                           13274       335222   3a4e729a 0
+spec/README.md                                                  10855       348547   1f70e8d6 0
+spec/SPEC.md                                                   104388       359446   bc958f06 0
+spec/X-C2PA-EXPORT.md                                            7461       463876   06915153 0
+spec/conventions-map.image.json                                  2416       471388   84216657 0
+spec/conventions-map.json                                        9269       473865   03cf1658 0
+spec/examples/MANIFEST.example.json                             20080       483189   f9f8d941 0
+spec/examples/SIGNATURE.example.json                             1084       503334   5b25150b 0
+spec/examples/embedding.example.hex.txt                          4444       504484   54fb4a8c 0
+spec/examples/embedding.example.wkem                              512       508997   4350988a 0
+spec/examples/gsplat.example.hex.txt                             9796       509575   02d133ef 0
+spec/examples/gsplat.example.wkgs                                1120       519437   3073aec6 0
+spec/examples/make-examples.py                                  57655       520620   badea025 0
+spec/examples/restposes.example.hex.txt                          4308       578335   cb182dc5 0
+spec/examples/restposes.example.wkrp                              560       582712   8aebbe41 0
+spec/examples/signature.example.txt                              4544       583338   f9b6f838 0
+spec/extensions/x.cub.v1.baked.layout.txt                        9359       587947   383f3c4d 0
+spec/extensions/x.cub.v1.md                                      8783       597377   77c5fe5e 0
+spec/facets.json                                                11978       606217   5821a228 0
+spec/layouts/ENVELOPE.layout.txt                                26372       618241   766f1e87 0
+spec/layouts/animclip.layout.txt                                16800       644675   c1b4ab45 0
+spec/layouts/embedding.layout.txt                               14361       661537   791803f6 0
+spec/layouts/flowfield.layout.txt                                6263       675961   98af35e3 0
+spec/layouts/gsplat.layout.txt                                  23918       682287   3008a5f6 0
+spec/layouts/imposter.layout.txt                                10446       706265   1ace5feb 0
+spec/layouts/points.layout.txt                                  16663       716773   181c9ad0 0
+spec/layouts/restposes.layout.txt                                5958       733496   04f2574c 0
+spec/layouts/skeleton.layout.txt                                 5964       739517   210fd35f 0
+spec/schemas/conventions-map.schema.json                         4614       745543   d26e67c0 0
+spec/schemas/core.anim.clip.schema.json                          9585       750227   410af216 0
+spec/schemas/core.audio.effect.schema.json                       8628       759881   413e376a 0
+spec/schemas/core.audio.package.schema.json                      7320       768581   ea4f0a39 0
+spec/schemas/core.destruct.schema.json                           6319       775974   c9a29a14 0
+spec/schemas/core.disclosure.schema.json                        11515       782361   dd087aba 0
+spec/schemas/core.imposter.schema.json                           6708       793946   4a857614 0
+spec/schemas/core.material.schema.json                           4823       800722   e57448b5 0
+spec/schemas/core.phys.body.schema.json                          6157       805613   5b0d4e98 0
+spec/schemas/core.phys.bounds.schema.json                        3164       811839   832ef93b 0
+spec/schemas/core.phys.colliders.schema.json                     4116       815074   6f5f2729 0
+spec/schemas/core.props.schema.json                             11666       819264   ede1ce78 0
+spec/schemas/core.provenance.schema.json                         6140       830995   f3a0be12 0
+spec/schemas/core.recipe.schema.json                            26485       837205   e165039f 0
+spec/schemas/core.retarget.bind.schema.json                     13337       863756   6074b05c 0
+spec/schemas/core.semantics.schema.json                          6917       877166   f0abbd00 0
+spec/schemas/core.skeleton.schema.json                          11464       884152   8a992665 0
+spec/schemas/core.tool.config.schema.json                        7321       895684   3c18a53c 0
+spec/schemas/core.tool.schema.json                              10894       903076   b5d144ee 0
+spec/schemas/facets.schema.json                                  3593       914034   1b6f8dde 0
+spec/schemas/manifest.image.schema.json                         28278       917688   87331097 0
+spec/schemas/manifest.schema.json                               46174       946035   c0cf0ca1 0
+spec/schemas/signature.schema.json                              11209       992272   39163a1c 0
+spec/schemas/x.c2pa.export.schema.json                           4935      1003545   0602fa8e 0
+spec/skeleton/canonical-humanoid-v1.json                        22429      1008548   c9592f8c 0
+spec/skeleton/core.hands.v1.json                                26112      1031047   86360770 0
+spec/skeleton/derive-canonical-humanoid.py                      19852      1057221   1e466620 0
+semantics/semantics.json                                         2381      1077145   cfd5bc1a 0
+tools/splat-to-ply-run.config.json                               2007      1079580   4b422d5e 0
+tools/splat-to-ply/ply.py                                       21847      1081651   9eca05af 0
+tools/splat-to-ply/splat_to_ply.py                               8353      1103553   9c625fc5 0
+tools/splat-to-ply/tool.json                                     1818      1111970   df2456c5 0
+tools/werk-gsplat-run.config.json                                1824      1113846   619e3169 0
+tools/werk-gsplat/common.py                                     16849      1115733   53f92b3f 0
+tools/werk-gsplat/p_gsplat.py                                   12942      1132639   918d365f 0
+tools/werk-gsplat/ply.py                                        21847      1145640   9eca05af 0
+tools/werk-gsplat/tool.json                                      1936      1167541   033fabf1 0
+tools/werk-pointcloud-run.config.json                            1547      1169534   06169de8 0
+tools/werk-pointcloud/common.py                                 16849      1171148   53f92b3f 0
+tools/werk-pointcloud/p_pointcloud.py                           13791      1188058   4d0cae58 0
+tools/werk-pointcloud/ply.py                                    21847      1201916   9eca05af 0
+tools/werk-pointcloud/tool.json                                  1692      1223821   a4207afe 0
+recipe/recipe.json                                               6171      1225574   1feb9de9 0
+provenance/provenance.json                                       1047      1231793   5f96a21e 0
+points/plush-dc.wkpc                                          4223440      1232896   98812d52 0
+splats/plush.wkgs                                            15764784      5456386   23d0667c 0
+recipe/inputs/plush.splat                                     9007936     21221217   afa2d8ea 0
+
+
+===== FILE spec/MINI-SPECS.md -- SECTIONS 1, 2, 3, 4, 5, 6 and 11 ONLY (bit/byte order, UTF-8, JSON, MessagePack, zip, CRC-32, SHA-256). Sections 7-10, 12 and 13 were cut: this task decodes no DEFLATE, no PNG, no WAV and no GLB. =====
+## 1. Bit and byte conventions
+
+* **Little-endian** for every werk custom binary payload. The least
+  significant byte comes first: the u32 `0x12345678` is stored `78 56 34 12`.
+* **Big-endian** appears in exactly three imported places, and each is
+  called out where it occurs: MessagePack's internal integers, PNG's chunk
+  lengths and CRCs, and the zip format's *nothing* (zip is little-endian).
+  If you find yourself byte-swapping anywhere else, you have a bug.
+* IEEE-754 binary32 ("f32", 4 bytes) and binary64 ("f64", 8 bytes) are the
+  only float encodings. No NaN and no infinity may appear in a core payload.
+* Signed integers are two's complement.
+* Sizes are in bytes unless a field name says otherwise.
+
+---
+
+## 2. UTF-8
+
+Every string in every werk file is UTF-8, without a byte-order mark. A
+werk reader MUST reject a BOM rather than silently strip it, because a
+stripped BOM changes a file's sha256 and sha256 is the store key.
+
+Encoding, complete:
+
+| code point range | bytes |
+|---|---|
+| `U+0000`–`U+007F` | `0xxxxxxx` |
+| `U+0080`–`U+07FF` | `110xxxxx 10xxxxxx` |
+| `U+0800`–`U+FFFF` | `1110xxxx 10xxxxxx 10xxxxxx` |
+| `U+10000`–`U+10FFFF` | `11110xxx 10xxxxxx 10xxxxxx 10xxxxxx` |
+
+The `x` bits are the code point's bits, most significant first. Rules a
+conformant reader enforces: no overlong encodings (a code point must use the
+shortest form), no surrogate code points (`U+D800`–`U+DFFF`), nothing above
+`U+10FFFF`.
+
+werk ids (`entity.uuid`, `part_id`, `material_id`, `node_id`, `bone_id`,
+effect `slug`, facet tags) are ASCII kebab-case, matching
+`^[a-z0-9]+(-[a-z0-9]+)*$`. Human-facing text (names, notes, descriptions)
+is full UTF-8.
+
+---
+
+## 3. JSON
+
+werk uses RFC 8259 JSON, restricted:
+
+* UTF-8, no BOM.
+* No comments. No trailing commas. No single quotes.
+* No `NaN`, `Infinity`, `-Infinity` — a JSON number in werk is always finite.
+* Integers that must round-trip exactly stay within ±2^53.
+* Duplicate object keys are illegal; a reader encountering one MUST reject
+  the file rather than pick a winner.
+
+Grammar, complete:
+
+```
+value   = object | array | string | number | "true" | "false" | "null"
+object  = '{' [ member *( ',' member ) ] '}'
+member  = string ':' value
+array   = '[' [ value *( ',' value ) ] ']'
+string  = '"' *char '"'
+char    = any Unicode scalar except '"' and '\' and U+0000-U+001F
+        | '\' ( '"' | '\' | '/' | 'b' | 'f' | 'n' | 'r' | 't'
+                | 'u' 4HEXDIG )
+number  = [ '-' ] int [ frac ] [ exp ]
+int     = '0' | digit1-9 *digit
+frac    = '.' 1*digit
+exp     = ('e'|'E') [ '+' | '-' ] 1*digit
+ws      = *( ' ' | '\t' | '\n' | '\r' )   ; allowed between any two tokens
+```
+
+`\uXXXX` escapes: a code point above `U+FFFF` is written as a surrogate
+pair of two `\uXXXX` escapes, high surrogate first.
+
+### Canonical JSON (for hashing only)
+
+Where werk hashes a JSON *value* rather than a file's bytes — only
+`version.input_params` in the manifest does this — the canonical form is:
+
+1. Object keys sorted ascending by their UTF-8 byte sequence.
+2. No whitespace at all between tokens.
+3. Strings escaped minimally: only `"`, `\` and `U+0000`–`U+001F` escaped,
+   the last as `\u00XX` except for the short forms `\b \f \n \r \t`.
+4. Integers written without a decimal point or exponent. Non-integers
+   written in the shortest form that round-trips through binary64.
+5. UTF-8, no BOM, no trailing newline.
+
+Everywhere else — including the manifest hash that signatures cover — werk
+hashes **the bytes of the file as they are**, never a reserialisation.
+
+---
+
+## 4. MessagePack
+
+Used only for envelope headers in custom binaries. The full byte-level
+specification of the subset werk permits — every format byte, the banned
+extension types, and the canonical-encoding rules — is section 4 of
+`spec/layouts/ENVELOPE.layout.txt`. It is written there rather than here
+because it is inseparable from the envelope's other rules.
+
+The one thing worth repeating: **MessagePack integers and floats are
+big-endian**, unlike everything else in a werk binary.
+
+---
+
+## 5. zip
+
+The interchange form of a werk is its directory tree zipped. werk uses
+**store mode (method 0) by default**; see `SPEC.md` §1 for why.
+
+> **FIRST, THE CHEAP PATH: if your language has a zip library, use it.**
+> A `.werk` is an ordinary, standards-conformant zip — `import zipfile` in
+> Python, `java.util.zip`, `System.IO.Compression.ZipArchive`, `unzip(1)` —
+> and every one of them opens it correctly with no werk-specific knowledge at
+> all. **Nothing in this format asks you to write a zip parser.** The
+> byte-level description below is here for the reader that has no such library
+> (the embedded Rust and C loaders may use no third-party crates), for the
+> reader doing ranged reads over the preview prefix, and for the reader that
+> wants to verify what a library told it. It is a fallback, not the intended
+> route, and it is the graded-effort doctrine applied to your first five
+> minutes with the file.
+>
+> Recorded as spec finding **S-OW-4**: both sub-9B models in the open-weights
+> gauntlet died at the container — one hand-rolled an EOCD scan that never
+> found the EOCD, in sixteen attempts, with this section and a complete entry
+> listing *with offsets* in front of it — and neither had ever been told that
+> the library route existed.
+
+A zip file is read **from the end**. Three record types matter.
+
+### 5.1 End of central directory record (EOCD)
+
+Signature `50 4B 05 06` (`PK\x05\x06`), little-endian throughout:
+
+| offset | size | field |
+|---|---|---|
+| 0 | 4 | signature `0x06054b50` |
+| 4 | 2 | number of this disk (0) |
+| 6 | 2 | disk where central directory starts (0) |
+| 8 | 2 | central directory records on this disk |
+| 10 | 2 | total central directory records |
+| 12 | 4 | size of central directory in bytes |
+| 16 | 4 | offset of central directory from start of file |
+| 20 | 2 | comment length *n* |
+| 22 | *n* | comment |
+
+To find it, in these exact terms — a reader transcribing as it goes should be
+able to stop at the end of this list:
+
+```
+first offset tested   = filesize - 22
+lowest offset tested  = max(0, filesize - 22 - 65535)
+bytes you need to read = min(filesize, 65535 + 22) from the end
+```
+
+The comment is the only thing that can follow the record and its length field
+is 16 bits, so 65535 is the whole of the slack and the read window is that
+plus the 22-byte record itself.
+
+### 5.2 Central directory file header
+
+Signature `50 4B 01 02` (`0x02014b50`):
+
+| offset | size | field |
+|---|---|---|
+| 0 | 4 | signature |
+| 4 | 2 | version made by |
+| 6 | 2 | version needed |
+| 8 | 2 | general purpose flags |
+| 10 | 2 | compression method — **0 = store, 8 = deflate** |
+| 12 | 2 | last mod time (MS-DOS) |
+| 14 | 2 | last mod date (MS-DOS) |
+| 16 | 4 | CRC-32 of the uncompressed data |
+| 20 | 4 | compressed size |
+| 24 | 4 | uncompressed size |
+| 28 | 2 | file name length *n* |
+| 30 | 2 | extra field length *m* |
+| 32 | 2 | comment length *k* |
+| 34 | 2 | disk number start |
+| 36 | 2 | internal attributes |
+| 38 | 4 | external attributes |
+| 42 | 4 | **offset of the local file header** |
+| 46 | *n* | file name (UTF-8 when flag bit 11 is set; werk always sets it) |
+| 46+*n* | *m* | extra field |
+| 46+*n*+*m* | *k* | comment |
+
+Records follow one another with no padding. The central directory is the
+authority on names, sizes and offsets; a reader uses it and does not scan
+for local headers.
+
+### 5.3 Local file header
+
+Signature `50 4B 03 04` (`0x04034b50`), at the offset the central directory
+gave:
+
+| offset | size | field |
+|---|---|---|
+| 0 | 4 | signature |
+| 4 | 2 | version needed |
+| 6 | 2 | general purpose flags |
+| 8 | 2 | compression method |
+| 10 | 2 | last mod time |
+| 12 | 2 | last mod date |
+| 14 | 4 | CRC-32 |
+| 18 | 4 | compressed size |
+| 22 | 4 | uncompressed size |
+| 26 | 2 | file name length *n* |
+| 28 | 2 | extra field length *m* |
+| 30 | *n* | file name |
+| 30+*n* | *m* | extra field |
+
+**File data begins at `local_header_offset + 30 + n + m`.** Note that the
+local header's *n* and *m* can differ from the central directory's; always
+re-read them from the local header. With method 0 the data is `compressed
+size` bytes verbatim.
+
+A werk reader that supports only method 0 is conformant for store-mode
+packages, which is what the fixtures use. It MUST report a method-8 entry as
+unsupported rather than returning wrong bytes.
+
+### 5.4 Rules werk imposes
+
+* Names use forward slashes, are relative, contain no `..` segment, no drive
+  letter and no leading slash.
+* Directory entries (names ending in `/`, size 0) are optional; a reader
+  MUST NOT depend on them.
+* General purpose flag bit 3 (sizes in a trailing data descriptor) MUST NOT
+  be set by a werk writer, because it makes a ranged read of the preview
+  prefix impossible.
+* Entry order is the preview-first order declared in
+  `MANIFEST.json` → `container.entry_order`.
+
+### 5.5 Zip64 — how to RECOGNISE it, and what to do
+
+Zip64 is permitted for packages above 4 GiB, and a conformant full reader
+SHOULD support it. Recognising it is not optional for anybody, though,
+because a zip32-only reader that does not recognise it will read the
+sentinel values as real numbers and return wrong bytes — which §5.3's rule
+("report unsupported rather than return wrong bytes") forbids. So the
+detection procedure is normative even where the support is not:
+
+1. Find the 22-byte EOCD as in §5.1.
+2. **Sentinels.** In that EOCD, the value `0xFFFF` in either 16-bit count
+   field, or `0xFFFFFFFF` in the central-directory size or offset field,
+   means "the real value is in the zip64 record". Any one of them present ⇒
+   the container is zip64.
+3. **Zip64 EOCD locator**, signature `50 4B 06 07` (`0x07064b50`), 20 bytes,
+   sits immediately before the EOCD — i.e. at `eocd_offset - 20`. Its
+   presence is the second, independent signal; a reader MAY test for it
+   directly instead of relying on the sentinels.
+
+   | offset | size | field |
+   |---|---|---|
+   | 0 | 4 | signature `0x07064b50` |
+   | 4 | 4 | disk with the zip64 EOCD (0) |
+   | 8 | 8 | **offset of the zip64 EOCD record** |
+   | 16 | 4 | total number of disks (1) |
+
+4. **Zip64 EOCD record**, signature `50 4B 06 06` (`0x06064b50`), at the
+   offset the locator gave. The fields a reader needs are the 64-bit
+   widenings of the EOCD's:
+
+   | offset | size | field |
+   |---|---|---|
+   | 0 | 4 | signature `0x06064b50` |
+   | 4 | 8 | size of this record minus 12 |
+   | 12 | 2 | version made by |
+   | 14 | 2 | version needed |
+   | 16 | 4 | number of this disk (0) |
+   | 20 | 4 | disk with the central directory (0) |
+   | 24 | 8 | central directory records on this disk |
+   | 32 | 8 | total central directory records |
+   | 40 | 8 | size of the central directory |
+   | 48 | 8 | offset of the central directory |
+
+5. Per-entry, the same sentinel convention applies inside the central
+   directory: an uncompressed size, compressed size or local-header offset
+   of `0xFFFFFFFF` means the true 64-bit value is in that entry's extra
+   field, in the record tagged `0x0001` (2-byte tag, 2-byte size, then the
+   present values in the order uncompressed size, compressed size,
+   local-header offset, disk number — **only the ones whose fixed field held
+   the sentinel are present**, which is why the extra field's size is what
+   tells you how many were written).
+
+**What a zip32-only reader MUST do:** refuse the container — not a node —
+with a distinct, named report (`zip64-unsupported`), and read nothing from
+it. This is the one refusal in §10's checklist that is whole-container
+rather than per-node, because the offsets it would otherwise follow are
+sentinels rather than data. It MUST NOT fall back to reading the 32-bit
+fields. The directory form of the same package is unaffected and remains a
+complete, readable werk.
+
+None of the conformance fixtures is zip64 today, so a reader's zip64 path is
+unexercised by them; that is recorded honestly in `SPEC.md` §11 rather than
+claimed as coverage. The preview prefix never needs zip64.
+
+---
+
+## 6. CRC-32
+
+Needed twice: zip entry checksums, and PNG chunk checksums. It is the same
+function in both — the reflected IEEE 802.3 CRC-32 with polynomial
+`0xEDB88320`, initial value `0xFFFFFFFF`, final XOR `0xFFFFFFFF`.
+
+```
+crc32(bytes):
+    crc = 0xFFFFFFFF
+    for b in bytes:
+        crc ^= b
+        repeat 8 times:
+            crc = (crc >> 1) ^ (0xEDB88320 if (crc & 1) else 0)
+    return crc ^ 0xFFFFFFFF
+```
+
+**Test vector:** `crc32("123456789")` (the nine ASCII bytes `31 32 33 34 35
+36 37 38 39`) = `0xCBF43926`.
+
+---
+
+## 11. SHA-256
+
+`conventions.hash_algorithm` is `sha256`; every content hash in werk is the
+lowercase hex encoding of a SHA-256 digest, 64 characters.
+
+SHA-256 is FIPS 180-4. It is not reproduced byte-for-byte here — it is
+present in every standard library werk cares about (`hashlib` in Python,
+`sha2` in a hundred lines of C, `ring`/`sha2` in Rust) — but the following
+test vectors let an implementer prove theirs before trusting it. All are
+hex, lowercase.
+
+| input | digest |
+|---|---|
+| *(empty)* | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` |
+| `abc` | `ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad` |
+| `abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq` | `248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1` |
+
+Structural facts, in case you must implement it: 32-bit words, big-endian,
+message padded with a `0x80` byte then zeros then the 64-bit big-endian bit
+length, block size 64 bytes, 64 rounds, eight initial state words being the
+first 32 bits of the fractional parts of the **square roots** of the first
+eight primes, and the 64 round constants being the first 32 bits of the
+fractional parts of the **cube roots** of the first 64 primes. Both
+constant tables are therefore *derivable*, not data you must be given —
+which is the point of stating the rule instead of printing 72 numbers.
+
+### 11.1 SHA-512
+
+You need this only if you verify signatures: Ed25519 (§12) is defined in
+terms of SHA-512 and cannot be implemented without it. No werk content hash
+uses SHA-512, so a reader that does not verify signatures can skip this
+section entirely.
+
+SHA-512 is the same construction as SHA-256 with every dimension widened,
+and the same derivation rules for both constant tables:
+
+| | SHA-256 | SHA-512 |
+|---|---|---|
+| word size | 32 bits | **64 bits** |
+| block size | 64 bytes | **128 bytes** |
+| rounds | 64 | **80** |
+| length field in the padding | 64-bit big-endian | **128-bit big-endian** |
+| digest | 32 bytes | **64 bytes** |
+| initial state | first **32** bits of frac(√pₙ), n = 1..8 | first **64** bits of frac(√pₙ), n = 1..8 |
+| round constants | first **32** bits of frac(∛pₙ), n = 1..64 | first **64** bits of frac(∛pₙ), n = 1..**80** |
+
+The rotation amounts differ too, and they are the one thing not derivable
+from a rule, so here they are. With `ROTR` a 64-bit rotate right and `SHR` a
+64-bit shift right:
+
+```
+Σ0(a) = ROTR(a,28) ^ ROTR(a,34) ^ ROTR(a,39)
+Σ1(e) = ROTR(e,14) ^ ROTR(e,18) ^ ROTR(e,41)
+σ0(x) = ROTR(x, 1) ^ ROTR(x, 8) ^ SHR(x, 7)
+σ1(x) = ROTR(x,19) ^ ROTR(x,61) ^ SHR(x, 6)
+```
+
+Everything else — the message schedule, `Ch`, `Maj`, the compression loop,
+the final addition into the state — is identical to SHA-256 with 64-bit
+arithmetic.
+
+**Test vectors**, so you can prove it before Ed25519 depends on it:
+
+| input | digest |
+|---|---|
+| *(empty)* | `cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e` |
+| `abc` | `ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f` |
+| `abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu` | `8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909` |
+
+### What gets hashed
+
+* `files[].sha256` — the exact bytes of that file in the container.
+* `manifest_sha256` in `SIGNATURE.json` — the exact bytes of
+  `MANIFEST.json`.
+* `input_hash` — the concatenation, in `input_files` order, of each input's
+  32 **raw** digest bytes, followed by the UTF-8 bytes of the canonical JSON
+  (§3) of `input_params`. Raw bytes, not hex: hashing hex strings would work
+  too, but there would then be two conventions and one of them would be
+  wrong somewhere.
+
+  **An absent `input_params` is the empty object.** Its canonical JSON is the
+  two bytes `{}` and those two bytes are appended, exactly as they would be
+  if the key were written out. "Absent" and `{}` are the same input to this
+  hash and always were; nothing is ever appended as *nothing*. A writer
+  SHOULD emit `"input_params": {}` explicitly so the two spellings never have
+  to be reconciled by a reader at all.
+
+  Three independently-written readers each lost time to this — it was the
+  single longest detour in the gauntlet, for all three — so here it is as an
+  executable statement rather than a sentence:
+
+  ```
+  input_hash(input_files, input_params):
+      h = sha256_new()
+      for path in input_files:                 # ORDER MATTERS
+          h.update(sha256_raw_32_bytes_of(file_at(path)))
+      h.update(utf8(canonical_json(input_params or {})))   # "{}" when absent
+      return hex(h.digest())
+  ```
+
+  Worked example from this package, checkable by hand: node `bounds`,
+  version 1, has `input_files: ["geometry/game.glb"]` and no `input_params`.
+  Take `geometry/game.glb`'s declared `sha256`, decode those 64 hex
+  characters to 32 bytes, append the two ASCII bytes `{}`, and SHA-256 the
+  34-byte result. That is the node's declared `input_hash`.
+
+---
+
+
+
+
+===== FILE spec/layouts/ENVELOPE.layout.txt -- SECTIONS 0 to 7 ONLY (the whole normative grammar; section 8, the decision log, was cut). =====
+werk binary envelope - layout grammar v1
+--------------------------------------------------------------------------
+0. Governing rules (manifesto laws 8 and 11)
+--------------------------------------------------------------------------
+
+  * ALL numeric fields in the fixed prefix and in every payload section are
+    LITTLE-ENDIAN.
+  * EXCEPTION, and it is the single most common implementation bug:
+    MessagePack (used for the header only) encodes its integers and floats
+    BIG-ENDIAN, because that is what MessagePack is. Read section 4 before
+    writing a header parser.
+  * Every offset and every size is DECLARED in the header. A reader never
+    computes an offset from a struct definition, never infers a size from a
+    count times a guessed stride, and never trusts a comment. If a declared
+    offset/size pair does not fit inside the file, the node is malformed and
+    the reader marks it dead and continues (law 3).
+  * Payload data begins on a 16-byte boundary from the start of the file.
+  * No compression inside an envelope. No varints. No bit packing in core.
+    Flat POD arrays with explicit strides only.
+
+  WORKED EXAMPLES -- READ ONE BEFORE WRITING A DECODER. This grammar is
+  complete, and a complete grammar is still not a decoder; the gap between
+  the two is where implementations invent numbers. Every envelope magic the
+  core spec defines therefore ships a real binary and an annotated hex dump
+  of it, byte by byte, through to the decoded values:
+
+    spec/examples/restposes.example.hex.txt   WKRP, 560 B, 2 poses
+    spec/examples/gsplat.example.hex.txt      WKGS, 1120 B, 3 Gaussians
+    spec/examples/embedding.example.hex.txt   WKEM, 512 B, dim 8
+
+  All three are regenerated, byte-identical, by spec/examples/make-examples.py,
+  whose `mp_encode`/`mp_decode` are the executable statement of section 4 and
+  whose writers are the executable statement of each layout file. Recorded as
+  spec finding S-OW-3: a 30B model given section 4 and no worked example read
+  it, declined to implement it, and printed fabricated floats labelled
+  "demonstration" -- so the example is part of the minimum documentation set
+  for any package carrying an envelope, not an optional extra.
+
+--------------------------------------------------------------------------
+1. File structure
+--------------------------------------------------------------------------
+
+  byte range              size        field
+  ----------------------  ----------  ------------------------------------
+  [0 .. 4)                4           magic, 4 ASCII bytes, payload-kind
+                                      specific (see section 2)
+  [4 .. 8)                4           version : u32 LE, envelope+payload
+                                      schema version, starts at 1. An
+                                      INCREMENTAL INTEGER (1, 2, 3, ...),
+                                      never semver: a reader compares, it
+                                      does not parse. It declares the
+                                      MINIMUM grammar revision needed to
+                                      read this file COMPLETELY — see
+                                      section 5a.
+  [8 .. 12)               4           header_len : u32 LE, byte length of
+                                      the MessagePack header
+  [12 .. 12+header_len)   header_len  header : MessagePack map (section 3)
+  [12+header_len .. P)    pad         zero bytes, count = P-(12+header_len)
+  [P .. file_end)         *           payload sections (section 5)
+
+  where P = payload_origin = 16 * ceil((12 + header_len) / 16)
+
+  P is ALSO written into the header as the key "payload_origin". A reader
+  MUST verify that the computed and declared values agree and MUST reject
+  the file if they do not. (The computation is given so a writer can produce
+  the value; the declared value is the authority a reader checks against.
+  Two independent statements of the same fact is how a truncated or
+  hand-edited file is caught.)
+
+  Padding bytes MUST be 0x00. A reader MUST NOT rely on this (it verifies
+  nothing) but a writer that emits nonzero padding is non-conformant.
+
+  Minimum legal file size is 12 bytes (empty header is illegal: the header
+  map has mandatory keys, so header_len >= 1 always).
+
+--------------------------------------------------------------------------
+2. Magic values
+--------------------------------------------------------------------------
+
+  All magics are exactly 4 bytes of ASCII, no NUL, no version digit — the
+  version is the u32 at offset 4.
+
+  ASCII      hex            payload kind        layout file
+  ---------  -------------  ------------------  -------------------------
+  "WKFF"     57 4B 46 46    flow field grid     flowfield.layout.txt
+  "WKRP"     57 4B 52 50    settled rest poses  restposes.layout.txt
+  "WKAC"     57 4B 41 43    animation clip      animclip.layout.txt
+  "WKSK"     57 4B 53 4B    skeleton mirror     skeleton.layout.txt
+  "WKEM"     57 4B 45 4D    style embedding +   embedding.layout.txt
+                            palette
+  "WKPC"     57 4B 50 43    point cloud         points.layout.txt
+  "WKGS"     57 4B 47 53    3D Gaussian splat   gsplat.layout.txt
+  "WKX0".."WKX9"            extension binaries  supplied by the extension,
+                                                which MUST ship its own
+                                                *.layout.txt in the package
+
+  A reader that does not recognise a magic marks that node unreadable and
+  continues (law 3). Unknown-because-newer and broken degrade identically.
+
+--------------------------------------------------------------------------
+3. The header map
+--------------------------------------------------------------------------
+
+  The header is one MessagePack map with string keys. These keys are
+  MANDATORY in every envelope, of every kind:
+
+  key              type            meaning
+  ---------------  --------------  -------------------------------------
+  "kind"           str             node type id, e.g. "core.field.flow".
+                                   MUST match the magic per section 2.
+  "endianness"     str             MUST be exactly "le". Present so the
+                                   file states its own byte order rather
+                                   than relying on this document.
+  "payload_origin" uint            P, absolute byte offset of section 0.
+  "payload_size"   uint            total bytes from P to end of file.
+                                   file_size == payload_origin+payload_size
+                                   MUST hold.
+  "sections"       array of map    one entry per payload section, in file
+                                   order, no gaps permitted except
+                                   alignment padding (section 5).
+
+  Each element of "sections" is a map with these MANDATORY keys:
+
+  key         type        meaning
+  ----------  ----------  ----------------------------------------------
+  "name"      str         kebab-case section id, unique within the file.
+  "offset"    uint        ABSOLUTE byte offset from the start of the FILE
+                          (not relative to payload_origin). Declared, not
+                          derived.
+  "size"      uint        exact byte length of the section.
+  "dtype"     str         element type, from the table in section 6.
+  "shape"     array<uint> logical dimensions, slowest-varying dimension
+                          FIRST (C order). Example [128,64,64,3] is 128
+                          planes of 64 rows of 64 elements of 3 scalars.
+  "stride"    uint        bytes between the start of consecutive REPEATS of
+                          whatever unit this section repeats: one scalar, or
+                          one whole element (a component vector, a record).
+                          Which of the two it is, is DERIVED from "stride"
+                          itself by the rule below — never guessed, never
+                          taken from a comment. Declaring the stride is what
+                          makes reserved/padding bytes inside a record legal
+                          and explicit.
+
+  Consistency rule a reader MUST check. It is an algorithm, not a sentence,
+  because the earlier prose version could not be executed:
+
+      esz = byte size of "dtype" from section 6
+            ("record" has no fixed size: define esz = stride)
+
+      if stride == esz:
+          # the stride spans ONE SCALAR, so every entry of "shape" is an
+          # array dimension and none of them is a component count
+          size == stride * product(shape[0..n-1])          # all entries
+
+      else:                       # stride > esz necessarily
+          # the stride spans the LAST dimension: shape[-1] is a component
+          # count (or the record's field count is irrelevant and shape[-1]
+          # is absent — see the one-dimensional record case below)
+          stride >= esz * shape[-1]                        # MUST hold
+          size   == stride * product(shape[0..n-2])        # all but last
+
+  The `stride >= esz * shape[-1]` inequality (rather than equality) is what
+  permits declared padding inside a record; the surplus bytes are described
+  by the per-magic layout file's field table.
+
+  Worked, against every section this spec actually defines, so the rule can
+  be checked rather than believed:
+
+    poses     dtype "record" shape [pose_count]      stride 32
+              esz = 32 = stride  -> first branch  -> size = 32*pose_count
+    contacts  dtype "f32"    shape [contact_count,3] stride 12
+              esz = 4 != 12      -> second branch -> 12 >= 4*3, and
+                                                     size = 12*contact_count
+    sdf       dtype "f32"    shape [nz,ny,nx]       stride 4
+              esz = 4 = stride   -> first branch  -> size = 4*nz*ny*nx
+    flow      dtype "f32"    shape [nz,ny,nx,3]     stride 12
+              esz = 4 != 12      -> second branch -> size = 12*nz*ny*nx
+    root      dtype "f32"    shape [frame_count,7]  stride 28
+              esz = 4 != 28      -> second branch -> size = 28*frame_count
+    bones     dtype "f32"    shape [bone_count,frame_count,4] stride 16
+              esz = 4 != 16      -> second branch ->
+                                     size = 16*bone_count*frame_count
+    skel-bin  dtype "record" shape [bone_count]     stride 48
+              esz = 48 = stride  -> first branch  -> size = 48*bone_count
+    json-blob dtype "u8"     shape [size]           stride 1
+              esz = 1 = stride   -> first branch  -> size = 1*size
+    vector    dtype "f32"    shape [dim]            stride 4
+              esz = 4 = stride   -> first branch  -> size = 4*dim
+    palette   dtype "f32"    shape [swatches,4]     stride 16
+              esz = 4 != 16      -> second branch -> 16 >= 4*4, and
+                                                     size = 16*swatches
+    means     dtype "f32"    shape [count,3]        stride 12
+              esz = 4 != 12      -> second branch -> size = 12*count
+    rotations dtype "f32"    shape [count,4]        stride 16
+              esz = 4 != 16      -> second branch -> size = 16*count
+    opacities dtype "f32"    shape [count]          stride 4
+              esz = 4 = stride   -> first branch  -> size = 4*count
+    sh-rest   dtype "f32"    shape [count,K-1,3]    stride 12
+              esz = 4 != 12      -> second branch -> size = 12*count*(K-1),
+                                                     and 0 when K == 1
+    pc-color  dtype "u8"     shape [count,C]        stride C
+              esz = 1 != C       -> second branch -> C >= 1*C, and
+                                                     size = C*count
+              (C is the field's declared component count, 3 or 4: a WKPC
+               colour field may or may not carry alpha, and the row is
+               written with the symbol rather than a number so nobody reads
+               an ILLUSTRATION as a statement about a particular file. A
+               cold reader of the first WKPC package went looking for an
+               alpha channel that was not there.)
+
+  A zero-size section satisfies the rule trivially: some entry of "shape" is
+  0, so the product is 0.
+
+  The two branches agree whenever shape[-1] == 1, so no section is ambiguous
+  and no reader has to choose. EVERY layout file in this spec ALSO states,
+  per section, the exact arithmetic that must hold; when this document and a
+  specific layout file disagree, the specific layout file wins for that
+  magic. (Recorded as Stage 1 decision 19.)
+
+  Optional common keys, permitted in any envelope:
+
+  key            type    meaning
+  -------------  ------  ------------------------------------------------
+  "note"         str     free text. Never load-bearing.
+  "input_hash"   str     lowercase hex sha256 over the node's declared
+                         inputs (law 5). Mandatory for derived nodes; the
+                         manifest also carries it, and the two MUST agree.
+  "producer"     map     {"tool":str,"version":str,"model":str?}
+  "epistemic"    str     "authored" | "measured" | "inferred"
+  "confidence"   float   0.0 .. 1.0, only meaningful with "inferred"
+
+  Per-kind keys are defined by the per-kind layout files. A reader MUST
+  ignore header keys it does not know (law 12).
+
+--------------------------------------------------------------------------
+4. The MessagePack subset used by werk headers
+--------------------------------------------------------------------------
+
+  werk uses a deliberately small subset so this section can be a complete
+  specification. A reader written from this table alone will read every
+  conformant werk header.
+
+  IMPORTANT: all multi-byte integers and floats INSIDE MessagePack are
+  BIG-ENDIAN (network order). This is the opposite of the payload. Get this
+  wrong and header_len will look sane while every number is garbage.
+
+  4.1 Format bytes
+
+  first byte(s)   type        payload that follows
+  --------------  ----------  ------------------------------------------
+  0x00..0x7f      uint        none; value = the byte itself (0..127)
+  0xe0..0xff      int         none; value = byte - 256 (-32..-1)
+  0xc0            nil         none
+  0xc2            false       none
+  0xc3            true        none
+  0xcc            uint8       1 byte
+  0xcd            uint16      2 bytes BE
+  0xce            uint32      4 bytes BE
+  0xcf            uint64      8 bytes BE
+  0xd0            int8        1 byte, two's complement
+  0xd1            int16       2 bytes BE, two's complement
+  0xd2            int32       4 bytes BE, two's complement
+  0xd3            int64       8 bytes BE, two's complement
+  0xca            float32     4 bytes BE, IEEE-754 binary32
+  0xcb            float64     8 bytes BE, IEEE-754 binary64
+  0xa0..0xbf      str         len = (byte & 0x1f), then len UTF-8 bytes
+  0xd9            str8        1 byte len, then len UTF-8 bytes
+  0xda            str16       2 bytes BE len, then len UTF-8 bytes
+  0xdb            str32       4 bytes BE len, then len UTF-8 bytes
+  0xc4            bin8        1 byte len, then len raw bytes
+  0xc5            bin16       2 bytes BE len, then len raw bytes
+  0xc6            bin32       4 bytes BE len, then len raw bytes
+  0x90..0x9f      array       n = (byte & 0x0f), then n encoded values
+  0xdc            array16     2 bytes BE n, then n encoded values
+  0xdd            array32     4 bytes BE n, then n encoded values
+  0x80..0x8f      map         n = (byte & 0x0f), then n (key,value) pairs
+  0xde            map16       2 bytes BE n, then n (key,value) pairs
+  0xdf            map32       4 bytes BE n, then n (key,value) pairs
+
+  4.2 Banned in werk headers — a reader MUST reject the header (and mark
+  the node dead) if it encounters any of:
+
+  0xc1            never-used byte
+  0xc7 0xc8 0xc9  ext8 / ext16 / ext32
+  0xd4..0xd8      fixext1 / fixext2 / fixext4 / fixext8 / fixext16
+
+  Extension types are banned because they smuggle application knowledge
+  into the payload, which law 1 forbids.
+
+  4.3 Canonical encoding (writers MUST, readers MUST NOT depend on it)
+
+  So that identical headers hash identically (the manifest's sha256 is the
+  store key — see the manifesto's Companion section), a writer MUST:
+    * use the SHORTEST encoding that represents each integer exactly;
+    * encode every non-integral number as float64 (0xcb), never float32;
+    * encode every string as the shortest str form;
+    * emit map keys sorted ascending by their raw UTF-8 byte sequence;
+    * never emit nil for an absent optional key — omit the key instead.
+  A reader MUST accept any legal encoding from the table in 4.1, because a
+  non-canonical header is still a readable header.
+
+  4.4 Worked example
+
+  Header {"endianness":"le","kind":"core.pose.rest"} encodes as:
+
+    82                                map, 2 pairs
+    aa 65 6e 64 69 61 6e 6e 65 73 73  fixstr(10) "endianness"
+    a2 6c 65                          fixstr(2)  "le"
+    a4 6b 69 6e 64                    fixstr(4)  "kind"
+    ae 63 6f 72 65 2e 70 6f 73 65 2e  fixstr(14) "core.pose.rest"
+    72 65 73 74
+                                      = 35 bytes, so header_len = 35,
+                                      12+35 = 47, P = 48, pad = 1 byte.
+  (Keys are sorted: "endianness" < "kind" bytewise. The real header for
+  that kind has more mandatory keys; this shows only the encoding.)
+
+  Count it yourself, because an illustration that disagrees with section 4.1
+  is worse than no illustration: 1 (map header) + 1+10 ("endianness")
+  + 1+2 ("le") + 1+4 ("kind") + 1+14 ("core.pose.rest") = 35. The fixstr
+  lead byte is 0xa0 | len, so a 14-byte string is 0xae, not 0xaf.
+  (Earlier revisions of this file printed af / 34 / pad 2. payload_origin
+  came out as 48 either way, which is exactly why the error survived a
+  read-through. Recorded as Stage 1 decision 18.)
+
+--------------------------------------------------------------------------
+5. Payload sections
+--------------------------------------------------------------------------
+
+  * Section 0 starts exactly at payload_origin.
+  * Every section's "offset" MUST be a multiple of 16.
+  * Sections appear in the file in the same order as in "sections".
+  * Between the end of one section and the offset of the next there may be
+    0..15 zero padding bytes and nothing else.
+  * The last section's offset+size, rounded UP to a multiple of 16, MUST
+    equal payload_origin+payload_size. Trailing padding to the 16-byte
+    boundary is legal; trailing data is not.
+  * A section of size 0 is legal (an empty array). Its offset must still be
+    aligned and declared.
+
+--------------------------------------------------------------------------
+5a. Unknown sections, and what the version integer promises
+--------------------------------------------------------------------------
+
+  Sections are found BY NAME, never by position. "sections" is a declared
+  table of {name, dtype, shape, stride, offset, size}, and a reader looks up
+  the name it wants. This is the whole reason offsets are declared rather
+  than derived from a struct, and it is what makes the format additive
+  (law 12) instead of versioned-and-brittle.
+
+  Therefore, NORMATIVELY:
+
+  * A reader that meets a section whose "name" it does not recognise MUST
+    SKIP IT AND REPORT IT (report code "section-skipped-unknown", severity
+    info). It MUST NOT guess at its meaning, MUST NOT treat it as damage,
+    and MUST NOT fail the node. Unknown-because-newer and unknown-because-
+    third-party degrade through the same path, which is the same rule
+    section 2 already states for magics.
+  * A reader MUST still apply section 5's consistency rules to an unknown
+    section: its offset is aligned, it is in file order, and it is inside
+    payload_size. An unknown section is skipped, not unchecked.
+  * THE VERSION INTEGER DECLARES THE MINIMUM GRAMMAR REVISION NEEDED TO
+    READ THE FILE COMPLETELY. A writer emits the LOWEST revision whose
+    grammar covers everything the file actually uses — so a payload that
+    uses no feature added after revision 1 is still written as version 1,
+    byte-for-byte as before, and every existing reader keeps working.
+  * A reader that finds a version HIGHER than the revision it implements
+    MUST NOT refuse the file on the version alone. It reports
+    "layout-version-newer" (info), reads every section it recognises, skips
+    the rest by the rule above, and states in its report that it read the
+    file partially. Refusing a payload it can substantially read is exactly
+    law 3's failure mode: ninety live nodes thrown away because one thing
+    was newer than the reader.
+  * A reader that DOES implement the revision a section belongs to MUST use
+    that section. Silently dropping declared data it knows how to read is a
+    bug, not degradation, and it is invisible without this sentence.
+
+  The one thing a higher version legitimately warns about is a change to a
+  section a reader ALREADY knows. No such change has ever been made; if one
+  ever is, it gets a new section NAME rather than new semantics under an old
+  one, precisely so that the rules above stay sufficient.
+
+--------------------------------------------------------------------------
+6. dtype vocabulary
+--------------------------------------------------------------------------
+
+  dtype string   bytes   meaning
+  -------------  ------  ----------------------------------------------
+  "u8"           1       unsigned 8-bit
+  "i8"           1       signed 8-bit, two's complement
+  "u16"          2       unsigned 16-bit LE
+  "i16"          2       signed 16-bit LE, two's complement
+  "u32"          4       unsigned 32-bit LE
+  "i32"          4       signed 32-bit LE, two's complement
+  "u64"          8       unsigned 64-bit LE
+  "i64"          8       signed 64-bit LE, two's complement
+  "f32"          4       IEEE-754 binary32, LE
+  "f64"          8       IEEE-754 binary64, LE
+  "record"       n/a     a heterogeneous fixed-stride record; the layout
+                         file for that magic gives the byte-exact field
+                         table, and "stride" gives the record size
+
+  numpy equivalents, for the avoidance of doubt:
+    u8=uint8 i8=int8 u16=<u2 i16=<i2 u32=<u4 i32=<i4 u64=<u8 i64=<i8
+    f32=<f4 f64=<f8
+
+  Float rules: no NaN and no infinity may appear in any core payload. A
+  reader encountering either MUST mark the node dead and report it. (An
+  extension namespace may do as it likes.)
+
+  Quaternion rule: wherever a quaternion appears in any core payload its
+  component order is w,x,y,z — declared in the manifest as
+  conventions.quat_order = "wxyz". Quaternions are unit length; a reader
+  MUST accept |q| within 1e-6 of 1.0 and MAY renormalise. w >= 0 is the
+  canonical sign; writers MUST emit the w >= 0 representative.
+
+--------------------------------------------------------------------------
+7. Reference reader (normative pseudocode)
+--------------------------------------------------------------------------
+
+  read_envelope(path):
+      buf         = read whole file
+      magic       = buf[0:4]                       # 4 ASCII bytes
+      version     = u32_le(buf, 4)
+      header_len  = u32_le(buf, 8)
+      assert 12 + header_len <= len(buf)
+      header      = msgpack_decode(buf[12 : 12+header_len])   # section 4
+      assert header["endianness"] == "le"
+      P           = 16 * ceil((12 + header_len) / 16)
+      assert header["payload_origin"] == P
+      assert P + header["payload_size"] == len(buf)
+      for s in header["sections"]:
+          assert s["offset"] % 16 == 0
+          assert s["offset"] + s["size"] <= len(buf)
+          esz = dtype_size(s["dtype"]) or s["stride"]   # "record" -> stride
+          if s["stride"] == esz:
+              assert s["size"] == s["stride"] * prod(s["shape"])
+          else:
+              assert s["stride"] >= esz * s["shape"][-1]
+              assert s["size"] == s["stride"] * prod(s["shape"][:-1])
+          data = buf[s["offset"] : s["offset"] + s["size"]]
+          # interpret with s["dtype"], s["shape"], s["stride"]
+      return magic, version, header, sections
+
+  Any failed assertion => node is dead. Log which assertion, skip the node,
+  load the rest of the package. Never guess.
+
+
+
+
+===== FILE spec/layouts/gsplat.layout.txt -- SECTIONS 0 to 8 (everything normative, including section 5 'from coefficients to a colour' and section 7, the NORMATIVE degradation into a point cloud; section 9, the decision log, was cut). =====
+werk gaussian splat - layout grammar v1  (magic "WKGS")
+--------------------------------------------------------------------------
+0. What this payload is, and the one thing it refuses to do
+--------------------------------------------------------------------------
+
+A 3D Gaussian splat is N records of: a mean (a position), an anisotropic
+covariance factored into a scale and a rotation, an opacity, and a
+view-dependent colour expressed as spherical-harmonic coefficients. Rendering
+one is a sort and a blend; understanding one is entirely a question of WHICH
+SPACE each of those five numbers is in, and that is what this file pins.
+
+The refusal: **werk stores the ACTIVATED values, and it says so in the file.**
+The training-time representation stores `log` scales and `logit` opacity
+because an optimiser wants an unconstrained parameterisation. A file format
+has no optimiser. A consumer that reads a scale wants metres; a consumer that
+reads an opacity wants a number it can multiply by. Storing the raw parameters
+would mean every reader in every language reimplements `exp` and `sigmoid`
+correctly or renders something plausible and wrong — and "plausible and wrong"
+is the failure mode this whole format exists to make impossible.
+
+So `scale_space` is `"linear"` and `opacity_space` is `"linear"` in grammar
+revision 1, both are stated as header keys anyway (the same argument
+`endianness` makes: a file states its own facts rather than relying on this
+document), and section 6 gives the exact inverse so that a package can be
+turned back into training-ready parameters without guessing. Recorded as
+decision D-GS-1.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKGS"  = 57 4B 47 53
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  payload sections (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.geom.gsplat"
+    "endianness"      = "le"
+    "payload_origin"  uint
+    "payload_size"    uint
+    "sections"        array of section maps
+
+  Mandatory WKGS keys:
+
+  key                type    meaning
+  -----------------  ------  ---------------------------------------------
+  "count"            uint    N, the number of Gaussians. Every section's
+                             shape[0] MUST equal it. MAY be 0 (an empty
+                             splat is a legal splat: every section is then
+                             present with size 0, per ENVELOPE section 5).
+  "sh_degree"        uint    0, 1, 2 or 3. The maximum spherical-harmonic
+                             band carried. 0 means colour is a constant per
+                             Gaussian and there is no view dependence.
+  "sh_coeff_count"   uint    K, and it MUST equal (sh_degree+1)**2. Stated
+                             as well as derivable because law 8's corollary
+                             says a reader never computes what a writer can
+                             declare, and because it is the number a reader
+                             sizes a buffer with.
+  "sh_coeff_order"   str     MUST be "coefficient-major" — see section 4.
+  "quat_order"       str     MUST be "wxyz", matching the manifest's
+                             conventions.quat_order. Present because a splat
+                             PLY does NOT declare its own order and half the
+                             ecosystem writes xyzw; see section 6.
+  "scale_space"      str     MUST be "linear" (section 0).
+  "opacity_space"    str     MUST be "linear" (section 0).
+  "length_unit"      str     MUST be "metre", matching the manifest's
+                             conventions.length_unit. Means and scales are
+                             both in it.
+
+  Optional WKGS keys:
+
+  key                type    meaning
+  -----------------  ------  ---------------------------------------------
+  "source_convention" str    The field convention the payload was ingested
+                             FROM, when it was ingested from something:
+                             "inria-3dgs/1" is the PLY convention section 6
+                             specifies. Informational; the authority on what
+                             this file contains is the keys above.
+  "activation"       map     What was applied on the way in, as strings, so
+                             a reader can see the arithmetic rather than
+                             infer it: e.g. {"scale":"exp","opacity":
+                             "sigmoid","sh":"identity"}. Informational for
+                             the same reason.
+  "bounds"           map     {"min":[3 floats],"max":[3 floats]} — the
+                             axis-aligned box containing every mean, in
+                             metres. A HINT for a consumer sizing a view or
+                             a grid, exactly as advisory as
+                             container.preview_prefix_bytes: a reader that
+                             needs the true box computes it from the means.
+                             A writer that emits it MUST have computed it.
+  "opacity_note"     str     Free text about opacity provenance, e.g. that a
+                             logit inverse was clamped. Never load-bearing.
+
+  Plus any optional common key from ENVELOPE.layout.txt section 3
+  ("note", "input_hash", "producer", "epistemic", "confidence").
+  A reader MUST ignore header keys it does not know (law 12).
+
+--------------------------------------------------------------------------
+3. Payload sections
+--------------------------------------------------------------------------
+
+  Exactly six sections, in this order, all of them present even when empty.
+
+  name         dtype  shape             stride  arithmetic that MUST hold
+  -----------  -----  ----------------  ------  --------------------------
+  "means"      f32    [count,3]         12      size == 12 * count
+  "scales"     f32    [count,3]         12      size == 12 * count
+  "rotations"  f32    [count,4]         16      size == 16 * count
+  "opacities"  f32    [count]           4       size ==  4 * count
+  "sh-dc"      f32    [count,3]         12      size == 12 * count
+  "sh-rest"    f32    [count,K-1,3]     12      size == 12*count*(K-1)
+
+  Against ENVELOPE.layout.txt section 3's algorithm:
+
+    means/scales/sh-dc  esz 4 != 12 -> second branch, 12 >= 4*3, size =
+                        12 * prod(shape[:-1]) = 12*count
+    rotations           esz 4 != 16 -> second branch, 16 >= 4*4, size =
+                        16*count
+    opacities           esz 4 == 4   -> FIRST branch, size = 4*count
+    sh-rest             esz 4 != 12 -> second branch, 12 >= 4*3, size =
+                        12*count*(K-1); with sh_degree 0, K-1 = 0, the
+                        product is 0 and the section is present with size 0
+
+  Record i of every section describes Gaussian i. There is no index, no
+  sort order and no spatial structure: the ordering is whatever the producer
+  emitted, and a consumer that needs depth order sorts at draw time, which
+  is what a splat renderer does anyway. (D-GS-4.)
+
+  "means"      the Gaussian centre, in METRES, in werk model space: +Y up,
+               -Z forward, +X right, right-handed. A splat trained in a
+               COLMAP frame is NOT in this space; converting it is the
+               ingester's job and the ingester records the transform it
+               applied in the node's input_params. This layout describes
+               what is in the file, and what is in the file is werk space.
+
+  "scales"     the per-axis standard deviation of the Gaussian along its own
+               local axes, in METRES, LINEAR and strictly greater than zero.
+               The covariance a renderer needs is
+                   Sigma = R * diag(s.x^2, s.y^2, s.z^2) * R^T
+               with R the rotation matrix of the quaternion in "rotations".
+               Note the SQUARE: `scales` are standard deviations, not
+               variances. Getting that wrong is a splat that renders at the
+               wrong size and nothing else, which is why it is written here
+               as an equation rather than left to a convention.
+
+  "rotations"  a unit quaternion per Gaussian, component order **w,x,y,z**,
+               rotating from the Gaussian's local axes into model space.
+               ENVELOPE.layout.txt section 6 governs: |q| within 1e-6 of 1,
+               and writers MUST emit the w >= 0 representative.
+
+  "opacities"  alpha in [0,1], LINEAR. 0 is invisible, 1 is opaque. It
+               multiplies the Gaussian's evaluated density, and a renderer's
+               per-fragment alpha is `opacity * exp(-0.5 * d^T Sigma^-1 d)`.
+
+  "sh-dc"      the degree-0 spherical-harmonic coefficient, three values per
+               Gaussian in R,G,B order. This is NOT a colour: see section 5
+               for the one line that turns it into one.
+
+  "sh-rest"    coefficients 1..K-1, COEFFICIENT-MAJOR (section 4). Size 0
+               when sh_degree is 0, and a reader MUST accept that rather
+               than treat a zero-size section as damage.
+
+--------------------------------------------------------------------------
+4. "coefficient-major", stated so it cannot be read two ways
+--------------------------------------------------------------------------
+
+  Let N = count, K = sh_coeff_count. Coefficient 0 lives in "sh-dc";
+  coefficients 1..K-1 live in "sh-rest" as an [N, K-1, 3] array in C order.
+  So the byte offset, inside "sh-rest", of channel `ch` of coefficient `c`
+  (1 <= c <= K-1, 0 <= ch <= 2) for Gaussian `i` is:
+
+      offset = ((i * (K-1)) + (c-1)) * 12 + ch * 4
+
+  i.e. for one Gaussian the file holds coefficient 1's R,G,B, then
+  coefficient 2's R,G,B, and so on. That is COEFFICIENT-MAJOR.
+
+  **The source convention is the opposite one**, and this is the single most
+  expensive mistake available in this file. The INRIA reference writes
+  `f_rest_*` CHANNEL-MAJOR: all K-1 coefficients of red, then all K-1 of
+  green, then all K-1 of blue. An ingester therefore transposes, and a
+  renderer written against the PLY layout and pointed at a WKGS payload
+  without transposing produces an image with plausible colours and wrong
+  view-dependence — the kind of wrong that survives review. Section 6 gives
+  the index arithmetic in both directions.
+
+  Why werk stores the transpose rather than adopting the source order:
+  evaluating spherical harmonics is a loop over COEFFICIENTS accumulating
+  into an RGB triple, so coefficient-major is the order the consumer reads
+  in, and the channel-major order is an artefact of how the training code
+  happened to shape a tensor. Law 9 says a layout serves its consumers;
+  there is exactly one place to pay the transpose and it is the ingester.
+  Recorded as D-GS-2.
+
+  The band layout inside c = 0..K-1 is the standard real spherical harmonic
+  ordering used by the reference implementation, i.e. by increasing degree
+  l = 0,1,2,3 and within a degree by increasing order m = -l..+l:
+
+      c:  0 | 1  2  3 | 4  5  6  7  8 | 9 10 11 12 13 14 15
+      l:  0 | 1  1  1 | 2  2  2  2  2 | 3  3  3  3  3  3  3
+      m:  0 |-1  0 +1 |-2 -1  0 +1 +2 |-3 -2 -1  0 +1 +2 +3
+
+  The manifest's `conventions.sh_l1_order` describes a DIFFERENT thing (the
+  basis order an x.* extension uses for per-vertex L1 irradiance) and does
+  not govern this payload. `conventions.sh_coeff_order` is the one that
+  does; see SPEC.md section 3.16. Recorded as D-GS-3, because two SH
+  conventions in one format that mean different things is exactly the kind
+  of collision a reader is entitled to be warned about.
+
+--------------------------------------------------------------------------
+5. From coefficients to a colour
+--------------------------------------------------------------------------
+
+  The degree-0 basis function is the constant
+
+      C0 = 0.28209479177387814          ( = 1 / (2*sqrt(pi)) )
+
+  and the reference renderer's view-independent colour is
+
+      rgb_linear = clamp(0.5 + C0 * sh_dc, 0, 1)
+
+  componentwise, in LINEAR sRGB primaries (not sRGB-encoded: apply the
+  transfer function before display; MINI-SPECS.md section 7 has it).
+
+  The 0.5 offset is not decorative. The training code centres colour on 0.5
+  so that a zeroed coefficient is mid-grey rather than black, and a reader
+  that drops it renders a splat that is uniformly too dark by exactly half
+  the range. It is written here as an equation for the same reason section 3
+  writes the covariance out: a constant a reader has to know from elsewhere
+  is a promise about another file (law 1).
+
+  With sh_degree > 0 the full evaluation for a view direction d (unit, in
+  model space, pointing FROM the Gaussian TOWARD the camera) is the usual
+  real-SH sum over the K coefficients with the basis in section 4's order,
+  plus the same 0.5 offset and clamp. werk does not restate the degree-1..3
+  basis functions here, and that is deliberate: a consumer that only wants a
+  colour uses the line above and is correct to within view-dependence, and a
+  consumer implementing full SH already has the basis. What werk pins is the
+  ORDER, which is the part nobody agrees on.
+
+--------------------------------------------------------------------------
+6. Ingesting an INRIA-convention splat PLY, completely
+--------------------------------------------------------------------------
+
+  This is the source format in practice: `graphdeco-inria/gaussian-splatting`
+  and every trainer that followed it write one PLY `vertex` element with f32
+  properties in this order:
+
+      x y z                    the mean, in the trainer's own frame
+      nx ny nz                 ALWAYS ZERO. The reference code reuses a
+                               point-cloud writer. A reader that treats them
+                               as normals gets a black render. werk DROPS
+                               them and reports that it did.
+      f_dc_0 f_dc_1 f_dc_2     coefficient 0, R then G then B
+      f_rest_0 .. f_rest_M     coefficients 1..K-1, CHANNEL-MAJOR,
+                               M = 3*(K-1) - 1
+      opacity                  LOGIT space
+      scale_0 scale_1 scale_2  natural-LOG space
+      rot_0 rot_1 rot_2 rot_3  a unit quaternion, order NOT declared
+
+  The complete mapping into the sections of section 3:
+
+      means[i]        = (x, y, z)                        after the ingester's
+                                                         declared frame change,
+                                                         if any
+      scales[i]       = exp(scale_0, scale_1, scale_2)
+      opacities[i]    = 1 / (1 + exp(-opacity))
+      rotations[i]    = normalise(rot_*) reordered to wxyz, sign-canonicalised
+      sh-dc[i]        = (f_dc_0, f_dc_1, f_dc_2)         identity
+      sh-rest[i,c-1,ch] = f_rest_[ ch*(K-1) + (c-1) ]    the transpose
+
+  and the exact inverses, so a package can be turned back into a trainable
+  checkpoint:
+
+      scale_j         = log(scales[i][j])
+      opacity         = log(a / (1 - a))  with a = opacities[i]
+      f_rest_[ch*(K-1)+(c-1)] = sh-rest[i,c-1,ch]
+
+  **THE OPACITY INVERSE IS NOT TOTAL, AND THIS IS THE PLACE THAT SAYS SO.**
+  `a = 0` and `a = 1` have no logit, and ENVELOPE.layout.txt section 6
+  forbids an infinity in any core payload. A producer converting INTO the
+  logit space MUST clamp, MUST choose a clamp it can state, and SHOULD
+  record how many records it clamped — werk's own ingester clamps to
+  [0.5/255, 254.5/255] when its source quantised alpha to a byte, which is
+  half a quantisation step in from each end, and records the count in the
+  node's `input_params`. A reader converting OUT of werk into a trainer
+  faces the same wall in the same place, and a package whose `opacities`
+  contain exact 0.0 or 1.0 is telling it so honestly rather than storing an
+  infinity and hoping. (D-GS-5.)
+
+  **THE QUATERNION ORDER IS THE UNDECLARED FIELD**, and it is undeclared in
+  the source, not here. The reference implementation stores w first; several
+  widely used exporters store w last under the identical property names, and
+  nothing in a PLY header distinguishes them. An ingester therefore either
+  is TOLD the order or INFERS it, and in both cases it MUST record which,
+  and how, in the node's `input_params` — werk's ingester records the two
+  mean absolute components its inference compared, so a weak inference is
+  visible as a weak inference. On a real trained splat the statistic can be
+  genuinely weak (measured: 0.4578 vs 0.4627/0.4768/0.4509 on a 1.92 M
+  Gaussian scene, which decides nothing), and a guess that is recorded and a
+  guess that is silent are different things. Recorded as spec finding S12-3.
+
+--------------------------------------------------------------------------
+7. Graceful degradation into a point cloud — NORMATIVE (law 9, law 3)
+--------------------------------------------------------------------------
+
+  A consumer that does not implement Gaussian splatting is not thereby
+  entitled to nothing. The means are positions and the DC band is a colour,
+  so every WKGS payload contains a point cloud, exactly, with no
+  approximation and no resampling:
+
+      position[i]     = means[i]
+      color[i]        = clamp(0.5 + C0 * sh-dc[i], 0, 1)   (section 5)
+
+  This is normative in two directions, and both matter:
+
+  * A reader that understands only positions and colours **MUST** be able to
+    consume a WKGS by reading exactly two of its six sections, "means" and
+    "sh-dc", skipping the other four by the section table without parsing
+    them. It reports that it did so. It is a CONFORMANT consumer of the
+    node, not a degraded one — nothing in the format asks it to apologise
+    for not being a splat renderer.
+  * A writer that emits a WKGS **SHOULD** also emit the derived
+    `core.geom.points` node (magic "WKPC") with an `enhances` edge from the
+    splat, because a store's browser and a physics pass want the point cloud
+    as a payload they can hash and cache rather than as an arithmetic they
+    have to perform. When it does, that node is `epistemic: "measured"`, its
+    `input_files` name the WKGS payload, and the arithmetic above is its
+    whole derivation — so a consumer can RECOMPUTE it and check, which is
+    law 5's validate-or-recompute applied to a preview.
+
+  The two statements are not redundant. The first says the degradation
+  always exists; the second says a good writer materialises it. A package
+  with only the splat is conformant, and a reader must not fail on one.
+
+--------------------------------------------------------------------------
+8. What a reader MUST check
+--------------------------------------------------------------------------
+
+  Beyond ENVELOPE.layout.txt section 7's assertions:
+
+  1. `sh_coeff_count == (sh_degree+1)**2`, and sh_degree in 0..3.
+  2. Every section's shape[0] == count, and "sh-rest"'s shape[1] ==
+     sh_coeff_count - 1.
+  3. All six section names are present, in the order of section 3.
+  4. `quat_order == "wxyz"`, `scale_space == "linear"`,
+     `opacity_space == "linear"`, `length_unit == "metre"`.
+  5. No NaN and no infinity anywhere (ENVELOPE section 6).
+
+  and SHOULD check, reporting rather than failing, because each of these is
+  a producer's mistake rather than a malformed file and a reader that
+  refuses the node loses 100 % of the data over 0.001 % of it:
+
+  6. every scale strictly greater than 0;
+  7. every opacity within [0,1];
+  8. every |q| within 1e-6 of 1, and every w >= 0.
+
+  A failed check in 1..5 kills the node (law 3: report it, load the rest of
+  the package). A failed check in 6..8 is a report entry with severity
+  `warn` and the node still loads, and the report names the first offending
+  index so the complaint is actionable.
+
+
+
+
+===== FILE spec/layouts/points.layout.txt -- SECTIONS 0 to 7 (everything normative; section 8, the decision log, was cut). =====
+werk point cloud - layout grammar v1  (magic "WKPC")
+--------------------------------------------------------------------------
+0. The design question, and the answer
+--------------------------------------------------------------------------
+
+Every other custom binary in werk has a FIXED set of sections: a flow field
+has an SDF and a flow array, a clip has a root track and a bone track. A point
+cloud does not, and pretending otherwise is how PLY, LAS and E57 all ended up
+with a per-field type system anyway. A scanner emits intensity and a return
+number; a photogrammetry package emits a confidence; a classifier emits a
+class id; a splat preview emits a colour; a research capture emits four
+things nobody else has ever heard of.
+
+So WKPC declares its fields as DATA, in the header, and each field is one
+payload section. That is not a new mechanism: ENVELOPE.layout.txt section 5a
+already requires a reader to find sections BY NAME and to skip-and-report the
+ones it does not know. A custom field in a WKPC is therefore already handled
+correctly by a reader written before that field existed — it reads `position`
+and whatever else it recognises, reports the rest as
+`section-skipped-unknown`, and is conformant. The header's `fields` array
+exists so that the skip is INFORMED: it tells the reader the field's semantic,
+its unit and its colour space, so a consumer can decide whether it wanted it
+rather than discovering a name it cannot interpret.
+
+Recorded as D-PC-1. The alternative — an interleaved record with a field table
+of byte offsets, which is what LAS does — was rejected because it makes every
+consumer stride past the fields it does not want, and because a per-field
+section is exactly what a GPU vertex buffer or a numpy column wants.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKPC"  = 57 4B 50 43
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  payload sections (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.geom.points"
+    "endianness"      = "le"
+    "payload_origin"  uint
+    "payload_size"    uint
+    "sections"        array of section maps
+
+  Mandatory WKPC keys:
+
+  key            type    meaning
+  -------------  ------  -----------------------------------------------
+  "count"        uint    N, the number of points. Every section's shape[0]
+                         MUST equal it. MAY be 0.
+  "length_unit"  str     MUST be "metre", matching the manifest's
+                         conventions.length_unit. Positions are in it.
+  "fields"       array   one map per field, in the same order as the
+                         payload sections. Section 4 defines the entries.
+                         MUST contain exactly one field whose "semantic" is
+                         "position", and it MUST be the first.
+
+  Optional WKPC keys:
+
+  key            type    meaning
+  -------------  ------  -----------------------------------------------
+  "bounds"       map     {"min":[3 floats],"max":[3 floats]} in metres. A
+                         HINT, exactly as advisory as WKGS's: a reader that
+                         needs the true box computes it. A writer that emits
+                         it MUST have computed it.
+  "source"       str     what produced the points, e.g. "gsplat-dc-band",
+                         "lidar", "photogrammetry", "mesh-sample". Free
+                         text; the authority is the node's producer block
+                         in the manifest.
+
+  Plus any optional common key from ENVELOPE.layout.txt section 3
+  ("note", "input_hash", "producer", "epistemic", "confidence").
+  A reader MUST ignore header keys it does not know (law 12).
+
+--------------------------------------------------------------------------
+3. Payload sections
+--------------------------------------------------------------------------
+
+  One section per entry of "fields", in the same order, so section k
+  describes field k. The first section is always the position field.
+
+  Section `k`'s name is `fields[k]["section"]`, and:
+
+      shape   == [count]                    when components == 1
+      shape   == [count, components]        when components  > 1
+      stride  == byte size of dtype * components
+      size    == stride * count
+
+  Against ENVELOPE.layout.txt section 3's algorithm: with components == 1 the
+  stride equals the element size and the FIRST branch gives
+  `size = stride * prod(shape) = stride * count`; with components > 1 the
+  stride is larger, the SECOND branch applies, `stride >= esz*shape[-1]`
+  holds with equality, and `size = stride * prod(shape[:-1]) = stride*count`.
+  The two agree, which is the point of the rule.
+
+  Padded strides are NOT used by this grammar: `stride` is exactly
+  `esz * components`. The envelope permits a larger stride so that records
+  with declared internal padding are expressible; a point cloud has no
+  records, only columns, so there is nothing to pad. A reader MUST still
+  honour a declared stride rather than assume this, because that is what
+  declared means. (D-PC-4.)
+
+--------------------------------------------------------------------------
+4. The field entry
+--------------------------------------------------------------------------
+
+  Each element of "fields" is a MessagePack map with these MANDATORY keys:
+
+  key           type    meaning
+  ------------  ------  ------------------------------------------------
+  "name"        str     kebab-case field id, unique within the file. This
+                        is the human-facing name, and it is what an
+                        exporter writes into a PLY property or a LAS
+                        dimension when converting back out.
+  "section"     str     the payload section carrying it. Same value as
+                        "name" for every field this grammar defines; a
+                        separate key because an extension may want a
+                        section name that is not a field name, and because
+                        "look it up" must never become "assume they match".
+  "semantic"    str     what the numbers MEAN, from the registry in
+                        section 5. This is the key a consumer dispatches
+                        on, never "name".
+  "dtype"       str     from ENVELOPE.layout.txt section 6's vocabulary.
+                        "record" is NOT permitted in a WKPC field.
+  "components"  uint    >= 1. The per-point component count.
+
+  and these OPTIONAL keys:
+
+  key             type    meaning
+  --------------  ------  ----------------------------------------------
+  "unit"          str     SI unit of the values, e.g. "metre". MANDATORY
+                          in practice for any semantic whose registry entry
+                          names one — see section 5.
+  "color_space"   str     for semantic "color": "linear-srgb" or "srgb".
+                          MANDATORY for that semantic; a colour whose space
+                          is unstated is a colour that will be gamma-wrong
+                          in half its consumers, and the manifest's
+                          conventions.color_space_default is a DEFAULT for
+                          nodes that do not declare, which this one does.
+  "value_range"   array   [min, max] the producer guarantees, as floats.
+                          A HINT for a consumer normalising for display.
+  "labels"        map     for semantic "classification": integer code (as a
+                          decimal string key) to human name. Carried as
+                          DATA because a class scheme that lives in a
+                          consumer's constants is a class scheme two
+                          consumers disagree about.
+  "note"          str     free text, never load-bearing.
+
+  A reader MUST ignore field keys it does not know.
+
+--------------------------------------------------------------------------
+5. The semantic registry, v1
+--------------------------------------------------------------------------
+
+  semantic          dtype        components  unit      notes
+  ----------------  -----------  ----------  --------  ---------------------
+  "position"        f32 or f64   3           metre     MANDATORY, exactly
+                                                       one, and first. werk
+                                                       model space: +Y up,
+                                                       -Z forward, +X right,
+                                                       right-handed.
+  "color"           u8 or f32    3 or 4      —         "color_space" is
+                                                       MANDATORY. u8 is
+                                                       0..255 mapping to
+                                                       0..1; f32 is 0..1. A
+                                                       4th component is
+                                                       alpha, straight (NOT
+                                                       premultiplied).
+  "normal"          f32          3           —         unit length within
+                                                       1e-4, model space.
+  "intensity"       u16 or f32   1           —         sensor return
+                                                       strength. Its scale
+                                                       is a property of the
+                                                       instrument and is not
+                                                       normalised by this
+                                                       format; declare
+                                                       "value_range".
+  "classification"  u8 or u16    1           —         a class code.
+                                                       "labels" SHOULD be
+                                                       present; a code
+                                                       without a label map
+                                                       is an integer nobody
+                                                       can act on.
+  "custom"          any          any         declare   the escape hatch. The
+                                                       field's "name" MUST
+                                                       begin with "x-".
+
+  A field whose "semantic" is not in this table is an error UNLESS it is
+  "custom"; a reader meeting one treats the field as unknown, skips its
+  section, and reports `field-semantic-unknown` (severity info). It does not
+  kill the node — the position is still there and the position is what a
+  point cloud is. (D-PC-3.)
+
+  The `x-` prefix rule mirrors `spec/facets.json`'s `x.` rule for tags and
+  exists for the same reason: a registry that anyone may extend silently is
+  a registry whose entries cannot be trusted, and a namespace that costs two
+  characters is cheap enough that nobody is tempted to squat in core.
+
+--------------------------------------------------------------------------
+6. What a reader MUST check
+--------------------------------------------------------------------------
+
+  Beyond ENVELOPE.layout.txt section 7's assertions:
+
+  1. `fields` is present, non-empty, and has exactly as many entries as
+     there are payload sections, in the same order.
+  2. `fields[0]["semantic"] == "position"`, its dtype is f32 or f64 and its
+     components is 3.
+  3. Exactly one field has semantic "position".
+  4. For every field: the named section exists, its dtype matches the
+     field's dtype, and its shape is `[count]` or `[count, components]`
+     agreeing with the field's `components`.
+  5. Every field with semantic "color" declares "color_space".
+  6. Every field with semantic "custom" has a name beginning with "x-".
+  7. No NaN and no infinity in any f32/f64 section (ENVELOPE section 6).
+
+  A failure in 1..4 or 7 kills the node. A failure in 5 or 6 is a `warn`
+  report entry and the node loads: a colour whose space is undeclared is a
+  colour a consumer may still show while saying it guessed, and refusing a
+  million points over a missing string is law 3's failure mode.
+
+--------------------------------------------------------------------------
+7. Ingesting a PLY, and what is deliberately dropped
+--------------------------------------------------------------------------
+
+  PLY is what point clouds arrive in. `ascii 1.0` and
+  `binary_little_endian 1.0` are both mandatory for a werk ingester and
+  `binary_big_endian 1.0` is optional-but-cheap; werk's own ingester reads
+  all three. The property mapping werk uses:
+
+      x, y, z                       -> position (f32 x3)
+      red, green, blue[, alpha]     -> color, u8, color_space "srgb"
+      r, g, b                       -> the same (a common spelling)
+      nx, ny, nz                    -> normal (f32 x3)
+      intensity / scalar_Intensity  -> intensity
+      classification / class        -> classification
+      anything else                 -> a "custom" field named "x-<prop>",
+                                       carried rather than dropped
+
+  Two things are DROPPED, and both are reported rather than silent:
+
+  * a `face` element or any list property. A WKPC is points; a PLY that
+    carries faces is a mesh and belongs in `core.geom.source` as a GLB. An
+    ingester that quietly discarded the faces would turn a mesh into a point
+    cloud without telling anyone.
+  * `nx, ny, nz` that are ALL EXACTLY ZERO for every point. That is the
+    signature of the INRIA splat writer reusing a point-cloud writer
+    (gsplat.layout.txt section 6), and carrying three million zeros as
+    "normals" would be worse than carrying nothing: a consumer would light
+    with them. The drop is reported with the count that triggered it.
+
+  The colour space of PLY `red/green/blue` is undeclared by PLY itself.
+  werk's ingester declares "srgb", because every tool that writes those
+  properties writes display-referred bytes, and it records the assumption in
+  the node's `input_params` so it is an assumption on the record rather than
+  a fact nobody chose. (D-PC-2.)
+
+
+
+
+===== FILE spec/examples/gsplat.example.hex.txt (complete) -- a worked, annotated byte-by-byte decode of a small WKGS envelope =====
+Annotated hex dump of gsplat.example.wkgs
+============================================================
+
+Generated by make-examples.py in this directory. Read
+spec/layouts/ENVELOPE.layout.txt and
+spec/layouts/gsplat.layout.txt alongside it.
+
+file size          : 1120 bytes
+header_len         : 777
+payload_origin     : 800   (= 16 * ceil((12+777)/16))
+count              : 3 Gaussians, sh_degree 1, sh_coeff_count 4
+means              : offset 800, size 36, stride 12, shape [3, 3]
+scales             : offset 848, size 36, stride 12, shape [3, 3]
+rotations          : offset 896, size 48, stride 16, shape [3, 4]
+opacities          : offset 944, size 12, stride 4, shape [3]
+sh-dc              : offset 960, size 36, stride 12, shape [3, 3]
+sh-rest            : offset 1008, size 108, stride 12, shape [3, 3, 3]
+sha256             : 9a3af3dfde695e34cbeb8972a8d3f2453454226ba6ab9c69a6c5a0a199fe19ee
+
+HEX
+------------------------------------------------------------
+00000000  57 4b 47 53                                      magic "WKGS"
+00000004  01 00 00 00                                      u32 LE version = 1
+00000008  09 03 00 00                                      u32 LE header_len = 777
+0000000c  de 00 12 aa 61 63 74 69 76 61 74 69 6f 6e 83 a7  MessagePack header (decoded below)
+          6f 70 61 63 69 74 79 a7 73 69 67 6d 6f 69 64 a5
+          73 63 61 6c 65 a3 65 78 70 a2 73 68 a8 69 64 65
+          6e 74 69 74 79 a6 62 6f 75 6e 64 73 82 a3 6d 61
+          78 93 cb 3f e0 00 00 00 00 00 00 cb 3f f0 00 00
+          00 00 00 00 cb 3f d0 00 00 00 00 00 00 a3 6d 69
+          6e 93 cb bf e0 00 00 00 00 00 00 cb 00 00 00 00
+          00 00 00 00 cb bf e0 00 00 00 00 00 00 a5 63 6f
+          75 6e 74 03 aa 65 6e 64 69 61 6e 6e 65 73 73 a2
+          6c 65 a9 65 70 69 73 74 65 6d 69 63 a8 61 75 74
+          68 6f 72 65 64 a4 6b 69 6e 64 b0 63 6f 72 65 2e
+          67 65 6f 6d 2e 67 73 70 6c 61 74 ab 6c 65 6e 67
+          74 68 5f 75 6e 69 74 a5 6d 65 74 72 65 ad 6f 70
+          61 63 69 74 79 5f 73 70 61 63 65 a6 6c 69 6e 65
+          61 72 ae 70 61 79 6c 6f 61 64 5f 6f 72 69 67 69
+          6e cd 03 20 ac 70 61 79 6c 6f 61 64 5f 73 69 7a
+          65 cd 01 40 a8 70 72 6f 64 75 63 65 72 82 a4 74
+          6f 6f 6c ac 77 65 72 6b 2d 65 78 61 6d 70 6c 65
+          a7 76 65 72 73 69 6f 6e a3 30 2e 31 aa 71 75 61
+          74 5f 6f 72 64 65 72 a4 77 78 79 7a ab 73 63 61
+          6c 65 5f 73 70 61 63 65 a6 6c 69 6e 65 61 72 a8
+          73 65 63 74 69 6f 6e 73 96 86 a5 64 74 79 70 65
+          a3 66 33 32 a4 6e 61 6d 65 a5 6d 65 61 6e 73 a6
+          6f 66 66 73 65 74 cd 03 20 a5 73 68 61 70 65 92
+          03 03 a4 73 69 7a 65 24 a6 73 74 72 69 64 65 0c
+          86 a5 64 74 79 70 65 a3 66 33 32 a4 6e 61 6d 65
+          a6 73 63 61 6c 65 73 a6 6f 66 66 73 65 74 cd 03
+          50 a5 73 68 61 70 65 92 03 03 a4 73 69 7a 65 24
+          a6 73 74 72 69 64 65 0c 86 a5 64 74 79 70 65 a3
+          66 33 32 a4 6e 61 6d 65 a9 72 6f 74 61 74 69 6f
+          6e 73 a6 6f 66 66 73 65 74 cd 03 80 a5 73 68 61
+          70 65 92 03 04 a4 73 69 7a 65 30 a6 73 74 72 69
+          64 65 10 86 a5 64 74 79 70 65 a3 66 33 32 a4 6e
+          61 6d 65 a9 6f 70 61 63 69 74 69 65 73 a6 6f 66
+          66 73 65 74 cd 03 b0 a5 73 68 61 70 65 91 03 a4
+          73 69 7a 65 0c a6 73 74 72 69 64 65 04 86 a5 64
+          74 79 70 65 a3 66 33 32 a4 6e 61 6d 65 a5 73 68
+          2d 64 63 a6 6f 66 66 73 65 74 cd 03 c0 a5 73 68
+          61 70 65 92 03 03 a4 73 69 7a 65 24 a6 73 74 72
+          69 64 65 0c 86 a5 64 74 79 70 65 a3 66 33 32 a4
+          6e 61 6d 65 a7 73 68 2d 72 65 73 74 a6 6f 66 66
+          73 65 74 cd 03 f0 a5 73 68 61 70 65 93 03 03 03
+          a4 73 69 7a 65 6c a6 73 74 72 69 64 65 0c ae 73
+          68 5f 63 6f 65 66 66 5f 63 6f 75 6e 74 04 ae 73
+          68 5f 63 6f 65 66 66 5f 6f 72 64 65 72 b1 63 6f
+          65 66 66 69 63 69 65 6e 74 2d 6d 61 6a 6f 72 a9
+          73 68 5f 64 65 67 72 65 65 01 b1 73 6f 75 72 63
+          65 5f 63 6f 6e 76 65 6e 74 69 6f 6e ac 69 6e 72
+          69 61 2d 33 64 67 73 2f 31                     
+00000315  00 00 00 00 00 00 00 00 00 00 00                 zero padding to payload_origin = 800
+00000320  00 00 00 00 00 00 00 00 00 00 00 00              section "means" record 0 -- Gaussian centres, f32 x,y,z, METRES, werk model space (+Y up, -Z forward, right-handed)
+0000032c  00 00 00 3f 00 00 80 3e 00 00 00 bf 00 00 00 bf  section "means" records 1..2
+          00 00 80 3f 00 00 80 3e                        
+00000344  00 00 00 00 00 00 00 00 00 00 00 00              zero padding to the 16-byte-aligned "scales" section
+00000350  00 00 80 3e 00 00 00 3e 00 00 80 3e              section "scales" record 0 -- per-axis standard deviations, f32, METRES, LINEAR (already exp()'d): Sigma = R diag(sx^2,sy^2,sz^2) R^T
+0000035c  00 00 80 3d 00 00 80 3d 00 00 00 3f 00 00 00 3f  section "scales" records 1..2
+          00 00 80 3e 00 00 80 3d                        
+00000374  00 00 00 00 00 00 00 00 00 00 00 00              zero padding to the 16-byte-aligned "rotations" section
+00000380  00 00 80 3f 00 00 00 00 00 00 00 00 00 00 00 00  section "rotations" record 0 -- unit quaternions, f32, order w,x,y,z, w >= 0
+00000390  00 00 00 3f 00 00 00 3f 00 00 00 3f 00 00 00 3f  section "rotations" records 1..2
+          00 00 00 00 00 00 80 3f 00 00 00 00 00 00 00 00
+000003b0  00 00 80 3f                                      section "opacities" record 0 -- alpha in [0,1], f32, LINEAR (already sigmoid()'d)
+000003b4  00 00 00 3f 00 00 00 00                          section "opacities" records 1..2
+000003bc  00 00 00 00                                      zero padding to the 16-byte-aligned "sh-dc" section
+000003c0  00 00 80 3f 00 00 00 00 00 00 80 bf              section "sh-dc" record 0 -- SH coefficient 0, f32 R,G,B. rgb = clamp(0.5 + 0.28209479177387814*dc, 0, 1)
+000003cc  00 00 00 00 00 00 00 3f 00 00 80 3e 00 00 80 bf  section "sh-dc" records 1..2
+          00 00 00 bf 00 00 80 3e                        
+000003e4  00 00 00 00 00 00 00 00 00 00 00 00              zero padding to the 16-byte-aligned "sh-rest" section
+000003f0  00 00 00 3f 00 00 80 3e 00 00 00 3e              section "sh-rest" record 0 -- SH coefficients 1..K-1, COEFFICIENT-MAJOR [count,K-1,3]: record i is coeff1 RGB, coeff2 RGB, coeff3 RGB for Gaussian i (the source PLY stores the TRANSPOSE)
+000003fc  00 00 00 bf 00 00 80 3e 00 00 00 00 00 00 00 00  section "sh-rest" records 1..8
+          00 00 80 be 00 00 00 3f 00 00 80 3e 00 00 00 00
+          00 00 00 be 00 00 00 3e 00 00 00 3f 00 00 80 3e
+          00 00 80 be 00 00 00 00 00 00 00 00 00 00 00 00
+          00 00 00 00 00 00 00 00 00 00 00 3f 00 00 00 bf
+          00 00 00 3e 00 00 80 3e 00 00 80 3e 00 00 80 be
+0000045c  00 00 00 00                                      trailing padding to a 16-byte boundary
+
+HEADER, DECODED
+------------------------------------------------------------
+{
+  "activation": {
+    "opacity": "sigmoid",
+    "scale": "exp",
+    "sh": "identity"
+  },
+  "bounds": {
+    "max": [
+      0.5,
+      1.0,
+      0.25
+    ],
+    "min": [
+      -0.5,
+      0.0,
+      -0.5
+    ]
+  },
+  "count": 3,
+  "endianness": "le",
+  "epistemic": "authored",
+  "kind": "core.geom.gsplat",
+  "length_unit": "metre",
+  "opacity_space": "linear",
+  "payload_origin": 800,
+  "payload_size": 320,
+  "producer": {
+    "tool": "werk-example",
+    "version": "0.1"
+  },
+  "quat_order": "wxyz",
+  "scale_space": "linear",
+  "sections": [
+    {
+      "dtype": "f32",
+      "name": "means",
+      "offset": 800,
+      "shape": [
+        3,
+        3
+      ],
+      "size": 36,
+      "stride": 12
+    },
+    {
+      "dtype": "f32",
+      "name": "scales",
+      "offset": 848,
+      "shape": [
+        3,
+        3
+      ],
+      "size": 36,
+      "stride": 12
+    },
+    {
+      "dtype": "f32",
+      "name": "rotations",
+      "offset": 896,
+      "shape": [
+        3,
+        4
+      ],
+      "size": 48,
+      "stride": 16
+    },
+    {
+      "dtype": "f32",
+      "name": "opacities",
+      "offset": 944,
+      "shape": [
+        3
+      ],
+      "size": 12,
+      "stride": 4
+    },
+    {
+      "dtype": "f32",
+      "name": "sh-dc",
+      "offset": 960,
+      "shape": [
+        3,
+        3
+      ],
+      "size": 36,
+      "stride": 12
+    },
+    {
+      "dtype": "f32",
+      "name": "sh-rest",
+      "offset": 1008,
+      "shape": [
+        3,
+        3,
+        3
+      ],
+      "size": 108,
+      "stride": 12
+    }
+  ],
+  "sh_coeff_count": 4,
+  "sh_coeff_order": "coefficient-major",
+  "sh_degree": 1,
+  "source_convention": "inria-3dgs/1"
+}
+
+Decoded, the three Gaussians are:
+
+  Gaussian 0
+    mean      [0.0, 0.0, 0.0]   metres
+    scale     [0.25, 0.125, 0.25]   metres, linear
+    rotation  [1.0, 0.0, 0.0, 0.0]   wxyz
+    opacity   1
+    sh-dc     [1.0, 0.0, -1.0]  ->  rgb_linear [0.782095, 0.5, 0.217905]
+    sh-rest   coeff1 [0.5, 0.25, 0.125]  coeff2 [-0.5, 0.25, 0.0]  coeff3 [0.0, -0.25, 0.5]
+  Gaussian 1
+    mean      [0.5, 0.25, -0.5]   metres
+    scale     [0.0625, 0.0625, 0.5]   metres, linear
+    rotation  [0.5, 0.5, 0.5, 0.5]   wxyz
+    opacity   0.5
+    sh-dc     [0.0, 0.5, 0.25]  ->  rgb_linear [0.5, 0.641047, 0.570524]
+    sh-rest   coeff1 [0.25, 0.0, -0.125]  coeff2 [0.125, 0.5, 0.25]  coeff3 [-0.25, 0.0, 0.0]
+  Gaussian 2
+    mean      [-0.5, 1.0, 0.25]   metres
+    scale     [0.5, 0.25, 0.0625]   metres, linear
+    rotation  [0.0, 1.0, 0.0, 0.0]   wxyz
+    opacity   0
+    sh-dc     [-1.0, -0.5, 0.25]  ->  rgb_linear [0.217905, 0.358953, 0.570524]
+    sh-rest   coeff1 [0.0, 0.0, 0.0]  coeff2 [0.5, -0.5, 0.125]  coeff3 [0.25, 0.25, -0.25]
+
+The header round-trips: re-encoding the decoded map with the
+canonical rules of ENVELOPE.layout.txt section 4.3 reproduces
+the same bytes. That is checked every time this script runs.
+
+
+
+===== HEX DUMP -- first 2048 bytes of splats/plush.wkgs (hex+ASCII, 16 B/line) =====
+00000000  57 4b 47 53 01 00 00 00 4d 03 00 00 de 00 12 aa  |WKGS....M.......|
+00000010  61 63 74 69 76 61 74 69 6f 6e 83 a7 6f 70 61 63  |activation..opac|
+00000020  69 74 79 a7 73 69 67 6d 6f 69 64 a5 73 63 61 6c  |ity.sigmoid.scal|
+00000030  65 a3 65 78 70 a2 73 68 a8 69 64 65 6e 74 69 74  |e.exp.sh.identit|
+00000040  79 a6 62 6f 75 6e 64 73 82 a3 6d 61 78 93 cb 3f  |y.bounds..max..?|
+00000050  f3 be 61 80 00 00 00 cb 40 02 17 26 00 00 00 00  |..a.....@..&....|
+00000060  cb 3f fb 98 42 00 00 00 00 a3 6d 69 6e 93 cb bf  |.?..B.....min...|
+00000070  f1 7b aa e0 00 00 00 cb 3f f2 99 dd c0 00 00 00  |.{......?.......|
+00000080  cb 3f d7 f2 81 e0 00 00 00 a5 63 6f 75 6e 74 ce  |.?........count.|
+00000090  00 04 4b 9a aa 65 6e 64 69 61 6e 6e 65 73 73 a2  |..K..endianness.|
+000000a0  6c 65 a9 65 70 69 73 74 65 6d 69 63 a8 6d 65 61  |le.epistemic.mea|
+000000b0  73 75 72 65 64 a4 6b 69 6e 64 b0 63 6f 72 65 2e  |sured.kind.core.|
+000000c0  67 65 6f 6d 2e 67 73 70 6c 61 74 ab 6c 65 6e 67  |geom.gsplat.leng|
+000000d0  74 68 5f 75 6e 69 74 a5 6d 65 74 72 65 ad 6f 70  |th_unit.metre.op|
+000000e0  61 63 69 74 79 5f 73 70 61 63 65 a6 6c 69 6e 65  |acity_space.line|
+000000f0  61 72 ae 70 61 79 6c 6f 61 64 5f 6f 72 69 67 69  |ar.payload_origi|
+00000100  6e cd 03 60 ac 70 61 79 6c 6f 61 64 5f 73 69 7a  |n..`.payload_siz|
+00000110  65 ce 00 f0 89 d0 a8 70 72 6f 64 75 63 65 72 82  |e......producer.|
+00000120  a4 74 6f 6f 6c b4 70 69 70 65 6c 69 6e 65 2f 70  |.tool.pipeline/p|
+00000130  5f 67 73 70 6c 61 74 2e 70 79 a7 76 65 72 73 69  |_gsplat.py.versi|
+00000140  6f 6e a3 31 2e 30 aa 71 75 61 74 5f 6f 72 64 65  |on.1.0.quat_orde|
+00000150  72 a4 77 78 79 7a ab 73 63 61 6c 65 5f 73 70 61  |r.wxyz.scale_spa|
+00000160  63 65 a6 6c 69 6e 65 61 72 a8 73 65 63 74 69 6f  |ce.linear.sectio|
+00000170  6e 73 96 86 a5 64 74 79 70 65 a3 66 33 32 a4 6e  |ns...dtype.f32.n|
+00000180  61 6d 65 a5 6d 65 61 6e 73 a6 6f 66 66 73 65 74  |ame.means.offset|
+00000190  cd 03 60 a5 73 68 61 70 65 92 ce 00 04 4b 9a 03  |..`.shape....K..|
+000001a0  a4 73 69 7a 65 ce 00 33 8b 38 a6 73 74 72 69 64  |.size..3.8.strid|
+000001b0  65 0c 86 a5 64 74 79 70 65 a3 66 33 32 a4 6e 61  |e...dtype.f32.na|
+000001c0  6d 65 a6 73 63 61 6c 65 73 a6 6f 66 66 73 65 74  |me.scales.offset|
+000001d0  ce 00 33 8e a0 a5 73 68 61 70 65 92 ce 00 04 4b  |..3...shape....K|
+000001e0  9a 03 a4 73 69 7a 65 ce 00 33 8b 38 a6 73 74 72  |...size..3.8.str|
+000001f0  69 64 65 0c 86 a5 64 74 79 70 65 a3 66 33 32 a4  |ide...dtype.f32.|
+00000200  6e 61 6d 65 a9 72 6f 74 61 74 69 6f 6e 73 a6 6f  |name.rotations.o|
+00000210  66 66 73 65 74 ce 00 67 19 e0 a5 73 68 61 70 65  |ffset..g...shape|
+00000220  92 ce 00 04 4b 9a 04 a4 73 69 7a 65 ce 00 44 b9  |....K...size..D.|
+00000230  a0 a6 73 74 72 69 64 65 10 86 a5 64 74 79 70 65  |..stride...dtype|
+00000240  a3 66 33 32 a4 6e 61 6d 65 a9 6f 70 61 63 69 74  |.f32.name.opacit|
+00000250  69 65 73 a6 6f 66 66 73 65 74 ce 00 ab d3 80 a5  |ies.offset......|
+00000260  73 68 61 70 65 91 ce 00 04 4b 9a a4 73 69 7a 65  |shape....K..size|
+00000270  ce 00 11 2e 68 a6 73 74 72 69 64 65 04 86 a5 64  |....h.stride...d|
+00000280  74 79 70 65 a3 66 33 32 a4 6e 61 6d 65 a5 73 68  |type.f32.name.sh|
+00000290  2d 64 63 a6 6f 66 66 73 65 74 ce 00 bd 01 f0 a5  |-dc.offset......|
+000002a0  73 68 61 70 65 92 ce 00 04 4b 9a 03 a4 73 69 7a  |shape....K...siz|
+000002b0  65 ce 00 33 8b 38 a6 73 74 72 69 64 65 0c 86 a5  |e..3.8.stride...|
+000002c0  64 74 79 70 65 a3 66 33 32 a4 6e 61 6d 65 a7 73  |dtype.f32.name.s|
+000002d0  68 2d 72 65 73 74 a6 6f 66 66 73 65 74 ce 00 f0  |h-rest.offset...|
+000002e0  8d 30 a5 73 68 61 70 65 93 ce 00 04 4b 9a 00 03  |.0.shape....K...|
+000002f0  a4 73 69 7a 65 00 a6 73 74 72 69 64 65 0c ae 73  |.size..stride..s|
+00000300  68 5f 63 6f 65 66 66 5f 63 6f 75 6e 74 01 ae 73  |h_coeff_count..s|
+00000310  68 5f 63 6f 65 66 66 5f 6f 72 64 65 72 b1 63 6f  |h_coeff_order.co|
+00000320  65 66 66 69 63 69 65 6e 74 2d 6d 61 6a 6f 72 a9  |efficient-major.|
+00000330  73 68 5f 64 65 67 72 65 65 00 b1 73 6f 75 72 63  |sh_degree..sourc|
+00000340  65 5f 63 6f 6e 76 65 6e 74 69 6f 6e ac 69 6e 72  |e_convention.inr|
+00000350  69 61 2d 33 64 67 73 2f 31 00 00 00 00 00 00 00  |ia-3dgs/1.......|
+00000360  ec 10 76 bd 70 08 d0 3f d5 60 6f 3f ca 77 0f bd  |..v.p..?.`o?.w..|
+00000370  f5 fd c9 3f 26 1e 84 3f bd 1e e0 bd e6 cf ce 3f  |...?&..?.......?|
+00000380  85 b0 80 3f 59 cb d2 bc cf c1 c9 3f 3b 52 84 3f  |...?Y......?;R.?|
+00000390  d2 86 41 bc f6 71 ce 3f 7d d7 70 3f 44 f2 26 be  |..A..q.?}.p?D.&.|
+000003a0  cc cf cf 3f dd 3c 5e 3f 73 f2 18 be 7b c8 ce 3f  |...?.<^?s...{..?|
+000003b0  70 a7 87 3f a0 3d e0 bd c3 c6 ce 3f c6 d4 80 3f  |p..?.=.....?...?|
+000003c0  9e e5 72 bc cb 89 ce 3f 53 1a 70 3f 5b db f6 3e  |..r....?S.p?[..>|
+000003d0  9c 0b fd 3f dd 92 b3 3f 4f f1 3a 3e 19 c3 e8 3f  |...?...?O.:>...?|
+000003e0  f8 88 9e 3f 33 97 06 be 66 fc ce 3f 9e b9 5e 3f  |...?3...f..?..^?|
+000003f0  ce 22 a9 bd 7c e3 d2 3f a5 91 5f 3f 3f cd b9 bd  |."..|..?.._??...|
+00000400  e1 00 d3 3f fc f1 88 3f 94 02 ab bc d2 0f d5 3f  |...?...?.......?|
+00000410  15 53 89 3f c4 a0 dc 3e a9 6e fd 3f 1c 88 b2 3f  |.S.?...>.n.?...?|
+00000420  29 e5 f9 bd 19 81 db 3f 39 34 72 3f 05 ba 06 be  |)......?94r?....|
+00000430  6d 6c d8 3f 8c f3 5f 3f ac 19 56 3d 21 d9 e8 3f  |ml.?.._?..V=!..?|
+00000440  87 ac 90 3f 80 8a 1a be 38 dc ca 3f 53 ef 8d 3f  |...?....8..?S..?|
+00000450  aa 0b 05 be f7 44 d7 3f 03 c8 54 3f 01 d7 96 be  |.....D.?..T?....|
+00000460  51 a0 01 40 00 71 bd 3f c2 32 e2 3e 4a ef 01 40  |Q..@.q.?.2.>J..@|
+00000470  43 2f a7 3f c8 30 22 be 7b d2 c5 3f 7e a9 8f 3f  |C/.?.0".{..?~..?|
+00000480  bb de b0 3d 79 93 c2 3f 0c 94 71 3f 35 fa 9b 3d  |...=y..?..q?5..=|
+00000490  2a 75 d4 3f 78 24 46 3f 74 b4 69 3f 37 7d 00 40  |*u.?x$F?t.i?7}.@|
+000004a0  3a b8 a6 3f ae 2d e3 3d f3 20 c0 3f 1f 5a 78 3f  |:..?.-.=. .?.Zx?|
+000004b0  c1 b6 eb be 7e bd be 3f 9b 27 12 3f f0 15 8c bd  |....~..?.'.?....|
+000004c0  47 b1 b0 3f 4a 15 61 3f dc 38 23 be 7d e3 b2 3f  |G..?J.a?.8#.}..?|
+000004d0  34 a5 70 3f 80 ad 08 be 3d f4 ce 3f 21 88 5e 3f  |4.p?....=..?!.^?|
+000004e0  73 3c b1 3d ea a3 c5 3f ff 4f 7e 3f 93 20 08 3e  |s<.=...?.O~?. .>|
+000004f0  d5 e6 d2 3f f6 1d 41 3f ae 7d 62 3e 16 ab ea 3f  |...?..A?.}b>...?|
+00000500  4c 7f 9a 3f 50 2f 50 be 8b 55 cb 3f 5b d6 87 3f  |L..?P/P..U.?[..?|
+00000510  49 44 46 3c da a3 d1 3f 9f 10 41 3f f0 40 6b 3c  |IDF<...?..A?.@k<|
+00000520  e2 63 c4 3f 23 b4 97 3f 53 a4 a5 be 9d c4 b8 3f  |.c.?#..?S......?|
+00000530  30 be 26 3f c1 e9 22 be 72 f6 b5 3f 48 26 6f 3f  |0.&?..".r..?H&o?|
+00000540  e2 62 1b 3f 20 ca fd 3f b5 73 b1 3f 16 9b f5 be  |.b.? ..?.s.?....|
+00000550  87 a8 b7 3f c2 92 1c 3f 07 02 3f be 83 58 de 3f  |...?...?..?..X.?|
+00000560  28 b9 66 3f 25 1f 34 be e7 ff b8 3f 1d 3e 5d 3f  |(.f?%.4....?.>]?|
+00000570  d9 cb 39 be 5b a0 d0 3f 0f 8f 4f 3f fd 74 7c 3e  |..9.[..?..O?.t|>|
+00000580  6a c6 fe 3f 75 30 b0 3f eb 63 be 3d 36 40 cc 3f  |j..?u0.?.c.=6@.?|
+00000590  dc 89 54 3f 43 0c 21 be 38 82 ce 3f 82 3e 58 3f  |..T?C.!.8..?.>X?|
+000005a0  32 53 8d 3e 0c dc e8 3f 97 ed a4 3f 14 cf 4f be  |2S.>...?...?..O.|
+000005b0  f7 b5 b5 3f e6 ca 62 3f 8b e3 52 be 72 ae c3 3f  |...?..b?..R.r..?|
+000005c0  b5 b8 82 3f 3f b7 18 be b1 0e db 3f be 47 89 3f  |...??......?.G.?|
+000005d0  09 32 5d be f7 96 00 40 d0 7e bc 3f 26 c9 29 bd  |.2]....@.~.?&.).|
+000005e0  9f 70 b3 3f 5c c2 80 3f 31 a4 e1 3e 02 4f e9 3f  |.p.?\..?1..>.O.?|
+000005f0  ed c7 99 3f 1d 18 b1 be fc 38 b3 3f fc ce 17 3f  |...?.....8.?...?|
+00000600  93 88 f9 3d b1 28 d3 3f 29 77 3d 3f 69 6e ca 3e  |...=.(.?)w=?in.>|
+00000610  cb a2 fb 3f e4 db b5 3f 2e 49 33 be e2 77 d9 3f  |...?...?.I3..w.?|
+00000620  5d aa 87 3f f6 8b 9a 3d 5f 01 cf 3f c2 12 41 3f  |]..?...=_..?..A?|
+00000630  57 e5 09 3f 44 ad f4 3f 1c 60 bc 3f 9b bd 35 be  |W..?D..?.`.?..5.|
+00000640  7b 9d b6 3f d3 c5 81 3f 44 3c 04 3f 24 19 ef 3f  |{..?...?D<.?$..?|
+00000650  0f 3d c4 3f 8d fd 8e be fb c0 bc 3f 5f 75 40 3f  |.=.?.......?_u@?|
+00000660  6f c2 bb bd ca ee d2 3f 3a e2 88 3f f7 ac 9e be  |o......?:..?....|
+00000670  a2 c0 fe 3f 49 e9 c4 3f a0 7c f5 3e 11 98 03 40  |...?I..?.|.>...@|
+00000680  08 9d 97 3f ef 80 23 3e a3 ac d6 3f b9 20 2f 3f  |...?..#>...?. /?|
+00000690  71 aa e7 be d4 1b b6 3f 20 f3 1a 3f af 1d 59 bd  |q......? ..?..Y.|
+000006a0  6f 2b e7 3f 7a 7f 8f 3f 04 28 a9 bb 95 fc b1 3f  |o+.?z..?.(.....?|
+000006b0  3c 82 74 3f 18 17 63 be 93 a6 cf 3f e1 46 6c 3f  |<.t?..c....?.Fl?|
+000006c0  e0 84 56 bd 3b 95 b0 3f 05 1e 74 3f 12 92 ad be  |..V.;..?..t?....|
+000006d0  b1 fd b4 3f e9 17 2a 3f 32 a0 0b be f9 7f b1 3f  |...?..*?2......?|
+000006e0  35 ec 70 3f 40 2c 93 be 53 bf 02 40 27 52 ba 3f  |5.p?@,..S..@'R.?|
+000006f0  19 5a f9 3e 2c fa e5 3f 66 7c c7 3f a3 e6 a3 be  |.Z.>,..?f|.?....|
+00000700  28 ff af 3f 7b e3 07 3f 56 68 55 be 5a 8f d3 3f  |(..?{..?VhU.Z..?|
+00000710  93 f5 7c 3f 46 c4 bf be af f3 09 40 82 53 9e 3f  |..|?F......@.S.?|
+00000720  b8 23 1d 3f bf 22 02 40 23 c1 a5 3f 60 53 a0 3d  |.#.?.".@#..?`S.=|
+00000730  73 db c4 3f 15 b4 8e 3f 18 4b 39 be d9 9f c5 3f  |s..?...?.K9....?|
+00000740  03 45 92 3f 7b 05 53 be 85 0f d2 3f 88 77 82 3f  |.E.?{.S....?.w.?|
+00000750  80 23 53 bc a9 35 b1 3f 0a 3d 68 3f bd 67 9c bd  |.#S..5.?.=h?.g..|
+00000760  76 6e b3 3f 7e cb 68 3f 61 d1 da bd f9 2a cd 3f  |vn.?~.h?a....*.?|
+00000770  0c de 93 3f 58 c5 73 be 16 1e b9 3f c1 5b 69 3f  |...?X.s....?.[i?|
+00000780  dd 7b a6 be 42 09 b1 3f 9b 7e 05 3f e9 07 2c be  |.{..B..?.~.?..,.|
+00000790  fa a5 b6 3f 98 be 5a 3f 75 93 8a be 2f d0 fd 3f  |...?..Z?u.../..?|
+000007a0  cf 2c c3 3f 79 62 15 be 6c ee c7 3f 6b f5 89 3f  |.,.?yb..l..?k..?|
+000007b0  8f 9f ca bc 59 d2 c2 3f 65 7c 95 3f 14 a0 7d 3d  |....Y..?e|.?..}=|
+000007c0  58 0a d5 3f 4c 02 9c 3f 14 f8 11 be 6a 11 10 40  |X..?L..?....j..@|
+000007d0  d0 93 8b 3f 01 70 16 3d 86 05 ee 3f 85 cb 97 3f  |...?.p.=...?...?|
+000007e0  81 c6 dd bc 9a a5 b1 3f 24 ae 6d 3f df 1e 9f 3e  |.......?$.m?...>|
+000007f0  83 eb ea 3f d9 62 9f 3f b2 49 72 be 01 e0 b9 3f  |...?.b.?.Ir....?|
+
+
+===== HEX DUMP -- first 2048 bytes of points/plush-dc.wkpc (hex+ASCII, 16 B/line) =====
+00000000  57 4b 50 43 01 00 00 00 ac 03 00 00 8d a6 62 6f  |WKPC..........bo|
+00000010  75 6e 64 73 82 a3 6d 61 78 93 cb 3f f3 be 61 80  |unds..max..?..a.|
+00000020  00 00 00 cb 40 02 17 26 00 00 00 00 cb 3f fb 98  |....@..&.....?..|
+00000030  42 00 00 00 00 a3 6d 69 6e 93 cb bf f1 7b aa e0  |B.....min....{..|
+00000040  00 00 00 cb 3f f2 99 dd c0 00 00 00 cb 3f d7 f2  |....?........?..|
+00000050  81 e0 00 00 00 a5 63 6f 75 6e 74 ce 00 04 4b 9a  |......count...K.|
+00000060  aa 65 6e 64 69 61 6e 6e 65 73 73 a2 6c 65 a9 65  |.endianness.le.e|
+00000070  70 69 73 74 65 6d 69 63 a8 6d 65 61 73 75 72 65  |pistemic.measure|
+00000080  64 a6 66 69 65 6c 64 73 92 86 aa 63 6f 6d 70 6f  |d.fields...compo|
+00000090  6e 65 6e 74 73 03 a5 64 74 79 70 65 a3 66 33 32  |nents..dtype.f32|
+000000a0  a4 6e 61 6d 65 a8 70 6f 73 69 74 69 6f 6e a7 73  |.name.position.s|
+000000b0  65 63 74 69 6f 6e a8 70 6f 73 69 74 69 6f 6e a8  |ection.position.|
+000000c0  73 65 6d 61 6e 74 69 63 a8 70 6f 73 69 74 69 6f  |semantic.positio|
+000000d0  6e a4 75 6e 69 74 a5 6d 65 74 72 65 87 ab 63 6f  |n.unit.metre..co|
+000000e0  6c 6f 72 5f 73 70 61 63 65 ab 6c 69 6e 65 61 72  |lor_space.linear|
+000000f0  2d 73 72 67 62 aa 63 6f 6d 70 6f 6e 65 6e 74 73  |-srgb.components|
+00000100  03 a5 64 74 79 70 65 a2 75 38 a4 6e 61 6d 65 a5  |..dtype.u8.name.|
+00000110  63 6f 6c 6f 72 a4 6e 6f 74 65 d9 bf 74 68 65 20  |color.note..the |
+00000120  47 61 75 73 73 69 61 6e 20 73 70 6c 61 74 27 73  |Gaussian splat's|
+00000130  20 64 65 67 72 65 65 2d 30 20 53 48 20 62 61 6e  | degree-0 SH ban|
+00000140  64 20 74 68 72 6f 75 67 68 20 63 6c 61 6d 70 28  |d through clamp(|
+00000150  30 2e 35 20 2b 20 30 2e 32 38 32 30 39 34 37 39  |0.5 + 0.28209479|
+00000160  31 37 37 33 38 37 38 31 34 2a 64 63 2c 20 30 2c  |177387814*dc, 0,|
+00000170  20 31 29 2c 20 71 75 61 6e 74 69 73 65 64 20 74  | 1), quantised t|
+00000180  6f 20 38 20 62 69 74 73 20 70 65 72 20 63 68 61  |o 8 bits per cha|
+00000190  6e 6e 65 6c 2e 20 4c 49 4e 45 41 52 2c 20 6e 6f  |nnel. LINEAR, no|
+000001a0  74 20 73 52 47 42 2d 65 6e 63 6f 64 65 64 3a 20  |t sRGB-encoded: |
+000001b0  61 70 70 6c 79 20 74 68 65 20 74 72 61 6e 73 66  |apply the transf|
+000001c0  65 72 20 66 75 6e 63 74 69 6f 6e 20 62 65 66 6f  |er function befo|
+000001d0  72 65 20 64 69 73 70 6c 61 79 2e a7 73 65 63 74  |re display..sect|
+000001e0  69 6f 6e a5 63 6f 6c 6f 72 a8 73 65 6d 61 6e 74  |ion.color.semant|
+000001f0  69 63 a5 63 6f 6c 6f 72 a4 6b 69 6e 64 b0 63 6f  |ic.color.kind.co|
+00000200  72 65 2e 67 65 6f 6d 2e 70 6f 69 6e 74 73 ab 6c  |re.geom.points.l|
+00000210  65 6e 67 74 68 5f 75 6e 69 74 a5 6d 65 74 72 65  |ength_unit.metre|
+00000220  a4 6e 6f 74 65 d9 97 64 65 72 69 76 65 64 20 66  |.note..derived f|
+00000230  72 6f 6d 20 73 70 6c 61 74 73 2f 70 6c 75 73 68  |rom splats/plush|
+00000240  2e 77 6b 67 73 2c 20 73 65 63 74 69 6f 6e 73 20  |.wkgs, sections |
+00000250  60 6d 65 61 6e 73 60 20 61 6e 64 20 60 73 68 2d  |`means` and `sh-|
+00000260  64 63 60 2c 20 62 79 20 73 70 65 63 2f 6c 61 79  |dc`, by spec/lay|
+00000270  6f 75 74 73 2f 67 73 70 6c 61 74 2e 6c 61 79 6f  |outs/gsplat.layo|
+00000280  75 74 2e 74 78 74 20 73 65 63 74 69 6f 6e 20 37  |ut.txt section 7|
+00000290  2e 20 45 78 61 63 74 3a 20 6e 6f 74 68 69 6e 67  |. Exact: nothing|
+000002a0  20 72 65 73 61 6d 70 6c 65 64 2c 20 6e 6f 74 68  | resampled, noth|
+000002b0  69 6e 67 20 64 65 63 69 6d 61 74 65 64 2e ae 70  |ing decimated..p|
+000002c0  61 79 6c 6f 61 64 5f 6f 72 69 67 69 6e cd 03 c0  |ayload_origin...|
+000002d0  ac 70 61 79 6c 6f 61 64 5f 73 69 7a 65 ce 00 40  |.payload_size..@|
+000002e0  6e 10 a8 70 72 6f 64 75 63 65 72 82 a4 74 6f 6f  |n..producer..too|
+000002f0  6c b8 70 69 70 65 6c 69 6e 65 2f 70 5f 70 6f 69  |l.pipeline/p_poi|
+00000300  6e 74 63 6c 6f 75 64 2e 70 79 a7 76 65 72 73 69  |ntcloud.py.versi|
+00000310  6f 6e a3 31 2e 30 a8 73 65 63 74 69 6f 6e 73 92  |on.1.0.sections.|
+00000320  86 a5 64 74 79 70 65 a3 66 33 32 a4 6e 61 6d 65  |..dtype.f32.name|
+00000330  a8 70 6f 73 69 74 69 6f 6e a6 6f 66 66 73 65 74  |.position.offset|
+00000340  cd 03 c0 a5 73 68 61 70 65 92 ce 00 04 4b 9a 03  |....shape....K..|
+00000350  a4 73 69 7a 65 ce 00 33 8b 38 a6 73 74 72 69 64  |.size..3.8.strid|
+00000360  65 0c 86 a5 64 74 79 70 65 a2 75 38 a4 6e 61 6d  |e...dtype.u8.nam|
+00000370  65 a5 63 6f 6c 6f 72 a6 6f 66 66 73 65 74 ce 00  |e.color.offset..|
+00000380  33 8f 00 a5 73 68 61 70 65 92 ce 00 04 4b 9a 03  |3...shape....K..|
+00000390  a4 73 69 7a 65 ce 00 0c e2 ce a6 73 74 72 69 64  |.size......strid|
+000003a0  65 03 a6 73 6f 75 72 63 65 ae 67 73 70 6c 61 74  |e..source.gsplat|
+000003b0  2d 64 63 2d 62 61 6e 64 00 00 00 00 00 00 00 00  |-dc-band........|
+000003c0  ec 10 76 bd 70 08 d0 3f d5 60 6f 3f ca 77 0f bd  |..v.p..?.`o?.w..|
+000003d0  f5 fd c9 3f 26 1e 84 3f bd 1e e0 bd e6 cf ce 3f  |...?&..?.......?|
+000003e0  85 b0 80 3f 59 cb d2 bc cf c1 c9 3f 3b 52 84 3f  |...?Y......?;R.?|
+000003f0  d2 86 41 bc f6 71 ce 3f 7d d7 70 3f 44 f2 26 be  |..A..q.?}.p?D.&.|
+00000400  cc cf cf 3f dd 3c 5e 3f 73 f2 18 be 7b c8 ce 3f  |...?.<^?s...{..?|
+00000410  70 a7 87 3f a0 3d e0 bd c3 c6 ce 3f c6 d4 80 3f  |p..?.=.....?...?|
+00000420  9e e5 72 bc cb 89 ce 3f 53 1a 70 3f 5b db f6 3e  |..r....?S.p?[..>|
+00000430  9c 0b fd 3f dd 92 b3 3f 4f f1 3a 3e 19 c3 e8 3f  |...?...?O.:>...?|
+00000440  f8 88 9e 3f 33 97 06 be 66 fc ce 3f 9e b9 5e 3f  |...?3...f..?..^?|
+00000450  ce 22 a9 bd 7c e3 d2 3f a5 91 5f 3f 3f cd b9 bd  |."..|..?.._??...|
+00000460  e1 00 d3 3f fc f1 88 3f 94 02 ab bc d2 0f d5 3f  |...?...?.......?|
+00000470  15 53 89 3f c4 a0 dc 3e a9 6e fd 3f 1c 88 b2 3f  |.S.?...>.n.?...?|
+00000480  29 e5 f9 bd 19 81 db 3f 39 34 72 3f 05 ba 06 be  |)......?94r?....|
+00000490  6d 6c d8 3f 8c f3 5f 3f ac 19 56 3d 21 d9 e8 3f  |ml.?.._?..V=!..?|
+000004a0  87 ac 90 3f 80 8a 1a be 38 dc ca 3f 53 ef 8d 3f  |...?....8..?S..?|
+000004b0  aa 0b 05 be f7 44 d7 3f 03 c8 54 3f 01 d7 96 be  |.....D.?..T?....|
+000004c0  51 a0 01 40 00 71 bd 3f c2 32 e2 3e 4a ef 01 40  |Q..@.q.?.2.>J..@|
+000004d0  43 2f a7 3f c8 30 22 be 7b d2 c5 3f 7e a9 8f 3f  |C/.?.0".{..?~..?|
+000004e0  bb de b0 3d 79 93 c2 3f 0c 94 71 3f 35 fa 9b 3d  |...=y..?..q?5..=|
+000004f0  2a 75 d4 3f 78 24 46 3f 74 b4 69 3f 37 7d 00 40  |*u.?x$F?t.i?7}.@|
+00000500  3a b8 a6 3f ae 2d e3 3d f3 20 c0 3f 1f 5a 78 3f  |:..?.-.=. .?.Zx?|
+00000510  c1 b6 eb be 7e bd be 3f 9b 27 12 3f f0 15 8c bd  |....~..?.'.?....|
+00000520  47 b1 b0 3f 4a 15 61 3f dc 38 23 be 7d e3 b2 3f  |G..?J.a?.8#.}..?|
+00000530  34 a5 70 3f 80 ad 08 be 3d f4 ce 3f 21 88 5e 3f  |4.p?....=..?!.^?|
+00000540  73 3c b1 3d ea a3 c5 3f ff 4f 7e 3f 93 20 08 3e  |s<.=...?.O~?. .>|
+00000550  d5 e6 d2 3f f6 1d 41 3f ae 7d 62 3e 16 ab ea 3f  |...?..A?.}b>...?|
+00000560  4c 7f 9a 3f 50 2f 50 be 8b 55 cb 3f 5b d6 87 3f  |L..?P/P..U.?[..?|
+00000570  49 44 46 3c da a3 d1 3f 9f 10 41 3f f0 40 6b 3c  |IDF<...?..A?.@k<|
+00000580  e2 63 c4 3f 23 b4 97 3f 53 a4 a5 be 9d c4 b8 3f  |.c.?#..?S......?|
+00000590  30 be 26 3f c1 e9 22 be 72 f6 b5 3f 48 26 6f 3f  |0.&?..".r..?H&o?|
+000005a0  e2 62 1b 3f 20 ca fd 3f b5 73 b1 3f 16 9b f5 be  |.b.? ..?.s.?....|
+000005b0  87 a8 b7 3f c2 92 1c 3f 07 02 3f be 83 58 de 3f  |...?...?..?..X.?|
+000005c0  28 b9 66 3f 25 1f 34 be e7 ff b8 3f 1d 3e 5d 3f  |(.f?%.4....?.>]?|
+000005d0  d9 cb 39 be 5b a0 d0 3f 0f 8f 4f 3f fd 74 7c 3e  |..9.[..?..O?.t|>|
+000005e0  6a c6 fe 3f 75 30 b0 3f eb 63 be 3d 36 40 cc 3f  |j..?u0.?.c.=6@.?|
+000005f0  dc 89 54 3f 43 0c 21 be 38 82 ce 3f 82 3e 58 3f  |..T?C.!.8..?.>X?|
+00000600  32 53 8d 3e 0c dc e8 3f 97 ed a4 3f 14 cf 4f be  |2S.>...?...?..O.|
+00000610  f7 b5 b5 3f e6 ca 62 3f 8b e3 52 be 72 ae c3 3f  |...?..b?..R.r..?|
+00000620  b5 b8 82 3f 3f b7 18 be b1 0e db 3f be 47 89 3f  |...??......?.G.?|
+00000630  09 32 5d be f7 96 00 40 d0 7e bc 3f 26 c9 29 bd  |.2]....@.~.?&.).|
+00000640  9f 70 b3 3f 5c c2 80 3f 31 a4 e1 3e 02 4f e9 3f  |.p.?\..?1..>.O.?|
+00000650  ed c7 99 3f 1d 18 b1 be fc 38 b3 3f fc ce 17 3f  |...?.....8.?...?|
+00000660  93 88 f9 3d b1 28 d3 3f 29 77 3d 3f 69 6e ca 3e  |...=.(.?)w=?in.>|
+00000670  cb a2 fb 3f e4 db b5 3f 2e 49 33 be e2 77 d9 3f  |...?...?.I3..w.?|
+00000680  5d aa 87 3f f6 8b 9a 3d 5f 01 cf 3f c2 12 41 3f  |]..?...=_..?..A?|
+00000690  57 e5 09 3f 44 ad f4 3f 1c 60 bc 3f 9b bd 35 be  |W..?D..?.`.?..5.|
+000006a0  7b 9d b6 3f d3 c5 81 3f 44 3c 04 3f 24 19 ef 3f  |{..?...?D<.?$..?|
+000006b0  0f 3d c4 3f 8d fd 8e be fb c0 bc 3f 5f 75 40 3f  |.=.?.......?_u@?|
+000006c0  6f c2 bb bd ca ee d2 3f 3a e2 88 3f f7 ac 9e be  |o......?:..?....|
+000006d0  a2 c0 fe 3f 49 e9 c4 3f a0 7c f5 3e 11 98 03 40  |...?I..?.|.>...@|
+000006e0  08 9d 97 3f ef 80 23 3e a3 ac d6 3f b9 20 2f 3f  |...?..#>...?. /?|
+000006f0  71 aa e7 be d4 1b b6 3f 20 f3 1a 3f af 1d 59 bd  |q......? ..?..Y.|
+00000700  6f 2b e7 3f 7a 7f 8f 3f 04 28 a9 bb 95 fc b1 3f  |o+.?z..?.(.....?|
+00000710  3c 82 74 3f 18 17 63 be 93 a6 cf 3f e1 46 6c 3f  |<.t?..c....?.Fl?|
+00000720  e0 84 56 bd 3b 95 b0 3f 05 1e 74 3f 12 92 ad be  |..V.;..?..t?....|
+00000730  b1 fd b4 3f e9 17 2a 3f 32 a0 0b be f9 7f b1 3f  |...?..*?2......?|
+00000740  35 ec 70 3f 40 2c 93 be 53 bf 02 40 27 52 ba 3f  |5.p?@,..S..@'R.?|
+00000750  19 5a f9 3e 2c fa e5 3f 66 7c c7 3f a3 e6 a3 be  |.Z.>,..?f|.?....|
+00000760  28 ff af 3f 7b e3 07 3f 56 68 55 be 5a 8f d3 3f  |(..?{..?VhU.Z..?|
+00000770  93 f5 7c 3f 46 c4 bf be af f3 09 40 82 53 9e 3f  |..|?F......@.S.?|
+00000780  b8 23 1d 3f bf 22 02 40 23 c1 a5 3f 60 53 a0 3d  |.#.?.".@#..?`S.=|
+00000790  73 db c4 3f 15 b4 8e 3f 18 4b 39 be d9 9f c5 3f  |s..?...?.K9....?|
+000007a0  03 45 92 3f 7b 05 53 be 85 0f d2 3f 88 77 82 3f  |.E.?{.S....?.w.?|
+000007b0  80 23 53 bc a9 35 b1 3f 0a 3d 68 3f bd 67 9c bd  |.#S..5.?.=h?.g..|
+000007c0  76 6e b3 3f 7e cb 68 3f 61 d1 da bd f9 2a cd 3f  |vn.?~.h?a....*.?|
+000007d0  0c de 93 3f 58 c5 73 be 16 1e b9 3f c1 5b 69 3f  |...?X.s....?.[i?|
+000007e0  dd 7b a6 be 42 09 b1 3f 9b 7e 05 3f e9 07 2c be  |.{..B..?.~.?..,.|
+000007f0  fa a5 b6 3f 98 be 5a 3f 75 93 8a be 2f d0 fd 3f  |...?..Z?u.../..?|
+
+
+===== FILE semantics/semantics.json =====
+{
+  "schema_version": 1,
+  "facets_version": 1,
+  "facets": {
+    "function": [
+      "decor"
+    ],
+    "scale-class": [
+      "handheld"
+    ],
+    "condition": [
+      "used"
+    ],
+    "style": [
+      "x.photogrammetric-capture"
+    ],
+    "mood": [
+      "x.plush"
+    ]
+  },
+  "description": "A photogrammetric 3D-Gaussian-Splatting capture of a small plush toy: 281498 Gaussians spanning 2.327 x 1.099 x 1.350 in the capture's own units, treated as metres because the source declares no unit.",
+  "keywords": [
+    "gaussian-splat",
+    "point-cloud",
+    "photogrammetry",
+    "plush-toy",
+    "capture"
+  ],
+  "palette": {
+    "method": "histogram-4x4x4-top-8-on-the-dc-band, truncated: the weights sum to less than 1 by construction and are NOT renormalised (S-24)",
+    "colors": [
+      {
+        "hex_srgb": "#d3c7aa",
+        "linear_rgb": [
+          0.64978,
+          0.569347,
+          0.402677
+        ],
+        "weight": 0.187156
+      },
+      {
+        "hex_srgb": "#c6b29c",
+        "linear_rgb": [
+          0.563905,
+          0.444949,
+          0.33135
+        ],
+        "weight": 0.12383
+      },
+      {
+        "hex_srgb": "#ac9977",
+        "linear_rgb": [
+          0.412011,
+          0.320674,
+          0.185631
+        ],
+        "weight": 0.092114
+      },
+      {
+        "hex_srgb": "#f0ead4",
+        "linear_rgb": [
+          0.874568,
+          0.820617,
+          0.659736
+        ],
+        "weight": 0.082761
+      },
+      {
+        "hex_srgb": "#b3a595",
+        "linear_rgb": [
+          0.450583,
+          0.378566,
+          0.302451
+        ],
+        "weight": 0.076722
+      },
+      {
+        "hex_srgb": "#faf8ee",
+        "linear_rgb": [
+          0.957976,
+          0.937896,
+          0.856247
+        ],
+        "weight": 0.075329
+      },
+      {
+        "hex_srgb": "#d8d2c5",
+        "linear_rgb": [
+          0.689033,
+          0.64755,
+          0.558003
+        ],
+        "weight": 0.065748
+      },
+      {
+        "hex_srgb": "#e9d9ca",
+        "linear_rgb": [
+          0.813421,
+          0.69565,
+          0.588709
+        ],
+        "weight": 0.052576
+      }
+    ]
+  },
+  "note": "The palette is MEASURED, over all 281498 DC-band colours of the splat, not sampled from a render. That is the point of computing it here: a consumer holding splats/plush.wkgs can recompute every swatch and check it."
+}
+
+
+
+===== FILE spec/conventions-map.json =====
+{
+  "schema_version": 1,
+  "profile": "3d-entity/1",
+  "note": "The machine-readable form of spec/SPEC.md section 10.1. Same content, different reader: a human applies the table, a loader applies this. Ruled 2026-08-08 (S-17). A reader that does not support a declared convention looks it up here, refuses exactly the node types in `governs` with report code unsupported-convention, and loads, lists, hash-verifies and extracts everything else. The graph listing, the hashes and the work notes are readable knowledge that no convention gates. Stage 12 added core.geom.points and core.geom.gsplat to the envelope-binary rows and two OPTIONAL conventions, sh_coeff_order and sh_degree; an entry carrying \"optional\": true is a convention a manifest may omit, and a reader that meets its absence uses the profile default stated in SPEC.md rather than reporting a missing convention.",
+  "conventions": {
+    "endianness": {
+      "scope": "node",
+      "governs": [
+        "core.field.flow",
+        "core.pose.rest",
+        "core.anim.clip",
+        "core.skeleton",
+        "core.embedding",
+        "core.geom.points",
+        "core.geom.gsplat",
+        "x.*"
+      ],
+      "note": "Every envelope binary. core.skeleton only through its optional binary mirror; the JSON skeleton has no endianness."
+    },
+    "alignment_bytes": {
+      "scope": "node",
+      "governs": [
+        "core.field.flow",
+        "core.pose.rest",
+        "core.anim.clip",
+        "core.skeleton",
+        "core.embedding",
+        "core.geom.points",
+        "core.geom.gsplat",
+        "x.*"
+      ],
+      "note": "The same set as endianness: payload sections in envelope binaries start on this boundary."
+    },
+    "units_per_meter": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.props"
+      ],
+      "note": "core.anim.clip through its root translation and any bone-translation section; core.retarget.bind through the solved stature scale; core.imposter through the depth range; core.props through any length-valued property."
+    },
+    "length_unit": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.props"
+      ]
+    },
+    "angle_unit": {
+      "scope": "node",
+      "governs": [
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.props"
+      ],
+      "note": "core.skeleton through joint limits; core.retarget.bind through residuals and tolerances; core.props through any angle-valued property."
+    },
+    "time_unit": {
+      "scope": "node",
+      "governs": [
+        "core.anim.clip",
+        "core.audio.package",
+        "core.audio.effect",
+        "core.audio.ambience",
+        "core.props"
+      ]
+    },
+    "mass_unit": {
+      "scope": "node",
+      "governs": [
+        "core.phys.body",
+        "core.destruct",
+        "core.props"
+      ]
+    },
+    "up_axis": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct"
+      ],
+      "note": "Every node carrying a direction or a position in model space. For core.retarget.bind the solved basis rotation is source-to-THESE axes, so refusing them makes the bind meaningless rather than merely unusable."
+    },
+    "forward_axis": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct"
+      ]
+    },
+    "right_axis": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct"
+      ]
+    },
+    "handedness": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct"
+      ]
+    },
+    "winding": {
+      "scope": "node",
+      "governs": [
+        "core.geom.source",
+        "core.geom.game",
+        "core.geom.lod",
+        "core.destruct"
+      ]
+    },
+    "quat_order": {
+      "scope": "node",
+      "governs": [
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.geom.gsplat"
+      ],
+      "also_governs": [
+        "parts[].transform.rotation"
+      ],
+      "note": "The one convention whose reach extends outside nodes[]: part placement in the manifest itself is quaternions too, and no node-type list can say so. core.geom.gsplat carries one quaternion per Gaussian in its `rotations` stream and its envelope header restates the order, because the PLY it was ingested from does NOT declare one (spec/layouts/gsplat.layout.txt section 6)."
+    },
+    "oct_encoding_pole": {
+      "scope": "node",
+      "governs": [
+        "core.imposter",
+        "x.*"
+      ],
+      "note": "core.imposter through its octahedral normal channel; any x.* using octahedral encoding."
+    },
+    "sh_l1_order": {
+      "scope": "extension",
+      "governs": [
+        "x.*"
+      ],
+      "note": "No core node uses it today. It is declared because x.cub.* and any other extension carrying L1 spherical harmonics needs it pinned, and a convention agreed on only once an extension arrives is a convention nobody agreed on."
+    },
+    "color_space_default": {
+      "scope": "node",
+      "governs": [
+        "core.tex",
+        "core.imposter",
+        "core.semantics",
+        "core.geom.points"
+      ],
+      "note": "core.semantics through the palette. Only where the node does not declare its own color_space, which every conformant core.tex does and which a core.geom.points field with semantic 'color' is likewise required to do."
+    },
+    "uv_origin": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.tex",
+        "core.imposter",
+        "core.material"
+      ],
+      "note": "core.geom.* through TEXCOORD_*; core.material through texture slots."
+    },
+    "text_encoding": {
+      "scope": "container",
+      "governs": [
+        "*"
+      ],
+      "note": "Every text and JSON payload in the package, INCLUDING MANIFEST.json — which is why the scope is container: a reader that cannot do UTF-8 cannot read the manifest at all."
+    },
+    "id_case": {
+      "scope": "container",
+      "governs": [
+        "*"
+      ],
+      "note": "Every id in the manifest and in every payload."
+    },
+    "hash_algorithm": {
+      "scope": "container",
+      "governs": [
+        "*"
+      ],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256."
+    },
+    "signature_algorithm": {
+      "scope": "signature",
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state of SPEC.md section 10 step 4 — a fourth fixed token meaning 'I did not check' — and it is not damage."
+    },
+    "sh_coeff_order": {
+      "scope": "node",
+      "governs": [
+        "core.geom.gsplat"
+      ],
+      "optional": true,
+      "note": "Added Stage 12. Memory order of a per-primitive spherical-harmonic coefficient array. OPTIONAL in the manifest: absence means 'coefficient-major', which spec/layouts/gsplat.layout.txt section 4 requires anyway, so every package written before this key existed is unaffected. It is NOT sh_l1_order — that names the BASIS order an x.* extension uses for per-vertex L1 irradiance, this names a memory order, and collapsing them would give one convention two meanings (D-GS-3)."
+    },
+    "sh_degree": {
+      "scope": "node",
+      "governs": [
+        "core.geom.gsplat"
+      ],
+      "optional": true,
+      "advisory": true,
+      "note": "Added Stage 12, and ADVISORY even where it governs: a package-level MAXIMUM so a store can size a buffer before parsing, never the authority on a payload. Each WKGS envelope declares its own sh_degree and that governs that payload. A payload declaring more than the manifest is a producer error a reader REPORTS (sh-degree-exceeds-declared) rather than resolving. Refusing this convention is therefore never grounds to refuse a node."
+    }
+  }
+}
+

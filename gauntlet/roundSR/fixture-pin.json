@@ -1,0 +1,17 @@
+{
+  "fixtures": {
+    "selfrun-v1": {
+      "path": "gauntlet/roundSR/selfrun-v1.werk",
+      "bytes": 62525273,
+      "sha256": "1f8e1270b89371a5acc80aa854db3572631f7dac9a053fd045da0af112d51f17",
+      "zip_entries": 85,
+      "declared_files": 83,
+      "nodes": 14,
+      "profile": "model/1-draft",
+      "spec_sha256": "3decb3978e99f593572da026f69fb9d3472f75cfbd2c6f25f3c1505e4d87caff",
+      "preview_prefix_bytes": 1221844,
+      "recorded": "2026-08-09",
+      "note": "Experiment-local. NOT part of the conformance corpus and deliberately NOT in fixtures/fixtures.json: it declares a DRAFT profile that does not exist in spec/ and validates against a manifest schema that travels inside it. Rebuild: gauntlet/roundSR/build_selfrun_fixture.py. Check: gauntlet/roundSR/verify_selfrun.py (29 PASS / 0 FAIL, 2026-08-09)."
+    }
+  }
+}

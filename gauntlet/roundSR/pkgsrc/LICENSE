@@ -1,0 +1,94 @@
+werk selfrun-v1 — licence notice
+
+THREE SEPARATE LICENCES MEET IN THIS PACKAGE. They are stated separately
+because collapsing them into one line is the thing a provenance format must
+never do, and because one of them is a publisher's assertion rather than a
+document and that difference is worth a paragraph.
+
+Ruling 21 (spec/SPEC.md §2) governs and is not softened here: the format
+provides the structured place for licence facts, filling it truthfully is the
+author's job, and the format neither vets nor enforces content licensing.
+
+
+1. THE RUNTIME — tools/llama2c/  —  MIT
+---------------------------------------
+
+`run.c`, `win.h` and `win.c` are from Andrej Karpathy's llama2.c
+(github.com/karpathy/llama2.c), retrieved 2026-08-09 and carried BYTE-IDENTICAL.
+The project's MIT licence text is carried verbatim at
+`tools/llama2c/LICENSE-llama2c.txt`
+(sha256 e87b912002f04cdfa837eaf7f70548ab79b9cb62a285495edf575f3da875aec4)
+and is the operative grant. It reads, in part: "Copyright (c) 2023 Andrej".
+
+`tools/llama2c/BUILD-AND-RUN.md` was written for this package and is covered by
+§4 below, not by the MIT grant.
+
+
+2. THE WEIGHTS — model/stories15M.bin  —  MIT, BY THE PUBLISHER'S ASSERTION
+---------------------------------------------------------------------------
+
+`stories15M.bin` is from the Hugging Face repository karpathy/tinyllamas,
+retrieved 2026-08-09 and carried BYTE-IDENTICAL.
+
+THE FORM OF THIS GRANT MATTERS AND IS STATED PLAINLY. There is no LICENSE file
+in that repository. What exists is the model card's YAML front matter — the two
+lines `---` / `license: mit` — and the Hugging Face metadata that echoes it.
+That card is carried verbatim in this package at
+`recipe/inputs/tinyllamas-model-card.md`, because a licence that is a
+publisher's assertion and a licence that is a document are different things,
+and this package carries the assertion rather than paraphrasing it into a grant
+nobody wrote.
+
+So: the publisher declares MIT. This package repeats that declaration, points at
+where it is made, and adds nothing to it. Anyone redistributing these weights
+under terms stronger than "the publisher's model card says MIT" must establish
+those terms themselves.
+
+`model/tokenizer.bin` is from the llama2.c repository and is covered by §1.
+
+
+3. THE TRAINING CORPUS — NOT CARRIED, TERMS RECORDED AS A FACT
+--------------------------------------------------------------
+
+The weights were trained on the TinyStories dataset (Eldan & Li), which is
+published separately by its own authors under its own terms. THAT DATASET IS NOT
+IN THIS PACKAGE and this file grants nothing in respect of it.
+
+It is mentioned at all because a model package that named its corpus nowhere
+would be hiding the one input that most affects what the artifact does. It is
+mentioned HERE, in the licence notice, rather than only in the recipe, because
+the corpus's terms are a licence fact and a downstream user asking "what may I
+do with this" deserves to be told that a third body of terms exists upstream of
+the weights, was not established by this package, and is not reproduced here
+because no text was supplied to reproduce.
+
+`recipe/recipe.json` records the same fact in machine-readable form, in
+`unrecorded[]`.
+
+
+4. EVERYTHING WRITTEN FOR THIS PACKAGE
+--------------------------------------
+
+The werk specification and schemas under `spec/`, the three bootstrap loaders
+under `loaders/`, the two layout grammars
+(`spec/layouts/llama2c-checkpoint.layout.txt`,
+`spec/layouts/llama2c-tokenizer.layout.txt`), the draft profile
+(`spec/PROFILE-MODEL-DRAFT.md`), `tools/llama2c/BUILD-AND-RUN.md`, this file,
+`README.txt`, and the JSON payloads under `testvectors/`, `recipe/`,
+`disclosure/` and `provenance/` are part of the werk format project and carry
+the werk project's own terms.
+
+The GENERATED TEXT inside `testvectors/` is the output of the model in §2,
+produced at temperature 0 from the prompts recorded beside it. It is model
+output; see `disclosure/disclosure.json`, which states that as a fact and
+attaches no conclusion to it.
+
+
+5. WHAT IS NOT CLAIMED
+----------------------
+
+No claim is made about the copyright status of model weights as such, in any
+jurisdiction. No claim is made about the output of the model. Those are open
+questions and a licence notice that answered them would be inventing law. This
+file records who published what, under what stated terms, and where each
+statement can be checked.

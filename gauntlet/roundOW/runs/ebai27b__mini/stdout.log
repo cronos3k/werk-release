@@ -1,0 +1,261 @@
+model=ebai3.6-27b-unscensored ctx=65536 package_ctx=65536 budget=121896 chars package=91059 chars included=17 omitted=0
+preflight: prompt_tokens=33044 cold prefill=32.5s (1017 tok/s), chars/token=2.83
+
+--- iteration 1 (343s, finish=stop, 26556 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py — Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound, and write REPORT.md.
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+from datetime import datetime, timezone
+
+
+def sha256_hex(data: bytes) -> str:
+    """Return lowercase hex SHA-256 digest of data."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def main():
+    start_time = datetime.now(timezone.utc)
+    werk_path = "mini-v1.werk"
+
+    report_lines = []
+    def rpt(line=""):
+        report_lines.append(str(line))
+
+    rpt("# REPORT.md — mini-v1.werk analysis")
+    rpt()
+
+    # ------------------------------------------------------------------
+    # Phase 1: Open the container and read MANIFEST.json
+    # -----------
+  >> running solution.py (18344 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=148B
+  
+  STDERR:   File "F:\ow-gauntlet\ebai27b__mini\solution.py", line 454
+      rpt("
+          ^
+  SyntaxError: unterminated string literal (detected at line 454)
+  
+
+--- iteration 2 (630s, finish=stop, 25995 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py — Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound, and write REPORT.md.
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+from datetime import datetime, timezone
+
+
+def sha256_hex(data):
+    """Return lowercase hex SHA-256 digest of data."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def main():
+    start_time = datetime.now(timezone.utc)
+    werk_path = "mini-v1.werk"
+
+    report_lines = []
+
+    def rpt(line=""):
+        report_lines.append(str(line))
+
+    rpt("# REPORT.md — mini-v1.werk analysis")
+    rpt()
+
+    # ------------------------------------------------------------------
+    # Phase 1: Open the container and read MANIFEST.json
+    # ------------------------
+  >> running solution.py (17667 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=148B
+  
+  STDERR:   File "F:\ow-gauntlet\ebai27b__mini\solution.py", line 429
+      rpt("
+          ^
+  SyntaxError: unterminated string literal (detected at line 429)
+  
+
+--- iteration 3 (911s, finish=stop, 25946 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py - Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound, and write REPORT.md.
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+from datetime import datetime, timezone
+
+
+def sha256_hex(data):
+    """Return lowercase hex SHA-256 digest of data."""
+    return hashlib.sha256(data).hexdigest()
+
+
+def main():
+    start_time = datetime.now(timezone.utc)
+    werk_path = "mini-v1.werk"
+
+    report_lines = []
+
+    def rpt(line=""):
+        report_lines.append(str(line))
+
+    rpt("# REPORT.md - mini-v1.werk analysis")
+    rpt()
+
+    # ------------------------------------------------------------------
+    # Phase 1: Open the container and read MANIFEST.json
+    # ------------------------
+  >> running solution.py (17836 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=148B
+  
+  STDERR:   File "F:\ow-gauntlet\ebai27b__mini\solution.py", line 441
+      rpt("
+          ^
+  SyntaxError: unterminated string literal (detected at line 441)
+  
+
+--- iteration 4 (1194s, finish=stop, 24331 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py - Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound, and write REPORT.md.
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+from datetime import datetime, timezone
+
+
+def sha256_hex(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def main():
+    start_time = datetime.now(timezone.utc)
+    werk_path = "mini-v1.werk"
+    report_lines = []
+
+    def rpt(line=""):
+        report_lines.append(str(line))
+
+    rpt("# REPORT.md - mini-v1.werk analysis")
+    rpt()
+
+    # Phase 1: Open container and read MANIFEST.json
+    phase_open_start = datetime.now(timezone.utc)
+    print("[phase] Opening " + werk_path)
+
+    if not os.path.isfile(werk_path):
+        print("ERROR: " + werk_p
+  >> running solution.py (16816 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=148B
+  
+  STDERR:   File "F:\ow-gauntlet\ebai27b__mini\solution.py", line 430
+      rpt("
+          ^
+  SyntaxError: unterminated string literal (detected at line 430)
+  
+
+--- iteration 5 (1459s, finish=stop, 24196 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+"""
+solution.py - Open mini-v1.werk, list contents with meanings, verify integrity,
+extract primary mesh and one sound, and write REPORT.md.
+"""
+
+import zipfile
+import json
+import hashlib
+import os
+import sys
+from datetime import datetime, timezone
+
+
+def sha256_hex(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def main():
+    start_time = datetime.now(timezone.utc)
+    werk_path = "mini-v1.werk"
+    report_lines = []
+
+    def rpt(line=""):
+        report_lines.append(str(line))
+
+    rpt("# REPORT.md - mini-v1.werk analysis")
+    rpt()
+
+    # Phase 1: Open container and read MANIFEST.json
+    phase_open_start = datetime.now(timezone.utc)
+    print("[phase] Opening " + werk_path)
+
+    if not os.path.isfile(werk_path):
+        print("ERROR: " + werk_p
+  >> running solution.py (16889 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=148B
+  
+  STDERR:   File "F:\ow-gauntlet\ebai27b__mini\solution.py", line 436
+      rpt("
+          ^
+  SyntaxError: unterminated string literal (detected at line 436)
+  
+
+--- iteration 6 (1476s, finish=length, 0 chars) ---
+
+
+--- iteration 7 (1486s, finish=length, 86 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+import zipfile
+import json
+import hashlib
+import os
+
+--- iteration 8 (1496s, finish=length, 35 chars) ---
+
+
+```python
+#!/usr/bin/env python3
+
+
+=== outcome=no-program (3 replies with no ```python block) iters=8 first_clean_run=None wall=1496.1s ===
+{"model": "ebai3.6-27b-unscensored", "quant": "unlisted", "context": 65536, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "ebai27b-mini", "protocol": "inline-context + error-feedback", "outcome": "no-program", "detail": "3 replies with no ```python block", "iterations": 8, "first_clean_run": null, "wall_s": 1496.1, "preflight_s": 32.5, "wall_s_excl_preflight": 1463.6, "prompt_tokens": 33044, "package_ctx": 65536, "package_chars": 91059, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 3, "rundir": "F:\\ow-gauntlet\\ebai27b__mini"}

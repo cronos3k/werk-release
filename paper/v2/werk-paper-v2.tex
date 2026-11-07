@@ -1,0 +1,889 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+% ---------------------------------------------------------------------------
+% Encoding & fonts
+% ---------------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp}
+
+\IfFileExists{newtxtext.sty}{%
+  \usepackage{newtxtext}%
+  \usepackage{newtxmath}%
+}{%
+  \usepackage{mathptmx}%
+}
+
+% ---------------------------------------------------------------------------
+% Layout
+% ---------------------------------------------------------------------------
+\usepackage[letterpaper,margin=0.7in,columnsep=0.28in]{geometry}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{enumitem}
+
+\definecolor{darkblue}{RGB}{0,0,139}
+
+\usepackage[colorlinks=true,linkcolor=darkblue,citecolor=darkblue,%
+            urlcolor=darkblue,breaklinks=true]{hyperref}
+\usepackage{url}
+
+% ---------------------------------------------------------------------------
+% Compact section headings
+% ---------------------------------------------------------------------------
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{2.0ex plus 0.6ex minus .2ex}{1.0ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1.4ex plus 0.4ex minus .2ex}{0.7ex plus .2ex}
+
+% ---------------------------------------------------------------------------
+% Headers / footers
+% ---------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[L]{\footnotesize Technical Report --- \texttt{werk}}
+\fancyfoot[R]{\footnotesize \thepage}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+  \fancyfoot[L]{\footnotesize Technical Report --- \texttt{werk}}%
+  \fancyfoot[R]{\footnotesize \thepage}%
+}
+
+\captionsetup{font=small,labelfont=bf,skip=4pt}
+
+% float placement: prefer many floats at the top, few float-only pages
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.6}
+\renewcommand{\textfraction}{0.06}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\dbltopfraction}{0.92}
+\renewcommand{\dblfloatpagefraction}{0.75}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\dblfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\parindent}{1em}
+\frenchspacing
+\raggedbottom
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\code}[1]{\texttt{\small #1}}
+
+% ---------------------------------------------------------------------------
+% Title block
+% ---------------------------------------------------------------------------
+\title{%
+  \vspace{-2.0em}
+  {\bfseries\huge Agent-Implementability as a Format-Quality Metric}\\[0.35em]
+  {\large A Measurement Protocol for Self-Contained File Formats, and \texttt{werk},
+   a Container Doctrine Designed Against It}\\[0.5em]
+  {\normalsize\itshape Technical Report --- version 0.2 (second edition)}%
+}
+
+\author{%
+  Gregor Hubert Max Koch\\
+  {\small\itshape Independent researcher}\\
+  {\small\href{mailto:gregor.koch@gmail.com}{gregor.koch@gmail.com}}%
+}
+
+\date{8 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+A file format's quality is usually argued rather than measured. We propose that it can be measured directly, by a single question: given one file and nothing else --- no web, no library, no prior familiarity, no author to ask --- can an uninvolved implementer write a correct reader for it? We call the answer \textbf{agent-implementability}, and the arrival of language-model agents makes it cheap enough to run as an acceptance gate rather than to invoke as a virtue. The contribution of this paper is the metric and its protocol; the format is the apparatus that made it testable.
+
+We report seven runs of that protocol, moving first the task and then the implementer. In round 1, four fresh isolated agents in four languages were handed one 13\,MB package and asked to open it, list it, verify it and extract from it. All four succeeded, in 486, 519, 755 and 806 seconds; \textbf{none of the four learned the format from the reader programs bundled inside the file}, which is the result that makes the metric mean what we want it to mean. Twelve distinct specification bugs were surfaced, one of them a two-byte hashing ambiguity that three agents in three languages hit independently and that a year of internal review had not. In round 2, on a second profile carrying a custom binary payload, two agents parsed the binary envelope and \textbf{recomputed an embedded image descriptor bit-exactly from the source pixels} using only the in-file layout grammar; one implemented Ed25519 from the embedded mini-specification and reported \code{signed-and-valid}, and the other declined the curve arithmetic and reported \code{signature-unverified}. In round 3, one agent given a 30\,MB Gaussian-splat package wrote a splat reader from the layout grammars alone, cross-checked the package's derived point cloud to a maximum 8-bit difference of zero over 281\,498 points, and filed four real defects --- three of which were the same defect: a provenance format overstating what it had proved.
+
+Four later rounds move the implementer instead. Frontier coding models from two other laboratories repeated rounds 1 and 3 against the pinned committed fixtures, 4 of 4, reproducing round 1's 0/4 on the bundled loaders from vendors that had never seen round 1. Eight open-weights models between 4B and 30B were then run locally with \textbf{no agentic harness at all} --- the file's own self-description inlined into the prompt, one program per turn, the traceback fed back --- which yields a number the format did not previously have: the whole test fits in \textbf{31\,490 tokens} of self-description, and four models built a correct reader from it. A package carrying a language model \emph{and the complete source of a runtime that executes it} was handed to two vendors with one sentence, and both made the model produce text matching the package's own temperature-zero test vectors, in 98 and 648 seconds. And one package was printed on three sheets of A4 in a matrix code invented for the round, degraded, and recovered \textbf{byte-identically} by an agent given only photographs and a sentence naming no format.
+
+Around the experiment we report seven independent consumers with re-runnable acceptance gates, including a package that \textbf{regenerates its own payload byte-identically by running the tools embedded inside it}, a Blender-authored package whose three textures survive an Unreal round trip \textbf{pixel-identically}, and one hash algorithm specified in prose that three independent implementations --- Python, Rust and C++ --- reproduced to the same digest. We report at length what none of this establishes: n = 1 per language per round, a single model family, fixtures that evolved between rounds, two harness failures, a vision model that called a metal street lamp oak wood at 0.95 confidence, and a generated image that violates its own prompt's exclusion list --- which an agent read, unprompted, as evidence that a recipe records instructions and not guarantees. And in the deliberately worst-case arm --- a small model behind a bare API, with no scaffolding, no tools and no supervision --- this protocol did not get a working reader out of any model below roughly 9B parameters, which we report as the benchmark result it is rather than as a property of the format.
+
+\end{abstract}
+\section{Introduction}
+
+\subsection{Formats die of missing knowledge, not of missing bytes}
+
+A modern digital artifact is usually a promise about other files. A mesh promises materials it does not carry. An engine asset promises fifty siblings in a sidecar directory. A document promises fonts; a video promises a codec. And each of them promises a \emph{program}: some application, at some version, on some machine, without which the bytes are noise.
+
+This is the mechanism by which formats die. The application rots, the documentation moves, the one engineer who knew the quirks retires, and the bytes remain, mute. The loss is not of data --- the data is right there --- but of the knowledge required to interpret it. Digital preservation has named this problem for two decades and converged on a set of sustainability factors, of which self-documentation and freedom from external dependencies are two; what has been missing is not the diagnosis but a way to tell whether a format satisfies them.
+
+\subsection{An untestable virtue becomes a measurement}
+
+The usual defence of a documented format is a claim of the form \emph{a competent engineer could implement this from the specification}, and that claim has never been cheap to test. Hiring four engineers who have never seen your format, isolating them from the internet and paying for a week of their time to discover that your section 4.4 has an arithmetic error is not a practice any format has been able to afford, which is why essentially no format has done it. The virtue was real and untestable at once, so it degraded into a marketing adjective.
+
+Language-model agents change that economics, and only that. An agent can be instantiated fresh, denied network access, pointed at exactly one file, and asked to produce a working program --- repeatedly, in several languages, for the cost of a few hours of compute. The question \emph{can an isolated implementer write a correct reader for this file, from the file alone?} stops being rhetorical and becomes a measurement with a protocol, a success criterion, a failure taxonomy and a falsifier.
+
+The thesis of this paper is that designing a format \emph{against} that measurement is not merely a way to score well on it. The properties one is usually told to want --- hermeticity, self-description, graceful degradation, declared conventions, recorded provenance --- fall out of the metric as consequences rather than as a wishlist, because each is exactly what an isolated implementer needs and each fails visibly when absent. Every design decision in the container described here was either derived from that requirement or corrected by a run of the experiment.
+
+\subsection{Contributions}
+
+\begin{enumerate}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
+\item \textbf{A format-quality metric with a protocol} --- agent-implementability, its isolation rules, its pre-declared success criteria, and the taxonomy of what is recorded when it fails (\S4).
+\item \textbf{Seven runs of that protocol} in four protocol arms, across three container profiles, five languages, three commercial model families and five open-weights lineages, with all agent programs and outputs committed (\S5).
+\item \textbf{A measurement of how much specification a format actually needs}: the whole of one package's self-description, sufficient for four independent models to write a correct reader, is 31\,490 tokens (\S5.6).
+\item \textbf{A demonstration that the metric's failures are its product}: nineteen distinct specification bugs in the first three rounds and twenty-eight further findings in the four later ones, each traced to a ruling or a filed proposal, including one that three agents in three languages hit independently while no internal review had (\S5.10).
+\item \textbf{\code{werk}}\footnote{The format's name is \code{werk} (German \emph{Werk}: a work, an opus); files carry the extension \code{.werk}. The name is set in typewriter face throughout, to distinguish it from the ordinary German word.}, a container doctrine whose acceptance gates are stated in terms of the metric and whose specification travels inside every file it describes (\S2, \S3), extended here to two artifact classes that stress it: an \textbf{executable} payload carried as source (\S5.7) and a \textbf{printed} package whose only substrate is ink (\S5.8).
+\item \textbf{Ecosystem evidence that the metric is necessary but not sufficient}: seven consumers with re-runnable gates, including a self-regenerating package, a pixel-identical cross-engine texture round trip, and a prose-specified digest reproduced by three independent implementations (\S6).
+\item \textbf{A capability-ladder framing} of what a format can and cannot do for an implementer, with the rungs that are measured separated from the rungs that are argued (\S9.4).
+\item \textbf{An honest account of the limits}, including the ones that are results (\S7, \S9).
+\end{enumerate}
+
+\subsection{Scope, and what is not claimed}
+
+Hermetic packaging is not new; self-describing serialisation is not new; cryptographic provenance for media is not new; content addressing is not new. \S8 places each of those traditions. What is new is the proposition that whether a format achieves self-containment is an \emph{empirical} question with a repeatable answer, and that the experiment belongs inside conformance rather than beside it.
+
+This is a technical report on a system built and measured over a short, intense development period; it is not a controlled study, and \S7 states the limits at greater length than convention would, because a paper arguing for honesty about what is known cannot practise otherwise.
+
+\section{Design principles derived from the metric}
+
+\code{werk} is deliberately not a file format. It is a doctrine for building file formats: twelve laws that govern every concrete \emph{profile}. Profile 1 is a 3D entity; profile 2 is an image. The laws mention no triangles, and both profiles instantiate them unchanged. This section argues the load-bearing ones as consequences of \S1.2 rather than listing them as preferences; Table 1 states all twelve for reference.
+
+\begin{table}[t]\centering\footnotesize
+\caption{the twelve laws, from \code{MANIFESTO.md} v0.1; law 10 is the subject of this paper.}
+\begin{tabular}{@{}c L{2.05cm} L{4.2cm}@{}}
+\toprule
+\# & Law & In one sentence \\
+\midrule
+1 & Hermeticity & A \code{werk} answers every question it raises; no external references, ever. \\
+2 & Self-description & The knowledge to read the file travels inside it: narrative spec, JSON Schemas, byte-level layout grammars. \\
+3 & Islands & Every node is self-contained; edges are \code{requires} or \code{enhances}; a node that cannot be parsed costs one feature, never the file. \\
+4 & Identity over indices & Stable ids survive re-export; indices rot. \\
+5 & Provenance and epistemic status & Every derived node records who made it, from what, and how sure: \code{authored}, \code{measured}, \code{inferred}. \\
+6 & Versions live in the file & Multiple coexisting versions, append-only, one advisory \code{active} pointer, a mandatory work note each. \\
+7 & The signature chain & Append-only Ed25519 custody over the manifest hash; three states, surfaced, never enforced. \\
+8 & Conventions declared numerically & Units, handedness, axes, colour spaces, quaternion order, alignment: machine-checkable values, never prose. \\
+9 & Two masters & Every payload earns its bytes twice, for runtime and for tooling; preview-tier bytes physically first. \\
+10 & Agent-first, measured & Implementable from the payload alone, and this is tested, not asserted. \\
+11 & Boring encodings & Flat POD arrays, explicit strides, little-endian, magic plus version plus header length plus payload. \\
+12 & Extension without breakage & \code{core.*} is the constitution, \code{x.*} the frontier; readers skip what they do not know, for free. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Hermeticity, and the exceptions that are argued rather than assumed}
+
+An isolated implementer cannot follow a reference. That makes hermeticity the first law rather than a nice property: a \code{werk} file references nothing outside itself --- not a texture path, not a URL, not an engine asset id --- and where a payload needs an input, the input is embedded.
+
+There are exactly two exceptions in the whole doctrine, and both are instructive because the argument for them is not convenience. A generation recipe records the models that produced an artifact: input \emph{media} MUST be embedded and listed in the recipe node's own file list, while model \emph{weights} may be named by hash without being carried, and a recipe that does not carry them must say so rather than stay silent. A 12\,GB checkpoint inside every generated image is not a format, and the line falls where it does because input media are small and are the thing the model actually saw. The second exception is narrower and has the same shape: an \emph{intermediate} that an embedded tool reproduces from an embedded input need not be carried, provided the recipe records its hash, its size and the exact invocation. That is not a loophole but a strengthening --- a 15\,MB intermediate the file's own converter regenerates byte-for-byte from a 9\,MB input the file carries is \emph{more} checkable than a copy, because a consumer can run the check instead of comparing two blobs it was handed. \S5.4 reports that check running.
+
+\subsection{Self-description at three layers, and why boring encodings still get a grammar}
+
+Self-description is layered. \code{spec/SPEC.md} is the narrative specification of the profile; \code{spec/schemas/*.json} are JSON Schemas for every structured node, stored as ordinary data files; \code{spec/layouts/*.layout.txt} are plain-text layout grammars for every custom binary, giving endianness, alignment, offsets, types, counts and field semantics precisely enough to write a parser from scratch.
+
+Where a boring ubiquitous encoding exists --- zip, PNG, WAV, GLB, JSON, UTF-8, CRC-32, SHA-256, Ed25519 --- \code{werk} uses it, per law 11, \emph{and still embeds a byte-level mini-specification with test vectors}. This looks redundant and is the decision the experiment vindicated hardest: in round 1 no agent needed anything external for the container, the hashes, the media encodings, the manifest structure, the node graph, the edge semantics, the version-resolution rules, the signature states, the refusal scopes or the exit statuses. Ubiquity is a property of the present tense; a mini-specification is not.
+
+The container's compression default follows from the same requirement rather than from a benchmark. A \code{werk} package is a directory tree, the interchange form is that tree zipped, and compression defaults to zip \emph{store} mode, because a zero-dependency store-mode zip reader is roughly a hundred lines in any language and several hundred more with inflate. The payloads that dominate a package's size are already internally compressed, so deflating the container buys single-digit percentages on the bytes that matter; cross-file redundancy is a store's job (\S6.7), not the format's.
+
+\subsection{Degradation as the default control flow}
+
+Every node is an island: self-contained, meaningful alone, never reaching into another node's bytes. Cross-references go through the manifest by identity, edges are typed \code{requires} or \code{enhances}, and almost everything is \code{enhances}. Corruption is quarantined per node --- a hash mismatch marks the node dead, logs a report entry, and the load continues --- and unknown-because-newer travels the same code path as unreadable-because-broken, which is what makes law 12 free: an extension namespace costs a reader nothing, because the skip-and-report machinery already had to exist for damage.
+
+The operational meaning of \emph{refuse, do not guess} was itself a specification bug, found by two independently written bootstrap readers and ruled during this work. Refusal now has three scopes and a reader picks the smallest that contains the problem: \textbf{value} (one field), \textbf{node} (bytes, envelope, schema, or a \code{requires} edge failed), and \textbf{container} (not a zip, no end-of-central-directory record, zip64 in a zip32-only reader, or an unparseable manifest --- the only scope permitted to come back empty-handed). Exit status is pinned to the same taxonomy: 0 opened with no error entry, 1 opened with at least one error entry, 2 container-scoped refusal. A specification that says ``degrade gracefully'' and stops there has told an implementer nothing checkable; one that enumerates scopes and pins exit statuses to them can be got right by strangers, and in \S5.2 four of them do.
+
+\subsection{Epistemic provenance, enforced by schema rather than by review}
+
+Law 5 attacks the silently-wrong-answer class of bug directly. Every derived node records its producer, its ordered input files, its input parameters and a hash over both, and carries an epistemic stamp of \code{authored}, \code{measured} or \code{inferred}. An inferred value is useful \emph{because} it is labelled inferred; laundering it into fact is the failure.
+
+The stamp is machine-enforced, not hoped for: the manifest schema carries a conditional requiring an input hash and an \emph{ordered} input-file array whenever a stamp is \code{measured} or \code{inferred}, because an unordered input set cannot produce a reproducible hash. Two independent adapter authors, working on Blender and on Unreal, each attempted to stamp an authored artifact as \code{measured} and were rejected by the schema rather than by a reviewer --- in both cases correctly, because a live editor scene is not a file in the package and there is nothing to recompute against. The payoff is that stale derived data becomes detectable from the file alone: in \S6.6 the acceptance gate recomputed all 78 stamped-derived input hashes from the packages' own bytes, and in round 2 an outside agent did the same for 7 of 7 without being asked.
+
+\subsection{History and custody inside the file}
+
+A node may hold multiple coexisting versions, append-only, with one \code{active} pointer that is the author's recommendation and not a command. Every version carries a mandatory work note --- one sentence of why it exists --- as payload rather than as tooling metadata, because a history that lives in a repository is a history that does not travel with the file. Old versions are never rewritten; compaction is an explicit, signed, logged choice.
+
+Authorship is an append-only Ed25519 chain. Each entry signs the manifest hash and the manifest hashes every file, so a signature covers the entire package state transitively. Conformant tools must surface three states: \textbf{signed-and-valid}; \textbf{absent} (anonymous by choice or by stripping --- nothing breaks, but the absence is visible); and \textbf{present-and-invalid} (tampering under an existing signature, the state that catches bad actors). A fourth fixed token, \code{unverified}, exists for a reader that did not check, so that declared narrowness is available and silent narrowness is a bug; three of the consumers in \S6 report it and none of them guesses. One consequence is easy to get backwards, and we flagged it in advance as the most likely thing an outside implementer would invert: \textbf{corrupting a payload does not invalidate the signature} --- the chain signs the manifest, the manifest hashes the files, and detection belongs to the per-file hash --- while \textbf{corrupting the manifest does}, under a different report code. Section 5.2 reports what happened when nobody was told.
+
+A late addition closes the last self-description gap: every manifest now declares a digest over the specification tree the package carries, so that ``which revision of the specification does this file claim to conform to?'' is a comparison rather than an inference (\S6.8).
+
+\subsection{Facts without enforcement, three times}
+
+Profile 2 introduced two base-doctrine node types that every profile inherits. \code{core.recipe} is the full reproduction record: models with weight hashes where they exist, prompts as files rather than as strings, seeds, samplers, adapters by hash, tool versions, every input medium by hash, and a declared reproducibility grade. \code{core.disclosure} carries machine-readable facts about synthetic content and carries no enforcement of any kind. The format ships facts; the viewer applies its own jurisdiction; a viewer that ignores every disclosure field is still conformant. The schema's jurisdiction note exists precisely so that authors stop writing that sentence into free text where no reader can find it, and its own description forbids a tool from reporting compliance on the strength of it. \S8 contrasts this with C2PA, whose provenance model is coupled to an enforcement and trust-list apparatus.
+
+The same doctrine was extended to licensing by ruling on a real case rather than a hypothetical one: a conformance fixture built from third-party capture data whose terms are genuinely not established ships with a licence file that says exactly that. The format provides the structured place for licence facts and nothing else, no conformance clause turns on what the licence text \emph{says}, and a package whose licence honestly states that its content's terms are unknown is exactly as conformant as one under a permissive licence. What the format guarantees is what it guarantees for a disclosure: that the text cannot be swapped or stripped silently, because the manifest hashes it and the chain signs the manifest.
+
+The same restraint governs embedded executable content. A package may carry the source of the tools that made it, and the schema for such a node carries \code{never\_auto\_execute} as a \emph{constant} rather than as a switch, so a package cannot opt out and a consumer that never reads the safety section still sees the rule: source always, prebuilt binaries never automatically.
+
+\section{The \code{werk} container}
+
+\subsection{Physical layout, manifest and envelope}
+
+The interchange form is a store-mode zip whose entries are ordered so that a ranged read of the first megabyte is useful on its own. Figure 1 shows the shipped Gaussian-splat package, the most complete instance: the manifest, the signature, the licence, the readme, all three bootstrap readers, the whole specification tree, the semantics node, a preview, \emph{and the source of every tool that made the file} precede the bulk payloads, in 1\,160\,246 bytes of a 30\,163\,573-byte package.
+
+\begin{figure}[t]\centering\small
+\begin{minipage}{\columnwidth}\footnotesize\begin{verbatim}
+MANIFEST.json    the only index: profile,
+                 conventions, nodes, versions,
+                 per-file sha256, spec_sha256
+SIGNATURE.json    append-only Ed25519 chain
+LICENSE  README.txt
+loaders/werk_read.{py,rs,c}    bootstrap readers
+spec/SPEC.md   spec/MINI-SPECS.md  (zip, CRC-32,
+               SHA-2, Ed25519, PNG, WAV, GLB)
+spec/schemas/*.json  spec/layouts/*.layout.txt
+tools/werk-gsplat/*.py         the tools that made it
+semantics/  preview/           -- preview prefix ends
+splats/plush.wkgs              WKGS, 6 sections
+points/plush-dc.wkpc           WKPC, derived
+source/plush.splat             the recipe's input
+\end{verbatim}\end{minipage}
+\caption{the shipped Gaussian-splat package, abridged; entries appear in this physical order.}
+\end{figure}
+
+Entry order is a SHOULD and the declared preview-prefix length is a hint. Both were proposed as MUSTs and deliberately ruled weaker, for a reason worth recording: the prefix length is a measurement \emph{of the container that contains it}, so writing it moves every later entry and changes the measurement. Every writer here iterates to a fixed point and every one converges, but a MUST that a correct writer can fail for arithmetic reasons is a MUST in the wrong place --- and an implementation that hardened either rule would now be stricter than the format and would reject conformant packages, which the specification says in its open-items list rather than leaving to be discovered.
+
+\code{MANIFEST.json} is the only index. It declares the profile, the container facts, the conventions as numbers, the primary-entity pointers, and the node graph: for each node an id, a type, and one or more versions, each with an ordered file list carrying path, size and sha256, an epistemic stamp, a producer record and a work note. Nothing in a package is reachable except through it, and nothing in it is reachable except by identity --- no node refers to another by index, and no file refers to another by path. Two structural rules deserve naming because outside readers forced both: schema maps may be empty, because a package with no schema-bearing nodes is conformant; and the primary-entity pointer gained a type-agnostic \code{geometry} slot alongside the narrower \code{mesh}, because a Gaussian splat is not a mesh, and a package that had to choose between calling it one and declaring nothing was being asked to lie in one direction or stay silent in the other.
+
+Custom binary payloads share one envelope: a four-byte magic, a version, a header length, a header in a declared MessagePack subset, and a table of sections at declared offsets. The grammar's section rule is normative in both directions --- an unknown section is \textbf{skipped and reported}, and a higher version integer is never grounds to refuse a payload, because a version integer declares the minimum grammar revision needed to read the file \emph{completely}. A clip that carries no translation track is still written as version 1, byte-identical to what an earlier writer produced, which is why an extension that added a payload section left every existing fixture, reader and adapter untouched.
+
+The envelope is also where the metric found the format's most embarrassing gap. The reference core's magic table knew four magics and not the fifth, so it silently declined to parse the one envelope in the image profile's fixture --- and reported nothing, because an unrecognised magic is by rule not damage. The omission was therefore \emph{indistinguishable from a package with no envelopes in it}, and it was found only by adding two more magics beside it. A table that must be edited in four files when one magic is added has no mechanism keeping the four honest, and nothing measured the gap.
+
+\subsection{Profiles and node families}
+
+Profile 1, the 3D entity, carries source and game meshes, LOD chains, materials and textures, octahedral imposters that double as the asset browser's preview, colliders, mass properties, rest poses, distance and flow fields, a quaternion skeleton with one-pose retargeting, sampled animation, a complete sound package, simulation properties and semantic facets. Profile 2, the image, carries the image, its recipe and its disclosure. Recipes and disclosures are base doctrine and belong to every profile, as --- since the most recent revision --- are point clouds, Gaussian splats and \emph{tools}: a tool node carries a program's source and a sibling configuration node carries its invocation, and a recipe step may name them by node id, so that ``which tool'' is answered inside the package rather than by a hash somebody else has to look up.
+
+The splat family is the clearest illustration of law 8, because Gaussian splatting [23] is a field where every ambiguity is real and undeclared in practice. The container stores \emph{activated} scales and opacities and says so, with the exact inverses in the grammar, rather than making every reader in every language carry an exponential and a sigmoid for the benefit of one consumer in a thousand resuming training. Spherical-harmonic coefficients are stored coefficient-major, transposed from the common channel-major source order, because evaluating them is a loop over coefficients accumulating into RGB --- a renderer written against the source layout and pointed at this one gets plausible colours and wrong view dependence. And the quaternion order is the one field a source PLY does not declare at all: the reference implementation stores the real part first, widely used exporters store it last under identical property names, and nothing in the header distinguishes them, so the grammar makes \emph{recording what was guessed, and how weakly}, mandatory. That this matters is measured rather than argued: on one real capture the component statistics identify the order strongly, and on a 1.92 M-Gaussian trainer output the four mean absolute components are 0.4578, 0.4627, 0.4768 and 0.4509, which decides nothing.
+
+\section{The experiment: the agent gauntlet}
+
+\subsection{Protocol and isolation}
+
+A conformance fixture is copied to a neutral directory outside every project repository. A fresh agent is instantiated with its own workspace and given one task sentence, verbatim:
+
+\begin{quote}\small\itshape
+Here is a file: \code{...\textbackslash{}crate-v1.werk}. Write a program in $\langle$L$\rangle$ that opens it, lists its contents with their meanings, verifies integrity, and extracts the primary mesh and one sound to disk. You may read anything inside the file. You may not search the web or read anything outside the file.
+\end{quote}
+
+Isolation is enforced as a hard constraint rather than requested: the only permitted input is that file and its contents; the project repositories and any specification, \code{werk} or loader directory anywhere else on the machine are off limits; web search and web fetch are forbidden; and --- the clause that does the most work --- \emph{recognising the format from prior knowledge does not license using it}, so that everything must be derived from the file.
+
+\subsection{Success criteria, declared before the runs}
+
+Success is not self-reported, and the criteria were fixed in the brief before any agent was instantiated. An agent succeeds if its program opens the container, lists the node graph with meanings, verifies every declared hash, extracts the named payloads, and the extracted bytes hash to the values the manifest declares. Round 2 added three clauses: parse the custom binary payload and print what is inside it; state in plain language how the image was generated; and state what the file declares about that generation. Round 3 added two: identify the tools that made the file and show their source, and take the specified degradation path through a payload type the agent had no prior implementation for.
+
+Grading is by artifact, not by narrative: the programs and their complete outputs are committed, and the extracted files are hashed against the manifest by the grader rather than by the agent. The rule needed strengthening once, in the arm where the artifact is a program rather than a payload. A first grader for the self-run task scored a run as passing because the expected output text appeared in what the run produced --- and it appeared there because the package's own test vectors had been inlined into the prompt, so the model had printed the answer key. That check is now labelled an echo check and decides nothing; the grade requires the grader to invoke a binary the run actually built. This is the same rule the gauntlet applies to agents, applied to a grader that was accepting the package's own answer key.
+
+\subsection{What is recorded, and the one measurement that is load-bearing}
+
+Five things are recorded: success or failure; wall-clock time to a working reader; whether the agent used the reader programs bundled \emph{inside} the file; whether the agent wanted anything from outside the file; and every stumble, deduplicated afterwards into distinct specification bugs.
+
+The third is load-bearing and deserves its own justification. Every \code{werk} package embeds single-file, zero-dependency bootstrap readers in Python, Rust and C as ordinary payload. If agents learned the format by reading those, the experiment would be measuring \emph{can an agent port a program}, which is a different and much easier question. The metric means what we claim only if the specification is the path of least resistance. This is why the 0/4 in Table 2 matters more than the 4/4 above it.
+
+A later round forced a correction to how that number may be read. A foreign agent passed every one of round 1's success clauses in 106 seconds having opened exactly one file inside the package, \code{MANIFEST.json}, and never opening \code{spec/} at all (\S5.5). A manifest rich enough to drive a correct reader is arguably the design working, but \emph{declined the loaders} and \emph{used the specification} are two measurements and the first hides the second. Every round from \S5.5 onward therefore reports \textbf{how many implementers opened the specification} beside how many declined the loaders, and both numbers are task-relative.
+
+\subsection{Deviations, recorded rather than hidden}
+
+Three deviations from the brief are recorded, and the first two bear on how the numbers may be read.
+
+The task sentence was not literally the only text an agent received: each also got the isolation rules above, a workspace path, a timing instruction, an instruction to report stumbles honestly, and one environment note --- this host's MinGW gcc fails silently under one available shell, a sandbox artifact that would otherwise have been recorded as a format failure. The task sentence itself is verbatim. The reporting instruction is not neutral either: agents were told that a stumble is worth more than a clean run and that under-reporting to look competent would corrupt the experiment, which inflates the stumble count relative to a silent run --- the intent, since the stumbles are the product --- and means the count is not comparable to one gathered without that instruction.
+
+The damaged fixture was never handed out in round 1. The brief called for re-running two agents against a deliberately corrupted copy; in the event all four synthesised their own damage without being asked, so there was nothing left to re-run. That is a stronger result than the brief asked for and a weaker one than it specified: nobody was tested against damage they did not design. C++ was in the brief's language list and was not run as an implementer; it is covered as a \emph{consumer} by the three-face test of \S6.1 and by the third implementation of the spec digest in \S6.8.
+
+\subsection{Four protocol arms, and what each one varies}
+
+The first three rounds vary the \textbf{task} and hold the implementer fixed: a frontier coding model inside its own agentic command-line harness, with a shell, a file system and the ability to run what it writes. Rounds 4 to 7 hold the task family roughly fixed and vary the \textbf{implementer}, along two different axes, and they are reported as separate arms rather than as more data points because the conditions are not comparable.
+
+The \textbf{agentic arm} is rounds 1 to 3 plus the cross-vendor round: an autonomous agent in a sandboxed CLI, isolation enforced by the sandbox where the harness offers one and audited from the transcript where it does not. The \textbf{void arm} is deliberately the weakest condition the metric can be run in: a small open-weights model behind a bare chat API, with no tools, no shell, no scratch space and no supervision. It cannot open the file, so the harness inlines the file's own self-description into the prompt, takes one complete program per turn, runs it against the real package and feeds back the traceback; the bundled loaders are never inlined, because pasting them in would make the loader metric meaningless. The \textbf{self-run arm} changes the artifact rather than the implementer --- the payload is \emph{executable}, and the task is to run it --- and the \textbf{hardcopy arm} changes the substrate, printing the package and handing the reader photographs.
+
+The seven runs, in order. Round 1 ran four agents in Python, JavaScript, Rust and C against a 3D-entity package. Round 2 ran two agents in Python and Rust against an image package carrying a custom binary payload, chosen to close the gap round 1's own verdict identified: round 1's fixture had no custom binary at all, so the entire envelope apparatus went untested. Round 3, the mini-gauntlet, ran one agent against the Gaussian-splat package, with an explicit additional instruction not to execute anything that came out of the file. Round 4, the cross-vendor round, gave two other laboratories' frontier models round 1's task sentence verbatim and then round 3's, on the pinned committed fixtures. Round 5, the open-weights round, is the void arm, with a post-fix second arm that re-ran the failing models after their findings had been turned into specification text. Round 6, the self-run round, handed out a package carrying a language model and its runtime's source. Round 7, the hardcopy round, handed out three photographs.
+
+\section{Results}
+
+\subsection{Round 1: four languages, one file}
+
+The artifact was the 3D-entity fixture as it stood on the morning of the run: 13\,262\,619 bytes, 157 zip entries, 36 nodes, 155 declared files. It is a wooden crate with a complete sound world, taken from a real production run of a separate 3D-to-audio pipeline rather than mocked up: 272 vertices and 408 triangles of source geometry, a minimal bounding sphere of r = 0.8893\,m computed by Welzl's algorithm [24] and checked against all 272 points, 20 audio effects across 73 WAV files, six rendered orbit views and ten segmentation crops carried as extension nodes, and one signature-chain entry. Its preview prefix was 723\,944 bytes, 5.46\,\% of the archive.
+
+\begin{table}[t]\centering\footnotesize
+\caption{agent gauntlet, round 1.}
+\begin{tabular}{@{}L{4.6cm} r@{}}
+\toprule
+Measurement & Value \\
+\midrule
+Success rate & \textbf{4 / 4} \\
+Languages & Python, JavaScript, Rust, C \\
+Median time to a working reader & \textbf{637\,s} \\
+Mean & 642\,s \\
+Range & 486--806\,s \\
+Used bundled loaders to learn the format & \textbf{0 / 4} \\
+Read a bundled loader at all & 2 / 4, after their own ran clean \\
+Extracted mesh and sound, hashes matching & 4 / 4 \\
+Wanted something from outside the file & 3 / 4, on the same two gaps \\
+Distinct spec bugs surfaced & \textbf{12} \\
+Total stumbles reported & 38 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Every agent opened the container, listed the graph with meanings, verified every declared hash, extracted the game mesh and one WAV, and matched the manifest's declared sha256 on both extracted files.
+
+The single most useful number in Table 2 is the 0/4. Two agents opened a bundled loader at the very end, after their own reader already ran clean, and both found that the loader did \emph{less} than what they had built: none of the three bootstrap readers implements the input-hash staleness check and none implements Ed25519 --- the two things that cost the most time. Had the loaders been the path of least resistance, this experiment would have measured program porting. The three agents that wanted something external all wanted the same two things, Ed25519 internals and SHA-512, and both are now in the file (\S5.5).
+
+\begin{table*}[t]\centering\footnotesize
+\caption{round 1, per agent; stumbles are raw self-reports, deduplicating to the twelve bugs of Table 10.}
+\begin{tabular}{@{}l r r L{4.9cm}@{}}
+\toprule
+Language & Time & Stumbles & Notable \\
+\midrule
+Python & 486\,s & 10 & Hand-rolled the store-mode zip reader rather than using the standard library's; implemented SHA-256 from the embedded structural facts and Ed25519 in about sixty lines of extended-coordinate Edwards arithmetic, then gated the program on the file's RFC 8032 vector \emph{and} on rejecting a wrong message, so a constant-true verify could not pass its own gate. \\
+JavaScript & 519\,s & 8 & The control for ``what if there is no loader in your language at all'': there is none, and it made no difference. Wrote a forty-line zip lister from prior knowledge \emph{before} reading any specification, then retro-confirmed it against the embedded mini-spec and found the zip64 rule it had missed. Supplied a twelve-byte DER prefix from memory and proved the guess with the file's own vector. \\
+Rust & 755\,s & 9 & Bare \code{rustc -O}, no cargo, no crates. Derived every SHA-2 round constant \emph{at run time} from the primes; computed the base point from its definition. Never read, ran or ported the Rust loader sitting inside the very file it was reading. Declared its own narrowness in the format's vocabulary rather than claiming coverage it lacked. \\
+C & 806\,s & 11 & Slowest and most thorough: single-file C99, standard library only, 56\,KB of source, and no memorised constant anywhere --- initialisation vectors, round constants, the curve constant and the base point all derived at run time from their definitions. Did not read the C loader shipping inside the file. The only agent to demonstrate all three signature states by construction. \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+Two patterns are worth naming. First, the agents were more paranoid than the specification asked them to be, and in a specific direction: three of four refused to trust remembered constants and derived them instead, and all four gated their cryptographic stack on the test vectors the file supplies. That is a property of the file rather than of the agents --- a package that ships an RFC 8032 vector makes \emph{prove your guess} the cheap move --- and the JavaScript agent's own note, that the file's vector rescued a guess and that this was still a gap, is simultaneously the mechanism working and the report of a real specification bug.
+
+\subsection{Damage, unprompted}
+
+Nobody was asked to test degradation. All four did.
+
+\begin{table*}[t]\centering\footnotesize
+\caption{damage the agents built for themselves.}
+\begin{tabular}{@{}l L{2.7cm} L{4.6cm}@{}}
+\toprule
+Agent & Damage it built & Result \\
+\midrule
+Python & a flipped byte in a WAV; separately an injected unknown node type; separately the signature file removed & exit 1; present-and-invalid for the injection, which re-serialised the manifest; 34 of 36 nodes still loaded, mesh and sound extracted; the stripped copy gave exit 0 and state absent \\
+Rust & a flipped byte in a WAV & exit 1, a zip CRC mismatch and a hash mismatch on that path, \textbf{35 live and 1 dead}, signature still signed-and-valid \\
+C (first) & a flipped byte in the embedded mini-specification, i.e. damage to the \emph{specification} it had just used & exit 1, 1 node dead, 35 alive, signature still signed-and-valid \\
+C (second) & a flipped byte in the manifest & exit 1, signature-invalid, \textbf{0 nodes dead and 0 files failed}, state present-and-invalid \\
+JavaScript & corruption run over two output sets & degraded, reported, continued \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+This is the strongest single piece of evidence in round 1 precisely because it was not asked for. Four independently written readers each got right the distinction we had flagged in advance as the easiest in the format to invert --- payload corruption leaves the signature valid, manifest corruption does not --- and three of the four produced the three-state doctrine as three \emph{distinct} outputs rather than two, which is the thing the specification warns tools get wrong.
+
+\subsection{Round 2: the custom binary, and two honest verdicts}
+
+The artifact was an image-profile package of 15 nodes: a real AI-generated character plate with its real recipe, chosen after auditing three candidates. The two rejections are the useful part. A video first frame was rejected because its prompt sidecar records the \emph{pre-wrap} input rather than the string actually sent, so the recipe would have been confident and wrong; a set of reference sheets was rejected because they are deterministic montages rather than model output at all, and a fixture for AI-generation recipes must not be built from something that was not generated. The two agents saw different builds, recorded rather than smoothed over --- 9\,969\,937 and 9\,973\,037 bytes, both 63 entries, the second rebuilt after the first agent's findings were fixed --- so the Rust agent tested the corrected file: a weaker test of three findings and a fair test of everything else.
+
+\begin{table}[t]\centering\footnotesize
+\caption{agent gauntlet, round 2.}
+\begin{tabular}{@{}L{4.6cm} r@{}}
+\toprule
+Measurement & Value \\
+\midrule
+Success rate & \textbf{2 / 2} \\
+Parsed the binary envelope payload & \textbf{2 / 2} \\
+Checked \emph{both} branches of the section consistency rule & \textbf{2 / 2} \\
+Stated the recipe correctly, with grade and caveats & \textbf{2 / 2} \\
+Stated the disclosure correctly, including that it binds nobody & \textbf{2 / 2} \\
+Used bundled loaders to learn the format & \textbf{0 / 1 recorded} \\
+Wanted anything from outside the file & \textbf{0 / 2} \\
+New spec bugs surfaced & \textbf{3} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The result worth putting first is not the success rate. A fresh agent, working only from section 4 of one embedded layout grammar, reimplemented the package's image descriptor and recomputed it from the source pixels bit-exactly:
+
+\begin{quote}\footnotesize\begin{verbatim}
+max |recomputed - stored| : vector  0.000e+00
+max |recomputed - stored| : palette 0.000e+00
+      (declared tolerance 1.0e-06)
+\end{verbatim}\end{quote}
+
+on both the 72-component vector and the 8-swatch palette. The second agent, in a different language, reproduced the descriptor as well and cross-checked its eight palette swatches against the duplicate copy of the same palette in the package's JSON semantics node, agreeing to $1\times10^{-6}$ including the re-encoded sRGB hex values.
+
+This is what an epistemic stamp of \code{measured} is \emph{for}: the claim a package makes when it stamps a node measured is that the value is a measurement of bytes that are also in the package, and that the procedure is defined completely enough for a stranger to redo. A stranger redid it, twice, in two languages, from a prose grammar in a text file, and hit every bit --- where the package's own builder had recorded a worst drift of $1.381\times10^{-8}$ against the same declared $1\times10^{-6}$, which is the correct direction for that surprise.
+
+The second result is a disagreement that is not one. The Python agent implemented Ed25519 from the package's embedded mini-specification and reported \code{signed-and-valid}; the Rust agent deliberately did not implement the curve arithmetic and reported \code{signature-unverified} --- the fourth token the specification defines for exactly this case --- while still rebuilding the signed message bytes, checking the chain linkage, and checking the anchor against the manifest actually present. Two readers, two honest verdicts, neither guessing. In round 1, three of four agents had named Ed25519 internals as the thing they wanted from outside the file; the difference between the rounds is one specification fix.
+
+\begin{table}[t]\centering\footnotesize
+\caption{round 2: checks the agents ran that we did not ask for.}
+\begin{tabular}{@{}L{4.4cm} L{2.9cm}@{}}
+\toprule
+Check & Result \\
+\midrule
+Python agent's own verdict line & 23 hard checks, 0 failed \\
+Rust agent's own verdict line & 16 passed, 0 failed, 1 note \\
+All declared input hashes recompute & 7 / 7, both agents \\
+Ed25519 against RFC 8032 [22] vector 1 & pass (Python) \\
+Preview prefix recomputed from local headers & declared 998\,658, computed 998\,658, over 58 entries \\
+Physical order against declared entry order & 62 of 63; the miss was a real bug \\
+Payload origin recomputed, and origin plus size against file length & 704 = 704; 1120 = 1120 \\
+Vector L2 norm against declared normalisation & 1.000000006 \\
+Palette: binary payload against JSON duplicate & all 8 agree to $1\times10^{-6}$, hex included \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two rows deserve comment. The palette cross-check is law 9 --- every payload serves at least two masters --- being \emph{audited by a stranger}: the same eight colours are stated twice, once in a binary payload and once in a JSON node, and the only way to know that the redundancy is not silently diverging is for someone with no stake to compare them. And the Python agent independently noticed that the palette weights sum to 0.995117 rather than to 1, correctly diagnosing a top-N palette rather than a cover, which is a specification bug found from the outside.
+
+Comprehension, not merely parsing, was the other thing round 2 tested, and both agents stated the recipe and the disclosure correctly, including the parts that limit what may be claimed. The Python agent produced the disclosure doctrine without being told it --- the format ships facts, the viewer applies jurisdiction, a viewer that ignores every field is still conformant, and what the program must not do is paraphrase the claim into a different one --- and drew, unprompted, the two distinctions the specification cares most about: that the chain verifies but its key is a published development key with no external root of trust, so the declared author ``is an assertion by a party and must not be presented as verified authorship'', and that the package's C2PA export node ``is a DECLARED BUT UNIMPLEMENTED mapping and proves nothing about C2PA interoperability''.
+
+The Rust agent produced the observation we consider the most valuable single sentence either round generated, and it is not about parsing at all. The recipe's prompt carries an exclusion list --- among other things, no militaria --- and the delivered image contains uniformed figures with plumed helmets and epaulettes. The agent's reading was that this is the declared reproducibility grade doing exactly what the recipe warns it does: the recipe records the instructions, not a guarantee about the pixels. A reader with no context inferred, from a declared grade alone, the single most important thing a recipe does \emph{not} promise. We report it as a positive result about the recipe node and as a permanent caveat about all recipe data everywhere.
+
+\subsection{Round 3: a package that rebuilds itself, read by a stranger}
+
+Round 3 tested the newest claim in the doctrine: that a file can carry the code that made it, and that this is checkable rather than decorative. The fixture is a 30\,163\,573-byte package built from a real photogrammetric capture of a physical object --- 281\,498 Gaussians, 9\,007\,936 bytes of source --- through three embedded tools: a converter from the compact splat form to a PLY, an ingester from PLY to the container's splat payload, and a degrader from the splat to a plain coloured point cloud. All three travel as tool nodes with configuration siblings; the source travels in the recipe node's own file list; the 15\,764\,528-byte intermediate PLY does not travel, and its hash, size and exact invocation are recorded instead, per \S2.1.
+
+The acceptance gate runs the check that makes the arrangement mean something. In a neutral directory, with the interpreter's module path set to the extracted files alone and nothing from the project repository reachable, the package's own embedded tools are run on the package's own embedded input: the intermediate PLY comes back matching the declared hash, and the splat payload comes back \textbf{byte-identical}, in 0.54\,s. The gate's splat decoder is written in the gate file itself, from the header's own declared offsets, so that a broken writer cannot be agreed with by its own reader; it reads 281\,498 Gaussians at exactly 56\,B each across six sections, finds zero non-positive scales, zero opacities outside the unit interval and a maximum quaternion-norm error of $4.92\times10^{-8}$, and recomputes the derived point cloud from the means and the DC band with zero position and zero colour mismatches.
+
+Into that, one fresh agent, given the file and nothing else. It wrote its own loader importing nothing from the package, found the store-mode zip and the splat envelope, read the header --- big-endian inside a little-endian payload --- without being caught by it, and took the normative two-section degradation path rather than implementing the full splat. It cross-checked its own decode against the point cloud the package ships: positions bit-identical, colours matching on 281\,498 of 281\,498 points at a maximum 8-bit difference of \textbf{0}. It verified every payload hash against the recipe, all eight tool source hashes against their tool nodes, and the manifest hash against the signature, and it noticed that a count the recipe declares for clamped opacities is exactly the number of values sitting on the clamp endpoints, which it counted itself. It identified all three tools with their roles and locations and quoted the ingester's array function verbatim --- and did not run any of it. Its own summary was that the grammar files alone were sufficient to write a reader from zero, and that it never needed outside knowledge of Gaussian splatting, of PLY or of MessagePack. Its two open items are honest ones: it did not verify Ed25519, having no library and reading in the package's own note that the development key is not a trust anchor, and it could not check the intermediate PLY's hash, because that requires running an embedded tool --- which the exercise forbade and which the gate does instead.
+
+It filed six defect reports in about twenty-five minutes. Four were real and all four are fixed; three of the four were the same defect wearing different clothes, and the shape is worth stating plainly because it is the shape this project is built to prevent: \textbf{a provenance format overstating what it had proved}. A note claimed reproducibility in terms that read as though the acceptance harness travelled with the package, when it does not; a byte-identity claim was scoped as unqualified in one file and as machine-local in another, which cannot both be right; and a garbled sentence had emptied out the one field designed to make a weak inference visible. The third was fixed at the root rather than in the text --- the ingester now computes the quaternion-order statistic \emph{unconditionally}, because the field had been left empty on exactly the run where the order was known. A cold reader found three overstatements of proof in twenty-five minutes, in a package whose entire argument is that it does not overstate. That is the metric working on the axis it was built for.
+
+\subsection{Round 4: the same file, read by two other laboratories' models}
+
+\S7 of the first edition named one limit more sharply than the rest: every agent came from a single model family, so a shared blind spot would look exactly like a shared success. Round 4 takes that step. Two vendors that are not ours --- OpenAI's Codex CLI 0.144.1 on \code{gpt-5.6-sol} and Moonshot's Kimi Code CLI 0.15.0 on \code{kimi-for-coding} --- were each given round 1's task sentence verbatim under round 1's isolation rules, and then round 3's splat task: four runs, and the first round whose artifact is the pinned committed fixture rather than a build that has since been superseded.
+
+\begin{table}[t]\centering\footnotesize
+\caption{round 4, the cross-vendor round; two vendors, two tasks, four runs. Times are process wall clock, not self-reports.}
+\begin{tabular}{@{}L{4.2cm} L{3.3cm}@{}}
+\toprule
+Measurement & Value \\
+\midrule
+Success rate & \textbf{4 / 4} \\
+Round-1 task, time & 558\,s, 106\,s \\
+Splat task, time & 512\,s, 377\,s \\
+Used a bundled loader to learn the format & \textbf{0 / 4} \\
+Ported a bundled loader & \textbf{0 / 4} \\
+Read a bundled loader at all & 1 / 4, after its own reader ran \\
+Opened \code{spec/} at all & 3 / 4; the exception is the finding \\
+Wanted anything from outside the file & \textbf{0 / 4} \\
+Extracted bytes hashed by the grader & 2 / 2, both payloads \\
+Splat point count, both vendors & 281\,498 / 281\,498 \\
+Defects found in the splat package & \textbf{0} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+What matters is the shape of the success rather than the rate. Both vendors resolved the payloads through the manifest's \code{primary} pointer rather than guessing paths, and the extracted bytes --- hashed by the grader, not accepted from the reports --- carry the same two digests our own agents produced. The deep run verified 203 hash declarations in ten families and got \code{input\_hash} right first pass at 25 of 25, so S-10, three of four round-1 agents' longest detour, appears nowhere in its stumble list: the fix holds outside the family that found the bug. On the splat package it went past round 3's own cross-check, matching all 3\,377\,976 position bytes byte-for-byte and recomputing all 844\,494 stored colour bytes under a round-half-even rule it found in an embedded tool configuration. Neither vendor implemented Ed25519 and neither claimed a verdict it had not earned; both reported \code{unverified}. Round 1's recognition threat reproduced, and so did its mitigation: an agent wrote a zip parser from remembered field positions, flagged itself unprompted, audited it against the package's own mini-specification and found three gaps in its own code where round 1's equivalent found one.
+
+The finding of the round is about the experiment. The Moonshot run passed all five of round 1's success clauses in 106 seconds having read \textbf{only \code{MANIFEST.json}} --- never the readme, never \code{spec/}. Round 1's criteria are therefore satisfiable without the specification, which bounds what the 0/N-loaders number establishes, and it stayed invisible for three rounds only because every previous agent read the specification when it did not have to. The control arrived the same afternoon: the same model on the splat task read fourteen files and named \code{spec/README.md} and the envelope grammar as its unblockers. It is the task that opens the specification, and the clauses that force it open are the ones rounds 2 and 3 added. The round also produced a caveat on the whole ledger: all four agents overestimated their own elapsed time against the process clock by factors of 2.2 to 11, so only harness-measured times are quoted here as measurements, and round 2's \textasciitilde{}65-minute Rust breakdown is an impression.
+
+\subsection{Round 5: the void arm, and how much specification a format needs}
+
+Round 4 added vendor diversity; what it did not add was implementer diversity, both vendors being frontier commercial coding models inside agentic harnesses. Round 5 removes the harness. Six open-weights models --- a 30B-A3B mixture-of-experts coder, a 30B reasoning mixture, a 27B dense model, a 9.4B, an 8B non-coder generalist and a 4B --- ran locally on one consumer GPU with no network, no tools and no shell, under the inline-context protocol of \S4.5. Nothing about the condition is favourable, and that is the point.
+
+It produces a number the format did not have. The self-description handed to the models --- complete manifest, complete zip entry listing with offsets, the bit-order, UTF-8, JSON, zip, CRC-32, SHA-256, WAV, GLB, PNG and Ed25519 sections of the embedded mini-specifications, one complete payload layout grammar, the conventions map, the signature and licence files, and 256-byte hex heads of each payload --- is \textbf{31\,490 prompt tokens}, measured as the server's own count, against 107\,388 for the full 3D-entity fixture. The fixture was made smaller to reach it, deterministically, from bytes already inside two pinned packages. Four models built a correct reader from those tokens: an upper bound on the minimum sufficient self-description for round 1's task, and the form in which the self-containment claim stops being rhetorical --- \emph{this many tokens, and a stranger can write the reader.}
+
+The bound is in fact looser than that, and the way we know is a defect in our own instrument rather than a new run. A later round re-read the committed context package and found that the section-selector that trims a specification document to the sections a task needs matched only headings of one shape, so \textbf{every section of the binary-envelope grammar was silently dropped} --- the block was present, the banner claimed the whole normative grammar, the body was one synthesised title line, and every counter in the harness reported eighteen of eighteen items included and nothing omitted. The round-1 task's own encodings came through a document the selector handled correctly and both passing digests are unchanged, so what the defect changes is the \emph{shape} of the claim rather than its direction: the four models that wrote a correct reader did it with less specification in front of them than the figure implies. It also invalidates the instrument for the round's second, spec-forcing arm, which asked two models to decode a binary envelope having shown them the magic, a hex head and no grammar at all; that arm's result is withdrawn as instrument-invalidated rather than reported as a capability finding. An instrument defect that a later round finds by re-reading the committed evidence is the methodology working --- the house rule that an agent's report is evidence about the agent and not about the artifact, applied one level up, where it had gone unenforced.
+
+\begin{table*}[t]\centering\footnotesize
+\caption{round 5, the void arm: no harness, no tools, no supervision. The post-fix column re-ran the failing models after their own findings had been written into the specification. Digests are graded by the orchestrator against the manifest.}
+\begin{tabular}{@{}L{2.7cm} l l L{4.4cm}@{}}
+\toprule
+Class and lineage & Pre-fix & Post-fix & Note \\
+\midrule
+30B-A3B MoE coder (Qwen) & PASS & not re-run & clean at iteration 3, 74.0\,s \\
+30B MoE reasoner (Z.ai) & PASS & not re-run & needed a larger generation cap \\
+27B dense (Qwen lineage) & PASS & not re-run & attempt 1 lost to a syntax loop \\
+9.4B (Z.ai), the control & PASS on retry & \textbf{PASS on attempt 1} & first clean run moved 3 to 1 \\
+7.5B raw, ``effective 4B'' (Google) & --- & \textbf{PASS} on retry & the first sub-9B pass in any arm \\
+8B non-coder (Meta) & FAIL & FAIL & wrote the descriptor where a WAV was asked for, twice \\
+4B (Qwen) & FAIL & FAIL & failure layer moved from the container to its own console I/O \\
+4B (NVIDIA) & --- & FAIL & second lineage; resolved both payloads, verified both digests, wrote no files \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+As a benchmark the arm says success is available from 9.4B upward, degrades at 8B and is absent at 4B, one model per class, with the 4B floor surviving a second independent lineage. Four passing models produced payload digests \textbf{identical} to the ones both commercial vendors and our own agents produced, which is the only cross-implementer agreement worth having: not that the reports agree, but that the bytes do.
+
+As an instrument it is more useful than its pass rate, because a large model routes around a missing sentence and a small one walks into it. Three gaps invisible to every frontier agent were found by lowering capability. The signed-message construction --- the exact six-field string a signature covers --- lived only in the full specification and a JSON schema, neither of which fitted the documentation budget, and every model that attempted a verdict reported \code{present-and-invalid} on a package that is \code{signed-and-valid}: a \textbf{false tampering alarm}, which is worse than reporting nothing. The manifest's \code{primary.sound} pointer names a node rather than a file, and the 8B model followed it to that node's first file and wrote out the JSON descriptor where a WAV was asked for --- the round's only wrong artifact produced by a program that believed it had succeeded. And the cheapest correct path through the container, \emph{this is an ordinary zip, use your language's zip library}, was nowhere stated, so the 4B model hand-rolled a reader and spent sixteen iterations failing to find the end-of-central-directory record with every offset it needed in front of it.
+
+All three became specification text --- a worked signed-message example generated from real bytes and checkable at a printed checkpoint, an optional machine-readable payload pointer with a resolution order that forbids silently taking the first file, and one opening sentence in the zip mini-specification --- and then the same models were run again. \textbf{The claim under test was that a failure locates a gap, the gap is fixed, and the same model then passes. It did not hold for either failing model.} The 8B did the identical thing a second time with the new field present in the manifest it had already read, naming the WAV; its program never looked at it. What moved is real and smaller: the 4B stopped fighting the container and produced a complete correct entry listing before dying on its own console encoding, no post-fix run raised a false tampering alarm, the weakest model in the arm restated the new signature rule in its own words, and the 9.4B control moved from pass-on-retry to pass on the first attempt. \textbf{A specification fix removes an excuse; it does not supply a capability.}
+
+The spec-forcing cell was therefore measured again, on a package that did contain the grammars: round 3's splat task, verbatim, at the void rung. Two things came out of it and neither is a pass rate. The first is a hardware boundary, recorded because the alternative is a silent substitution of exactly the kind the packer defect was: the splat task's complete self-description is \textbf{65\,775 tokens}, which needs a served context of at least 98\,304, and on a 24\,GB card a 27--30B model at four-bit quantisation cannot be given one at speed --- the same model prefills at 3\,751 tokens per second where the cache fits and at 274 where it does not. Three of the five rostered models were excluded by residency rather than by anything about them, so no \emph{n}/5 is reported. The second is that both models which could be served failed, and neither failure is a knowledge barrier. One never opened the artifact at all in eight successive programs, having read the isolation clause \emph{do not execute anything that came out of the file} as \emph{do not read the file}, and transcribed the inlined context into Python literals instead; the other opened the container at the first iteration and then spent seven revisions stuck on a single attribute error inside its own integrity pass. The first of those is a specification-wording finding worth carrying --- an isolation instruction written for an agent with a shell reads differently to a model that has none --- and the same misreading appeared again in a third arm, where a local model given the self-run task predicted the build command, the runner arguments and the expected digest correctly out of the package, and then compiled a path that did not exist because it had taken the inlined zip entry listing for a directory listing. It never produced an executable, and by its last iterations it was quoting the package's own documented build failure as the reason --- which is S-SR-11's mirror image: a recorded negative result is payload for an implementer that triggers it, and an available excuse for one that never got that far.
+
+That is also the boundary of what these failures mean, and the framing is the author's ruling rather than our inference. The void arm is worst-case by construction and sits outside the format's use case: no harness, no scratch space, no supervising second intelligence. Every rung above it passed everything, and both post-fix failures are of a kind a supervising human fixes in a minute --- one resolved both payloads and verified both digests and then never wrote the files; the other's residual failure was a console codec. In any real deployment the environment supplies the capability the void arm removed, which is \S9.4's argument. We report the threshold as the benchmark datum it is and decline to report it as a limitation of the format.
+
+\subsection{Round 6: a package that runs, not one that is read}
+
+Every round to this point asked whether a stranger can \emph{read} a package. Round 6 asks whether one can \emph{run} it. The fixture is a 62\,525\,273-byte package under a draft \code{model/1} profile carrying a 15\,191\,712-parameter language model in f32, its tokenizer, byte-exact layout grammars for both, and \textbf{the complete source of a runtime that executes them} as a tool node, with no prebuilt binary anywhere --- the never-auto-execute doctrine of \S2.6 applied to the case that most obviously wants one. It also carries two temperature-zero test vectors: the exact stdout of two runs, hashed under both line-ending conventions, with their token ids and the two-line instrumentation diff that captured them.
+
+Two vendors were given the file and one sentence --- \emph{this file contains a language model and everything needed to run it; make the model run and produce text, and verify your result against whatever correctness information the file provides.} Both succeeded on the first attempt, in \textbf{98.2\,s} and \textbf{647.5\,s}, and both outputs matched the embedded vectors byte for byte under the grader's own hashing, in both line-ending forms; the second matched the \textbf{token ids} too, by applying the package's own instrumentation diff. Four independent builds of that source --- three MSVC across two compiler versions, one static mingw --- produced identical output, which turns the package's own caveat about vectorising compilers reassociating reductions from a worry into a measurement.
+
+The vectors are what make this a measurement rather than a demonstration: without them, \emph{it ran} rests on an agent's word that fluent English is correct output, and a runtime reading the weights at the wrong offsets emits confident text. The second result is stranger. \textbf{A documented failure carried the second vendor through.} It never located the compiler the package recommends, went down the toolchain path the build note documents as \emph{failing}, hit both errors that note records verbatim, and applied exactly the two fixes it prescribes --- one cast and one preprocessor guard, both in the platform shim --- leaving the runtime source byte-identical. A note saying only \emph{use this compiler} would have stranded it; one saying \emph{the other fails} and stopping would have left it guessing. In a package that must be \emph{built}, negative results are payload.
+
+The limit is as plain as the result. \textbf{Neither agent opened the manifest, anything under \code{spec/}, or a bundled loader: 0 of 2 opened the specification, 0 of 2 used a loader, 2 of 2 succeeded.} The round establishes that self-containment extends past documents to executable artifacts, and that source-only distribution cost nothing here; it does not establish that any \code{werk}-specific structure was load-bearing, and a plain zip carrying the same readme and build note would very likely have produced the same 98 seconds. That is round 4's finding on a third task and both vendors, and the adversarial follow-up that would make the layout grammars earn their bytes --- a damaged self-run package, or one with no readme --- has not been run. Eleven findings came out of it, six of them schema-shaped gaps a ruled profile would have to close first: no word for an \emph{executor} role, a hermeticity rule no model package can satisfy because a training corpus cannot travel, and an environment block with nowhere to declare a compiler or its flags --- which bit immediately, the round's own headline comparison being across two compiler versions. One last observation belongs to law 12: handed this package, every bundled loader reports 14 nodes, 11 live, 0 dead and \textbf{3 skipped for unknown type}, because the whole payload sits in the extension namespace. A clean, honest, completely uninformative report is exactly the specified behaviour.
+
+\subsection{Round 7: the package as paper}
+
+Every previous round handed out \textbf{the file}, so \emph{the file explains itself} was never separated from \emph{the substrate already knows how to open it}: the container is a zip because zip readers are everywhere, and the manifest is JSON for the same reason. Paper separates them. Round 7 prints a package on three sheets of A4 --- two of prose, one carrying the last of the prose and all nine symbols --- where the payload tier is a 2D matrix code and \textbf{the printed prose is that code's only specification}.
+
+The decision that makes this evidence rather than a demonstration is that the code was invented for the round. QR was rejected for two reasons and the second is decisive. The first is size: a conformant decoder needs finder rectification, a forty-row alignment table, BCH format and version information, eight masks with penalty scoring, a 160-row block-structure table and Reed--Solomon over GF(256) --- a specification, not two printed pages. The second is that \textbf{a code which already exists cannot distinguish ``read the printed prose'' from ``recognised a QR code and called a library''}, so a QR artifact could not have measured self-description at all. The code used here has no library and appears in no training data, which removes the confound by construction, and it is why the optional QR convenience arm was deliberately not built. The price is stated rather than hidden: 99 modules a side, a locator frame, an orientation elbow, a 1128-byte codeword of which 1112 are payload, per-symbol CRC-32 turning corruption into erasure and one XOR parity symbol per eight turning erasure into recovery --- no in-symbol error correction at all, which is strictly worse than QR at what QR is good at, and describable, which is the requirement here. One surprise came free: at 0.10085 payload bytes per module net of parity against QR version 40-L's 0.09426, the describable code is \textbf{1.07$\times$ denser}, precisely because it spends nothing on in-symbol correction.
+
+A fresh agent was given a directory holding only three degraded photographs --- rotation of 0.55 to 0.90\textdegree{}, 1.1-pixel blur, a multiplicative illumination ramp to 62\,\%, Gaussian noise of standard deviation 9/255, JPEG quality 82 --- and one sentence naming no format, no encoding and no file type. In \textbf{206.7 seconds} it read the prose, implemented a decoder from scratch, recovered 8168 bytes whose SHA-256 matches the digest printed in words on the sheet, produced a file \textbf{byte-identical} to the payload, opened it as a package, verified every hash it declares, and extracted a 64$\times$64 image \textbf{pixel-identical over all 4096 pixels} to the generator's reference: five of five on the declared success ladder, first attempt, graded by the orchestrator from the artifacts. Its isolation is audited rather than assumed --- an attempted library install failed for want of a network, and a case-insensitive search of the whole 45\,654-byte transcript for URLs, for \emph{qrcode}, for the ISO standard number and for \emph{reed-solomon} returns zero.
+
+Two findings sharpen how any self-description claim should be reported, and the first is the most transferable sentence in this paper. \textbf{Prose that describes a code is a program, and it has bugs; the only way to find them is to implement from the prose alone and run the result.} Two were found exactly that way by the round's own control decoder, written from the printed text and run against the degraded pages before any agent saw them. Taking the topmost, rightmost, bottommost and leftmost pixels of a frame is \emph{wrong} at one degree of rotation, because a 600-pixel edge six pixels thick has hundreds of pixels sharing the smallest column and the tie-break lands most of the way down it --- measured side lengths of 470, 237, 497 and 125 for a symbol whose side is 593. And the frame must not be assumed to be one connected piece, since an illumination gradient breaks it into several and using only the largest put four of nine symbols out of geometry. Both corrections are now printed with the measurement that motivated them. \textbf{Every prose specification in this project's \code{spec/} tree is in that position, and the only rounds that have ever found bugs in those documents are the ones where somebody implemented from the prose and ran the result.} The complement is the second finding: \emph{the prose was sufficient} and \emph{the prose was used} are different claims and only the second is measurable. Two of the seven printed steps went unimplemented --- a global threshold replaced the local one, and nine hand-written crops replaced the page-wide symbol search --- so those sections are untested, and the parts measured to be load-bearing are the ones no amount of looking supplies: the geometry, the bit order, the codeword layout, the CRC-32 with its test vector, and the reassembly rule. It follows that the minimum sufficient specification is a function of the payload rather than a fixed package: this one was opened, verified and explained from \textbf{ten printed lines}, which refines \S5.6's 31\,490 tokens rather than contradicting them, that figure having been sized for a fixture with four payload families and a binary envelope.
+
+The round was replicated on a second vendor with the task sentence, the input files and the cap unchanged: \textbf{six of six rungs, first attempt, 1\,367.4\,s}, \code{recovered.werk} and the recovered image both \textbf{byte-identical}, against the first vendor's 5/5 in 206.7\,s. Two things replicated beside the pass. The lost symbol was the same one --- the emptiest, whose payload is mostly zero padding, so its data area has no contrast --- repaired from the parity symbol, which is now three independent decoders losing one symbol and losing the same one. And the signature was again \textbf{correctly declined} rather than reported as tampering, which makes it three rounds and five model families in which the signed-message construction cannot be reached from what the reader was given, and it is still open. One asymmetry is stated rather than buried: the second vendor had a network and used it, installing an imaging library, where the first had none. That is tooling and not knowledge --- no library anywhere decodes this code --- but the two arms are not isolation-equivalent, and the honest form of the replication claim says so.
+
+What paper buys and what it costs is arithmetic. Twelve symbols fit on a symbols-only sheet, so a sheet carries 11\,861 file bytes and a mebibyte costs \textbf{88.4 sheets}, which makes the 3D-entity fixture 1\,154 sheets and the splat fixture 2\,550. \textbf{Paper proves the property; it does not store the corpus.} And nobody printed or photographed anything: the degradation is a stated, reproducible model rather than a camera, and because its illumination ramp never darkens ink, one global threshold sufficed and the printed local-threshold recipe went unexercised.
+
+\subsection{What is covered, and what is pending}
+
+\begin{table*}[t]\centering\footnotesize
+\caption{coverage at the time of writing. Cells marked \emph{in progress} are running as this is written and are not filled in; nothing in this paper depends on them.}
+\begin{tabular}{@{}L{3.4cm} L{2.6cm} L{2.4cm} L{4.4cm}@{}}
+\toprule
+Population & Protocol & Runs & Result \\
+\midrule
+frontier commercial, three families & agentic CLI, rounds 1--4 & 11 & 11 / 11; 0 / 10 recorded learned the format from a loader \\
+frontier commercial, two families & agentic CLI, executable payload (\S5.7) & 2 & 2 / 2, both matched the embedded test vectors \\
+frontier commercial, two families & agentic CLI, printed substrate (\S5.8) & 2 & 5 / 5 and 6 / 6 rungs, byte-identical recovery both times; not isolation-equivalent \\
+open weights, 4B--30B, five lineages & void arm, reader task (\S5.6) & 6 pre-fix, 9 post-fix & 4 / 6, then 2 passes and 3 failures on a changed roster \\
+open weights, spec-forcing splat task & void arm (\S5.6) & 2 of 5 servable & 0 / 2, both behavioural; 3 excluded by KV residency, no rate reported \\
+open weights, self-run task & void arm, harness-executed script & 1 & FAIL: correct predictions, no executable produced \\
+open weights, frontier class, served locally & void arm & --- & \textbf{in progress at time of writing} \\
+weak model plus a human supplying hands & --- & --- & argued in \S9.4, \textbf{not measured} \\
+novice human, no model & --- & --- & argued in \S9.4, \textbf{not measured} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The pending row is named rather than left implicit: a frontier open-weights model served on our own hardware, which would fill the empty corner of the capability-by-provenance grid. Its result is not available at the time of writing and no claim here rests on it. The two void-arm rows below the reader task carry their own caveat in the table, because a zero there is a statement about the rung and, for three of the five rostered models, about a graphics card.
+
+\subsection{Specification bugs are the product}
+
+A success rate is the least interesting output of this experiment. The interesting output is the failure list, because in this design every failure has exactly one legitimate response: a specification fix. The house rule is that a failed gate is a specification bug and not an excuse.
+
+\begin{table*}[t]\centering\footnotesize
+\caption{round 1's twelve distinct specification bugs; ``seen by'' is what makes the priority ordering an observation rather than an opinion.}
+\begin{tabular}{@{}l l L{3.9cm} l@{}}
+\toprule
+\# & Seen by & One line & Status \\
+\midrule
+S-10 & Py, JS, Rust & input hash with an absent parameter object: append \code{\{\}} or nothing? & fixed \\
+S-11 & Rust, C & SHA-512 undocumented, and Ed25519 needs it & fixed \\
+S-12 & all four & ``use a library'' is unfollowable in a hermetic reader & fixed \\
+S-13 & Py, JS, Rust & ``the primary mesh'' is nowhere a machine-readable fact & fixed \\
+S-14 & Py & entry order mixes exact paths and prefixes, unmarked & ruled \\
+S-15 & Py & the preview prefix does not say what it measures \emph{to} & ruled \\
+S-16 & Py, Rust & the spec inside the fixture denied the fixture existed & fixed \\
+S-17 & --- & which nodes an unsupported convention kills is not tabulated & fixed \\
+S-18 & Py & ``exactly one file list'' against a multi-version node & fixed \\
+S-19 & Py & loader capability and state words drift between manifest, loaders and spec & fixed \\
+S-20 & Py & one package, two vocabularies for the same value & fixed \\
+S-21 & Py, Rust & minors, including the entire envelope apparatus untested & closed by round 2 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\textbf{S-10 is the finding of the run.} Three agents, three languages, no contact with each other, and the same longest detour. All three read the sentence ``followed by the UTF-8 bytes of the canonical JSON of the input parameters'' the natural way --- no parameters, append nothing --- and all three got 0 of 25 hashes right. Two brute-forced candidate conventions against known targets; the third found it by discovering the two-byte update inside a generator script that happened to travel in the package. Two things make this the most valuable result of round 1. First, the bundled loaders could not have saved anyone: none of the three implements the input-hash check at all, and two agents checked and said so. Second, it is exactly the failure mode the format claims to prevent --- the package's own specification README lists ten questions the folder must answer alone, and question six is \emph{is this derived data stale? Recompute the input hash from the input files and compare}. It was the one of the ten the folder could not actually answer. The ruling is that an absent parameter object \emph{is} the empty object, its canonical JSON is the two bytes \code{\{\}}, and they are appended exactly as if the key were written out; nothing is ever appended as nothing. The rule now ships with executable pseudocode and a worked example checkable by hand against the package itself, and the fix is verified rather than assumed: a later independent implementation, the game-engine reader of \S6.2, implemented the rule straight from the pseudocode with no detour at all.
+
+\textbf{S-12 indicts the specification's own advice.} All four agents hit it. The embedded mini-specification said, of Ed25519, \emph{do not implement this from a description; use a library} --- while the format's thesis is that an isolated implementer has no library to reach for, and the specification separately forbids the embedded Rust and C loaders from having one. Three agents implemented it anyway; the fourth supplied a DER prefix from memory and proved the guess against the file's own vector. The ruling keeps the advice, because it is correct and a subtly wrong signature check is worse than none, but makes the file sufficient: the mini-specification now carries the curve parameters, point encoding and decompression, the group law, the canonical-scalar check, both verification equations, the SubjectPublicKeyInfo DER prefix, and a statement that \emph{signing} is deliberately out of scope because key handling belongs in an audited library. Round 2 measures that fix.
+
+Findings are tracked in an append-only ledger, none erased: eight from the first two independently written bootstrap readers, one from the golden sample, twelve from round 1, three from round 2, four from round 3, five from round 4, six from round 5, eleven from round 6, six from round 7, five more from the wave that turned round 5's findings into specification text, and several dozen from the consumers of \S6. Not all of the later ones are specification bugs and the ledger says which --- two of round 5's are serving-stack failure modes, three of the spec-fix wave's are defects in this project's own tooling --- so that a reader can tell a format problem from a harness problem. Round 6's eleven are open by design: they are gaps against a draft profile that has deliberately not been ruled on.
+
+\section{Ecosystem validation}
+
+Agent-implementability is a necessary condition and not a sufficient one. A format that a stranger can read and that nothing real consumes has proven half of something. This section reports seven consumers, each with a committed, re-runnable acceptance harness. Table 11 is the state of every gate at the time of writing; each subsection is one paragraph of what its gate establishes and, where it exists, one measurement that could not have been obtained any other way.
+
+\begin{table}[t]\centering\footnotesize
+\caption{measured acceptance gates, all re-run after the final specification revision; none is a self-report.}
+\begin{tabular}{@{}L{4.9cm} L{2.4cm}@{}}
+\toprule
+Gate (harness) & Result \\
+\midrule
+Reference core, three faces & 11 PASS, 0 FAIL, 1 SKIP \\
+Golden fixture & 9 PASS, 0 FAIL \\
+Enrichment pipeline & 19 PASS, 0 FAIL, 0 WARN \\
+Retarget, three foreign rigs & 34 PASS, 0 FAIL (30.4\,s) \\
+Image profile fixture & 15 PASS, 0 FAIL \\
+Splat, tools, self-regeneration & 18 PASS, 0 FAIL (15.8\,s) \\
+Blender adapter & 20 PASS, 0 FAIL (6.3\,s) \\
+Unreal round trip (UE 5.7) & 16 PASS, 0 FAIL \\
+Unreal engine-free core & 10 PASS, 0 FAIL (0.31\,s) \\
+Unreal live editor control & 6 PASS, 0 FAIL \\
+Game engine consumer & 43 tests, 0 failed \\
+Store, whole-blob and chunked & 59 tests, 0 failed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The single SKIP is honest and unchanged: this host's MinGW gcc exits 1 with no diagnostics on a program that returns zero from main, and the same C loader source compiles and passes under MSVC in the very next clause. The harness says which of those two things happened rather than calling a broken toolchain a source failure.
+
+\subsection{The reference core: three faces of one library}
+
+The reference core is a Rust dynamic library behind a C ABI, consumed by C++ as header plus DLL and by Python over \code{ctypes}, with no package-manager dependencies anywhere in the path. On the smallest fixture --- 413\,741 bytes, 28 entries, 15 nodes, 26 declared files --- all three faces report the same 15 nodes, the same 14-alive/1-skipped split, the same signed-and-valid verdict and the same manifest digest, and round-trip byte-identity holds from the zip, from the committed directory form and from a freshly materialised directory, because the physical entry order is a pure function of the manifest and the writer uses a fixed timestamp. Its damage gauntlet asserts \emph{exact} reports and \emph{exact} survivors rather than the absence of a crash, including a schema-invalid payload that was \emph{re-hashed}, so that zero hashes mismatch and only the schema can catch it. Three single-file zero-dependency bootstrap readers ship inside every package, sharing no code with each other or with the core, and all three verify 26 of 26 files standalone with byte-identical output under stdlib Python, bare \code{rustc} and both \code{gcc -std=c99 -Wall -Wextra} and MSVC. One measurement shows that the code and the specification agree rather than merely coexist: the fixture's binary rest-pose payload, written by the Rust envelope writer, is byte-identical to the example payload the specification's own generator produces --- 560 bytes, the same digest, the same value the specification's annotated hex dump records.
+
+\subsection{A game engine: loading without a cook step}
+
+The CUB engine implements the container \emph{natively} rather than binding the C ABI --- store-mode zip from the embedded mini-specification, the envelope header's MessagePack subset from the embedded grammar --- which makes it a second independent implementation and the first consumer to exercise the envelope apparatus that round 1 recorded as untested. It reports the signature chain as unverified and never as signed-and-valid, because it carries no Ed25519: declared narrowness, not silent narrowness. Loading the golden fixture with no cook step, no sidecar and no import dialog gives exit 0, 36 nodes, 34 live, 0 dead, 2 skipped as unknown types, 139 files verified over 12\,865\,205 bytes, and exact bounds at r = 0.889269\,m; handed the damaged copy, it and the reference core agree on exactly what dies, down to the node id and the file within it.
+
+\begin{table}[t]\centering\footnotesize
+\caption{cooked-tier load time, decode only, both paths starting from a byte slice already in RAM; median of 50 iterations.}
+\begin{tabular}{@{}L{3.0cm} r r r@{}}
+\toprule
+Mesh & GLB & cooked tier & Speedup \\
+\midrule
+crate, 272\,v / 408\,t & 0.043\,ms & 0.022\,ms & 1.9$\times$ \\
+grid, 502\,681\,v / 1\,002\,528\,t, 1 material & 88.95\,ms & 24.00\,ms & \textbf{3.7$\times$} \\
+same grid, 3 materials & 145.51\,ms & 21.69\,ms & 6.7$\times$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+3.7$\times$ is the honest headline and the three-material row must not be quoted instead of it: a per-material GLB split duplicates vertices at the seams, so that path is processing 1\,005\,360 vertices against the cooked tier's 502\,681, and its slower time is partly a different job rather than only a slower one. The absolute number matters as much as the ratio --- 65\,ms per million-triangle mesh is the difference between a level streaming in and a level hitching. But the result that vindicates law 12 is not a benchmark: the engine's exported package, carrying an engine-specific cooked tier as an extension node, was handed to the embedded Python bootstrap reader, which has never heard of this engine, and it reported 9 nodes --- 8 live, 0 dead, 1 skipped for unknown type, the skip being the cooked tier --- with the manifest validating against the package's own schema with 0 errors. Two engine bugs surfaced on the way past, neither found by reading the engine: its loaders defaulted an absent bounds to a zero-radius sphere at the origin, which a culler will happily cull, and its cooking step stored the sphere \emph{circumscribing} the bounding box rather than the minimal one. Both surfaced because a schema field would not let itself go unanswered.
+
+\subsection{Blender: import, export, determinism}
+
+The Blender adapter is a 4.x add-on, installable as a zip and callable headless, with zero external dependencies --- stdlib plus the Blender API, \code{werk} parsing vendored byte-identically from the bootstrap reader --- and its gate runs on a real Blender 4.2.1 LTS launched with factory settings, so that no user add-on, preference or startup file contributes to the result.
+
+\begin{table}[t]\centering\footnotesize
+\caption{Blender adapter: the measured clauses.}
+\begin{tabular}{@{}L{2.9cm} L{4.4cm}@{}}
+\toprule
+Clause & Measurement \\
+\midrule
+import clean fixture & 36 nodes, 34 alive, 0 dead, 2 unknown-type skips, \textbf{0 unexpected skips}, 272\,v / 408\,t, 0.329\,s \\
+import damaged fixture & exactly one hash mismatch and three unknown types; 1 dead, 33 alive, mesh still imports \\
+round trip & uuid survived, all 7 facets and 15 tags survived, 272 to 272 vertices \\
+exported package & 624\,539\,B, 50 entries, 8 nodes, 49 files \\
+verified by the reference core & 8 alive, \textbf{0 errors, 0 warnings} \\
+verified by the bootstrap reader & \textbf{49 / 49 files}, exit 0 \\
+writer determinism & \textbf{49 / 49 payload entries byte-identical} across two exports, same order \\
+rig round trip & worst rest-head error \textbf{0\,m}, worst posed rotation error \textbf{$8.4\times10^{-8}$ rad}, against a declared $1\times10^{-5}$ \\
+textured round trip & sRGB and non-colour \textbf{both preserved}; both material slots recovered \\
+point-cloud import & 281\,498 points as vertices, colour attribute present, splat not imported twice, 2.08\,s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two clauses carry more weight than the rest. Writer determinism matters because a format whose acceptance test is byte identity needs writers that do not drift, and two exports of one scene produced 49 of 49 byte-identical payload entries in the same order, with only the manifest's wall clock differing --- excluded from the comparison and named rather than hidden. The colour-space clause matters because a data map read as sRGB is wrong mathematics and is invisible in review. That invisibility is the theme of this adapter's history: the gate caught five real bugs before it passed and every one was silent, passing all structural checks while producing wrong data. A sixth was in the \emph{gate itself} and is worth as much: comparing quaternions after rounding to five decimals manufactured $8\times10^{-3}$ rad of error out of a round trip exact to $1\times10^{-7}$, and it would have been called a tolerance and lived with.
+
+\subsection{Unreal Engine, a cross-engine handoff, and the bug only rendering could find}
+
+The Unreal adapter is an editor-only UE 5.7 plugin that imports a package into real engine assets and exports selected assets plus their real dependency closure into a conformant unsigned package. Against the golden fixture the import commandlet returns exit 0 over 36 nodes with 164 files hash-verified and the signature reported unverified; against the damaged fixture it returns exit 1, which is correct rather than a failure, with one node refused, twenty-one assets still created, and the unknown-because-newer node reported as unknown rather than as broken. Geometry survives exactly --- 272 vertices and 408 triangles in and out, an identical engine-space bounding box, a byte-identical WAV --- and three independent readers agree on the exported package: the adapter's own engine-free core, the unrelated Python bootstrap reader whose independently computed manifest digest matched to the character, and a standard JSON Schema validator, with 0 errors.
+
+The measurement no single-engine test could produce is a \emph{cross-engine handoff}. The textured fixture is not hand-written: it is built by driving the gate-proven Blender add-on --- the golden crate's own mesh, given analytic UVs, dressed with three generated maps, exported by the add-on already under test. Unreal imports that package, exports it again, and the gate decodes both PNG sets with stdlib zlib and the five PNG filters and compares pixels. All three maps round-trip \textbf{pixel-identical}, and the gate simultaneously prints that PNG \emph{bytes} are identical for \textbf{0 of 3}, because two PNG encoders will not agree on bytes and calling that a failure would be dishonest. Pixels are the claim. Colour spaces survive in both directions --- albedo sRGB, normal and packed metallic-roughness linear --- and texture slots survive with their node ids preserved rather than recomputed. The packed map's metallic channel is uniformly zero by construction, which is what makes ``did the channel packing survive?'' an answerable question rather than a plausible one.
+
+The most important result of this adapter is a bug, and it is the argument of the whole project turned on its author. Setting a mesh's UV channel count \emph{invalidates} a UV attribute reference taken before it; writing through the stale reference raised no assertion, logged no warning and returned no error, and the mesh came out with \textbf{every UV at the origin}. Every count in every report stayed correct --- 730 vertices, 408 triangles, three textures imported, three slots bound --- and the crate rendered as one flat texel of its own albedo. It was invisible from inside the adapter and invisible in the package, because the round-trip \emph{pixel} comparison passed: the texture bytes were never the problem. The only thing that found it was pointing a camera at it. The general lesson is the one this paper is otherwise arguing for a format: \emph{a report is not a measurement.} Everything the adapter said about that import was true, and the import was wrong. The regression test is now a number read back off the artifact --- the measured UV extent of the built mesh --- rather than a count of things attempted.
+
+\subsection{Retarget: recovering units from bone directions}
+
+The skeleton work binds three real, foreign, independently authored rigs to a canonical humanoid from \emph{one} calibration pose each, and retargets real motion in both directions.
+
+\begin{table}[t]\centering\footnotesize
+\caption{three foreign rigs, one calibration pose each; the round trip is through the real f32 animation payload on disk, against a declared tolerance of $1.0\times10^{-4}$ rad quoted from the format's own animation grammar.}
+\begin{tabular}{@{}L{2.7cm} r r r@{}}
+\toprule
+Rig & Bones & Solved scale & Round trip \\
+\midrule
+CesiumMan (glTF) & 19 & 1.358670 & $5.157\times10^{-8}$ rad \\
+UE 5.7 mannequin & 68 & 0.991813 & $5.217\times10^{-8}$ rad \\
+CMU mocap 02\_01 (BVH) & 31 & 0.0616003 & $8.803\times10^{-8}$ rad \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The scale column is the whole claim. Nothing told the solver that a BVH unit in that capture is about six centimetres, that Unreal is centimetres, or that CesiumMan is a 1.29\,m figure; it recovered each from one pose, together with the whole-body rotation that turns Z-up into Y-up and left-handed into right-handed. The proof that it got the metre right is physical rather than algebraic: the retargeted figures land with their hips between 0.836\,m and 1.091\,m above the floor plane the skeleton declares, against a canonical rest hip height of 0.98\,m, and a wrong scale cannot produce that. Six cross-rig transits land between $5.2\times10^{-8}$ and $8.8\times10^{-8}$ rad, three orders of magnitude inside the declared tolerance, and each \emph{names} the bones that cannot cross rather than averaging them into a residual. The stage also produced a measurement that corrected its own argument, and the corrected version is the finding: retargeting error is frame-invariant \emph{when} the corresponding bones are parent and child in both rigs, at measured spreads of $2.35\times10^{-6}$, $3.03\times10^{-14}$ and $7.60\times10^{-14}$ rad, but where a foreign rig \emph{interposes} an animated joint the invariance fails by exactly that joint's motion, at 0.2217\,rad. The gate gates on the adjacent set and reports the interposed set beside it, never inside it, and the format's inability to say which interposed joints are artefacts and which are real motion is filed rather than smoothed away.
+
+\subsection{An unattended enrichment pipeline}
+
+The producer side turns a bare GLB into a signed, schema-valid, fully enriched package with no human in the loop and no prompt at any point, across sixteen producers covering geometry, bounds, textures, materials, imposters, an LOD chain with a \emph{rendered} screen-space error metric, colliders, mass properties, drop-simulated rest poses, distance and flow fields, semantics, simulation properties and provenance.
+
+\begin{table}[t]\centering\footnotesize
+\caption{enrichment over three real assets; the third is deliberately the awkward one, at 408 triangles with vertex colours, no images and no material block.}
+\begin{tabular}{@{}L{2.9cm} r r r@{}}
+\toprule
+ & crate & lantern & example \\
+\midrule
+bytes & 17\,936\,593 & 26\,871\,359 & 7\,551\,623 \\
+nodes / files & 37 / 108 & 38 / 123 & 33 / 74 \\
+derived nodes, input hash recomputed & 27/27 & 28/28 & 23/23 \\
+reference core & 0 err, 0 dead & 0 err, 0 dead & 0 err, 0 dead \\
+producers & 16 ok & 16 ok & \textbf{15 ok, 1 failed} \\
+wall & 196.9\,s & 88.9\,s & 72.3\,s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All 108 node versions across the three packages carry an epistemic stamp; all 78 stamped measured or inferred carry ordered inputs, parameters and a hash, and the gate recomputes every one of those 78 from the packages' own bytes. All three validate against the JSON Schemas \emph{the package itself carries}, never the repository's copy, and two runs with the reproducibility flag are byte-identical. The third column is the island rule under test rather than described: the texture producer raised a named exception --- the GLB carries no embedded images --- the failure landed in the package's own pipeline report with its exact exception text, and the package came out anyway with 33 nodes, no source texture node, no dead nodes and no errors. A producer failing yields a missing node and a report, never a dead pipeline and never a fabricated node. One refusal belongs beside it: one sample declares a longest axis of 25.66\,m, glTF units are metres and the manifest pins the unit scale to 1.0, so the pipeline takes that at face value, does not rescale, and its mass comes out at 130 tonnes --- because silently fixing a source's scale would make every downstream number a different lie, and instead the payload, the README and the run report all say that the axis is implausible and that nothing was rescaled.
+
+Two producers were replaced during this work by vendored reference implementations, and in both cases the honest comparison is more interesting than the upgrade. Real V-HACD [26] beats the declared substitute it replaced on two of three assets --- peak error to zero and excess volume cut threefold on one, peak error down 22\,\% on another --- and is mixed on the third, where mean error nearly halves while peak error is 6\,\% worse; that asset is an open box, every solid decomposition of an open box contains the cavity, and the excess figures are therefore mostly \emph{the crate is hollow} rather than \emph{the engine is bad}. Replacing the tangent basis with the reference MikkTSpace [25] produced the larger surprise. Both bases are orthonormal far below anything a shader can see, so the measurement that matters is the angle between the two answers on the vertices MikkTSpace splits: a median of 9.76\textdegree{} with a 95th percentile of 175.13\textdegree{}, which is exactly what \emph{agrees in the chart interior, disagrees at the seam} looks like. On that asset 1\,927 of 5\,703 vertices --- 34\,\% --- had a handedness the old method got wrong, and a normal map baked against MikkTSpace was lighting them wrong, silently.
+
+The last producer to be brought up yields this paper's most useful negative result. Simulation properties are inferred by a vision-language model, and until this work the path had never once completed: it was implemented, environment-driven, and exercised against an endpoint that refused every connection. It now completes on all three gate assets in 3.12 to 3.38\,s, writing ten fields each --- density, Young's modulus, failure mode, conductivities, flammability, electrical and magnetic class, porosity, buoyancy --- every one stamped \code{inferred}, with the model named in the node's producer record and the preview sheet it was shown listed as the input file, its hash recomputed by the gate. And the model is confidently wrong. Shown a metal street lamp, it returned a material of \emph{oak wood}, a flammability class of flammable and a claim that the object does not float, at a self-reported confidence of 0.95 --- the same confidence it reported for a correct identification of the crate. Nothing in the pipeline can catch this and nothing should pretend to; the package says exactly what happened and every field is stamped as an inference. This is the format working as designed, and it is also the first time the failure was \emph{visible}, which is why it produced a specification finding rather than a shrug: a number a model writes about itself is not a measurement, and the package presents it in the same field a calibrated confidence would occupy. The proposal is filed and the choice between a confidence-source field, a cap, and leaving the field absent is deliberately left to a ruling rather than made in an implementation.
+
+\subsection{The companion store}
+
+Law 1 forbids the \emph{format} from being clever about redundancy; the companion doctrine puts that cleverness in a version-control store under a strict ordering of authority, in which the materialised package is truth and the store is a cache. The store is Python with zero third-party dependencies, including the cryptography. On a real production corpus with a real append-only edit, whole-blob content addressing measured a dedup ratio of 1.9970$\times$, a marginal ingest cost for the second version of 0.2404\,\% of its own size, and a sync to a store already holding the first version that moved 0.27\,\% of the second's bytes, both packages materialising identical to the originals under a whole-tree hash comparison against the source directories.
+
+\begin{table}[t]\centering\footnotesize
+\caption{content-defined chunking against whole-blob addressing, on the conformance-fixture corpus plus a 4\,KiB edit at a fixed offset of its largest payload.}
+\begin{tabular}{@{}L{3.3cm} r r@{}}
+\toprule
+ & whole-blob & chunked \\
+\midrule
+logical & 31.79\,MiB & 31.79\,MiB \\
+physical & 26.72\,MiB & \textbf{21.89\,MiB} \\
+dedup ratio & 1.1897$\times$ & \textbf{1.4524$\times$} \\
+edited package, marginal ingest & 5.15\,MiB & \textbf{0.31\,MiB} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The chunker is a FastCDC-style [21] Gear chunker at 64\,KiB minimum, 256\,KiB average and 1\,MiB maximum, whose gear table is derived deterministically from SHA-256 so that a foreign implementation needs one sentence rather than 256 constants. Chunk-boundary stability is what makes chunking worth having: the 4\,KiB edit changed 1 of 19 chunks, so 18 of 19 kept their hash, and syncing the edited package to a remote already holding the first version moved 3.63\,\% of its bytes. The byte-exactness invariant is untouched, because materialisation still re-reads the \emph{destination} and rehashes every file against the manifest, so chunking cannot weaken the proof even in principle, and a materialisation that cannot prove byte-identity raises and deletes its own output. Handed the deliberately damaged fixture, the store refuses it in 1.43\,s with the exact hash-mismatch report and records no reference: a store must not contain a package it cannot give back verified.
+
+\subsection{One digest, three languages}
+
+The last piece of evidence is the smallest and, for the paper's thesis, among the most direct. The manifest's specification digest is defined in prose: an ordering convention over the files of the embedded specification tree, and a hash over them. It is now implemented three times independently --- in Python as the reference script, in Rust inside the core, and in C++ inside the Unreal exporter, which cannot import either of the others and had to be written from the specification text alone. Over 46 embedded specification files the C++ implementation declares \code{f087dbcb...e700}, byte-identical to what the Python reference computes from the same bytes. Three independent implementations agreeing on one digest is the only kind of evidence a hash algorithm written down in prose can have, and it is the same kind the gauntlet produces, obtained without an agent. Making the field mandatory is itself a reported result: it broke six writers at once --- four fixture builders, a command-line tool, the Blender exporter, the pipeline and the C++ exporter --- and every one was a real gap, each having vendored a specification tree with no statement of which revision. The sixth was found late, by a gate that had earlier refused to run, which is the lesson worth carrying forward: \emph{a mandatory-field change is not done until every writer has been run}, and a gate that refuses is not a gate that passed.
+
+\section{Threats to validity}
+
+This section is longer than convention would have it. The format's central claim is honesty about what is known, and a paper about that format cannot practise otherwise.
+
+\textbf{Sample size.} Every cell of Table 9 is small. The agentic arm is fifteen runs --- four, two and one in rounds 1 to 3, four cross-vendor, two self-run and two hardcopy --- all of them successes, which is consistent with a true rate anywhere above roughly four-fifths at conventional confidence and says nothing finer; the void arm is one model per weight class, and its threshold is \emph{observed} rather than established. This design can rule out a bad format; it cannot distinguish a good one from a lucky one, and no claim about \emph{how likely} an arbitrary implementer is to succeed is supported. The rounds are also not replicates: each closed a coverage gap the previous one exposed, which is the right way to spend a scarce experiment and the wrong way to accumulate statistical power.
+
+\textbf{Three model families, five open-weights lineages, and still no humans.} The first edition of this section said that every agent in every round came from one model family, so that a shared blind spot would look exactly like a shared success, and that testing a family which is not ours had been the stated next honest step since round 1 and remained untaken. It has been taken. Rounds 4 to 7 add two frontier commercial families from other laboratories and, in the void arm, eight open-weights models across five weight classes and five training lineages --- Alibaba, Meta, Google, NVIDIA and Z.ai --- none of them ours, none of them agentic. Four of those produced payload bytes whose digests are identical to the ones our own agents and both commercial vendors produced, which is the form of agreement that matters: not that the reports agree, but that the extracted bytes do. The one place the old threat was visible, Ed25519, was re-tested and behaved the same way in a foreign model --- remembered constants, caught by the file's own vector --- so the mitigation travels with the format rather than with the family. A shared blind spot across that whole set is no longer a credible explanation of the result. What remains is a real threat rather than a smaller one: every implementer tested is still a language model, n is still one per cell in most cells, the void arm is a single protocol on a single machine, no damage gauntlet has ever been run outside our own family, and the two rungs below the void arm --- a weak model with a human supplying hands and judgement, and a novice human with nothing but the file and its bundled reader --- are argued in \S9.4 and have never been run. Vendor diversity is measured; implementer diversity is measured downward as far as an unassisted 4B model and no further.
+
+\textbf{What an implementer reads is set by the task, not by the format.} The 0/N-loaders number was round 1's headline and it is not self-sufficient. One foreign agent satisfied every declared success clause of round 1 having opened only the manifest, and both agents in round 6 ran a language model out of a package without opening the manifest, the specification or a loader. Those runs are successes of the artifact and not evidence about the specification, so \emph{declined the loaders}, \emph{opened the specification} and \emph{succeeded} are three numbers that must be quoted together with the task beside them --- and two of this paper's rounds have a 0/2 in the middle column. \textbf{Self-reported time is likewise not time:} all four cross-vendor agents overestimated their own elapsed time against the process clock by factors between 2.2 and 11, so every duration quoted here is harness- or process-measured, except round 2's \textasciitilde{}65-minute Rust breakdown, which is an impression. And \textbf{the void arm's condition is not the format's use case}: it is the weakest link the metric can be measured through, chosen to find gaps that capable implementers route around, and a failure there is a statement about the rung (\S9.4).
+
+\textbf{The instrument is not exempt from the rule it enforces.} Every round insists that an agent's report is evidence about the agent and not about the artifact. The same discipline had not been applied to the harnesses, and it cost one result: a context packer reported eighteen of eighteen items included and nothing omitted while shipping an empty block where a binary grammar should have been, and two arms were measured through it before a later round re-read the committed package and found it (\S5.6). One measurement is withdrawn, one number is looser than it looked, and the pattern to take from it is that a harness's self-report needs the same treatment as an agent's --- a block whose body is shorter than a floor should be refused and recorded as omitted, which is filed and not yet applied. Two further harness defects were caught the same way and before grading rather than after: a grader that accepted a package's own inlined answer key as evidence, and a run that resolved the wrong shell interpreter and would have recorded our environment as a model's capability.
+
+\textbf{Recognition is not fully excluded.} Agents were instructed to derive everything from the file and their logs are consistent with that, but zip and glTF are ubiquitous, and the JavaScript agent wrote its zip reader from prior knowledge \emph{before} opening the specification and said so. What that measures is that the specification retro-confirmed a from-memory implementation and caught a gap in it: weaker, still real, and not upgradable without a format nobody has seen. The same behaviour and the same mitigation reproduced in a foreign model three rounds later --- a from-memory zip parser, flagged unprompted, then audited against the package's own mini-specification, which this time caught three gaps rather than one --- so what the round-1 note recorded as an anecdote is now a pattern with a working defence. The one place the confound was removed entirely is round 7, whose matrix code did not exist before the sheets were printed, so no library and no training data could contain it. What ``fresh agent'' guarantees is a clean workspace, no repository access, no network and no conversational history with the authors --- not an implementer with no prior exposure to zip, PNG or Ed25519, which is unobtainable and would anyway be measuring the mini-specification for SHA-256 rather than the format. What the protocol isolates is \emph{this format's} knowledge, which is the knowledge at issue.
+
+\textbf{The stumble count is instruction-inflated} by design, and should be read as a lower bound on the places the specification could be misread, never as a defect density. \textbf{Timing is wall-clock over a whole agent session} --- reading, writing, compiling, debugging and report-writing --- with no human baseline, so the times in Table 2 are internally comparable and externally meaningless.
+
+\textbf{The rounds are not replicates, and the fixtures evolved between them.} Each round closed a gap the previous one exposed, so the three are a sequence rather than a sample. Worse, for a period the fixtures were rebuilt as specification fixes landed while no document recorded which build each measurement used. The first edition of this paper re-opened the shipped fixtures with nothing but the standard library and found three disagreements with the record: one fixture recorded at one size with two different digests, a two-byte drift in another, and a stale file count in a third gate. Those were reported as findings rather than reconciled, and have since been fixed structurally rather than by correcting the copies: there is now one generated record of every fixture, and every gate harness calls a pin check \emph{before it measures anything}, so a rebuild fails a gate with both digests in the message instead of quietly changing what the gate measured. Two stale pins were caught by that mechanism within a day of its existing, one in another repository entirely. The mechanism does not stop the fixtures from moving, and they have moved since: the wave that turned round 5's findings into specification text added six worked-example files to the embedded specification tree, which changed the specification digest and therefore every manifest and every package hash. Table 17 is the shipped set at the time of writing; each round in \S5 quotes the build it was actually handed, which is why those sizes and the table's do not agree and why the record now names the build beside every measurement.
+
+\begin{table}[t]\centering\footnotesize
+\caption{the shipped fixtures at the time of writing; all six share one specification digest, which is what that field is for.}
+\begin{tabular}{@{}L{3.5cm} r l@{}}
+\toprule
+Fixture & Bytes & sha256[:8] \\
+\midrule
+crate-v1 & 13\,684\,477 & \code{0a7a7341} \\
+crate-v1-damaged & 13\,685\,629 & \code{01348a10} \\
+crate-tex-v1 & 948\,659 & \code{0b43cfb8} \\
+ista-varun-v1 & 10\,192\,487 & \code{923ab39f} \\
+humanoid-retarget-v1 & 1\,514\,545 & \code{916cf5c1} \\
+gsplat-v1 & 30\,235\,611 & \code{ede0aee6} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+One nuance in Table 17 is stated rather than hidden: the textured fixture is built through Blender and its manifest carries a wall-clock creation time, so its whole-file hash changes on every rebuild by design; its builder's own determinism check prints that it differs, as expected, and the pinned bytes are the shipped build. Three further packages are pinned outside that corpus because they are experiment artifacts rather than conformance fixtures: the void arm's small package, the self-run package and the printed package, each pinned in its own round's directory in the same shape.
+
+\textbf{Harness failures, counted as harness failures.} The first round-2 Rust agent died 21 minutes in, after building a complete 3\,520-line reader across eight modules and extracting the payloads, without delivering a report. Its workspace survives and shows how far it got; its report does not exist. It is counted \emph{neither as a success nor as a failure of the format}, and the run was repeated fresh --- a new agent in a new workspace, never a resume. Separately, the harness wrote both round-2 agents' task transcripts as zero-byte files, so the per-agent process data round 1 collected cannot be reported for the round-2 Python agent and is marked \emph{not recorded} rather than guessed. That is the run's own finding about itself: an experiment whose evidence lives only in a transcript is one lost file away from being an anecdote. The agents' programs and complete outputs are committed, and are the evidence for everything claimed about them. The later rounds added three more of the same class and each is recorded rather than scored: a serving stack that returned an entire generation budget as reasoning with zero characters of content, and then refused a conversation containing its own earlier reply; a model that killed the harness itself by emitting a character the console could not encode; and a first hardcopy run whose sandbox refused to show the agent the images at all. None of them is a property of the format, and a harness that scored them as format failures would be measuring the wrong thing.
+
+\textbf{The observer problem, reduced but not removed.} The implementers are no longer ours: three commercial families and five open-weights lineages have now run the protocol. The \emph{measurers} still are. Every grader, every gate harness and most of the systems under test were built in this laboratory, and the defence is structural rather than social --- grading is by artifact, the orchestrator hashes the extracted bytes itself and re-runs each program in a clean directory, and independent readers that share no code check each other's output. The separation that makes the experiment meaningful is between implementer and measurer rather than between human and machine (\S10), and is enforced by isolation rather than by provenance --- but a reader should treat every result here as \emph{this format, measured by this laboratory}, with external validity open until someone else runs the protocol end to end.
+
+\section{Related work}
+
+\textbf{Interchange formats for 3D.} glTF 2.0 [1] and its binary container are the closest thing to a universal runtime interchange format, and \code{werk} uses them: geometry payloads inside a \code{werk} package \emph{are} GLBs, because law 11 prefers a boring ubiquitous encoding over a clever new one, and a \code{werk} material node names the shading model it is written against --- OpenPBR [2] or another --- rather than assuming one. What \code{werk} adds is the layer glTF deliberately does not have --- glTF's semantics live in an external specification and its extension ecosystem is a set of external agreements, so a GLB does not carry the knowledge of how to read a GLB. The difference is measurable, and this paper measures it: agents parsed GLB from an embedded mini-specification without wanting anything external.
+
+\textbf{Scene composition.} USD [3] and its packaged form USDZ [4] are the industrial answer to scene-scale composition, and their defining strength --- layered references and overrides across files --- is structurally the pattern law 1 forbids. This is a difference in purpose rather than a criticism: USD is a composition system for live pipelines, \code{werk} an artifact doctrine for things that must survive their tools. USDZ packages a scene for delivery; it does not package the specification, the schemas, the readers, the provenance, the version history or the custody chain, and a USDZ whose authoring application is gone is in exactly the position \S1.1 describes.
+
+\textbf{Content provenance.} C2PA [5] is the closest relative and the sharpest point of design disagreement in this work. C2PA binds content credentials cryptographically and derives much of its meaning from an enforcement-and-trust-list apparatus: a claim is worth what its signer's position in a trust hierarchy makes it worth. \code{werk}'s chain is deliberately facts-only --- it records who signed what state, surfaces three states plus a fourth \emph{I did not check} token, and enforces nothing: no trust list, no revocation authority, no notion of a compliant viewer. The format cannot prevent plagiarism; it makes clean provenance the cheapest path and its absence conspicuous. The two models are complementary rather than competing, and the package carries an explicitly labelled, explicitly unimplemented C2PA export stub rather than a claim of interoperability --- which round 2's agent correctly reported as proving nothing.
+
+\textbf{Self-describing serialisation and data.} FlatBuffers [6], Cap'n Proto [7] and Protocol Buffers [8] solve zero-copy structured access with excellent engineering, conditional on the consumer possessing the schema; ASN.1 [9] made the same trade decades earlier. The scientific-data formats are closer in spirit: HDF5 [10] and netCDF [11] carry their own structural metadata, and it is no accident that they dominate in fields where files outlive the programs that wrote them. \code{werk}'s position is one step further along the same axis --- the schema is part of the artifact, stored as ordinary data files inside the package, with the manifest naming their paths \emph{inside this package} and never by convention. The cost is duplication, since every conformant writer must vendor a copy of every schema it emits, and the mitigation --- a byte-identical vendored copy refreshed by one script and verified by that script's check mode as a gate clause --- is offered as the shape of a general answer rather than as one. The FAIR principles [12] make the same argument at the level of metadata policy.
+
+\textbf{Sustainable formats and digital preservation.} This is the closest prior art for the paper's actual claim. PDF/A [13] is the canonical example of a format profile defined by \emph{self-containment}: no external dependencies, embedded fonts, no encryption, device-independent colour. The Library of Congress's format sustainability factors [14] name the dimension directly --- disclosure, adoption, transparency, self-documentation, external dependencies, patent encumbrance and technical protection mechanisms --- and self-documentation and external dependencies are exactly what an isolated implementer measures. Preservation metadata standards such as PREMIS [15] record what happened to an object; \code{werk}'s epistemic stamps record it inside the object. What this literature has not had is an \emph{operational} test: the factors are assessed by expert judgement, per format, in prose. Agent-implementability is a proposal for turning two of them into a number that a format's own test suite can produce on every commit. We consider this the paper's most transferable idea, and note without irony that PDF/A would score well on it and that nobody has measured that. Round 7 (\S5.8) gives that literature something it has not previously had on this side of the argument: an operational test of \textbf{channel independence}. Self-containment as the sustainability factors define it is a property of a file, and every earlier round measured it with the file's own substrate intact --- a zip, because zip readers are everywhere. Printing the package and recovering it from photographs removes the substrate and leaves only the prose, which is the preservation scenario stated at its limit: the artifact survives transcription into a medium that shares nothing with the one it was written for. The result is a byte-exact recovery, and the cost --- 88.4 sheets per mebibyte --- is stated beside it, because the point is the property and not the medium.
+
+\textbf{Reproducibility and artifact evaluation.} The reproducible-builds movement [16] and the software bill-of-materials effort [17] share \code{werk}'s instinct that an artifact should carry a checkable account of its own production; the recipe node and the input-hash discipline are that idea applied to media rather than to binaries, with the one difference that a model's weights may be named by hash rather than carried. The artifact-evaluation practice now standard at systems conferences [18] is adjacent in a more direct way: an artifact-evaluation committee is, in effect, a small and expensive agent gauntlet run once per paper. The self-regeneration result of \S5.4 is the strongest form of that idea we know how to state for data rather than for code --- the artifact contains the program that produced it, the input that produced it, and a hash of the result, so reproduction is a command rather than a correspondence. \S5.7 carries the same instinct one step further, into the case where the payload is itself a program: a model, the source of its executor, and two temperature-zero vectors that make \emph{did it run correctly} a hash comparison rather than a judgement about whether the output reads well.
+
+\textbf{Content-addressed storage.} Git, IPFS [19], OCI images [20] and the proprietary asset databases solve dedup, transfer and identity, and \code{werk}'s companion store is squarely in that tradition, down to sharing the manifest's per-file digest as the store key with no translation layer; the chunker follows the FastCDC [21] line of work. The doctrinal difference is the ordering of authority: the materialised package is truth and the store is a cache, never the reverse, enforced structurally by making every round-trip assertion compare against the original on disk and by a test that corrupts the store and requires materialisation to fail loudly and leave nothing behind.
+
+\section{Discussion and limitations}
+
+\subsection{What the metric is good at, and what it cannot see}
+
+The three runs suggest that agent-implementability is sharpest on exactly the defects internal review is worst at: ambiguities in prose where both readings are plausible, rules stated once and contradicted implicitly elsewhere, and instructions that are correct advice and impossible to follow. S-10 is the archetype, and no amount of review by people who already know the intended reading finds that defect, because they cannot stop knowing it.
+
+The metric is correspondingly blind to whole classes of defect. It says nothing about whether a format is \emph{good for its domain} --- a beautifully implementable format for the wrong data model would score perfectly --- nor about performance, authoring ergonomics or governance. And it cannot see a defect that all implementers share with the specification's author, which, given \S7's observer problem, is precisely the class the current evidence is weakest against.
+
+\subsection{Limits on the implementations}
+
+Several consumers in \S6 are narrower than a reader might assume, and each narrowness is declared in the artifact as well as here. No deflate and no zip64 support exists anywhere in this project; both are detected and refused by name, and no zip64 fixture exists, so every zip64 path any implementation has written is unexercised code. Three consumers carry no Ed25519 and report \code{unverified} rather than guessing. The Unreal adapter imports no skeletons and no animation; the Blender adapter is measured on one version on one operating system; the enrichment pipeline on three small assets, none above 6\,576 triangles. Half a gate is measured for the game-engine consumer, whose acceptance criterion names load time \emph{and} frame time: only load time was measured, nothing in that work has been through a renderer, and the cooked tier's frame-time claim is plausible and untested. The splat family has a coverage gap of the same honest kind: no real splat available to this laboratory carries spherical harmonics above the DC band, so the higher-order index arithmetic is exercised only by a \emph{synthetic} ascii PLY in the gate. And one specified mechanism has never been implemented --- the recovery appendix, six executable passes by which a reader rebuilds an index from container bytes when the manifest is damaged --- so it is a promise about behaviour rather than a measurement of it, and it is quoted as such. Two pieces of doctrine quoted in \S5 are likewise provisional and labelled: the machine-readable payload pointer added after round 5 is implemented and gated but \emph{proposed}, awaiting a ruling, and the model profile of \S5.7 is an explicit draft with eleven findings against existing doctrine and one unsolved half --- a declarative computation graph that would have to be checkable against the runtime the package also ships, or it is a second statement of one fact with no way to catch a disagreement.
+
+\subsection{The limits that are results}
+
+Two of this paper's least flattering measurements are the ones we would keep if we had to discard the rest. The round-2 fixture's own recipe carries an exclusion list that the delivered image violates; we could have chosen a fixture without that property and did not, because the honest reading of it --- supplied unprompted by an agent that had never seen the format --- is the most useful thing any round produced about recipes: \emph{a recipe records instructions, not guarantees.}
+
+The void arm's threshold belongs here too, and its value is not the number. What a specification fix can and cannot do had never been separated by measurement in this project, and the post-fix arm separated it: two models failed, their failures were traced to three gaps, the gaps became specification text, the same models were run again, and both failed again --- one of them in the identical way, with the newly added machine-readable field sitting in the manifest it had already read, naming the file it should have taken. \textbf{A specification fix removes an excuse; it does not supply a capability.} That sentence is worth more to us than a clean improvement would have been, because it is the boundary of the claim this whole paper makes for formats: self-description drives the knowledge barrier toward zero and does nothing whatever about the other two requirements an implementer has.
+
+The vision model called a metal street lamp oak wood at 0.95 confidence, and the package says so, in a field stamped \code{inferred}, naming the model and the image it was shown. A format that could not represent that would have had two options: omit the property, or launder a guess into a fact. The value of an epistemic stamp is not that it makes inference reliable but that it makes an unreliable inference \emph{safe to carry} --- and the finding it produced, that a model's self-reported confidence is not a confidence, is a specification improvement that no amount of correct output would have surfaced.
+
+\subsection{The capability ladder, and what a format can actually remove}
+
+An implementer needs three things: \textbf{knowledge} of the format, \textbf{hands} --- a shell, a file system, the ability to run a program and see what it printed --- and \textbf{working memory} enough to hold the relevant specification and its own program at once. A format can eliminate only the first. The other two are not properties of a format and can always be supplied from outside: an agentic harness supplies them, the void arm's inline-context loop supplies them, and in the limit a determined human supplies them for an arbitrarily weak model by pasting the right pages in, running the program and handing back the traceback. So the metric's floor is not the weakest autonomous agent but the weakest \emph{assisted pair}, and \code{werk}'s claim is the narrow one that survives that framing: \textbf{the knowledge requirement is driven to zero, so that the capability of the implementer becomes a free variable.}
+
+The protocol arms of \S4.5 are a sweep along that axis. The top rung is an autonomous frontier agent supplying its own hands and memory, measured in rounds 1 to 4, 6 and 7. One rung down, hands and memory come from the harness and the model supplies only its own competence --- the void arm, where success is available from 9.4B and the failures below it are failures of the rung. The next rung is a weak model with a human assistant, and the bottom rung has no model at all: a motivated novice with the file, a stock Python installation and no network. \textbf{Both bottom rungs are argued and neither is measured, and nothing in this paper is evidence about them.}
+
+The argument for them is the graded-effort design, and it shows that graceful degradation in this doctrine applies to \emph{implementers} and not only to readers. The preview tier costs nothing: a package is a store-mode zip, so it opens by renaming, and the images and sounds inside open in whatever is already installed --- the imposters \emph{are} the preview. The structured tier costs running one file, the zero-dependency bootstrap reader that ships inside every package and needs no compiler, no package manager and no network. The exact-offset tier costs real skill and is the only one that demands writing a decoder against a layout grammar, which is what every agent in every round of this paper did. A format is fully self-describing, on this view, when the weakest motivated implementer extracts value at \emph{some} tier and each additional unit of capability unlocks a deeper one. Measuring the bottom rung means a user study --- people who have never seen the format, given the file and nothing else, recorded by which tier they reach and where they stall --- and that is the obvious next experiment.
+
+The ladder is also what settles how the void arm's failures should be read. Below 9B, with no harness and no supervision, this protocol did not produce a working reader; but the archaeologist is part of the system, and if somebody started the computer, somebody is at the keyboard. A model that writes most of a correct loader and then fails to print its output file has made an error a supervising human corrects in a minute, which is precisely what both post-fix failures were. We therefore report the threshold as a benchmark result about model capability under zero support, and decline to report it as a limitation of the format --- while keeping the finding it produced, which is that lowering the implementer's capability is the best gap-finding instrument this project has.
+
+\subsection{Survivability, and the substrate the file does not control}
+
+Hermeticity is usually argued as an interoperability property. Round 7 makes the preservation reading of it operational. A package's self-description had until then always been read through the substrate it was written for: a zip, a JSON parser, a file system. The printed round removes all three. What survives onto paper is prose, a digest written out in words, and a matrix code whose only specification is the prose beside it --- and what comes back off degraded photographs is the same 8168 bytes, verified against the printed digest, opened, and yielding a pixel-identical image. The property demonstrated is \textbf{channel independence}: the knowledge required to read the artifact travels with the artifact even when the artifact changes medium.
+
+Two limits keep it from being an archival recommendation, and both are arithmetic or absence rather than argument: 88.4 sheets per mebibyte, and a degradation model that is not a camera. The transferable result is not the paper at all. It is that a prose specification is a program, that it has bugs, and that the only test which finds them is somebody implementing from the prose alone and running the result --- the same claim this paper makes for file formats, arrived at from the other end.
+
+\section{On the authorship of this work}
+
+This paper is about whether autonomous agents can implement a format from a file. It would be incoherent to obscure the fact that autonomous agents also built and tested the thing being measured, so we state it plainly. The doctrine, the twelve laws, the design decisions, every ruling on a filed finding and the acceptance criteria are the author's. The implementation work --- the reference core, the three bootstrap readers, the enrichment pipeline, the retarget solver, the store, the Blender and Unreal adapters, the fixtures and the gate harnesses --- was carried out by Claude agents working in a loop against written briefs, under a house rule that nothing advances on assertion and every gate is a measurement. The gauntlet agents of \S5 are from the same model family, which \S7 states as the sharpest limit on external validity. The prose of this paper was drafted by an agent from the recorded measurements and is the author's responsibility.
+
+Three consequences follow, and each is load-bearing rather than a disclaimer. \textbf{The separation that makes the experiment valid is between implementer and measurer, not between human and machine.} The gauntlet agents were isolated from the repository, from the web and from every artifact of the development process except the single file handed to them; whether the author of a package's producer was a human or a model is irrelevant to whether a stranger can read the package.
+
+\textbf{Agent-built systems make the silently-wrong-answer failure mode more dangerous, not less}, and this work has the receipts: five of the Blender adapter's bugs and three of the Unreal adapter's passed every structural check while producing wrong data, and one was invisible in the package, invisible in the round-trip pixel comparison, correctly reported by every count in every report, and found only by pointing a camera at the result. An agent that writes plausible code and an agent that writes a plausible report are the same agent. The defence is structural: gates that assert exact sets rather than the absence of crashes, numbers read back off artifacts rather than counted at attempt time, fixtures pinned by hash before a gate measures anything, and independent readers that share no code grading each other's output.
+
+\textbf{The process failures are as reportable as the results.} Concurrent agents sharing one working tree collided on a shared findings counter three times in one afternoon, recorded rather than tidied, on the same principle that governs the format: a history that gets quietly corrected stops being a history.
+
+\section{Conclusion}
+
+Formats die when their knowledge dies. The response proposed here is neither a better schema language nor a better archive: it is a constitutional rule that a file answers every question it raises, plus an experiment that tells you whether it does.
+
+The experiment works. Fifteen agentic runs across seven rounds, five languages, three container profiles and three model families, each given one file and nothing else, produced working readers --- and between them surfaced nineteen distinct specification bugs in the first three rounds and twenty-eight further findings in the four later ones, none of which internal review had. None learned the format from the readers bundled inside the file, which is the single result that makes the metric mean what we want it to mean. Two recomputed an embedded, epistemically stamped measurement from source pixels and hit every bit, which turns a claim a package makes into one a stranger can check. Four spontaneously built damaged copies and each got right the signature-versus-payload distinction we had flagged as the easiest thing in the format to invert. One, handed a package that carries the source of the tools that made it, found three places where that package claimed more than it had proved --- inside a project whose entire argument is that it does not. Two made a language model produce text from a package carrying its runtime as source, and checked the output against the package's own vectors rather than against their own judgement. And two, from different vendors, recovered the whole of a package, byte for byte, from photographs of it printed on paper.
+
+Below that, eight open-weights models were run in the weakest condition the metric admits --- no harness, no tools, no supervision --- which produced the number the format did not have, that 31\,490 tokens of self-description are enough for a stranger to write the reader, and the sentence that bounds what any of this claims: \emph{a specification fix removes an excuse; it does not supply a capability.} A format can drive the knowledge barrier to zero; hands and memory come from somewhere else, and in every real deployment they do.
+
+The honest next steps are shorter than they were, because two of them were taken. What remains: more runs per cell, the pending row of Table 9, a fixture carrying zip64 and a deflated container, a damage gauntlet outside our own model family, an adversarial self-run package with no README to fall back on, a real print-and-photograph pass, a frame-time measurement to close the half-measured engine gate, an implementation of the recovery appendix --- and, the one that would change the shape of the evidence rather than its quantity, a user study on the bottom rung of \S9.4, where the implementer is a person and not a model.
+
+What generalises beyond \code{werk} is the metric. Any format --- scientific data, documents, model checkpoints, medical imaging --- can be handed to an isolated implementer with the instruction \emph{write a reader}. The success rate is interesting. The list of things the implementer had to guess is the product.
+
+\begin{thebibliography}{99}\footnotesize
+\setlength{\itemsep}{0pt}
+
+\bibitem{r748}Khronos Group. \emph{glTF 2.0 Specification}.
+\bibitem{r749}Adobe and Autodesk. \emph{OpenPBR Surface Specification}, 2024.
+\bibitem{r750}Pixar Animation Studios. \emph{Universal Scene Description (USD)}.
+\bibitem{r751}Apple Inc. \emph{USDZ File Format Specification}.
+\bibitem{r752}Coalition for Content Provenance and Authenticity. \emph{C2PA Technical Specification}.
+\bibitem{r753}Google. \emph{FlatBuffers}.
+\bibitem{r754}K. Varda. \emph{Cap'n Proto}.
+\bibitem{r755}Google. \emph{Protocol Buffers}.
+\bibitem{r756}ITU-T. \emph{Recommendation X.680 (ASN.1)} and X.690 (BER/DER).
+\bibitem{r757}The HDF Group. \emph{Hierarchical Data Format, version 5}.
+\bibitem{r758}R. Rew and G. Davis. NetCDF: an interface for scientific data access. \emph{IEEE Computer Graphics and Applications}, 1990.
+\bibitem{r759}M. D. Wilkinson et al. The FAIR Guiding Principles for scientific data management and stewardship. \emph{Scientific Data} 3, 2016.
+\bibitem{r760}ISO 19005-1:2005. \emph{Electronic document file format for long-term preservation, Part 1 (PDF/A-1)}.
+\bibitem{r761}Library of Congress. \emph{Sustainability of Digital Formats: Planning for Library of Congress Collections}.
+\bibitem{r762}Library of Congress. \emph{PREMIS Data Dictionary for Preservation Metadata}.
+\bibitem{r763}The Reproducible Builds project. \emph{reproducible-builds.org}.
+\bibitem{r764}The Linux Foundation. \emph{SPDX Specification}.
+\bibitem{r765}Association for Computing Machinery. \emph{Artifact Review and Badging}, version 1.1, 2020.
+\bibitem{r766}J. Benet. IPFS --- content addressed, versioned, peer-to-peer file system. arXiv:1407.3561, 2014.
+\bibitem{r767}Open Container Initiative. \emph{OCI Image Format Specification}.
+\bibitem{r768}W. Xia et al. FastCDC: fast content-defined chunking for data deduplication. \emph{USENIX ATC}, 2016.
+\bibitem{r769}S. Josefsson and I. Liusvaara. \emph{Edwards-Curve Digital Signature Algorithm (EdDSA)}. RFC 8032, 2017.
+\bibitem{r770}B. Kerbl et al. 3D Gaussian splatting for real-time radiance field rendering. \emph{ACM Transactions on Graphics}, 2023.
+\bibitem{r771}E. Welzl. Smallest enclosing disks (balls and ellipsoids). \emph{New Results and New Trends in Computer Science}, 1991.
+\bibitem{r772}M. S. Mikkelsen. Simulation of wrinkled surfaces revisited, 2008; reference implementation MikkTSpace.
+\bibitem{r773}K. Mamou. \emph{V-HACD}, version 4.1.
+\end{thebibliography}
+\section*{Availability and acknowledgements}
+
+The specification, the implementations, all fixtures, every gate harness and the gauntlet agents' verbatim programs and outputs are committed in the project repository. Every gate in Table 11 is re-runnable, every fixture in Table 17 is pinned by hash in the harness that measures it, and every number here is traced to its recorded source in \code{paper/v2/NUMBERS.md}. The manifesto is co-authored with Ken Gamble; the Khronos Group's CesiumMan and Lantern assets, Carnegie Mellon University's motion capture database and Epic Games' mannequin made the interoperation measurements possible.
+
+
+\end{document}

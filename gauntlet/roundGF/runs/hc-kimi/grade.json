@@ -1,0 +1,48 @@
+{
+ "rundir": "F:/gf-gauntlet/hc-kimi",
+ "payload_sha256": "b0823016712e4770e01870f709b10a0fd3d4aaf08753d714092038d84d7617a6",
+ "png_sha256": "9082008dbcfdf3ce76e5b77c0b7aceeef6039e1964a82a00a9e7ad3e2d73d285",
+ "wrote_code": [
+  "analyze.py",
+  "analyze2.py",
+  "correct_seq7.py",
+  "decoder.py",
+  "inspect_symbol7.py",
+  "parity_check.py"
+ ],
+ "byte_identical_werk": [
+  "recovered.werk"
+ ],
+ "byte_identical_png": [
+  "recovered_pkg/image/smiley.png"
+ ],
+ "ladder": {
+  "1_read_the_prose": true,
+  "2_implemented_a_decoder": true,
+  "3_crcs_pass": true,
+  "4_whole_file_sha256": true,
+  "5_opened_the_werk": true,
+  "6_the_image_is_the_smiley": true
+ },
+ "rungs_passed": 6,
+ "rungs_total": 6,
+ "files": [
+  "analyze.py",
+  "analyze2.py",
+  "correct_seq7.py",
+  "debug_bin.png",
+  "debug_mask.png",
+  "decoder.py",
+  "inspect_symbol7.py",
+  "page-01.jpg",
+  "page-02.jpg",
+  "page-03.jpg",
+  "parity_check.py",
+  "recovered.werk",
+  "recovered_pkg/LICENSE",
+  "recovered_pkg/MANIFEST.json",
+  "recovered_pkg/README.txt",
+  "recovered_pkg/SIGNATURE.json",
+  "recovered_pkg/image/smiley.png"
+ ]
+}

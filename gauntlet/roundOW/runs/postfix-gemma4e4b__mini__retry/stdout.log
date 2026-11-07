@@ -1,0 +1,59 @@
+model=google/gemma-4-e4b ctx=131072 package_ctx=65536 budget=121896 chars package=103573 chars included=18 omitted=0
+preflight: prompt_tokens=39767 cold prefill=5.1s (7797 tok/s), chars/token=2.66
+
+--- iteration 1 (45s, finish=stop, 15002 chars) ---
+This program simulates the required reading process by using Python's standard library `zipfile` and `hashlib` to interact with the container format. It parses the manifest, traverses the node graph, verifies file hashes against declared values, extracts the primary mesh and sound payloads, and generates a detailed report in `REPORT.md`.
+
+```python
+import zipfile
+import json
+import hashlib
+import os
+from typing import Dict, Any, List, Tuple
+
+# --- Constants and Setup ---
+WORK_FILE = "mini-v1.werk"
+REPORT_FILE = "REPORT.md"
+EXTRACTED_DIR = "extracted_payloads"
+
+def calculate_sha256(file_path: str) -> str:
+    """Calculates the SHA-256 hash of a given file."""
+    hasher = hashlib.sha256()
+    try:
+        with open(file_path, 'rb') as f:
+            while chunk := f.read(8192):
+            
+  >> running solution.py (14648 chars)
+  << exit=0 in 0.1s  stdout=10631B stderr=0B
+  --- Starting Werk Package Analysis ---
+  
+  --- Node Graph Listing & Meaning ---
+  
+  [NODE]: geom-game (core.geom.game)
+    Edges (Dependencies): geom-source (derived-from)
+    -> Version Details:
+       Note: Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPEC 3.10 requires NORMAL and requires COLOR_0 to be linear.
+       Producer: fixtures/build_golden.py v1
+       [File]: geometry/game.glb (Size: 16736 bytes)
+         Declared SHA256: eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce
+  
+  [NODE]: material-wood (core.material)
+    Edges (Dependencies): geom-game (shades)
+    -> Version Details:
+       Note: Authored PBR parameters for the crate's only material.
+       Producer: fixtures/build_golden.py v1
+       [File]: materials/wood.json (Size: 525 bytes)
+         Declared SHA256: c66b9e725769fd818505022a916110a81c0a7449a789061c366f6b58f145ba61
+  
+  [NODE]: bounds (core.phys.bounds)
+    Edges (Dependencies): geom-game (bounds-of)
+    -> Version Details:
+       Note: Measured bounds for culling, placement and LOD selection maths.
+       Producer: fixtures/build_golden.py v1
+       [File]: physics/bounds.json (Size: 654
+
+--- iteration 2 (48s, finish=stop, 13 chars) ---
+TASK COMPLETE
+
+=== outcome=model-finished (declared TASK COMPLETE after a clean run) iters=2 first_clean_run=1 wall=48.2s ===
+{"model": "google/gemma-4-e4b", "quant": "unlisted", "context": 131072, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "postfix-gemma4e4b-mini-retry", "protocol": "inline-context + error-feedback", "outcome": "model-finished", "detail": "declared TASK COMPLETE after a clean run", "iterations": 2, "first_clean_run": 1, "wall_s": 48.2, "preflight_s": 5.1, "wall_s_excl_preflight": 43.1, "prompt_tokens": 39767, "package_ctx": 65536, "package_chars": 103573, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "spec/examples/restposes.example.hex.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\postfix-gemma4e4b__mini__retry"}

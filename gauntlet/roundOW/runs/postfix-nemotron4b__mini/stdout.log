@@ -1,0 +1,60 @@
+model=nvidia/nemotron-3-nano-4b ctx=131072 package_ctx=65536 budget=121896 chars package=103573 chars included=18 omitted=0
+preflight: prompt_tokens=37834 cold prefill=3.9s (9701 tok/s), chars/token=2.80
+
+--- iteration 1 (25s, finish=stop, 5088 chars) ---
+
+```python
+#!/usr/bin/env python3
+"""
+mini-v1.werk processor
+
+* Opens the zip container mini-v1.werk
+* Parses MANIFEST.json to list node graph, primary mesh and sound name
+* Verifies SHA256 of every declared file against its content
+* Extracts geometry/game.glb (primary mesh) and audio/sfx/crate-impact-hard-surface.wav (one sound)
+* Writes a REPORT.md with all required information
+
+All work is derived from the file contents only; no external libraries or readers are executed.
+"""
+
+import json, hashlib, zipfile, os
+from pathlib import Path
+
+# ----------------------------------------------------------------------
+# 1. Open container and read manifest
+# ----------------------------------------------------------------------
+with zipfile.ZipFile('mini-v1.werk', 'r') as z:
+    # Load MANIFEST.js
+  >> running solution.py (5059 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=284B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\postfix-nemotron4b__mini\solution.py", line 22, in <module>
+      manifest_path = z.findobj(lambda f: f.filename == 'MANIFEST.json')
+                      ^^^^^^^^^
+  AttributeError: 'ZipFile' object has no attribute 'findobj'
+  
+!! HTTP 500: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Internal Server Error</pre>
+</body>
+</html>
+
+
+=== outcome=api-error (HTTP 500: <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Error</title>
+</head>
+<body>
+<pre>Internal Server Error</pre>
+</body>
+</html>
+) iters=2 first_clean_run=None wall=25.4s ===
+{"model": "nvidia/nemotron-3-nano-4b", "quant": "unlisted", "context": 131072, "task": "PROMPT-round1task-mini.txt", "kind": "mini", "label": "postfix-nemotron4b-mini", "protocol": "inline-context + error-feedback", "outcome": "api-error", "detail": "HTTP 500: <!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n<title>Error</title>\n</head>\n<body>\n<pre>Internal Server Error</pre>\n</body>\n</html>\n", "iterations": 2, "first_clean_run": null, "wall_s": 25.4, "preflight_s": 3.9, "wall_s_excl_preflight": 21.5, "prompt_tokens": 37834, "package_ctx": 65536, "package_chars": 103573, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "spec/examples/restposes.example.hex.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\postfix-nemotron4b__mini"}

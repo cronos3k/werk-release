@@ -1,0 +1,340 @@
+model=llama-3.1-8b-lexi-uncensored ctx=131072 package_ctx=65536 budget=121896 chars package=91059 chars included=17 omitted=0
+preflight: prompt_tokens=28220 cold prefill=66.4s (425 tok/s), chars/token=3.31
+
+--- iteration 1 (99s, finish=stop, 2325 chars) ---
+```python
+import json
+import hashlib
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'r') as f:
+        return json.load(f)
+
+def read_node(node_id: str, nodes: List[Dict]) -> Dict:
+    """Finds a node by its ID in the list of nodes and returns it."""
+    for node in nodes:
+        if node['node_id'] == node_id:
+            return node
+    return None
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+       
+  >> running solution.py (2312 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=514B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 61, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 49, in main
+      manifest = read_manifest('MANIFEST.json')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      with open(file_path, 'r') as f:
+           ^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'MANIFEST.json'
+  
+
+--- iteration 2 (132s, finish=stop, 2338 chars) ---
+```python
+import json
+import hashlib
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'r') as f:
+        return json.load(f)
+
+def read_node(node_id: str, nodes: List[Dict]) -> Dict:
+    """Finds a node by its ID in the list of nodes and returns it."""
+    for node in nodes:
+        if node['node_id'] == node_id:
+            return node
+    return None
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+       
+  >> running solution.py (2325 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=553B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 61, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 49, in main
+      manifest = read_manifest('mini-v1.werk/MANIFEST.json')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      with open(file_path, 'r') as f:
+           ^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'mini-v1.werk/MANIFEST.json'
+  
+
+--- iteration 3 (163s, finish=stop, 2094 chars) ---
+```python
+import json
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'r') as f:
+        return json.load(f)
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+            if 'files' in version:
+                for file in version['files']:
+                    print(f"File: {file['path']} (SHA256: {file['sha256']})")
+    if 'edges' in node:
+        for edge in node['edges']:
+            print(f"Edge to: {edg
+  >> running solution.py (2081 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=553B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 53, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 41, in main
+      manifest = read_manifest('mini-v1.werk/MANIFEST.json')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 6, in read_manifest
+      with open(file_path, 'r') as f:
+           ^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: 'mini-v1.werk/MANIFEST.json'
+  
+
+--- iteration 4 (196s, finish=stop, 2116 chars) ---
+```python
+import json
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+            if 'files' in version:
+                for file in version['files']:
+                    print(f"File: {file['path']} (SHA256: {file['sha256']})")
+    if 'edges' in node:
+        for edge in node['edges']:
+            pri
+  >> running solution.py (2103 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=695B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 53, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 41, in main
+      manifest = read_manifest('mini-v1.werk')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      return json.load(f)
+             ^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 293, in load
+      return loads(fp.read(),
+                   ^^^^^^^^^
+    File "<frozen codecs>", line 322, in decode
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0x9a in position 15: invalid start byte
+  
+
+--- iteration 5 (228s, finish=stop, 2117 chars) ---
+```python
+import json
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'r', encoding='latin1') as f:
+        return json.load(f)
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+            if 'files' in version:
+                for file in version['files']:
+                    print(f"File: {file['path']} (SHA256: {file['sha256']})")
+    if 'edges' in node:
+        for edge in node['edges']:
+            pr
+  >> running solution.py (2104 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=1125B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 53, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 41, in main
+      manifest = read_manifest('mini-v1.werk')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      return json.load(f)
+             ^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 293, in load
+      return loads(fp.read(),
+             ^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 346, in loads
+      return _default_decoder.decode(s)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\decoder.py", line 338, in decode
+      obj, e
+
+--- iteration 6 (262s, finish=stop, 2099 chars) ---
+```python
+import json
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'rb') as f:
+        return json.load(f)
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+            if 'files' in version:
+                for file in version['files']:
+                    print(f"File: {file['path']} (SHA256: {file['sha256']})")
+    if 'edges' in node:
+        for edge in node['edges']:
+            print(f"Edge to: {ed
+  >> running solution.py (2086 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=837B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 53, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 41, in main
+      manifest = read_manifest('mini-v1.werk')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      return json.load(f)
+             ^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 293, in load
+      return loads(fp.read(),
+             ^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 341, in loads
+      s = s.decode(detect_encoding(s), 'surrogatepass')
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0x9a
+
+--- iteration 7 (296s, finish=stop, 2099 chars) ---
+```python
+import json
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'rb') as f:
+        return json.load(f)
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+            if 'files' in version:
+                for file in version['files']:
+                    print(f"File: {file['path']} (SHA256: {file['sha256']})")
+    if 'edges' in node:
+        for edge in node['edges']:
+            print(f"Edge to: {ed
+  >> running solution.py (2086 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=837B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 53, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 41, in main
+      manifest = read_manifest('mini-v1.werk')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      return json.load(f)
+             ^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 293, in load
+      return loads(fp.read(),
+             ^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 341, in loads
+      s = s.decode(detect_encoding(s), 'surrogatepass')
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0x9a
+
+--- iteration 8 (330s, finish=stop, 2099 chars) ---
+```python
+import json
+from typing import Dict, List
+
+def read_manifest(file_path: str) -> Dict:
+    """Reads the manifest from a file and returns it as a dictionary."""
+    with open(file_path, 'rb') as f:
+        return json.load(f)
+
+def print_node_info(node: Dict) -> None:
+    """Prints information about a node, including its type, versions, and edges."""
+    print(f"Node ID: {node['node_id']}")
+    print(f"Type: {node['type']}")
+    if 'versions' in node:
+        for version in node['versions']:
+            print(f"Version: {version['v']}")
+            if 'files' in version:
+                for file in version['files']:
+                    print(f"File: {file['path']} (SHA256: {file['sha256']})")
+    if 'edges' in node:
+        for edge in node['edges']:
+            print(f"Edge to: {ed
+  >> running solution.py (2086 chars)
+  << exit=1 in 0.1s  stdout=0B stderr=837B
+  
+  STDERR: Traceback (most recent call last):
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 53, in <module>
+      main()
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 41, in main
+      manifest = read_manifest('mini-v1.werk')
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "F:\ow-gauntlet\llama31-8b__envel\solution.py", line 7, in read_manifest
+      return json.load(f)
+             ^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 293, in load
+      return loads(fp.read(),
+             ^^^^^^^^^^^^^^^^
+    File "C:\Program Files\Python312\Lib\json\__init__.py", line 341, in loads
+      s = s.decode(detect_encoding(s), 'surrogatepass')
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  UnicodeDecodeError: 'utf-8' codec can't decode byte 0x9a
+
+=== outcome=iteration-cap (used all 8 feedback iterations) iters=8 first_clean_run=None wall=330.4s ===
+{"model": "llama-3.1-8b-lexi-uncensored", "quant": "unlisted", "context": 131072, "task": "PROMPT-envelopetask-mini.txt", "kind": "mini", "label": "llama31-8b-envel", "protocol": "inline-context + error-feedback", "outcome": "iteration-cap", "detail": "used all 8 feedback iterations", "iterations": 8, "first_clean_run": null, "wall_s": 330.4, "preflight_s": 66.4, "wall_s_excl_preflight": 264.0, "prompt_tokens": 28220, "package_ctx": 65536, "package_chars": 91059, "included": ["README.txt", "MANIFEST.json", "<zip listing>", "MINI-SPECS 1,2,3,5,6,11", "ENVELOPE 0-7", "spec/layouts/restposes.layout.txt", "hex:geometry/game.glb", "hex:audio/sfx/crate-impact-hard-surface.wav", "hex:poses/rest.wkrp", "hex:x/splat-foley/segments/seg_00.png", "MINI-SPECS 9,10", "MINI-SPECS 12", "MINI-SPECS 8", "spec/README.md", "spec/conventions-map.json", "SIGNATURE.json", "LICENSE"], "omitted": [], "truncated_replies": 0, "rundir": "F:\\ow-gauntlet\\llama31-8b__envel"}

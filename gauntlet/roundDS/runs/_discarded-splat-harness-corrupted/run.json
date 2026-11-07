@@ -1,0 +1,67 @@
+{
+ "model": "DeepSeek-V4-Flash-0731",
+ "quant": "MXFP4",
+ "context": 1048576,
+ "task": "PROMPT-gsplattask.txt",
+ "kind": "gsplatmini",
+ "label": "dsv4-splat",
+ "protocol": "inline-context + error-feedback",
+ "harness": "roundDS/driver.py (roundGF/driver.py -- which is roundOW's + GF-1 gsplatmini packer + GF-2 PYTHONIOENCODING=utf-8 per S-SFX-4 + GF-4, the S-GF-1 section-picker fix -- plus DS-1, an --api flag for a non-localhost endpoint, and DS-2, the selfrun packer)",
+ "outcome": "wall-cap",
+ "detail": "hit the 2700 s wall cap",
+ "iterations": 4,
+ "first_clean_run": 1,
+ "wall_s": 2969.5,
+ "preflight_s": 255.6,
+ "wall_s_excl_preflight": 2713.9,
+ "prompt_tokens": 54889,
+ "package_ctx": 131072,
+ "package_chars": 166642,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,4,5,6,11",
+  "ENVELOPE 0-7",
+  "gsplat.layout 0-8",
+  "points.layout 0-7",
+  "spec/examples/gsplat.example.hex.txt",
+  "hex:splats/plush.wkgs",
+  "hex:points/plush-dc.wkpc",
+  "semantics/semantics.json",
+  "spec/conventions-map.json"
+ ],
+ "omitted": [],
+ "truncated_replies": 2,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 0,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 0
+  },
+  {
+   "iter": 2,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 178
+  },
+  {
+   "iter": 3,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 200
+  },
+  {
+   "iter": 4,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 0,
+   "stderr_bytes": 178
+  }
+ ],
+ "rundir": "F:\\ds-gauntlet\\dsv4__splat"
+}

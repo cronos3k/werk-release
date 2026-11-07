@@ -1,0 +1,46 @@
+{
+ "model": "DeepSeek-V4-Flash-0731",
+ "quant": "MXFP4",
+ "context": 1048576,
+ "task": "PROMPT-gsplattask.txt",
+ "kind": "gsplatmini",
+ "label": "dsv4-splat-retry",
+ "protocol": "inline-context + error-feedback",
+ "harness": "roundDS/driver.py (roundGF/driver.py -- which is roundOW's + GF-1 gsplatmini packer + GF-2 PYTHONIOENCODING=utf-8 per S-SFX-4 + GF-4, the S-GF-1 section-picker fix -- plus DS-1, an --api flag for a non-localhost endpoint, and DS-2, the selfrun packer)",
+ "outcome": "model-finished",
+ "detail": "declared TASK COMPLETE after a clean run",
+ "iterations": 2,
+ "first_clean_run": 1,
+ "wall_s": 507.5,
+ "preflight_s": 4.0,
+ "wall_s_excl_preflight": 503.5,
+ "prompt_tokens": 54889,
+ "package_ctx": 131072,
+ "package_chars": 166642,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,4,5,6,11",
+  "ENVELOPE 0-7",
+  "gsplat.layout 0-8",
+  "points.layout 0-7",
+  "spec/examples/gsplat.example.hex.txt",
+  "hex:splats/plush.wkgs",
+  "hex:points/plush-dc.wkpc",
+  "semantics/semantics.json",
+  "spec/conventions-map.json"
+ ],
+ "omitted": [],
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 0,
+   "secs": 0.8,
+   "stdout_bytes": 13421,
+   "stderr_bytes": 0
+  }
+ ],
+ "rundir": "F:\\ds-gauntlet\\dsv4__splat__retry"
+}

@@ -1,0 +1,2270 @@
+===== CONTEXT PACKAGE =====
+Everything below was extracted from INSIDE the file named in the task and
+from nowhere else. You cannot read the file yourself, so this is what you
+have. The bundled reader programs under loaders/ were deliberately NOT
+included. The two large binaries appear only as hex heads; your script
+runs against the real file and can read every byte itself.
+Items: 15.
+
+
+===== README.txt =====
+stories15M — a language model that carries its own engine
+=========================================================
+
+This is a werk package: ONE FILE that carries an artifact and everything needed
+to understand it. This particular one carries a language model, and "everything
+needed to understand it" was taken literally.
+
+WHAT IS IN HERE
+
+  model/stories15M.bin       the weights. 15 191 712 parameters, f32, 58 MB.
+  model/tokenizer.bin        the vocabulary. 32 000 entries.
+  tools/llama2c/             the COMPLETE SOURCE of a runtime that runs it:
+                             ~970 lines of C99, no dependencies, no build
+                             system, no network.
+  spec/layouts/              a byte-exact grammar for each of the two binary
+                             formats above.
+  testvectors/               what the model MUST produce, deterministically,
+                             so you can tell "it ran" from "it ran correctly".
+  spec/                      the werk format specification itself.
+  loaders/                   three single-file, dependency-free readers for
+                             this container: one Python, one Rust, one C.
+  recipe/, disclosure/, provenance/, LICENSE
+                             where the weights came from, what is model output
+                             and what is not, and the three licences that meet
+                             in this file.
+
+HOW TO GET TEXT OUT OF IT
+
+  1. Extract. It is a store-mode zip; any zip tool works, or use
+     loaders/werk_read.py, which needs nothing but a Python interpreter.
+  2. Read tools/llama2c/BUILD-AND-RUN.md. It has the exact compile command for
+     each platform, says which of them were measured and on what machine, and
+     says which one is upstream's and was not measured here.
+  3. Build the runtime from source. There is no binary in this package.
+  4. Run it. The invocation is in BUILD-AND-RUN.md §3 and in
+     testvectors/vectors.json as an argv array.
+  5. Check your output against testvectors/vectors.json. That step is the
+     point of the package: a runtime that reads the weights at the wrong
+     offsets still emits confident English, and only the vector catches it.
+
+NOTHING HERE RUNS ITSELF
+
+There is no compiled artifact anywhere in this package, and no werk tool
+executes anything it finds in one. spec/SPEC.md §7.1 is the rule: source is
+always allowed and reading it is the point; a prebuilt binary is inert data and
+is never executed automatically under any circumstance, including a valid
+signature. This package has no prebuilt binary at all, so every executable byte
+you end up with is one you produced from source you can read.
+
+A NOTE ON THE PROFILE
+
+This package declares `profile: "model/1-draft"`. THAT PROFILE DOES NOT EXIST as
+a ruled part of the werk specification. It was drafted while building this file,
+because the file had nowhere to declare what it was, and the draft is carried
+here at spec/PROFILE-MODEL-DRAFT.md together with the manifest schema it
+validates against (spec/schemas/manifest.model-draft.schema.json). Section 5 of
+the draft lists five places where the existing core doctrine does not fit a
+model package — a missing `train` role, a hermeticity rule no model package can
+satisfy, a disclosure axis that has one dimension where a model has two, a tool
+role vocabulary with no word for "executor", and the absence of the node types
+this package had to declare in the `x.` namespace. None of them are fixed. They
+were found by building this, which is what fixtures are for.
+
+WHAT THIS PACKAGE IS NOT
+
+Not a benchmark: the test vectors check that execution is CORRECT, not that the
+model is good. It is a 15 M-parameter story completer trained on a synthetic
+children's-story corpus and it will happily contradict itself in the third
+sentence.
+
+Not a training record: the weights are the output of a run this package did not
+perform and cannot reproduce. recipe/recipe.json says so, in the format's own
+vocabulary, with `reproducibility: "descriptive"`.
+
+Not fast: the carried runtime is scalar C on one core, measured at ~94 tokens
+per second. Optimised executors are somebody's product and an extension-tier
+concern by design; base doctrine's job is that a stranger can get output at all.
+
+
+
+===== ZIP ENTRY LISTING (all 85 entries) =====
+name                                                                 size       offset      crc32 method
+MANIFEST.json                                                       32681            0   bb5da4ce 0
+SIGNATURE.json                                                       1047        32724   c5dc9246 0
+LICENSE                                                              4436        33815   04693ac5 0
+README.txt                                                           4273        38288   5ca59988 0
+loaders/werk_read.c                                                111051        42601   66522126 0
+loaders/werk_read.py                                                42226       153701   83e8fb3a 0
+loaders/werk_read.rs                                                98761       195977   acc58bf8 0
+spec/MINI-SPECS.md                                                  40147       294788   ccd32657 0
+spec/PROFILE-IMAGE.md                                               13274       334983   3a4e729a 0
+spec/PROFILE-MODEL-DRAFT.md                                         12874       348308   65974cb2 0
+spec/README.md                                                      10855       361239   1f70e8d6 0
+spec/SPEC.md                                                       104388       372138   bc958f06 0
+spec/X-C2PA-EXPORT.md                                                7461       476568   06915153 0
+spec/conventions-map.image.json                                      2416       484080   84216657 0
+spec/conventions-map.json                                            9269       486557   03cf1658 0
+spec/examples/MANIFEST.example.json                                 20758       495881   257c6d5c 0
+spec/examples/SIGNATURE.example.json                                 1107       516704   5e3a9ff0 0
+spec/examples/embedding.example.hex.txt                              4552       517877   43d9de26 0
+spec/examples/embedding.example.wkem                                  512       522498   4350988a 0
+spec/examples/gsplat.example.hex.txt                                10032       523076   433b7248 0
+spec/examples/gsplat.example.wkgs                                    1120       533174   3073aec6 0
+spec/examples/make-examples.py                                      57151       534357   7bec72df 0
+spec/examples/restposes.example.hex.txt                              4415       591568   6721ad4e 0
+spec/examples/restposes.example.wkrp                                  560       596052   8aebbe41 0
+spec/examples/signature.example.txt                                  4631       596678   8a841367 0
+spec/extensions/x.cub.v1.baked.layout.txt                            9359       601374   383f3c4d 0
+spec/extensions/x.cub.v1.md                                          8783       610804   77c5fe5e 0
+spec/facets.json                                                    11978       619644   5821a228 0
+spec/layouts/ENVELOPE.layout.txt                                    26372       631668   766f1e87 0
+spec/layouts/animclip.layout.txt                                    16800       658102   c1b4ab45 0
+spec/layouts/embedding.layout.txt                                   14361       674964   791803f6 0
+spec/layouts/flowfield.layout.txt                                    6263       689388   98af35e3 0
+spec/layouts/gsplat.layout.txt                                      23918       695714   3008a5f6 0
+spec/layouts/imposter.layout.txt                                    10446       719692   1ace5feb 0
+spec/layouts/llama2c-checkpoint.layout.txt                           8731       730200   a048077a 0
+spec/layouts/llama2c-tokenizer.layout.txt                            5671       739003   272eb74e 0
+spec/layouts/points.layout.txt                                      16663       744745   181c9ad0 0
+spec/layouts/restposes.layout.txt                                    5958       761468   04f2574c 0
+spec/layouts/skeleton.layout.txt                                     5964       767489   210fd35f 0
+spec/schemas/conventions-map.schema.json                             4614       773515   d26e67c0 0
+spec/schemas/core.anim.clip.schema.json                              9585       778199   410af216 0
+spec/schemas/core.audio.effect.schema.json                           8628       787853   413e376a 0
+spec/schemas/core.audio.package.schema.json                          7320       796553   ea4f0a39 0
+spec/schemas/core.destruct.schema.json                               6319       803946   c9a29a14 0
+spec/schemas/core.disclosure.schema.json                            11515       810333   dd087aba 0
+spec/schemas/core.imposter.schema.json                               6708       821918   4a857614 0
+spec/schemas/core.material.schema.json                               4823       828694   e57448b5 0
+spec/schemas/core.phys.body.schema.json                              6157       833585   5b0d4e98 0
+spec/schemas/core.phys.bounds.schema.json                            3164       839811   832ef93b 0
+spec/schemas/core.phys.colliders.schema.json                         4116       843046   6f5f2729 0
+spec/schemas/core.props.schema.json                                 11666       847236   ede1ce78 0
+spec/schemas/core.provenance.schema.json                             6140       858967   f3a0be12 0
+spec/schemas/core.recipe.schema.json                                26485       865177   e165039f 0
+spec/schemas/core.retarget.bind.schema.json                         13337       891728   6074b05c 0
+spec/schemas/core.semantics.schema.json                              6917       905138   f0abbd00 0
+spec/schemas/core.skeleton.schema.json                              11464       912124   8a992665 0
+spec/schemas/core.tool.config.schema.json                            7321       923656   3c18a53c 0
+spec/schemas/core.tool.schema.json                                  10894       931048   b5d144ee 0
+spec/schemas/facets.schema.json                                      3593       942006   1b6f8dde 0
+spec/schemas/manifest.image.schema.json                             28278       945660   87331097 0
+spec/schemas/manifest.model-draft.schema.json                       47792       974007   500c6942 0
+spec/schemas/manifest.schema.json                                   46174      1021874   c0cf0ca1 0
+spec/schemas/signature.schema.json                                  11209      1068111   39163a1c 0
+spec/schemas/x.c2pa.export.schema.json                               4935      1079384   0602fa8e 0
+spec/skeleton/canonical-humanoid-v1.json                            22429      1084387   c9592f8c 0
+spec/skeleton/core.hands.v1.json                                    26112      1106886   86360770 0
+spec/skeleton/derive-canonical-humanoid.py                          19852      1133060   1e466620 0
+testvectors/generate-once-upon-a-time.stdout.txt                      234      1152984   31fdd18f 0
+testvectors/generate-the-little-robot.stdout.txt                      140      1153296   4cfade93 0
+testvectors/tokens_instrumentation.diff                               831      1153514   4d231841 0
+testvectors/vectors.json                                             6794      1154414   9bb3b703 0
+tools/llama2c-testvector-run.config.json                             2376      1161262   a3708804 0
+tools/llama2c/BUILD-AND-RUN.md                                       9166      1163708   b6f8db71 0
+tools/llama2c/LICENSE-llama2c.txt                                    1063      1172934   ee61796f 0
+tools/llama2c/run.c                                                 38545      1174060   14d1ac69 0
+tools/llama2c/tool.json                                              3158      1212654   7c3f8b68 0
+tools/llama2c/win.c                                                  4269      1215865   2024d1aa 0
+tools/llama2c/win.h                                                  1612      1220183   6e617e58 0
+recipe/inputs/llama2c-README.md                                     35271      1221844   135ac01c 0
+recipe/inputs/tinyllamas-model-card.md                                183      1257176   409d8495 0
+recipe/recipe.json                                                   4835      1257427   ad4e6c4d 0
+disclosure/disclosure.json                                           4288      1262310   61dd34f7 0
+provenance/provenance.json                                           1952      1266654   01acbb59 0
+model/stories15M.bin                                             60816028      1268662   f2892ec0 0
+model/tokenizer.bin                                                433869     62084740   9301f576 0
+
+
+===== tools/llama2c/BUILD-AND-RUN.md (complete) =====
+# BUILD AND RUN — the runtime this package carries
+
+This package contains a language model and the complete source of a runtime
+that executes it. This file is the exact procedure: what to compile, with what
+command, and what to run to get text out. Every command below is quoted as it
+was actually typed; the ones marked **VERIFIED** were run by the package's
+author on the machine described in §5 and their output is what
+`testvectors/vectors.json` records.
+
+Nothing here is executed for you and nothing in this package executes itself.
+`spec/SPEC.md` §7.1 is the rule and it is not softened here: source is always
+allowed and reading it is the point; a compiled artifact is inert data. There is
+no compiled artifact in this package — every executable byte you end up with,
+you produced.
+
+## 1. What you need out of the package
+
+Extract the whole package (it is a store-mode zip; any zip tool, or the
+zero-dependency reader in `loaders/`). Four paths matter:
+
+| path | what it is |
+|---|---|
+| `tools/llama2c/run.c` | the whole runtime, ~970 lines of C99, no dependencies beyond the standard library and libm |
+| `tools/llama2c/win.h`, `tools/llama2c/win.c` | a Windows shim providing `mmap`/`munmap`/`clock_gettime`. Needed on Windows ONLY; `run.c` includes `win.h` behind `#if defined _WIN32` |
+| `model/stories15M.bin` | the weights, 60 816 028 bytes, f32. Layout: `spec/layouts/llama2c-checkpoint.layout.txt` |
+| `model/tokenizer.bin` | the vocabulary, 433 869 bytes. Layout: `spec/layouts/llama2c-tokenizer.layout.txt` |
+
+Toolchain: any hosted C99 compiler. Nothing is downloaded, nothing is
+installed, there is no build system, no makefile is required and no network
+access is needed at any point.
+
+## 2. Build
+
+Run these from the extracted package root.
+
+### 2a. POSIX — Linux, macOS, WSL, MSYS2's UCRT/MSYS shells
+
+```
+cc -O3 -o run tools/llama2c/run.c -lm
+```
+
+`win.c` is NOT compiled on POSIX and MUST NOT be: `run.c` takes the
+`<sys/mman.h>` branch there. This is upstream llama2.c's own build line
+(`gcc -O3 -o run run.c -lm`, from its README, which this package carries at
+`recipe/inputs/llama2c-README.md`). **NOT VERIFIED HERE** — the machine in §5
+is Windows and had no working POSIX C compiler on it, so this command is
+reported as upstream's, unmeasured, and is labelled that way rather than
+claimed. If it fails for you, that is a fact worth reporting; the two commands
+below are the ones that were measured.
+
+### 2b. Windows, MSVC — **VERIFIED**
+
+From a shell where `cl.exe` is on PATH (run `vcvars64.bat` from your Visual
+Studio installation first, or use a "x64 Native Tools Command Prompt"):
+
+```
+cl /nologo /O2 /Fe:run.exe tools\llama2c\run.c tools\llama2c\win.c
+```
+
+Both `.c` files. `win.c` supplies `mmap`, `munmap` and `clock_gettime`, which
+`run.c` calls and which Windows does not have. Measured: exit 0, one warning-free
+`Generating Code...`, a 218 624-byte `run.exe`.
+
+### 2c. Windows, mingw-w64 gcc — **VERIFIED TO FAIL, UNMODIFIED**
+
+```
+gcc -O3 -o run.exe tools/llama2c/run.c tools/llama2c/win.c -lm
+```
+
+does **not** build with mingw-w64 gcc 15.2.0. Measured, both errors, verbatim:
+
+```
+win.c:136: error: passing argument 4 of 'VirtualProtect' from incompatible
+           pointer type   (uint32_t * vs PDWORD, i.e. unsigned long *)
+win.c:175: error: redefinition of 'clock_gettime'
+           (mingw's own <pthread_time.h> already defines it inline)
+```
+
+Neither is a werk problem and neither is fixed here, because fixing it would
+mean shipping a `win.c` whose bytes are not the ones its author published — and
+then this package's `sha256` for that file would no longer match upstream, which
+is the one property that lets a stranger check where the code came from. The
+two changes a consumer needs, if a mingw build is what they want, are one cast
+and one `#if !defined(__MINGW32__)` guard, both inside `win.c`, both outside the
+scope of this package. Use §2b instead.
+
+Suppressing the first error with `-Wno-incompatible-pointer-types` and renaming
+the second with `-Dclock_gettime=...` was also tried, and also fails: the rename
+applies to mingw's own inline definition too. Recorded so nobody spends the
+twenty minutes again.
+
+## 3. Run
+
+```
+./run model/stories15M.bin -z model/tokenizer.bin -t 0.0 -n 64 -i "Once upon a time"
+```
+
+(on Windows, `run.exe model\stories15M.bin -z model\tokenizer.bin -t 0.0 -n 64 -i "Once upon a time"`)
+
+Flags that matter:
+
+| flag | meaning |
+|---|---|
+| first positional | path to the checkpoint. Required. |
+| `-z <path>` | tokenizer path. **Required here**, because run.c's default is `tokenizer.bin` in the CURRENT DIRECTORY and this package puts it in `model/`. Omitting it is the single most likely way to fail. |
+| `-t <float>` | temperature. **`-t 0.0` selects greedy argmax and makes the run deterministic.** Any other value samples and the output will not match the test vectors. |
+| `-n <int>` | number of steps. |
+| `-i <string>` | the prompt. |
+| `-s <int>` | RNG seed. Irrelevant at `-t 0.0`; the sampler is never consulted. |
+
+The generated text goes to **stdout**. A timing line (`achieved tok/s: …`) goes
+to **stderr** and is not part of any test vector.
+
+## 4. Check your result against the package
+
+`testvectors/vectors.json` is the correctness anchor. It records, for two
+temperature-0 runs, the exact command line, the exact stdout, its sha256, and
+the exact sequence of token ids. Verify like this:
+
+1. Run the command in `vectors[i].argv`.
+2. Take stdout, **replace CRLF with LF**, and compare against
+   `vectors[i].stdout_text` — or hash it and compare against
+   `vectors[i].stdout_sha256_lf`.
+3. It should match byte for byte.
+
+The CRLF normalisation is not a fudge. `run.c` writes to a text-mode stream, so
+the newlines inside the generated story come out as `\n` on POSIX and `\r\n` on
+Windows from an identical model computation. The hash is therefore declared over
+the LF form and the byte count of the LF form is given too
+(`stdout_bytes_lf`). The raw Windows-console hash of the first vector is
+recorded separately as `stdout_sha256_crlf` so that the normalisation can itself
+be checked rather than taken on trust.
+
+`vectors[i].token_ids` is the stronger anchor: token ids are integers and no
+newline convention touches them. They were captured by a two-line
+instrumentation of `run.c`, and that instrumentation travels in this package as
+`testvectors/tokens_instrumentation.diff` so you can reproduce the capture
+instead of believing it. **The unmodified `run.c` does not print token ids** —
+matching `stdout_sha256_lf` is the check you can do without patching anything,
+and it is sufficient.
+
+### If it does not match
+
+Floating-point summation order is the expected cause and it is a real one: the
+runtime is scalar C, but a compiler is free to vectorise the reductions in
+`rmsnorm`, `softmax` and `matmul`, and `-ffast-math` or an aggressive `-O` on a
+different target will reassociate them. A greedy argmax over 32 000 logits is
+usually robust to that, and it is not guaranteed to be. So:
+
+* a run that matches **is** strong evidence the whole chain is right;
+* a run that **diverges after N tokens** is evidence of arithmetic reassociation,
+  not necessarily of a broken reader. Report N and your compiler flags.
+* a run that produces **fluent English but a different story from token 1** means
+  the prompt encoding differs — check §5 of the tokenizer layout grammar (the
+  BOS token and the dummy-prefix space).
+* a run that produces **garbage from token 1** means the weights are being read
+  at the wrong offsets — check the dead RoPE tables in §4 of the checkpoint
+  layout grammar.
+
+## 5. The machine the vectors were produced on
+
+Recorded because "it matched" is only a measurement if you know against what.
+
+| | |
+|---|---|
+| OS | Microsoft Windows 10 Enterprise, 10.0.19045, x64 |
+| CPU | AMD Ryzen Threadripper 3970X (32 core) |
+| compiler | Microsoft (R) C/C++ Optimizing Compiler Version **19.38.33143** for x64 (Visual Studio 2022 Community) |
+| build command | `cl /nologo /O2 /Fe:run.exe run.c win.c` |
+| binary | `run.exe`, 218 624 bytes |
+| throughput | 93.75 tok/s on vector 1, 94.51 tok/s on vector 2 (from the runtime's own stderr line) |
+
+No GPU is involved anywhere. This is a 15 M-parameter model in f32 on one CPU
+core.
+
+## 6. What this package does NOT contain
+
+Stated so nobody looks for it:
+
+* **no training code and no training data.** The weights are the output of a
+  training run this package did not perform and cannot reproduce.
+  `recipe/recipe.json` records what is known about that run — the architecture,
+  the dataset by name, the publisher — with `reproducibility: "descriptive"`
+  and an `unrecorded[]` list, which is the format's way of saying "this is a
+  truthful record and it is not a reproduction recipe".
+* **no compiled binary.** By doctrine, see the top of this file.
+* **no quantised variant.** The checkpoint is f32 throughout.
+* **no chat template.** `run.c` has a `-m chat` mode; the model in this package
+  is a story completer trained on TinyStories and was never instruction-tuned,
+  so chat mode will produce a story with the chat scaffolding wrapped around it.
+
+
+
+===== tools/llama2c/tool.json =====
+{
+  "schema_version": 1,
+  "tool_id": "llama2c",
+  "name": "run.c (llama2.c)",
+  "version": "master@2026-08-09-fetch",
+  "role": "creator",
+  "form": "source",
+  "language": "c",
+  "entrypoint": "tools/llama2c/run.c",
+  "files": [
+    {
+      "path": "tools/llama2c/run.c",
+      "sha256": "9c4f2d5c6ae01b71726d1cc37530d71e60bff0ec7cc012565f16a43c1ca658bd",
+      "size": 38545
+    },
+    {
+      "path": "tools/llama2c/win.h",
+      "sha256": "718d5c4d246a4262e7b8c6caaf7191d3e5d6d73050ec4c54a75916c00df1d833",
+      "size": 1612
+    },
+    {
+      "path": "tools/llama2c/win.c",
+      "sha256": "33a6df145d7c7ad3ff444b61795d54f2823ab04e5705a80e9c89abdbb165abd4",
+      "size": 4269
+    },
+    {
+      "path": "tools/llama2c/BUILD-AND-RUN.md",
+      "sha256": "9e58ff3b7073238d7d140c528b5d6db74bf3363be1e035de1caf751c457b07fd",
+      "size": 9166
+    },
+    {
+      "path": "tools/llama2c/LICENSE-llama2c.txt",
+      "sha256": "e87b912002f04cdfa837eaf7f70548ab79b9cb62a285495edf575f3da875aec4",
+      "size": 1063
+    }
+  ],
+  "license": {
+    "spdx_id": "MIT",
+    "file": "tools/llama2c/LICENSE-llama2c.txt",
+    "holder": "Andrej Karpathy",
+    "note": "The MIT licence text as published in the llama2.c repository, carried verbatim. sha256 e87b912002f04cdfa837eaf7f70548ab79b9cb62a285495edf575f3da875aec4. It is the RUNTIME's licence and not the weights' - they happen to agree here, and core.tool.license exists because that is the thing people forget."
+  },
+  "invocation": {
+    "example": "run model/stories15M.bin -z model/tokenizer.bin -t 0.0 -n 64 -i \"Once upon a time\"",
+    "argv": [
+      "run",
+      "model/stories15M.bin",
+      "-z",
+      "model/tokenizer.bin",
+      "-t",
+      "0.0",
+      "-n",
+      "64",
+      "-i",
+      "Once upon a time"
+    ],
+    "working_directory": ".",
+    "toolchain": "any hosted C99 compiler; libm",
+    "dependencies": [],
+    "note": "BUILD FIRST. tools/llama2c/BUILD-AND-RUN.md carries the exact compile line for each platform, which of them was measured on which machine, and the one that is upstream's and was NOT measured here. On Windows both run.c AND win.c must be compiled: win.h only DECLARES mmap/munmap/clock_gettime and win.c defines them, which is why a package carrying only run.c and win.h looks complete and fails to link."
+  },
+  "repository": {
+    "url": "https://github.com/karpathy/llama2.c",
+    "revision": "not-recorded",
+    "path_in_repository": "run.c"
+  },
+  "produced": [
+    "testvectors"
+  ],
+  "note": "The whole inference engine: ~970 lines of C99, zero dependencies beyond the standard library and libm, no build system, no network. It is carried as SOURCE and there is no prebuilt artifact anywhere in this package, so SPEC.md 7.1's inert-binary clause has nothing to bite on and the safety question does not arise: every executable byte a consumer ends up with, the consumer produced. `role` is `creator` rather than `viewer` because this program did produce something that IS in this package - the test vectors - and `viewer` is defined as having produced nothing here. Neither word is right for an EXECUTOR; see spec/PROFILE-MODEL-DRAFT.md section 5 item 4."
+}
+
+
+
+===== tools/llama2c-testvector-run.config.json =====
+{
+  "schema_version": 1,
+  "config_id": "llama2c-testvector-run",
+  "tool_node": "runtime",
+  "params": {
+    "checkpoint": "model/stories15M.bin",
+    "tokenizer": "model/tokenizer.bin",
+    "temperature": 0.0,
+    "topp": 0.9,
+    "topp_note": "recorded because run.c parses it, and INERT at temperature 0: sample() takes the argmax branch and never consults the nucleus sampler or the RNG.",
+    "rng_seed": "not set; irrelevant at temperature 0",
+    "mode": "generate",
+    "steps": [
+      64,
+      32
+    ],
+    "prompts": [
+      "Once upon a time",
+      "The little robot"
+    ]
+  },
+  "params_provenance": "recorded",
+  "environment": {
+    "platform": "win32",
+    "runtime_version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.38.33143 for x64 (Visual Studio 2022 Community)",
+    "device": "cpu",
+    "note": "COMPILED TOOL. Build command: cl /nologo /O2 /Fe:run.exe run.c win.c. Resulting binary: 218624 bytes. Machine: Microsoft Windows 10 Enterprise 10.0.19045 x64, AMD Ryzen Threadripper 3970X 32-Core Processor. `runtime_version` carries the COMPILER because this schema's environment block has no key for one -- see spec/PROFILE-MODEL-DRAFT.md section 5. The structured form of all of it is in testvectors/vectors.json under `environment`."
+  },
+  "determinism": "deterministic",
+  "determinism_note": "Temperature 0 selects the greedy argmax branch of sample() in run.c, so no random source is consulted at all and the run is a pure function of the weights, the tokenizer and the prompt. The scope of the byte-exact claim is ONE build on ONE machine, both named in `environment`: the forward pass is scalar C and a vectorising compiler may reassociate the reductions in rmsnorm, softmax and matmul. A greedy argmax over 32000 logits is usually robust to that and is not guaranteed to be, which is why testvectors/vectors.json says what a mismatch means instead of only what a match means.",
+  "unrecorded": [
+    "the exact libm build that evaluated expf, sqrtf and powf",
+    "the machine's microcode and whether FMA contraction was applied by the compiler; /fp:precise is MSVC's default and was not overridden, but it was not verified in the disassembly either"
+  ],
+  "ran_at": "2026-08-09T00:00:00Z",
+  "note": "The one configuration this package makes a claim about. Any other temperature produces a legal run that no test vector covers."
+}
+
+
+
+===== tools/llama2c/win.h (complete) =====
+#ifndef _WIN_H_
+#define _WIN_H_
+
+#define WIN32_LEAN_AND_MEAN      // Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#include <time.h>
+#include <stdint.h>
+
+#define ssize_t int64_t
+#define ftell _ftelli64
+
+// Below code is originally from mman-win32
+//
+/*
+ * sys/mman.h
+ * mman-win32
+ */
+
+#ifndef _WIN32_WINNT            // Allow use of features specific to Windows XP or later.
+#define _WIN32_WINNT    0x0501  // Change this to the appropriate value to target other versions of Windows.
+#endif
+
+/* All the headers include this file. */
+#ifndef _MSC_VER
+#include <_mingw.h>
+#endif
+
+#include <sys/types.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define PROT_NONE       0
+#define PROT_READ       1
+#define PROT_WRITE      2
+#define PROT_EXEC       4
+
+#define MAP_FILE        0
+#define MAP_SHARED      1
+#define MAP_PRIVATE     2
+#define MAP_TYPE        0xf
+#define MAP_FIXED       0x10
+#define MAP_ANONYMOUS   0x20
+#define MAP_ANON        MAP_ANONYMOUS
+
+#define MAP_FAILED      ((void *)-1)
+
+/* Flags for msync. */
+#define MS_ASYNC        1
+#define MS_SYNC         2
+#define MS_INVALIDATE   4
+
+/* Flags for portable clock_gettime call. */
+#define CLOCK_REALTIME  0
+
+void*   mmap(void *addr, size_t len, int prot, int flags, int fildes, ssize_t off);
+int     munmap(void *addr, size_t len);
+int     mprotect(void *addr, size_t len, int prot);
+int     msync(void *addr, size_t len, int flags);
+int     mlock(const void *addr, size_t len);
+int     munlock(const void *addr, size_t len);
+int     clock_gettime(int clk_id, struct timespec *tp);
+
+#ifdef __cplusplus
+};
+#endif
+
+#endif /*  _WIN_H_ */
+
+
+
+===== tools/llama2c/win.c (complete) =====
+#include "win.h"
+#include <errno.h>
+#include <io.h>
+
+#ifndef FILE_MAP_EXECUTE
+#define FILE_MAP_EXECUTE    0x0020
+#endif /* FILE_MAP_EXECUTE */
+
+static int __map_mman_error(const uint32_t err, const int deferr)
+{
+    if (err == 0)
+        return 0;
+    //TODO: implement
+    return err;
+}
+
+static uint32_t __map_mmap_prot_page(const int prot)
+{
+    uint32_t protect = 0;
+    
+    if (prot == PROT_NONE)
+        return protect;
+        
+    if ((prot & PROT_EXEC) != 0)
+    {
+        protect = ((prot & PROT_WRITE) != 0) ? 
+                    PAGE_EXECUTE_READWRITE : PAGE_EXECUTE_READ;
+    }
+    else
+    {
+        protect = ((prot & PROT_WRITE) != 0) ?
+                    PAGE_READWRITE : PAGE_READONLY;
+    }
+    
+    return protect;
+}
+
+static uint32_t __map_mmap_prot_file(const int prot)
+{
+    uint32_t desiredAccess = 0;
+    
+    if (prot == PROT_NONE)
+        return desiredAccess;
+        
+    if ((prot & PROT_READ) != 0)
+        desiredAccess |= FILE_MAP_READ;
+    if ((prot & PROT_WRITE) != 0)
+        desiredAccess |= FILE_MAP_WRITE;
+    if ((prot & PROT_EXEC) != 0)
+        desiredAccess |= FILE_MAP_EXECUTE;
+    
+    return desiredAccess;
+}
+
+void* mmap(void *addr, size_t len, int prot, int flags, int fildes, ssize_t off)
+{
+    HANDLE fm, h;
+    void * map = MAP_FAILED;
+    
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4293)
+#endif
+
+    const uint32_t dwFileOffsetLow = (uint32_t)(off & 0xFFFFFFFFL);
+    const uint32_t dwFileOffsetHigh = (uint32_t)((off >> 32) & 0xFFFFFFFFL);
+    const uint32_t protect = __map_mmap_prot_page(prot);
+    const uint32_t desiredAccess = __map_mmap_prot_file(prot);
+
+    const ssize_t maxSize = off + (ssize_t)len;
+
+    const uint32_t dwMaxSizeLow = (uint32_t)(maxSize & 0xFFFFFFFFL);
+    const uint32_t dwMaxSizeHigh = (uint32_t)((maxSize >> 32) & 0xFFFFFFFFL);
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+    errno = 0;
+    
+    if (len == 0 
+        /* Unsupported flag combinations */
+        || (flags & MAP_FIXED) != 0
+        /* Unsupported protection combinations */
+        || prot == PROT_EXEC)
+    {
+        errno = EINVAL;
+        return MAP_FAILED;
+    }
+    
+    h = ((flags & MAP_ANONYMOUS) == 0) ? 
+                    (HANDLE)_get_osfhandle(fildes) : INVALID_HANDLE_VALUE;
+
+    if ((flags & MAP_ANONYMOUS) == 0 && h == INVALID_HANDLE_VALUE)
+    {
+        errno = EBADF;
+        return MAP_FAILED;
+    }
+
+    fm = CreateFileMapping(h, NULL, protect, dwMaxSizeHigh, dwMaxSizeLow, NULL);
+
+    if (fm == NULL)
+    {
+        errno = __map_mman_error(GetLastError(), EPERM);
+        return MAP_FAILED;
+    }
+
+    map = MapViewOfFile(fm, desiredAccess, dwFileOffsetHigh, dwFileOffsetLow, len);
+
+    CloseHandle(fm);
+
+    if (map == NULL)
+    {
+        errno = __map_mman_error(GetLastError(), EPERM);
+        return MAP_FAILED;
+    }
+
+    return map;
+}
+
+int munmap(void *addr, size_t len)
+{
+    if (UnmapViewOfFile(addr))
+        return 0;
+        
+    errno =  __map_mman_error(GetLastError(), EPERM);
+    
+    return -1;
+}
+
+int mprotect(void *addr, size_t len, int prot)
+{
+    uint32_t newProtect = __map_mmap_prot_page(prot);
+    uint32_t oldProtect = 0;
+    
+    if (VirtualProtect(addr, len, newProtect, &oldProtect))
+        return 0;
+    
+    errno =  __map_mman_error(GetLastError(), EPERM);
+    
+    return -1;
+}
+
+int msync(void *addr, size_t len, int flags)
+{
+    if (FlushViewOfFile(addr, len))
+        return 0;
+    
+    errno =  __map_mman_error(GetLastError(), EPERM);
+    
+    return -1;
+}
+
+int mlock(const void *addr, size_t len)
+{
+    if (VirtualLock((LPVOID)addr, len))
+        return 0;
+        
+    errno =  __map_mman_error(GetLastError(), EPERM);
+    
+    return -1;
+}
+
+int munlock(const void *addr, size_t len)
+{
+    if (VirtualUnlock((LPVOID)addr, len))
+        return 0;
+        
+    errno =  __map_mman_error(GetLastError(), EPERM);
+    
+    return -1;
+}
+
+// Portable clock_gettime function for Windows
+int clock_gettime(int clk_id, struct timespec *tp) {
+    uint32_t ticks = GetTickCount();
+    tp->tv_sec = ticks / 1000;
+    tp->tv_nsec = (ticks % 1000) * 1000000;
+    return 0;
+}
+
+
+
+===== tools/llama2c/run.c (complete) =====
+/* Inference for Llama-2 Transformer model in pure C */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <time.h>
+#include <math.h>
+#include <string.h>
+#include <fcntl.h>
+#if defined _WIN32
+    #include "win.h"
+#else
+    #include <unistd.h>
+    #include <sys/mman.h>
+#endif
+// ----------------------------------------------------------------------------
+// Transformer model
+
+typedef struct {
+    int dim; // transformer dimension
+    int hidden_dim; // for ffn layers
+    int n_layers; // number of layers
+    int n_heads; // number of query heads
+    int n_kv_heads; // number of key/value heads (can be < query heads because of multiquery)
+    int vocab_size; // vocabulary size, usually 256 (byte-level)
+    int seq_len; // max sequence length
+} Config;
+
+typedef struct {
+    // token embedding table
+    float* token_embedding_table;    // (vocab_size, dim)
+    // weights for rmsnorms
+    float* rms_att_weight; // (layer, dim) rmsnorm weights
+    float* rms_ffn_weight; // (layer, dim)
+    // weights for matmuls. note dim == n_heads * head_size
+    float* wq; // (layer, dim, n_heads * head_size)
+    float* wk; // (layer, dim, n_kv_heads * head_size)
+    float* wv; // (layer, dim, n_kv_heads * head_size)
+    float* wo; // (layer, n_heads * head_size, dim)
+    // weights for ffn
+    float* w1; // (layer, hidden_dim, dim)
+    float* w2; // (layer, dim, hidden_dim)
+    float* w3; // (layer, hidden_dim, dim)
+    // final rmsnorm
+    float* rms_final_weight; // (dim,)
+    // (optional) classifier weights for the logits, on the last layer
+    float* wcls;
+} TransformerWeights;
+
+typedef struct {
+    // current wave of activations
+    float *x; // activation at current time stamp (dim,)
+    float *xb; // same, but inside a residual branch (dim,)
+    float *xb2; // an additional buffer just for convenience (dim,)
+    float *hb; // buffer for hidden dimension in the ffn (hidden_dim,)
+    float *hb2; // buffer for hidden dimension in the ffn (hidden_dim,)
+    float *q; // query (dim,)
+    float *k; // key (dim,)
+    float *v; // value (dim,)
+    float *att; // buffer for scores/attention values (n_heads, seq_len)
+    float *logits; // output logits
+    // kv cache
+    float* key_cache;   // (layer, seq_len, dim)
+    float* value_cache; // (layer, seq_len, dim)
+} RunState;
+
+typedef struct {
+    Config config; // the hyperparameters of the architecture (the blueprint)
+    TransformerWeights weights; // the weights of the model
+    RunState state; // buffers for the "wave" of activations in the forward pass
+    // some more state needed to properly clean up the memory mapping (sigh)
+    int fd; // file descriptor for memory mapping
+    float* data; // memory mapped data pointer
+    ssize_t file_size; // size of the checkpoint file in bytes
+} Transformer;
+
+void malloc_run_state(RunState* s, Config* p) {
+    // we calloc instead of malloc to keep valgrind happy
+    int kv_dim = (p->dim * p->n_kv_heads) / p->n_heads;
+    s->x = calloc(p->dim, sizeof(float));
+    s->xb = calloc(p->dim, sizeof(float));
+    s->xb2 = calloc(p->dim, sizeof(float));
+    s->hb = calloc(p->hidden_dim, sizeof(float));
+    s->hb2 = calloc(p->hidden_dim, sizeof(float));
+    s->q = calloc(p->dim, sizeof(float));
+    s->key_cache = calloc(p->n_layers * p->seq_len * kv_dim, sizeof(float));
+    s->value_cache = calloc(p->n_layers * p->seq_len * kv_dim, sizeof(float));
+    s->att = calloc(p->n_heads * p->seq_len, sizeof(float));
+    s->logits = calloc(p->vocab_size, sizeof(float));
+    // ensure all mallocs went fine
+    if (!s->x || !s->xb || !s->xb2 || !s->hb || !s->hb2 || !s->q
+     || !s->key_cache || !s->value_cache || !s->att || !s->logits) {
+        fprintf(stderr, "malloc failed!\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void free_run_state(RunState* s) {
+    free(s->x);
+    free(s->xb);
+    free(s->xb2);
+    free(s->hb);
+    free(s->hb2);
+    free(s->q);
+    free(s->att);
+    free(s->logits);
+    free(s->key_cache);
+    free(s->value_cache);
+}
+
+void memory_map_weights(TransformerWeights *w, Config* p, float* ptr, int shared_weights) {
+    int head_size = p->dim / p->n_heads;
+    // make sure the multiplications below are done in 64bit to fit the parameter counts of 13B+ models
+    unsigned long long n_layers = p->n_layers;
+    w->token_embedding_table = ptr;
+    ptr += p->vocab_size * p->dim;
+    w->rms_att_weight = ptr;
+    ptr += n_layers * p->dim;
+    w->wq = ptr;
+    ptr += n_layers * p->dim * (p->n_heads * head_size);
+    w->wk = ptr;
+    ptr += n_layers * p->dim * (p->n_kv_heads * head_size);
+    w->wv = ptr;
+    ptr += n_layers * p->dim * (p->n_kv_heads * head_size);
+    w->wo = ptr;
+    ptr += n_layers * (p->n_heads * head_size) * p->dim;
+    w->rms_ffn_weight = ptr;
+    ptr += n_layers * p->dim;
+    w->w1 = ptr;
+    ptr += n_layers * p->dim * p->hidden_dim;
+    w->w2 = ptr;
+    ptr += n_layers * p->hidden_dim * p->dim;
+    w->w3 = ptr;
+    ptr += n_layers * p->dim * p->hidden_dim;
+    w->rms_final_weight = ptr;
+    ptr += p->dim;
+    ptr += p->seq_len * head_size / 2; // skip what used to be freq_cis_real (for RoPE)
+    ptr += p->seq_len * head_size / 2; // skip what used to be freq_cis_imag (for RoPE)
+    w->wcls = shared_weights ? w->token_embedding_table : ptr;
+}
+
+void read_checkpoint(char* checkpoint, Config* config, TransformerWeights* weights,
+                     int* fd, float** data, ssize_t* file_size) {
+    FILE *file = fopen(checkpoint, "rb");
+    if (!file) { fprintf(stderr, "Couldn't open file %s\n", checkpoint); exit(EXIT_FAILURE); }
+    // read in the config header
+    if (fread(config, sizeof(Config), 1, file) != 1) { exit(EXIT_FAILURE); }
+    // negative vocab size is hacky way of signaling unshared weights. bit yikes.
+    int shared_weights = config->vocab_size > 0 ? 1 : 0;
+    config->vocab_size = abs(config->vocab_size);
+    // figure out the file size
+    fseek(file, 0, SEEK_END); // move file pointer to end of file
+    *file_size = ftell(file); // get the file size, in bytes
+    fclose(file);
+    // memory map the Transformer weights into the data pointer
+    *fd = open(checkpoint, O_RDONLY); // open in read only mode
+    if (*fd == -1) { fprintf(stderr, "open failed!\n"); exit(EXIT_FAILURE); }
+    *data = mmap(NULL, *file_size, PROT_READ, MAP_PRIVATE, *fd, 0);
+    if (*data == MAP_FAILED) { fprintf(stderr, "mmap failed!\n"); exit(EXIT_FAILURE); }
+    float* weights_ptr = *data + sizeof(Config)/sizeof(float);
+    memory_map_weights(weights, config, weights_ptr, shared_weights);
+}
+
+void build_transformer(Transformer *t, char* checkpoint_path) {
+    // read in the Config and the Weights from the checkpoint
+    read_checkpoint(checkpoint_path, &t->config, &t->weights, &t->fd, &t->data, &t->file_size);
+    // allocate the RunState buffers
+    malloc_run_state(&t->state, &t->config);
+}
+
+void free_transformer(Transformer* t) {
+    // close the memory mapping
+    if (t->data != MAP_FAILED) { munmap(t->data, t->file_size); }
+    if (t->fd != -1) { close(t->fd); }
+    // free the RunState buffers
+    free_run_state(&t->state);
+}
+
+// ----------------------------------------------------------------------------
+// neural net blocks; the dynamics of the Transformer
+
+void rmsnorm(float* o, float* x, float* weight, int size) {
+    // calculate sum of squares
+    float ss = 0.0f;
+    for (int j = 0; j < size; j++) {
+        ss += x[j] * x[j];
+    }
+    ss /= size;
+    ss += 1e-5f;
+    ss = 1.0f / sqrtf(ss);
+    // normalize and scale
+    for (int j = 0; j < size; j++) {
+        o[j] = weight[j] * (ss * x[j]);
+    }
+}
+
+void softmax(float* x, int size) {
+    // find max value (for numerical stability)
+    float max_val = x[0];
+    for (int i = 1; i < size; i++) {
+        if (x[i] > max_val) {
+            max_val = x[i];
+        }
+    }
+    // exp and sum
+    float sum = 0.0f;
+    for (int i = 0; i < size; i++) {
+        x[i] = expf(x[i] - max_val);
+        sum += x[i];
+    }
+    // normalize
+    for (int i = 0; i < size; i++) {
+        x[i] /= sum;
+    }
+}
+
+void matmul(float* xout, float* x, float* w, int n, int d) {
+    // W (d,n) @ x (n,) -> xout (d,)
+    // by far the most amount of time is spent inside this little function
+    int i;
+    #pragma omp parallel for private(i)
+    for (i = 0; i < d; i++) {
+        float val = 0.0f;
+        for (int j = 0; j < n; j++) {
+            val += w[i * n + j] * x[j];
+        }
+        xout[i] = val;
+    }
+}
+
+float* forward(Transformer* transformer, int token, int pos) {
+
+    // a few convenience variables
+    Config* p = &transformer->config;
+    TransformerWeights* w = &transformer->weights;
+    RunState* s = &transformer->state;
+    float *x = s->x;
+    int dim = p->dim;
+    int kv_dim = (p->dim * p->n_kv_heads) / p->n_heads;
+    int kv_mul = p->n_heads / p->n_kv_heads; // integer multiplier of the kv sharing in multiquery
+    int hidden_dim =  p->hidden_dim;
+    int head_size = dim / p->n_heads;
+
+    // copy the token embedding into x
+    float* content_row = w->token_embedding_table + token * dim;
+    memcpy(x, content_row, dim*sizeof(*x));
+
+    // forward all the layers
+    for(unsigned long long l = 0; l < p->n_layers; l++) {
+
+        // attention rmsnorm
+        rmsnorm(s->xb, x, w->rms_att_weight + l*dim, dim);
+
+        // key and value point to the kv cache
+        int loff = l * p->seq_len * kv_dim; // kv cache layer offset for convenience
+        s->k = s->key_cache + loff + pos * kv_dim;
+        s->v = s->value_cache + loff + pos * kv_dim;
+
+        // qkv matmuls for this position
+        matmul(s->q, s->xb, w->wq + l*dim*dim, dim, dim);
+        matmul(s->k, s->xb, w->wk + l*dim*kv_dim, dim, kv_dim);
+        matmul(s->v, s->xb, w->wv + l*dim*kv_dim, dim, kv_dim);
+
+        // RoPE relative positional encoding: complex-valued rotate q and k in each head
+        for (int i = 0; i < dim; i+=2) {
+            int head_dim = i % head_size;
+            float freq = 1.0f / powf(10000.0f, head_dim / (float)head_size);
+            float val = pos * freq;
+            float fcr = cosf(val);
+            float fci = sinf(val);
+            int rotn = i < kv_dim ? 2 : 1; // how many vectors? 2 = q & k, 1 = q only
+            for (int v = 0; v < rotn; v++) {
+                float* vec = v == 0 ? s->q : s->k; // the vector to rotate (query or key)
+                float v0 = vec[i];
+                float v1 = vec[i+1];
+                vec[i]   = v0 * fcr - v1 * fci;
+                vec[i+1] = v0 * fci + v1 * fcr;
+            }
+        }
+
+        // multihead attention. iterate over all heads
+        int h;
+        #pragma omp parallel for private(h)
+        for (h = 0; h < p->n_heads; h++) {
+            // get the query vector for this head
+            float* q = s->q + h * head_size;
+            // attention scores for this head
+            float* att = s->att + h * p->seq_len;
+            // iterate over all timesteps, including the current one
+            for (int t = 0; t <= pos; t++) {
+                // get the key vector for this head and at this timestep
+                float* k = s->key_cache + loff + t * kv_dim + (h / kv_mul) * head_size;
+                // calculate the attention score as the dot product of q and k
+                float score = 0.0f;
+                for (int i = 0; i < head_size; i++) {
+                    score += q[i] * k[i];
+                }
+                score /= sqrtf(head_size);
+                // save the score to the attention buffer
+                att[t] = score;
+            }
+
+            // softmax the scores to get attention weights, from 0..pos inclusively
+            softmax(att, pos + 1);
+
+            // weighted sum of the values, store back into xb
+            float* xb = s->xb + h * head_size;
+            memset(xb, 0, head_size * sizeof(float));
+            for (int t = 0; t <= pos; t++) {
+                // get the value vector for this head and at this timestep
+                float* v = s->value_cache + loff + t * kv_dim + (h / kv_mul) * head_size;
+                // get the attention weight for this timestep
+                float a = att[t];
+                // accumulate the weighted value into xb
+                for (int i = 0; i < head_size; i++) {
+                    xb[i] += a * v[i];
+                }
+            }
+        }
+
+        // final matmul to get the output of the attention
+        matmul(s->xb2, s->xb, w->wo + l*dim*dim, dim, dim);
+
+        // residual connection back into x
+        for (int i = 0; i < dim; i++) {
+            x[i] += s->xb2[i];
+        }
+
+        // ffn rmsnorm
+        rmsnorm(s->xb, x, w->rms_ffn_weight + l*dim, dim);
+
+        // Now for FFN in PyTorch we have: self.w2(F.silu(self.w1(x)) * self.w3(x))
+        // first calculate self.w1(x) and self.w3(x)
+        matmul(s->hb, s->xb, w->w1 + l*dim*hidden_dim, dim, hidden_dim);
+        matmul(s->hb2, s->xb, w->w3 + l*dim*hidden_dim, dim, hidden_dim);
+
+        // SwiGLU non-linearity
+        for (int i = 0; i < hidden_dim; i++) {
+            float val = s->hb[i];
+            // silu(x)=x*σ(x), where σ(x) is the logistic sigmoid
+            val *= (1.0f / (1.0f + expf(-val)));
+            // elementwise multiply with w3(x)
+            val *= s->hb2[i];
+            s->hb[i] = val;
+        }
+
+        // final matmul to get the output of the ffn
+        matmul(s->xb, s->hb, w->w2 + l*dim*hidden_dim, hidden_dim, dim);
+
+        // residual connection
+        for (int i = 0; i < dim; i++) {
+            x[i] += s->xb[i];
+        }
+    }
+
+    // final rmsnorm
+    rmsnorm(x, x, w->rms_final_weight, dim);
+
+    // classifier into logits
+    matmul(s->logits, x, w->wcls, p->dim, p->vocab_size);
+    return s->logits;
+}
+
+// ----------------------------------------------------------------------------
+// The Byte Pair Encoding (BPE) Tokenizer that translates strings <-> tokens
+
+typedef struct {
+    char *str;
+    int id;
+} TokenIndex;
+
+typedef struct {
+    char** vocab;
+    float* vocab_scores;
+    TokenIndex *sorted_vocab;
+    int vocab_size;
+    unsigned int max_token_length;
+    unsigned char byte_pieces[512]; // stores all single-byte strings
+} Tokenizer;
+
+int compare_tokens(const void *a, const void *b) {
+    return strcmp(((TokenIndex*)a)->str, ((TokenIndex*)b)->str);
+}
+
+void build_tokenizer(Tokenizer* t, char* tokenizer_path, int vocab_size) {
+    // i should have written the vocab_size into the tokenizer file... sigh
+    t->vocab_size = vocab_size;
+    // malloc space to hold the scores and the strings
+    t->vocab = (char**)malloc(vocab_size * sizeof(char*));
+    t->vocab_scores = (float*)malloc(vocab_size * sizeof(float));
+    t->sorted_vocab = NULL; // initialized lazily
+    for (int i = 0; i < 256; i++) {
+        t->byte_pieces[i * 2] = (unsigned char)i;
+        t->byte_pieces[i * 2 + 1] = '\0';
+    }
+    // read in the file
+    FILE *file = fopen(tokenizer_path, "rb");
+    if (!file) { fprintf(stderr, "couldn't load %s\n", tokenizer_path); exit(EXIT_FAILURE); }
+    if (fread(&t->max_token_length, sizeof(int), 1, file) != 1) { fprintf(stderr, "failed read\n"); exit(EXIT_FAILURE); }
+    int len;
+    for (int i = 0; i < vocab_size; i++) {
+        if (fread(t->vocab_scores + i, sizeof(float), 1, file) != 1) { fprintf(stderr, "failed read\n"); exit(EXIT_FAILURE);}
+        if (fread(&len, sizeof(int), 1, file) != 1) { fprintf(stderr, "failed read\n"); exit(EXIT_FAILURE); }
+        t->vocab[i] = (char *)malloc(len + 1);
+        if (fread(t->vocab[i], len, 1, file) != 1) { fprintf(stderr, "failed read\n"); exit(EXIT_FAILURE); }
+        t->vocab[i][len] = '\0'; // add the string terminating token
+    }
+    fclose(file);
+}
+
+void free_tokenizer(Tokenizer* t) {
+    for (int i = 0; i < t->vocab_size; i++) { free(t->vocab[i]); }
+    free(t->vocab);
+    free(t->vocab_scores);
+    free(t->sorted_vocab);
+}
+
+char* decode(Tokenizer* t, int prev_token, int token) {
+    char *piece = t->vocab[token];
+    // following BOS (1) token, sentencepiece decoder strips any leading whitespace (see PR #89)
+    if (prev_token == 1 && piece[0] == ' ') { piece++; }
+    // careful, some tokens designate raw bytes, and look like e.g. '<0x01>'
+    // parse this and convert and return the actual byte
+    unsigned char byte_val;
+    if (sscanf(piece, "<0x%02hhX>", &byte_val) == 1) {
+        piece = (char*)t->byte_pieces + byte_val * 2;
+    }
+    return piece;
+}
+
+void safe_printf(char *piece) {
+    // piece might be a raw byte token, and we only want to print printable chars or whitespace
+    // because some of the other bytes can be various control codes, backspace, etc.
+    if (piece == NULL) { return; }
+    if (piece[0] == '\0') { return; }
+    if (piece[1] == '\0') {
+        unsigned char byte_val = piece[0];
+        if (!(isprint(byte_val) || isspace(byte_val))) {
+            return; // bad byte, don't print it
+        }
+    }
+    printf("%s", piece);
+}
+
+int str_lookup(char *str, TokenIndex *sorted_vocab, int vocab_size) {
+    // efficiently find the perfect match for str in vocab, return its index or -1 if not found
+    TokenIndex tok = { .str = str }; // acts as the key to search for
+    TokenIndex *res = bsearch(&tok, sorted_vocab, vocab_size, sizeof(TokenIndex), compare_tokens);
+    return res != NULL ? res->id : -1;
+}
+
+void encode(Tokenizer* t, char *text, int8_t bos, int8_t eos, int *tokens, int *n_tokens) {
+    // encode the string text (input) into an upper-bound preallocated tokens[] array
+    // bos != 0 means prepend the BOS token (=1), eos != 0 means append the EOS token (=2)
+    if (text == NULL) { fprintf(stderr, "cannot encode NULL text\n"); exit(EXIT_FAILURE); }
+
+    if (t->sorted_vocab == NULL) {
+        // lazily malloc and sort the vocabulary
+        t->sorted_vocab = malloc(t->vocab_size * sizeof(TokenIndex));
+        for (int i = 0; i < t->vocab_size; i++) {
+            t->sorted_vocab[i].str = t->vocab[i];
+            t->sorted_vocab[i].id = i;
+        }
+        qsort(t->sorted_vocab, t->vocab_size, sizeof(TokenIndex), compare_tokens);
+    }
+
+    // create a temporary buffer that will store merge candidates of always two consecutive tokens
+    // *2 for concat, +1 for null terminator +2 for UTF8 (in case max_token_length is 1)
+    char* str_buffer = malloc((t->max_token_length*2 +1 +2) * sizeof(char));
+    size_t str_len = 0;
+
+    // start at 0 tokens
+    *n_tokens = 0;
+
+    // add optional BOS (=1) token, if desired
+    if (bos) tokens[(*n_tokens)++] = 1;
+
+    // add_dummy_prefix is true by default
+    // so prepend a dummy prefix token to the input string, but only if text != ""
+    // TODO: pretty sure this isn't correct in the general case but I don't have the
+    // energy to read more of the sentencepiece code to figure out what it's doing
+    if (text[0] != '\0') {
+        int dummy_prefix = str_lookup(" ", t->sorted_vocab, t->vocab_size);
+        tokens[(*n_tokens)++] = dummy_prefix;
+    }
+
+    // Okay UTF-8 time. This will get messy. Here is the reference from Wikipedia:
+    // Code point ↔ UTF-8 conversion
+    // First code point	Last code point	Byte 1	Byte 2	Byte 3	Byte 4
+    // U+0000	U+007F	    0xxxxxxx
+    // U+0080	U+07FF	    110xxxxx	10xxxxxx
+    // U+0800	U+FFFF	    1110xxxx	10xxxxxx	10xxxxxx
+    // U+10000	U+10FFFF    11110xxx	10xxxxxx	10xxxxxx	10xxxxxx
+
+    // process the raw (UTF-8) byte sequence of the input string
+    for (char *c = text; *c != '\0'; c++) {
+
+        // reset buffer if the current byte is ASCII or a leading byte
+        // 0xC0 is 11000000, so (*c & 0xC0) keeps the first 2 bits and zeros the rest
+        // 0x80 is 10000000
+        // in UTF-8, all continuation bytes start with "10" in first two bits
+        // so in English this is: "if this byte is not a continuation byte"
+        if ((*c & 0xC0) != 0x80) {
+            // this byte must be either a leading byte (11...) or an ASCII char (0x...)
+            // => reset our location, as we're starting a new UTF-8 codepoint
+            str_len = 0;
+        }
+
+        // append the current byte to the buffer
+        str_buffer[str_len++] = *c; // ++ is post-increment, incremented after this line
+        str_buffer[str_len] = '\0';
+
+        // while the next character is a continuation byte, continue appending
+        // but if there are too many of them, just stop to avoid overruning str_buffer size.
+        if ((*(c+1) & 0xC0) == 0x80 && str_len < 4) {
+            continue;
+        }
+
+        // ok c+1 is not a continuation byte, so we've read in a full codepoint
+        int id = str_lookup(str_buffer, t->sorted_vocab, t->vocab_size);
+
+        if (id != -1) {
+            // we found this codepoint in vocab, add it as a token
+            tokens[(*n_tokens)++] = id;
+        } else {
+            // byte_fallback encoding: just encode each byte as a token
+            // +3 is here because the first 3 vocab elements are <unk>, <s>, </s>
+            // so the individual bytes only start at index 3
+            for (int i=0; i < str_len; i++) {
+                tokens[(*n_tokens)++] = (unsigned char)str_buffer[i] + 3;
+            }
+        }
+        str_len = 0; // protect against a sequence of stray UTF8 continuation bytes
+    }
+
+    // merge the best consecutive pair each iteration, according the scores in vocab_scores
+    while (1) {
+        float best_score = -1e10;
+        int best_id = -1;
+        int best_idx = -1;
+
+        for (int i=0; i < (*n_tokens-1); i++) {
+            // check if we can merge the pair (tokens[i], tokens[i+1])
+            sprintf(str_buffer, "%s%s", t->vocab[tokens[i]], t->vocab[tokens[i+1]]);
+            int id = str_lookup(str_buffer, t->sorted_vocab, t->vocab_size);
+            if (id != -1 && t->vocab_scores[id] > best_score) {
+                // this merge pair exists in vocab! record its score and position
+                best_score = t->vocab_scores[id];
+                best_id = id;
+                best_idx = i;
+            }
+        }
+
+        if (best_idx == -1) {
+            break; // we couldn't find any more pairs to merge, so we're done
+        }
+
+        // merge the consecutive pair (best_idx, best_idx+1) into new token best_id
+        tokens[best_idx] = best_id;
+        // delete token at position best_idx+1, shift the entire sequence back 1
+        for (int i = best_idx+1; i < (*n_tokens-1); i++) {
+            tokens[i] = tokens[i+1];
+        }
+        (*n_tokens)--; // token length decreased
+    }
+
+    // add optional EOS (=2) token, if desired
+    if (eos) tokens[(*n_tokens)++] = 2;
+
+    free(str_buffer);
+}
+
+// ----------------------------------------------------------------------------
+// The Sampler, which takes logits and returns a sampled token
+// sampling can be done in a few ways: greedy argmax, sampling, top-p sampling
+
+typedef struct {
+    float prob;
+    int index;
+} ProbIndex; // struct used when sorting probabilities during top-p sampling
+
+typedef struct {
+    int vocab_size;
+    ProbIndex* probindex; // buffer used in top-p sampling
+    float temperature;
+    float topp;
+    unsigned long long rng_state;
+} Sampler;
+
+int sample_argmax(float* probabilities, int n) {
+    // return the index that has the highest probability
+    int max_i = 0;
+    float max_p = probabilities[0];
+    for (int i = 1; i < n; i++) {
+        if (probabilities[i] > max_p) {
+            max_i = i;
+            max_p = probabilities[i];
+        }
+    }
+    return max_i;
+}
+
+int sample_mult(float* probabilities, int n, float coin) {
+    // sample index from probabilities (they must sum to 1!)
+    // coin is a random number in [0, 1), usually from random_f32()
+    float cdf = 0.0f;
+    for (int i = 0; i < n; i++) {
+        cdf += probabilities[i];
+        if (coin < cdf) {
+            return i;
+        }
+    }
+    return n - 1; // in case of rounding errors
+}
+
+int compare(const void* a, const void* b) {
+    ProbIndex* a_ = (ProbIndex*) a;
+    ProbIndex* b_ = (ProbIndex*) b;
+    if (a_->prob > b_->prob) return -1;
+    if (a_->prob < b_->prob) return 1;
+    return 0;
+}
+
+int sample_topp(float* probabilities, int n, float topp, ProbIndex* probindex, float coin) {
+    // top-p sampling (or "nucleus sampling") samples from the smallest set of
+    // tokens that exceed probability topp. This way we never sample tokens that
+    // have very low probabilities and are less likely to go "off the rails".
+    // coin is a random number in [0, 1), usually from random_f32()
+
+    int n0 = 0;
+    // quicksort indices in descending order of probabilities
+    // values smaller than (1 - topp) / (n - 1) cannot be part of the result
+    // so for efficiency we crop these out as candidates before sorting
+    const float cutoff = (1.0f - topp) / (n - 1);
+    for (int i = 0; i < n; i++) {
+        if (probabilities[i] >= cutoff) {
+            probindex[n0].index = i;
+            probindex[n0].prob = probabilities[i];
+            n0++;
+        }
+    }
+    qsort(probindex, n0, sizeof(ProbIndex), compare);
+
+    // truncate the list where cumulative probability exceeds topp
+    float cumulative_prob = 0.0f;
+    int last_idx = n0 - 1; // in case of rounding errors consider all elements
+    for (int i = 0; i < n0; i++) {
+        cumulative_prob += probindex[i].prob;
+        if (cumulative_prob > topp) {
+            last_idx = i;
+            break; // we've exceeded topp by including last_idx
+        }
+    }
+
+    // sample from the truncated list
+    float r = coin * cumulative_prob;
+    float cdf = 0.0f;
+    for (int i = 0; i <= last_idx; i++) {
+        cdf += probindex[i].prob;
+        if (r < cdf) {
+            return probindex[i].index;
+        }
+    }
+    return probindex[last_idx].index; // in case of rounding errors
+}
+
+void build_sampler(Sampler* sampler, int vocab_size, float temperature, float topp, unsigned long long rng_seed) {
+    sampler->vocab_size = vocab_size;
+    sampler->temperature = temperature;
+    sampler->topp = topp;
+    sampler->rng_state = rng_seed;
+    // buffer only used with nucleus sampling; may not need but it's ~small
+    sampler->probindex = malloc(sampler->vocab_size * sizeof(ProbIndex));
+}
+
+void free_sampler(Sampler* sampler) {
+    free(sampler->probindex);
+}
+
+unsigned int random_u32(unsigned long long *state) {
+    // xorshift rng: https://en.wikipedia.org/wiki/Xorshift#xorshift.2A
+    *state ^= *state >> 12;
+    *state ^= *state << 25;
+    *state ^= *state >> 27;
+    return (*state * 0x2545F4914F6CDD1Dull) >> 32;
+}
+float random_f32(unsigned long long *state) { // random float32 in [0,1)
+    return (random_u32(state) >> 8) / 16777216.0f;
+}
+
+int sample(Sampler* sampler, float* logits) {
+    // sample the token given the logits and some hyperparameters
+    int next;
+    if (sampler->temperature == 0.0f) {
+        // greedy argmax sampling: take the token with the highest probability
+        next = sample_argmax(logits, sampler->vocab_size);
+    } else {
+        // apply the temperature to the logits
+        for (int q=0; q<sampler->vocab_size; q++) { logits[q] /= sampler->temperature; }
+        // apply softmax to the logits to get the probabilities for next token
+        softmax(logits, sampler->vocab_size);
+        // flip a (float) coin (this is our source of entropy for sampling)
+        float coin = random_f32(&sampler->rng_state);
+        // we sample from this distribution to get the next token
+        if (sampler->topp <= 0 || sampler->topp >= 1) {
+            // simply sample from the predicted probability distribution
+            next = sample_mult(logits, sampler->vocab_size, coin);
+        } else {
+            // top-p (nucleus) sampling, clamping the least likely tokens to zero
+            next = sample_topp(logits, sampler->vocab_size, sampler->topp, sampler->probindex, coin);
+        }
+    }
+    return next;
+}
+
+// ----------------------------------------------------------------------------
+// utilities: time
+
+long time_in_ms() {
+    // return time in milliseconds, for benchmarking the model speed
+    struct timespec time;
+    clock_gettime(CLOCK_REALTIME, &time);
+    return time.tv_sec * 1000 + time.tv_nsec / 1000000;
+}
+
+// ----------------------------------------------------------------------------
+// generation loop
+
+void generate(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler, char *prompt, int steps) {
+    char *empty_prompt = "";
+    if (prompt == NULL) { prompt = empty_prompt; }
+
+    // encode the (string) prompt into tokens sequence
+    int num_prompt_tokens = 0;
+    int* prompt_tokens = (int*)malloc((strlen(prompt)+3) * sizeof(int)); // +3 for '\0', ?BOS, ?EOS
+    encode(tokenizer, prompt, 1, 0, prompt_tokens, &num_prompt_tokens);
+    if (num_prompt_tokens < 1) {
+        fprintf(stderr, "something is wrong, expected at least 1 prompt token\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // start the main loop
+    long start = 0;  // used to time our code, only initialized after first iteration
+    int next;        // will store the next token in the sequence
+    int token = prompt_tokens[0]; // kick off with the first token in the prompt
+    int pos = 0;     // position in the sequence
+    while (pos < steps) {
+
+        // forward the transformer to get logits for the next token
+        float* logits = forward(transformer, token, pos);
+
+        // advance the state machine
+        if (pos < num_prompt_tokens - 1) {
+            // if we are still processing the input prompt, force the next prompt token
+            next = prompt_tokens[pos + 1];
+        } else {
+            // otherwise sample the next token from the logits
+            next = sample(sampler, logits);
+        }
+        pos++;
+
+        // data-dependent terminating condition: the BOS (=1) token delimits sequences
+        if (next == 1) { break; }
+
+        // print the token as string, decode it with the Tokenizer object
+        char* piece = decode(tokenizer, token, next);
+        safe_printf(piece); // same as printf("%s", piece), but skips "unsafe" bytes
+        fflush(stdout);
+        token = next;
+
+        // init the timer here because the first iteration can be slower
+        if (start == 0) { start = time_in_ms(); }
+    }
+    printf("\n");
+
+    // report achieved tok/s (pos-1 because the timer starts after first iteration)
+    if (pos > 1) {
+        long end = time_in_ms();
+        fprintf(stderr, "achieved tok/s: %f\n", (pos-1) / (double)(end-start)*1000);
+    }
+
+    free(prompt_tokens);
+}
+
+void read_stdin(const char* guide, char* buffer, size_t bufsize) {
+    // read a line from stdin, up to but not including \n
+    printf("%s", guide);
+    if (fgets(buffer, bufsize, stdin) != NULL) {
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0'; // strip newline
+        }
+    }
+}
+
+// ----------------------------------------------------------------------------
+// chat loop
+// I manually inspected the tokens for a few chat conversations compared to
+// python reference and that seemed ok, but this was not thoroughly tested and
+// is not safely implemented, it's more a proof of concept atm.
+
+void chat(Transformer *transformer, Tokenizer *tokenizer, Sampler *sampler,
+          char *cli_user_prompt, char *cli_system_prompt, int steps) {
+
+    // buffers for reading the system prompt and user prompt from stdin
+    // you'll notice they are soomewhat haphazardly and unsafely set atm
+    char system_prompt[512];
+    char user_prompt[512];
+    char rendered_prompt[1152];
+    int num_prompt_tokens = 0;
+    int* prompt_tokens = (int*)malloc(1152 * sizeof(int));
+    int user_idx;
+
+    // start the main loop
+    int8_t user_turn = 1; // user starts
+    int next;        // will store the next token in the sequence
+    int token;       // stores the current token to feed into the transformer
+    int prev_token;
+    int pos = 0;     // position in the sequence
+    while (pos < steps) {
+
+        // when it is the user's turn to contribute tokens to the dialog...
+        if (user_turn) {
+            // get the (optional) system prompt at position 0
+            if (pos == 0) {
+                // at position 0, the user can also contribute a system prompt
+                if (cli_system_prompt == NULL) {
+                    // system prompt was not passed in, attempt to get it from stdin
+                    read_stdin("Enter system prompt (optional): ", system_prompt, sizeof(system_prompt));
+                } else {
+                    // system prompt was passed in, use it
+                    strcpy(system_prompt, cli_system_prompt);
+                }
+            }
+            // get the user prompt
+            if (pos == 0 && cli_user_prompt != NULL) {
+                // user prompt for position 0 was passed in, use it
+                strcpy(user_prompt, cli_user_prompt);
+            } else {
+                // otherwise get user prompt from stdin
+                read_stdin("User: ", user_prompt, sizeof(user_prompt));
+            }
+            // render user/system prompts into the Llama 2 Chat schema
+            if (pos == 0 && system_prompt[0] != '\0') {
+                char system_template[] = "[INST] <<SYS>>\n%s\n<</SYS>>\n\n%s [/INST]";
+                sprintf(rendered_prompt, system_template, system_prompt, user_prompt);
+            } else {
+                char user_template[] = "[INST] %s [/INST]";
+                sprintf(rendered_prompt, user_template, user_prompt);
+            }
+            // encode the rendered prompt into tokens
+            encode(tokenizer, rendered_prompt, 1, 0, prompt_tokens, &num_prompt_tokens);
+            user_idx = 0; // reset the user index
+            user_turn = 0;
+            printf("Assistant: ");
+        }
+
+        // determine the token to pass into the transformer next
+        if (user_idx < num_prompt_tokens) {
+            // if we are still processing the input prompt, force the next prompt token
+            token = prompt_tokens[user_idx++];
+        } else {
+            // otherwise use the next token sampled from previous turn
+            token = next;
+        }
+        // EOS (=2) token ends the Assistant turn
+        if (token == 2) { user_turn = 1; }
+
+        // forward the transformer to get logits for the next token
+        float* logits = forward(transformer, token, pos);
+        next = sample(sampler, logits);
+        pos++;
+
+        if (user_idx >= num_prompt_tokens && next != 2) {
+            // the Assistant is responding, so print its output
+            char* piece = decode(tokenizer, token, next);
+            safe_printf(piece); // same as printf("%s", piece), but skips "unsafe" bytes
+            fflush(stdout);
+        }
+        if (next == 2) { printf("\n"); }
+    }
+    printf("\n");
+    free(prompt_tokens);
+}
+
+
+// ----------------------------------------------------------------------------
+// CLI, include only if not testing
+#ifndef TESTING
+
+void error_usage() {
+    fprintf(stderr, "Usage:   run <checkpoint> [options]\n");
+    fprintf(stderr, "Example: run model.bin -n 256 -i \"Once upon a time\"\n");
+    fprintf(stderr, "Options:\n");
+    fprintf(stderr, "  -t <float>  temperature in [0,inf], default 1.0\n");
+    fprintf(stderr, "  -p <float>  p value in top-p (nucleus) sampling in [0,1] default 0.9\n");
+    fprintf(stderr, "  -s <int>    random seed, default time(NULL)\n");
+    fprintf(stderr, "  -n <int>    number of steps to run for, default 256. 0 = max_seq_len\n");
+    fprintf(stderr, "  -i <string> input prompt\n");
+    fprintf(stderr, "  -z <string> optional path to custom tokenizer\n");
+    fprintf(stderr, "  -m <string> mode: generate|chat, default: generate\n");
+    fprintf(stderr, "  -y <string> (optional) system prompt in chat mode\n");
+    exit(EXIT_FAILURE);
+}
+
+int main(int argc, char *argv[]) {
+
+    // default parameters
+    char *checkpoint_path = NULL;  // e.g. out/model.bin
+    char *tokenizer_path = "tokenizer.bin";
+    float temperature = 1.0f;   // 0.0 = greedy deterministic. 1.0 = original. don't set higher
+    float topp = 0.9f;          // top-p in nucleus sampling. 1.0 = off. 0.9 works well, but slower
+    int steps = 256;            // number of steps to run for
+    char *prompt = NULL;        // prompt string
+    unsigned long long rng_seed = 0; // seed rng with time by default
+    char *mode = "generate";    // generate|chat
+    char *system_prompt = NULL; // the (optional) system prompt to use in chat mode
+
+    // poor man's C argparse so we can override the defaults above from the command line
+    if (argc >= 2) { checkpoint_path = argv[1]; } else { error_usage(); }
+    for (int i = 2; i < argc; i+=2) {
+        // do some basic validation
+        if (i + 1 >= argc) { error_usage(); } // must have arg after flag
+        if (argv[i][0] != '-') { error_usage(); } // must start with dash
+        if (strlen(argv[i]) != 2) { error_usage(); } // must be -x (one dash, one letter)
+        // read in the args
+        if (argv[i][1] == 't') { temperature = atof(argv[i + 1]); }
+        else if (argv[i][1] == 'p') { topp = atof(argv[i + 1]); }
+        else if (argv[i][1] == 's') { rng_seed = atoi(argv[i + 1]); }
+        else if (argv[i][1] == 'n') { steps = atoi(argv[i + 1]); }
+        else if (argv[i][1] == 'i') { prompt = argv[i + 1]; }
+        else if (argv[i][1] == 'z') { tokenizer_path = argv[i + 1]; }
+        else if (argv[i][1] == 'm') { mode = argv[i + 1]; }
+        else if (argv[i][1] == 'y') { system_prompt = argv[i + 1]; }
+        else { error_usage(); }
+    }
+
+    // parameter validation/overrides
+    if (rng_seed <= 0) rng_seed = (unsigned int)time(NULL);
+    if (temperature < 0.0) temperature = 0.0;
+    if (topp < 0.0 || 1.0 < topp) topp = 0.9;
+    if (steps < 0) steps = 0;
+
+    // build the Transformer via the model .bin file
+    Transformer transformer;
+    build_transformer(&transformer, checkpoint_path);
+    if (steps == 0 || steps > transformer.config.seq_len) steps = transformer.config.seq_len; // override to ~max length
+
+    // build the Tokenizer via the tokenizer .bin file
+    Tokenizer tokenizer;
+    build_tokenizer(&tokenizer, tokenizer_path, transformer.config.vocab_size);
+
+    // build the Sampler
+    Sampler sampler;
+    build_sampler(&sampler, transformer.config.vocab_size, temperature, topp, rng_seed);
+
+    // run!
+    if (strcmp(mode, "generate") == 0) {
+        generate(&transformer, &tokenizer, &sampler, prompt, steps);
+    } else if (strcmp(mode, "chat") == 0) {
+        chat(&transformer, &tokenizer, &sampler, prompt, system_prompt, steps);
+    } else {
+        fprintf(stderr, "unknown mode: %s\n", mode);
+        error_usage();
+    }
+
+    // memory and file handles cleanup
+    free_sampler(&sampler);
+    free_tokenizer(&tokenizer);
+    free_transformer(&transformer);
+    return 0;
+}
+#endif
+
+
+
+===== spec/layouts/llama2c-checkpoint.layout.txt (complete) =====
+werk layout grammar — llama2c-checkpoint/1
+==========================================
+
+The binary layout of the file this package carries as `model/stories15M.bin`.
+
+This grammar exists because of law 2: a werk package must carry the knowledge
+needed to read its own bytes, and "it is a llama2.c checkpoint" is a name, not
+a grammar. Everything below is DERIVED FROM THE RUNTIME SOURCE this package
+also carries (`tools/llama2c/run.c`, functions `read_checkpoint` and
+`memory_map_weights`) and then CHECKED against the actual file: the offsets in
+§4 were computed from the header in §2 and they account for every one of the
+file's 60 816 028 bytes with nothing left over. That check is the only reason
+this document is allowed to say "MUST" anywhere.
+
+Unlike the layouts in `spec/layouts/`, this is NOT a werk envelope. There is no
+`WK**` magic, no MessagePack header and no section table. It is a foreign
+format — a bare header followed by bare tensors — and werk's job here is to
+describe it exactly rather than to convert it. That is the honest thing for a
+container to do with a third-party artifact whose bytes must stay byte-identical
+to what its author published.
+
+1. SCALARS AND ENDIANNESS
+-------------------------
+
+  i32  signed 32-bit integer, two's complement, LITTLE-ENDIAN
+  f32  IEEE 754 binary32, LITTLE-ENDIAN
+
+The file declares no endianness of its own. Little-endian is what the runtime
+assumes (it `mmap`s the bytes and casts) and it is what the manifest's
+`conventions.endianness = "le"` declares for this package. A big-endian consumer
+MUST byte-swap and MUST NOT read the file in place.
+
+There is no magic number, no version field and no checksum anywhere in this
+format. A reader therefore cannot tell a truncated or wrong file from a valid
+one by inspection; it can only check the arithmetic of §4 against the file size.
+This grammar makes that check normative:
+
+  MUST: a conformant reader computes the total from §4 and REFUSES the file
+  (node-scoped refusal, SPEC.md §10.1) when it does not equal the file size.
+
+The manifest's own `sha256` for `model/stories15M.bin` is the stronger check and
+is the one a werk reader has anyway.
+
+2. HEADER — 28 bytes at offset 0
+--------------------------------
+
+Seven i32 in this order. These are the fields of `Config` in run.c, in
+declaration order, read by one `fread(config, sizeof(Config), 1, file)`.
+
+  off  type  name          value in model/stories15M.bin
+  ---  ----  ------------  -----------------------------
+    0  i32   dim                288
+    4  i32   hidden_dim         768
+    8  i32   n_layers             6
+   12  i32   n_heads              6
+   16  i32   n_kv_heads           6
+   20  i32   vocab_size       32000
+   24  i32   seq_len            256
+
+Derived quantities used by §4:
+
+  head_size = dim / n_heads                 = 48
+  kv_dim    = (dim * n_kv_heads) / n_heads  = 288
+
+THE SIGN OF `vocab_size` IS A FLAG. run.c:
+
+    int shared_weights = config->vocab_size > 0 ? 1 : 0;
+    config->vocab_size = abs(config->vocab_size);
+
+A POSITIVE `vocab_size` means the output classifier SHARES the token embedding
+table; a NEGATIVE one means a separate classifier matrix follows the RoPE
+tables. In this file the value is +32000, so the weights ARE shared and there is
+no trailing classifier. run.c's own comment on this is "bit yikes." It is
+recorded here rather than smoothed over, because a reader that misses it reads
+either 36 864 000 bytes too few or too many.
+
+3. TENSOR ELEMENT TYPE
+----------------------
+
+Every tensor in this file is f32. There is no quantisation, no scale, no
+zero-point and no per-block metadata anywhere in this format. (llama2.c has a
+separate int8 checkpoint format, `version 2`, written by a different exporter
+with an explicit magic and version header; this file is NOT that and a reader
+must not look for one.)
+
+Tensors are stored DENSE, ROW-MAJOR, C order, with no padding and no alignment
+between them. A tensor of shape (a, b, c) occupies a*b*c*4 bytes and element
+(i, j, k) is at element index ((i*b) + j)*c + k.
+
+4. TENSOR ORDER AND OFFSETS
+---------------------------
+
+Immediately after the 28-byte header, in exactly this order. Order is
+load-bearing: nothing in the file names a tensor, so a tensor is identified only
+by its position in this sequence. The order is `memory_map_weights` in run.c,
+line for line.
+
+  #   name                    shape             elements     offset      bytes
+  --  ----------------------  ----------------  ---------  ----------  ---------
+   1  token_embedding_table   (32000, 288)       9216000          28   36864000
+   2  rms_att_weight          (6, 288)              1728    36864028       6912
+   3  wq                      (6, 288, 288)       497664    36870940    1990656
+   4  wk                      (6, 288, 288)       497664    38861596    1990656
+   5  wv                      (6, 288, 288)       497664    40852252    1990656
+   6  wo                      (6, 288, 288)       497664    42842908    1990656
+   7  rms_ffn_weight          (6, 288)              1728    44833564       6912
+   8  w1                      (6, 768, 288)      1327104    44840476    5308416
+   9  w2                      (6, 288, 768)      1327104    50148892    5308416
+  10  w3                      (6, 768, 288)      1327104    55457308    5308416
+  11  rms_final_weight        (288,)                 288    60765724       1152
+  12  (dead) freq_cis_real    (256, 24)             6144    60766876      24576
+  13  (dead) freq_cis_imag    (256, 24)             6144    60791452      24576
+  --  ----------------------  ----------------  ---------  ----------  ---------
+                                                     total offset 60816028
+
+  file size of model/stories15M.bin = 60 816 028 bytes.  EXACT MATCH, no slack.
+
+The general shapes, for a checkpoint with other hyperparameters:
+
+   1  token_embedding_table   (vocab_size, dim)
+   2  rms_att_weight          (n_layers, dim)
+   3  wq                      (n_layers, dim, n_heads * head_size)
+   4  wk                      (n_layers, dim, n_kv_heads * head_size)
+   5  wv                      (n_layers, dim, n_kv_heads * head_size)
+   6  wo                      (n_layers, n_heads * head_size, dim)
+   7  rms_ffn_weight          (n_layers, dim)
+   8  w1                      (n_layers, hidden_dim, dim)
+   9  w2                      (n_layers, dim, hidden_dim)
+  10  w3                      (n_layers, hidden_dim, dim)
+  11  rms_final_weight        (dim,)
+  12  (dead) freq_cis_real    (seq_len, head_size / 2)
+  13  (dead) freq_cis_imag    (seq_len, head_size / 2)
+  14  wcls                    (vocab_size, dim)   — ONLY when vocab_size < 0
+
+ENTRIES 12 AND 13 ARE DEAD SPACE AND MUST STILL BE SKIPPED. run.c says so in
+two comments — "skip what used to be freq_cis_real (for RoPE)" — and reads
+nothing from them: RoPE frequencies are recomputed on the fly in `forward()`.
+They are 49 152 bytes of a format that keeps them only so old checkpoints stay
+readable. A reader that does not skip them lands 49 152 bytes early on entry 14
+and, in a shared-weights file like this one, silently reads the wrong end of the
+file when it looks for anything after `rms_final_weight`.
+
+5. WHAT THIS GRAMMAR DOES NOT TELL YOU
+--------------------------------------
+
+It tells you where every number is. It does not tell you what the numbers MEAN
+as an architecture: the residual stream, the RMSNorm epsilon (1e-5f), the RoPE
+base (10000.0f), the SwiGLU in the FFN, the softmax and the sampler all live in
+`tools/llama2c/run.c`, which this package carries as source for exactly that
+reason. This document and that file are the two halves of "you can read these
+bytes"; neither is sufficient alone, and the split is deliberate — a layout
+grammar that also tried to be a model definition would be a paper, not a
+grammar.
+
+6. DECISIONS
+------------
+
+D-L2C-1  No conversion. The checkpoint travels byte-identical to what its
+         author published (sha256 in the manifest), because a package whose
+         payload does not hash to the upstream artifact cannot be checked
+         against upstream at all. Re-serialising it into a werk envelope would
+         have bought a section table and cost the one property that makes the
+         provenance verifiable by a stranger.
+
+D-L2C-2  The dead RoPE tables are documented as dead rather than deleted, for
+         the same reason: deleting them would change the bytes.
+
+D-L2C-3  The offsets in §4 are stated absolutely, not as a formula the reader
+         must evaluate. Law 8's corollary: never make a reader derive an offset
+         it could have been told. The formula is given too, in §4's second
+         table, for checkpoints that are not this one.
+
+
+
+===== spec/layouts/llama2c-tokenizer.layout.txt (complete) =====
+werk layout grammar — llama2c-tokenizer/1
+=========================================
+
+The binary layout of the file this package carries as `model/tokenizer.bin`.
+Derived from `build_tokenizer`, `encode` and `decode` in `tools/llama2c/run.c`,
+and checked against the file: the walk in §3 consumes exactly 433 869 bytes and
+yields exactly 32 000 entries, with nothing left over.
+
+1. SCALARS
+----------
+
+  i32  signed 32-bit integer, LITTLE-ENDIAN
+  f32  IEEE 754 binary32, LITTLE-ENDIAN
+  u8   raw byte
+
+No magic number, no version, no checksum, and — the important omission — NO
+VOCABULARY SIZE. See §4.
+
+2. HEADER — 4 bytes at offset 0
+-------------------------------
+
+  off  type  name               value in model/tokenizer.bin
+  ---  ----  -----------------  ----------------------------
+    0  i32   max_token_length             27
+
+`max_token_length` is the length in bytes of the longest token string in the
+file. It is a buffer hint for the encoder, not a structural field. MEASURED over
+this file: the longest entry is 27 bytes, so the declared value is correct. A
+reader SHOULD check it rather than trust it; a wrong value here overflows a
+fixed buffer in a naive encoder and nothing else in the file contradicts it.
+
+3. ENTRIES — 32 000 records, packed, starting at offset 4
+---------------------------------------------------------
+
+Each record, with no padding between records and none at the end:
+
+  type       name    meaning
+  ---------  ------  --------------------------------------------------------
+  f32        score   the BPE merge score. Higher wins. See §5.
+  i32        len     length of `bytes` in bytes. NOT null-terminated in file.
+  u8[len]    bytes   the token's UTF-8 text, verbatim
+
+The token's ID is its ORDINAL POSITION in this sequence, counting from 0. The
+file never writes an id down. This is the same property the checkpoint's tensor
+order has and it has the same consequence: order is load-bearing and a reader
+that skips a malformed record silently renumbers every token after it.
+
+  MUST: a conformant reader walks all `vocab_size` records and REFUSES the file
+  (node-scoped refusal, SPEC.md §10.1) if the walk does not land exactly on the
+  end of the file. For this file that landing point is byte 433 869.
+
+The first eight entries of model/tokenizer.bin, as a test vector for the walk:
+
+  id  score  len  bytes
+  --  -----  ---  --------------
+   0    0.0    5  "<unk>"
+   1    0.0    5  "\n<s>\n"
+   2    0.0    6  "\n</s>\n"
+   3    0.0    6  "<0x00>"
+   4    0.0    6  "<0x01>"
+   5    0.0    6  "<0x02>"
+   6    0.0    6  "<0x03>"
+   7    0.0    6  "<0x04>"
+
+Ids 1 and 2 are BOS and EOS. Ids 3..258 are the 256 single-byte fallback
+tokens, written as the six-character text "<0xNN>" — the text is the LITERAL
+angle-bracket spelling, not the byte itself, and `decode` in run.c recognises
+that spelling and substitutes the raw byte. A reader that emits "<0x0A>" where a
+newline was meant has read the file correctly and decoded it wrongly.
+
+4. THE MISSING FIELD, AND WHERE THE COUNT COMES FROM
+----------------------------------------------------
+
+THE NUMBER OF ENTRIES IS NOT IN THIS FILE. run.c carries the author's own note
+about it:
+
+    // i should have written the vocab_size into the tokenizer file... sigh
+
+The count is passed in from the CHECKPOINT's header: `build_tokenizer` is called
+with `transformer.config.vocab_size`. So `model/tokenizer.bin` cannot be read
+without `model/stories15M.bin`, and the two files are only jointly meaningful.
+
+That is a cross-file dependency inside one package, and werk states it rather
+than leaving a reader to discover it:
+
+  * the manifest's `x.model.tokenizer` node carries `meta.vocab_size = 32000`
+    and `meta.vocab_size_source = "checkpoint header field 6"`, so a consumer
+    holding only this node still knows the number;
+  * `MUST`: where the two disagree, a reader reports the disagreement and does
+    not pick one. The checkpoint's value is what the runtime will use, and a
+    tokenizer walk that does not terminate on the file's last byte is the
+    symptom.
+
+A reader that has ONLY this file, and no checkpoint, can still recover the count
+by walking to EOF and counting — which is what makes §3's "MUST land exactly on
+the end" worth stating. It works for this file. It is not a general recovery:
+any prefix of a valid record stream is also a valid record stream.
+
+5. WHAT THE SCORES ARE FOR
+--------------------------
+
+`encode` in run.c is a greedy merging BPE: it first maps the input string to
+single-byte and single-character tokens by exact lookup, then repeatedly finds
+the adjacent pair whose CONCATENATION exists in the vocabulary with the highest
+`score`, and merges it, until no pair merges. The scores are therefore a merge
+PRIORITY, not a probability and not a log-likelihood, and nothing in the file or
+the runtime normalises them.
+
+Two details a re-implementation gets wrong and this package's test vectors
+catch (`testvectors/vectors.json`):
+
+  * a BOS token (id 1) is prepended by `generate()`;
+  * SentencePiece encodes a leading space as U+2581, and run.c emulates that by
+    prepending a "dummy prefix" space token to a non-empty prompt before
+    merging. Drop it and the first generated token changes.
+
+6. DECISIONS
+------------
+
+D-L2T-1  Carried byte-identical to upstream, for the reason D-L2C-1 gives.
+
+D-L2T-2  `vocab_size` is duplicated into the node's `meta` rather than into the
+         payload. Editing the payload to add the field the author wishes he had
+         written would have broken the upstream hash — and law 9 says the
+         manifest is where a consumer looks before opening a payload anyway.
+
+
+
+===== testvectors/vectors.json (complete) =====
+{
+  "schema_version": 1,
+  "what_this_is": "The correctness anchor for this package. Build the runtime in tools/llama2c/ (see tools/llama2c/BUILD-AND-RUN.md), run each `argv` below from the extracted package root, take stdout, replace CRLF with LF, and compare against `stdout_text` or hash it against `stdout_sha256_lf`. A match means the container, the weights layout, the tokenizer layout and the whole forward pass are all right. Nothing weaker proves that: a runtime that reads the weights at the wrong offsets still emits confident text.",
+  "how_to_verify": [
+    "1. Build: see tools/llama2c/BUILD-AND-RUN.md section 2. There is no prebuilt binary in this package and nothing here is executed for you.",
+    "2. Run vectors[i].argv with your binary in place of '<the binary you built>'. The generated text is on stdout; the 'achieved tok/s' line is on stderr and is not part of any vector.",
+    "3. Normalise: replace CRLF with LF. run.c writes to a text-mode stream, so an identical computation emits \\n on POSIX and \\r\\n through a Windows console. The hash is declared over the LF form; stdout_sha256_crlf records the raw Windows form of the same bytes so the normalisation itself is checkable.",
+    "4. Compare against stdout_sha256_lf. That is the whole check."
+  ],
+  "on_mismatch": "A mismatch is diagnostic, not merely a failure, and the three cases are distinguishable. (a) FLUENT ENGLISH, DIVERGING AFTER N TOKENS: floating-point reassociation. The forward pass is scalar C but a vectorising compiler may reassociate the reductions in rmsnorm, softmax and matmul, and -ffast-math will. Report N and your flags; this is an arithmetic difference, not a broken reader. (b) FLUENT ENGLISH, DIFFERENT FROM TOKEN 1: the prompt encoding differs - check the BOS token and the SentencePiece dummy-prefix space, spec/layouts/llama2c-tokenizer.layout.txt section 5. (c) GARBAGE FROM TOKEN 1: the weights are being read at the wrong offsets - check the two DEAD RoPE tables, spec/layouts/llama2c-checkpoint.layout.txt section 4.",
+  "token_ids_note": "token_ids is the stronger anchor because integers have no newline convention. THE UNMODIFIED run.c DOES NOT PRINT THEM: they were captured by a two-line instrumentation, which travels beside this file as tokens_instrumentation.diff, a unified diff against this package's own tools/llama2c/run.c. Apply it, rebuild, and stderr carries one 'TOKEN <id>' line per step. The first id is always 1 (BOS). Matching stdout_sha256_lf needs no patching and is sufficient.",
+  "model": {
+    "config": {
+      "dim": 288,
+      "hidden_dim": 768,
+      "n_layers": 6,
+      "n_heads": 6,
+      "n_kv_heads": 6,
+      "vocab_size": 32000,
+      "seq_len": 256,
+      "head_size": 48,
+      "kv_dim": 288,
+      "parameters": 15191712
+    },
+    "checkpoint_sha256": "cd590644d963867a2b6e5a1107f51fad663c41d79c149fbecbbb1f95fa81f49a",
+    "checkpoint_bytes": 60816028
+  },
+  "environment": {
+    "platform": "win32",
+    "os": "Microsoft Windows 10 Enterprise 10.0.19045 x64",
+    "cpu": "AMD Ryzen Threadripper 3970X 32-Core Processor",
+    "compiler": "Microsoft (R) C/C++ Optimizing Compiler Version 19.38.33143 for x64 (Visual Studio 2022 Community)",
+    "build_command": "cl /nologo /O2 /Fe:run.exe run.c win.c",
+    "binary_bytes": 218624,
+    "device": "cpu",
+    "note": "No GPU anywhere. A 15 M-parameter f32 model on one core, measured at 93.75 and 94.51 tokens/s by the runtime's own stderr line. Recorded because 'it matched' is only a measurement if you know against what."
+  },
+  "vectors": [
+    {
+      "vector_id": "once-upon-a-time",
+      "prompt": "Once upon a time",
+      "steps": 64,
+      "temperature": 0.0,
+      "decode": "greedy-argmax",
+      "argv": [
+        "<the binary you built>",
+        "model/stories15M.bin",
+        "-z",
+        "model/tokenizer.bin",
+        "-t",
+        "0.0",
+        "-n",
+        "64",
+        "-i",
+        "Once upon a time"
+      ],
+      "stdout_file": "generate-once-upon-a-time.stdout.txt",
+      "stdout_bytes_lf": 234,
+      "stdout_sha256_lf": "32680de023a55d9eda57ec35c0a134eac7907285edf9b83827a946e2afaadfb5",
+      "stdout_sha256_crlf": "656ccd4f568014961a03c6ab0e65f6c7b45c716c09bb6010ec118eaf4ce92bf8",
+      "stdout_text": "Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in the sky. It was the sun! She thought it was so pretty.\nLily wanted to play with the ball, but it was\n",
+      "token_ids": [
+        1,
+        9038,
+        2501,
+        263,
+        931,
+        29892,
+        727,
+        471,
+        263,
+        2217,
+        7826,
+        4257,
+        365,
+        2354,
+        29889,
+        2296,
+        18012,
+        304,
+        1708,
+        5377,
+        297,
+        278,
+        6575,
+        845,
+        457,
+        29889,
+        3118,
+        2462,
+        29892,
+        1183,
+        4446,
+        263,
+        4802,
+        29892,
+        2654,
+        8287,
+        297,
+        278,
+        14744,
+        29889,
+        739,
+        471,
+        278,
+        6575,
+        29991,
+        2296,
+        2714,
+        372,
+        471,
+        577,
+        5051,
+        29889,
+        13,
+        29931,
+        2354,
+        5131,
+        304,
+        1708,
+        411,
+        278,
+        8287,
+        29892,
+        541,
+        372,
+        471
+      ],
+      "token_count": 65
+    },
+    {
+      "vector_id": "the-little-robot",
+      "prompt": "The little robot",
+      "steps": 32,
+      "temperature": 0.0,
+      "decode": "greedy-argmax",
+      "argv": [
+        "<the binary you built>",
+        "model/stories15M.bin",
+        "-z",
+        "model/tokenizer.bin",
+        "-t",
+        "0.0",
+        "-n",
+        "32",
+        "-i",
+        "The little robot"
+      ],
+      "stdout_file": "generate-the-little-robot.stdout.txt",
+      "stdout_bytes_lf": 140,
+      "stdout_sha256_lf": "eeeb4eb0a7f1f3b2f6a213a03317338c3ddf6de738b4aeaf0a55ceb5dd22540c",
+      "stdout_sha256_crlf": "82c7d6035216631958b1972628a7d934c31f69a39181fc10bfa2f3af1d834344",
+      "stdout_text": "The little robot was very excited. He had been waiting for a long time for a long time. He was so happy that he started to jump up and down\n",
+      "token_ids": [
+        1,
+        450,
+        2217,
+        19964,
+        471,
+        1407,
+        24173,
+        29889,
+        940,
+        750,
+        1063,
+        10534,
+        363,
+        263,
+        1472,
+        931,
+        363,
+        263,
+        1472,
+        931,
+        29889,
+        940,
+        471,
+        577,
+        9796,
+        393,
+        540,
+        4687,
+        304,
+        12500,
+        701,
+        322,
+        1623
+      ],
+      "token_count": 33
+    }
+  ]
+}
+
+
+
+===== testvectors/generate-once-upon-a-time.stdout.txt =====
+Once upon a time, there was a little girl named Lily. She loved to play outside in the sunshine. One day, she saw a big, red ball in the sky. It was the sun! She thought it was so pretty.
+Lily wanted to play with the ball, but it was
+
+
+
+===== testvectors/generate-the-little-robot.stdout.txt =====
+The little robot was very excited. He had been waiting for a long time for a long time. He was so happy that he started to jump up and down
+
+
+
+===== HEX DUMP -- first 256 bytes of model/stories15M.bin =====
+00000000  20 01 00 00 00 03 00 00 06 00 00 00 06 00 00 00  | ...............|
+00000010  06 00 00 00 00 7d 00 00 00 01 00 00 b0 0a 75 bd  |.....}........u.|
+00000020  48 92 6e bc c5 64 d9 3d b1 5b b1 3c a2 10 8e bb  |H.n..d.=.[.<....|
+00000030  80 42 e4 bb 60 61 1a 3c be 5c ee 3c 3d 80 c5 3c  |.B..`a.<.\.<=..<|
+00000040  8f 9e a2 3c a4 e3 a0 bc eb 15 d4 bb 0d e3 99 3c  |...<...........<|
+00000050  1e 5e 6b bc 08 94 c4 bc 60 cb c9 3c b8 e0 95 3c  |.^k.....`..<...<|
+00000060  c8 3d 4c 3c f4 57 a0 3a 17 82 e8 37 62 ce 6d ba  |.=L<.W.:...7b.m.|
+00000070  34 99 32 3d 6b 15 4e 3c 7e 55 b1 bb 69 22 1c 3c  |4.2=k.N<~U..i".<|
+00000080  78 2b 2e 3d 24 31 d9 3b 66 2b b1 bd 69 0d ac 3b  |x+.=$1.;f+..i..;|
+00000090  6d f1 80 3c 39 65 2a 3c ed 3c d2 bc 99 45 01 3b  |m..<9e*<.<...E.;|
+000000a0  d7 22 29 3d f6 f7 50 bc de 39 eb bb 98 22 1f bd  |.")=..P..9..."..|
+000000b0  f5 d2 8b bc b3 a8 10 3e 07 05 2f bb b1 c4 0b 3d  |.......>../....=|
+000000c0  a9 65 98 bc 9d c1 62 bb 52 86 2a 3c c9 ea 83 bc  |.e....b.R.*<....|
+000000d0  57 05 ef 3c 95 dd 98 3d a7 df 65 bc e2 d1 d7 3e  |W..<...=..e....>|
+000000e0  ae c0 09 bd b8 db 6b 3c 55 e2 1d bd 2f a0 6d 3c  |......k<U.../.m<|
+000000f0  d5 04 aa bc 0b f4 23 bd a4 49 a2 3c 03 89 22 bc  |......#..I.<..".|
+
+
+===== HEX DUMP -- first 256 bytes of model/tokenizer.bin =====
+00000000  1b 00 00 00 00 00 00 00 05 00 00 00 3c 75 6e 6b  |............<unk|
+00000010  3e 00 00 00 00 05 00 00 00 0a 3c 73 3e 0a 00 00  |>.........<s>...|
+00000020  00 00 06 00 00 00 0a 3c 2f 73 3e 0a 00 00 00 00  |.......</s>.....|
+00000030  06 00 00 00 3c 30 78 30 30 3e 00 00 00 00 06 00  |....<0x00>......|
+00000040  00 00 3c 30 78 30 31 3e 00 00 00 00 06 00 00 00  |..<0x01>........|
+00000050  3c 30 78 30 32 3e 00 00 00 00 06 00 00 00 3c 30  |<0x02>........<0|
+00000060  78 30 33 3e 00 00 00 00 06 00 00 00 3c 30 78 30  |x03>........<0x0|
+00000070  34 3e 00 00 00 00 06 00 00 00 3c 30 78 30 35 3e  |4>........<0x05>|
+00000080  00 00 00 00 06 00 00 00 3c 30 78 30 36 3e 00 00  |........<0x06>..|
+00000090  00 00 06 00 00 00 3c 30 78 30 37 3e 00 00 00 00  |......<0x07>....|
+000000a0  06 00 00 00 3c 30 78 30 38 3e 00 00 00 00 06 00  |....<0x08>......|
+000000b0  00 00 3c 30 78 30 39 3e 00 00 00 00 06 00 00 00  |..<0x09>........|
+000000c0  3c 30 78 30 41 3e 00 00 00 00 06 00 00 00 3c 30  |<0x0A>........<0|
+000000d0  78 30 42 3e 00 00 00 00 06 00 00 00 3c 30 78 30  |x0B>........<0x0|
+000000e0  43 3e 00 00 00 00 06 00 00 00 3c 30 78 30 44 3e  |C>........<0x0D>|
+000000f0  00 00 00 00 06 00 00 00 3c 30 78 30 45 3e 00 00  |........<0x0E>..|

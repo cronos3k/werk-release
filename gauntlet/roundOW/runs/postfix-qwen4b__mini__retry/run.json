@@ -1,0 +1,100 @@
+{
+ "model": "qwen3.8_4b_distilled_gguf",
+ "quant": "Q8_0",
+ "context": 131072,
+ "task": "PROMPT-round1task-mini.txt",
+ "kind": "mini",
+ "label": "postfix-qwen4b-mini-retry",
+ "protocol": "inline-context + error-feedback",
+ "outcome": "iteration-cap",
+ "detail": "used all 8 feedback iterations",
+ "iterations": 8,
+ "first_clean_run": null,
+ "wall_s": 620.5,
+ "preflight_s": 205.7,
+ "wall_s_excl_preflight": 414.8,
+ "prompt_tokens": 37032,
+ "package_ctx": 65536,
+ "package_chars": 103573,
+ "included": [
+  "README.txt",
+  "MANIFEST.json",
+  "<zip listing>",
+  "MINI-SPECS 1,2,3,5,6,11",
+  "ENVELOPE 0-7",
+  "spec/layouts/restposes.layout.txt",
+  "spec/examples/restposes.example.hex.txt",
+  "hex:geometry/game.glb",
+  "hex:audio/sfx/crate-impact-hard-surface.wav",
+  "hex:poses/rest.wkrp",
+  "hex:x/splat-foley/segments/seg_00.png",
+  "MINI-SPECS 9,10",
+  "MINI-SPECS 12",
+  "MINI-SPECS 8",
+  "spec/README.md",
+  "spec/conventions-map.json",
+  "SIGNATURE.json",
+  "LICENSE"
+ ],
+ "omitted": [],
+ "truncated_replies": 0,
+ "runs": [
+  {
+   "iter": 1,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2486,
+   "stderr_bytes": 388
+  },
+  {
+   "iter": 2,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 516
+  },
+  {
+   "iter": 3,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 515
+  },
+  {
+   "iter": 4,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 515
+  },
+  {
+   "iter": 5,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 515
+  },
+  {
+   "iter": 6,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 609
+  },
+  {
+   "iter": 7,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 609
+  },
+  {
+   "iter": 8,
+   "exit": 1,
+   "secs": 0.1,
+   "stdout_bytes": 2508,
+   "stderr_bytes": 609
+  }
+ ],
+ "rundir": "F:\\ow-gauntlet\\postfix-qwen4b__mini__retry"
+}
