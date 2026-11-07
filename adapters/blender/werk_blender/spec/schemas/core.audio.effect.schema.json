@@ -13,15 +13,15 @@
       "description": "The effect's stable id. This is what an animation event's effect_id resolves to, and what a destruction piece's audio_effect_id names. Ids, not indices (law 4)."
     },
     "prompt_used": {
-      "type": "string",
+      "type": ["string", "null"],
       "minLength": 1,
-      "description": "The exact text-to-audio prompt that produced the accepted take. Kept verbatim so the take is reproducible and so a human can see why it sounds the way it does."
+      "description": "The exact text-to-audio prompt that produced the accepted take. Kept verbatim so the take is reproducible and so a human can see why it sounds the way it does. null (werk relaxation of the donor shape) = the sound was not generated from a prompt (recorded, synthesised, edited by hand); a writer MUST NOT invent one."
     },
     "seconds": {"type": "number", "exclusiveMinimum": 0, "description": "Requested generation length, seconds. The delivered length after refinement is refined.duration."},
     "loopable": {"type": "boolean", "description": "True for continuous sounds (drag, roll, wind, ambience beds). A loopable take has been cross-faded; see refined.loop_crossfade_ms."},
     "clap_score": {
-      "type": "number",
-      "description": "CLAP audio-text similarity between the accepted take and prompt_used. Higher is a better match to the prompt. This is a MEASURED number and is exactly why the epistemic stamp on this node is 'measured' rather than 'inferred'."
+      "type": ["number", "null"],
+      "description": "CLAP audio-text similarity between the accepted take and prompt_used. Higher is a better match to the prompt. This is a MEASURED number and is exactly why the epistemic stamp on this node is 'measured' rather than 'inferred'. null (werk relaxation of the donor shape, as variations[].clap_score already allows) = NOT MEASURED: no CLAP model was run, or there is no prompt to compare with. A writer MUST write null rather than 0 or any other number for a measurement that was not made, and a version whose only would-be measurement is null is not stamped 'measured' on its account."
     },
     "attempts": {"type": "integer", "minimum": 1, "description": "How many generations were run before one was accepted."},
     "accepted": {"type": "boolean", "description": "Whether the effect passed its quality gate. A rejected effect may still ship: it is honest payload, and a consumer can choose to skip anything with accepted false."},

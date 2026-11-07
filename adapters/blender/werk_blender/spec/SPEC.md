@@ -102,6 +102,14 @@ zip64 container refuses it whole, by name (`zip64-unsupported`), with exit
 status 2, having read nothing but the container's last 64 KiB — `MINI-SPECS.md`
 §5.5 says how it is recognised, and that part is mandatory for every reader.
 
+**One name, one entry.** A zip whose central directory names one path twice
+is refused whole (`bad-container`, exit status 2): which bytes *are* that
+file cannot be decided, and readers that pick different records give
+different verdicts on one package (measured: one reader took the last record,
+two took the first). A writer never emits a name twice; the reader rules that
+make independent readers agree on a damaged container are `MINI-SPECS.md`
+§5.4.
+
 **Preview-first byte layout (law 9) — SHOULD, S-14, RULING, implemented.**
 When zipping, a writer **SHOULD** write entries in this physical order:
 `MANIFEST.json`, `SIGNATURE.json`, `LICENSE`, `loaders/`, `spec/`,
@@ -239,9 +247,10 @@ Single source of structure. Schema: **`spec/schemas/manifest.schema.json`**.
   here.** It is the sum of the `size` fields of every **distinct path**
   declared in `nodes[].versions[].files[]`: payload bytes only, excluding
   `MANIFEST.json`, `SIGNATURE.json` and all container framing, so it is the
-  same number in the directory form and in the zip. **A path listed by several
-  versions of one node counts once** — the S-18 reading of what a file belongs
-  to, applied arithmetically. It exists so a store can size a fetch before
+  same number in the directory form and in the zip — so it is **not** the size
+  of the `.werk` file, which is larger by the manifest, the signature and the
+  zip framing. **A path listed by several versions of one node counts once** —
+  the S-18 reading of what a file belongs to, applied arithmetically. It exists so a store can size a fetch before
   parsing the graph, it is optional, and it is advisory: a reader that needs
   the number computes it. The field previously had a definition only inside a
   schema `description`, and a gauntlet reader lost minutes to it *after* that
@@ -443,10 +452,11 @@ Single source of structure. Schema: **`spec/schemas/manifest.schema.json`**.
 
 ### 2.1 Which file in a node is THE payload — `payload_file`
 
-**S-XV-4 / S-OW-2, and the successor to S-13. Status: PROPOSED, pending
-Gregor's ruling; implemented in the schema, the writers and the fixtures
+**S-XV-4 / S-OW-2, and the successor to S-13. The field is PROPOSED, pending
+Gregor's ruling, and implemented in the schema, the writers and the fixtures
 because it is purely additive and a package built without it stays
-conformant.**
+conformant. The resolution order below is NORMATIVE now, field or no field:
+it is what a consumer does whenever it needs one payload file.**
 
 The measured failure this answers, because it is the sharpest kind — a
 program that produced a **wrong artifact while believing it had succeeded**:
@@ -499,6 +509,12 @@ that answers:
    the node and every candidate — and MUST NOT silently take `files[0]`.
    Taking the first entry is exactly the failure above and it is now
    explicitly forbidden rather than merely unmentioned.
+
+   The report belongs to the consumer that **asked** for one payload file. A
+   node whose files are a set with no single payload — `core.spec`,
+   `core.loader` — is not ambiguous for being several files, and a reader
+   that merely verifies a package does not report `payload-file-ambiguous`
+   for nodes nobody asked the payload of.
 
 **Reserved `role` values, which a reader may rely on.** `role` stays an open
 kebab-case vocabulary (law 12), and these three values are reserved with
@@ -918,6 +934,16 @@ splat-foley's real production output rather than designed fresh: `slug`,
 block with `kept`, `cut`, `events`, `heard` and the roll-back `reason`. The
 roll-back record is kept deliberately: a format that only records successes
 cannot be audited.
+
+**Not measured is a value.** `clap_score` is `null` when no similarity was
+measured, and `prompt_used` is `null` when the sound did not come from a
+prompt — a recorded or synthesised sound is a `core.audio.effect` like any
+other. Writing `0` for a measurement that was never made is a fabricated
+measurement, which is exactly what an epistemic stamp exists to rule out
+(found when four agent-written packages each described a synthesised tone
+differently, two of them with `clap_score: 0`). The node's payload is the WAV
+(§2.1 rule 4: role `best`); the JSON sidecar has role `descriptor` and is
+never the payload.
 
 **Two vocabularies, one value — read this before writing code against either.**
 `core.audio.package` was adopted verbatim from splat-foley's production
@@ -1812,6 +1838,16 @@ The three states a conformant tool MUST surface distinctly:
 **signed-and-valid** · **absent** (anonymous, and visibly so) ·
 **present-and-invalid** (tampering under an existing signature). A tool that
 collapses the last two into one warning has defeated the doctrine.
+**Absent means not in the container.** A `SIGNATURE.json` that is there but
+cannot be read as a chain — not UTF-8 JSON, not an object, an entry that does
+not decode — is present-and-invalid, never absent. A chain in an
+`algorithm` the reader does not implement is neither: the reader says
+**unverified**, §10 step 4's fourth word, which is a statement about the
+reader and not a fourth state of the package (§10.1, `signature_algorithm`).
+A reader that does not implement Ed25519 at all says `unverified` too, but
+what it can check without the mathematics — that the file is a JSON object
+whose `manifest_sha256` is the sha256 of the manifest bytes — it checks, and
+a failure there is present-and-invalid.
 
 ## 7. Embedded loaders — `core.loader`
 
@@ -2145,7 +2181,7 @@ to this table in the same change; an extension's own codes begin with `x-`.
 
 | code | usual severity | scope | meaning |
 |---|---|---|---|
-| `bad-container` | error | container | not a zip and not a directory, or the zip directory is malformed |
+| `bad-container` | error | container | not a zip and not a directory, the zip directory is malformed, or it names one entry twice (§1, `MINI-SPECS.md` §5.4) |
 | `zip64-unsupported` | error | container | a zip64 container; nothing was read (§1, `MINI-SPECS.md` §5.5) |
 | `manifest-absent`, `manifest-unparseable`, `manifest-structurally-invalid` | error | container | §12.1; a reader that implements §12 enters recovery instead |
 | `schema-invalid` | error | package or node | the manifest fails a schema it was held against (§2.2) |
@@ -2189,6 +2225,16 @@ Until ruling 9 of 2026-10-13 they did not agree: the core and two loaders
 returned 1 for an unreadable container, and one loader returned 3 for
 `--strict`. Status 2 is also what the reference tools return for a command
 line they cannot act on; no package was loaded then either.
+
+**A version fallback is not a clean load.** The node is alive
+(`version-fallback`, `warn`), and the file of the passed-over version that
+failed is still reported under its own code (`hash-mismatch`,
+`size-mismatch`, `file-missing`, `zip-entry-invalid`, …, severity `error`), so
+the status is **1** — for a bootstrap loader, under `--strict`. An `active`
+that names a version which does not exist falls back with the warning alone
+(nothing failed) and the status stays 0. A bootstrap loader's `--strict`
+returns 1 exactly when the report holds an `error` entry, the core's status
+without a flag is the same rule, and neither promotes a warning.
 
 A `--strict` mode MAY promote `warn` to `error`, and MUST say that it did.
 A load is never failed by damage alone: `open()` succeeds on a package with
@@ -2384,11 +2430,15 @@ Exactly three triggers, and a reader MUST report which one fired:
 |---|---|
 | `MANIFEST.json` absent from the container | `manifest-absent` |
 | `MANIFEST.json` present but not parseable as UTF-8 JSON | `manifest-unparseable` |
-| `MANIFEST.json` parses, but a **structural** key a reader needs is absent or of the wrong type (`nodes` missing, `nodes` not an array, `files` not an array) | `manifest-structurally-invalid` |
+| `MANIFEST.json` parses, but is not a JSON object, or the **structural** key a reader needs to walk the graph is absent or of the wrong type (`nodes` missing, `nodes` not an array) | `manifest-structurally-invalid` |
 
-A manifest that parses and is structurally sound but fails **schema**
-validation, or names a file that is not in the container, or carries a hash
-that does not match, is **not** a recovery trigger. That is ordinary damage and
+A **node** whose own structure is unusable — no string `node_id` or `type`,
+no integer `active`, no non-empty `versions[]`, a version without an integer
+`v` or a `files` array — is not a recovery trigger either: that node is dead
+(`node-dead`, with the reason), the rest loads (law 3), exactly as for a node
+that fails its schema. A manifest that parses and is structurally sound but
+fails **schema** validation, or names a file that is not in the container, or
+carries a hash that does not match, is **not** a recovery trigger. That is ordinary damage and
 §10.1's node scope handles it: refuse the affected nodes, load the rest, and
 keep using the manifest for everything else. Entering recovery there would
 discard good declared knowledge in favour of guesses, which is strictly worse.
