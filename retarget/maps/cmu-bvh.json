@@ -1,0 +1,32 @@
+{
+  "map_id": "cmu-bvh",
+  "description": "CMU Graphics Lab Motion Capture Database, in Bruce Hahne's BVH conversion -> werk canonical humanoid v1. 31 joints.",
+  "epistemic": "authored",
+  "derivation": "CMU's BVH joint names are close to the Mixamo names the canonical skeleton already ships a map for, and that near-miss is the point of including it. Three joints differ and each one would be a silent error under the shipped map: (1) CMU has LowerBack between Hips and Spine, so CMU's 'Spine' and 'Spine1' are the SECOND and THIRD spine joints, not the first and second -- the shipped mixamo map sends 'Spine' -> spine1 and 'Spine1' -> spine2, which puts the shoulders one joint too low; the geometry says otherwise, because LeftShoulder and RightShoulder are children of Spine1, and the canonical rig hangs its clavicles off spine3. (2) CMU has a two-segment neck, Neck and Neck1; the canonical rig has one. (3) LHipJoint and RHipJoint are zero-length CMU artefacts with no canonical counterpart. Filed as finding S6-1.",
+  "unmapped_foreign": ["LHipJoint", "RHipJoint", "Neck1", "LeftFingerBase", "LeftHandIndex1", "LThumb", "RightFingerBase", "RightHandIndex1", "RThumb"],
+  "unmapped_canonical": ["root"],
+  "map": {
+    "Hips": "hips",
+    "LowerBack": "spine1",
+    "Spine": "spine2",
+    "Spine1": "spine3",
+    "Neck": "neck",
+    "Head": "head",
+    "LeftShoulder": "l-clavicle",
+    "LeftArm": "l-upperarm",
+    "LeftForeArm": "l-forearm",
+    "LeftHand": "l-hand",
+    "RightShoulder": "r-clavicle",
+    "RightArm": "r-upperarm",
+    "RightForeArm": "r-forearm",
+    "RightHand": "r-hand",
+    "LeftUpLeg": "l-thigh",
+    "LeftLeg": "l-shin",
+    "LeftFoot": "l-foot",
+    "LeftToeBase": "l-toe",
+    "RightUpLeg": "r-thigh",
+    "RightLeg": "r-shin",
+    "RightFoot": "r-foot",
+    "RightToeBase": "r-toe"
+  }
+}

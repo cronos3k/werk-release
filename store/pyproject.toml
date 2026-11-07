@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "werkstore"
+version = "0.1.0"
+description = "Format-aware content-addressed store for werk packages. The store is a cache, never the truth."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "CC-BY-SA-4.0" }
+authors = [{ name = "Gregor Hubert Max Koch" }]
+
+# Zero dependencies, deliberately. Law 1 forbids a promise about other
+# files; a store that could only verify a signature when a wheel happened to
+# be installed would be making exactly that promise about itself. Ed25519 is
+# implemented from RFC 8032 on top of hashlib.
+dependencies = []
+
+[project.scripts]
+werkstore = "werkstore.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools]
+packages = ["werkstore"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

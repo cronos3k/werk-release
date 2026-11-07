@@ -1,0 +1,13 @@
+# Fixtures are BUILT, never committed: tests/mkwerk.py produces them
+# deterministically, and a 48 MiB corpus pair does not belong in git.
+tests/fixtures/
+.gate/
+.gate-cdc/
+.werkstore/
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/

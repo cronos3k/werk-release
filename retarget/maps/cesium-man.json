@@ -1,0 +1,30 @@
+{
+  "map_id": "cesium-man",
+  "description": "Khronos glTF-Sample-Assets 'CesiumMan' -> werk canonical humanoid v1. A COLLADA2GLTF export with 19 joints and no naming convention at all, which is why it is in this test set: the names carry no information a heuristic could use, the left and right sides are named differently from each other, and the rig has no clavicles, no spine2 and no separate head bone.",
+  "epistemic": "authored",
+  "derivation": "Assigned by reading the rig's own geometry, not by name similarity. Each joint's role was fixed by where its HEAD sits and how long the segment to its child is: Skeleton_arm_joint_L__4_ has its head 9.1 cm lateral of the chest and a 24.2 cm segment to its child, so it is the upper arm and not a clavicle; Skeleton_arm_joint_L__2_ is a leaf at the end of an 18.5 cm forearm, so it is the hand. The right side's chain is 14 -> 15 -> 16 named 'R', 'R__2_', 'R__3_' while the left side's is 17 -> 18 -> 19 named 'L__4_', 'L__3_', 'L__2_' -- the numbering runs the other way, and mirroring the left map by string substitution would silently swap the shoulder and the wrist.",
+  "unmapped_foreign": [],
+  "unmapped_canonical": ["root", "spine2", "l-clavicle", "r-clavicle"],
+  "unmapped_canonical_note": "This rig has no clavicles and only three torso joints. Nothing is invented to fill them: the canonical clavicles and spine2 hold their rest rotation relative to their nearest mapped ancestor, and the arms hang off spine3 exactly as they do on the source.",
+  "map": {
+    "Skeleton_torso_joint_1": "hips",
+    "Skeleton_torso_joint_2": "spine1",
+    "torso_joint_3": "spine3",
+    "Skeleton_neck_joint_1": "neck",
+    "Skeleton_neck_joint_2": "head",
+    "Skeleton_arm_joint_L__4_": "l-upperarm",
+    "Skeleton_arm_joint_L__3_": "l-forearm",
+    "Skeleton_arm_joint_L__2_": "l-hand",
+    "Skeleton_arm_joint_R": "r-upperarm",
+    "Skeleton_arm_joint_R__2_": "r-forearm",
+    "Skeleton_arm_joint_R__3_": "r-hand",
+    "leg_joint_L_1": "l-thigh",
+    "leg_joint_L_2": "l-shin",
+    "leg_joint_L_3": "l-foot",
+    "leg_joint_L_5": "l-toe",
+    "leg_joint_R_1": "r-thigh",
+    "leg_joint_R_2": "r-shin",
+    "leg_joint_R_3": "r-foot",
+    "leg_joint_R_5": "r-toe"
+  }
+}
