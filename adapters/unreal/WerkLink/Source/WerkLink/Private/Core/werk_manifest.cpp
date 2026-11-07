@@ -48,7 +48,7 @@ namespace
     std::string NumToString(double D)
     {
         char Buf[64];
-        if (D == double(long long(D)))
+        if (D == static_cast<double>(static_cast<long long>(D)))
         {
             // units_per_meter is written 1.0 in the spec text but is a JSON
             // number; both spellings mean the same value and neither is wrong.
