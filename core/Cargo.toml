@@ -1,0 +1,30 @@
+[package]
+name = "werk-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.70"
+description = "Reference implementation of the werk artifact container format (profile 3d-entity/1)"
+license = "MIT"
+publish = false
+
+# ONE shared library behind a C ABI (include/werk.h) is what C++ and Python
+# both consume, plus an rlib so Rust callers link natively.
+[lib]
+name = "werk"
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+# Deliberately small. zip (store mode) and MessagePack are implemented
+# natively in this crate — see src/zipstore.rs and src/msgpack.rs — because
+# the format's whole argument is that reading it needs no ecosystem.
+serde_json = "1"
+sha2 = "0.10"
+ed25519-dalek = { version = "2", default-features = false, features = ["std"] }
+
+[[bin]]
+name = "werkc"
+path = "src/bin/werkc.rs"
+
+[profile.release]
+opt-level = 2
