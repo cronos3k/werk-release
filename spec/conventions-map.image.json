@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "profile": "image/1",
+  "note": "The machine-readable form of spec/PROFILE-IMAGE.md section 6, and the profile-2 half of S-17 (ruled 2026-08-08). Nine conventions rather than profile 1's twenty-one, because an image has no handedness, no up axis and no quaternions, and declaring conventions a payload does not have would be exactly the advisory noise law 8 exists to remove. The convention set is a property of the PROFILE, not of the reader (S-25): a reader meeting this file must check THESE nine and must not report its own profile's conventions as missing.",
+  "conventions": {
+    "endianness": {
+      "scope": "node",
+      "governs": ["core.embedding", "x.*"],
+      "note": "Every envelope binary in an image package. WKEM is the only core one."
+    },
+    "alignment_bytes": {
+      "scope": "node",
+      "governs": ["core.embedding", "x.*"],
+      "note": "The same set as endianness."
+    },
+    "color_space_default": {
+      "scope": "node",
+      "governs": ["core.image.source", "core.image.derived", "core.semantics"],
+      "note": "core.semantics through the palette. Only where the node does not declare its own color_space, which every conformant image node does."
+    },
+    "pixel_origin": {
+      "scope": "node",
+      "governs": ["core.image.source", "core.image.derived", "core.embedding"],
+      "note": "core.embedding because its descriptor indexes pixels; a descriptor computed from the other origin is a different vector wearing the same name."
+    },
+    "alpha_mode": {
+      "scope": "node",
+      "governs": ["core.image.source", "core.image.derived"],
+      "note": "Only where has_alpha is true. A reader that does not support the declared alpha mode refuses those image nodes and still lists, hashes and extracts every byte."
+    },
+    "text_encoding": {
+      "scope": "container",
+      "governs": ["*"],
+      "note": "Every text and JSON payload, INCLUDING MANIFEST.json - which is why the scope is container."
+    },
+    "id_case": {
+      "scope": "container",
+      "governs": ["*"]
+    },
+    "hash_algorithm": {
+      "scope": "container",
+      "governs": ["*"],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256."
+    },
+    "signature_algorithm": {
+      "scope": "signature",
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state, not damage."
+    }
+  }
+}

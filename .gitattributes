@@ -1,0 +1,37 @@
+# werk is a byte-exact format project: a spec file whose line endings change
+# between checkouts has a different sha256, and sha256 is the store key.
+# Everything is LF in the working tree and in the repository, on every OS.
+* text=auto eol=lf
+
+# Payload fixtures are bytes and are never translated.
+*.png binary
+*.wav binary
+*.glb binary
+*.werk binary
+*.bin binary
+*.wkff binary
+*.wkrp binary
+*.wkac binary
+*.wksk binary
+*.wkem binary
+*.wkgs binary
+*.wkpc binary
+*.zip binary
+
+# The conformance fixture is HASHED CONTENT, not source. Every byte under
+# tests/fixtures/ is covered by a sha256 inside that package's own
+# MANIFEST.json, so a single normalised line ending anywhere in it would break
+# verification on checkout. Bytes are bytes here, including the JSON and the
+# markdown.
+tests/fixtures/** binary
+
+# The golden sample is HASHED CONTENT too, for the same reason.
+fixtures/*.werk binary
+
+# Stage 6's test corpus is HASHED CONTENT: tests/run_gate_6.py pins the sha256
+# of every downloaded file and refuses to run against different bytes, and
+# fixtures/humanoid-retarget-v1.werk hashes 02_01.bvh inside its own manifest.
+# 02_01.bvh and cmu-READMEFIRST.txt arrive with CRLF and MUST keep it -- one
+# normalised line ending on checkout and both checks fail, on the machine that
+# did nothing wrong.
+retarget/testdata/** binary

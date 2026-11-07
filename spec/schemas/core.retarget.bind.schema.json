@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.retarget.bind.schema.json",
+  "title": "core.retarget.bind — a solved bind between a foreign rig and a werk skeleton",
+  "description": "S6-2, RULING, implemented 2026-08-08. Stage 6 measured the gap this node closes: a conformant package could contain a clip that was retargeted, and contain the skeleton it was retargeted onto, and say NOTHING about the pose the bind was taken in, the scale that was solved, or the rotation that was recovered. Two of the three real rigs measured there have a neutral that is not the canonical T-pose — the UE 5.7 mannequin's A-pose is 0.419 rad away in mean bone direction, CesiumMan's bind pose 0.430 rad — and binding neutral-to-neutral is the CORRECT answer in both cases, not an error. The retarget fixture had to hide all three numbers in an x.werk.retarget node, which is honest and unreadable to anyone else. A bind is a REUSABLE ARTIFACT and today every tool that wants one recomputes it from scratch. This node is that artifact: matched pose, scale, rotation, per-bone offsets, source rig id, and the measured residuals that turn it from an assertion into something a consumer can judge. Narrative spec: spec/SPEC.md section 3.14.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "bind_id", "source", "target", "scale", "rotation", "bones", "residual", "solver"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+
+    "bind_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stable id for this bind, so a clip or a tool can name it (law 4: ids survive re-export, indices rot)."
+    },
+
+    "name": {"type": "string", "minLength": 1, "maxLength": 200},
+
+    "source": {
+      "description": "The foreign rig, identified as honestly as this package can. Not a promise about a file elsewhere: where the package carries the source rig, file+sha256 name it; where it does not, they are absent and the bind says what it knows.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skeleton_id", "bone_count", "unit_scale_to_metre", "unit_scale_epistemic", "axes"],
+      "properties": {
+        "skeleton_id": {
+          "type": "string",
+          "description": "The foreign rig's own identifier: a glTF skin name, a UE skeleton asset path, a BVH filename. Free-form, because a foreign rig's id is whatever the foreign tool calls it, and inventing a kebab-case id here would be inventing."
+        },
+        "name": {"type": "string"},
+        "bone_count": {"type": "integer", "minimum": 1},
+        "file": {"$ref": "#/$defs/path", "description": "Path IN THIS PACKAGE of the source rig, when the package carries it."},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "unit_scale_to_metre": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Multiply a source-rig length by this to get metres. A real number that is often not 1 and often not declared by the source: a CMU BVH unit measured 0.0615 m in Stage 6, and nothing in the file said so."
+        },
+        "unit_scale_epistemic": {
+          "enum": ["declared", "recovered"],
+          "description": "'declared' the source file states its unit; 'recovered' the solver worked it out from stature. Recovered is legitimate and common, and it is not the same claim — which is why it is a field rather than a footnote."
+        },
+        "axes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["up_axis", "forward_axis", "handedness"],
+          "description": "The source rig's axis convention, so the solved `rotation` below can be checked rather than trusted. A Z-up left-handed rig stops being a special case in somebody's code and becomes a number in a file.",
+          "properties": {
+            "up_axis": {"enum": ["x", "y", "z", "-x", "-y", "-z"]},
+            "forward_axis": {"enum": ["+x", "-x", "+y", "-y", "+z", "-z"]},
+            "handedness": {"enum": ["right", "left"]}
+          }
+        },
+        "calibration_pose": {
+          "$ref": "#/$defs/calibrationPose",
+          "description": "The pose the SOURCE rig was in when the bind was taken, in the source rig's own bone names. Absent means the source's own rest/bind pose was used, which is the same rule core.skeleton.schema.json already states for its calibration_pose."
+        }
+      }
+    },
+
+    "target": {
+      "description": "The werk skeleton this binds onto.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "skeleton_id"],
+      "properties": {
+        "node_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "node_id of the core.skeleton node in THIS package. The bind carries a `requires` edge to it."
+        },
+        "skeleton_id": {
+          "type": "string",
+          "description": "That skeleton's own skeleton_id, e.g. 'canonical-humanoid-v1'. Carried as well as the node_id so the bind survives being copied into a package whose node ids differ — an id join, not a position join (law 4)."
+        },
+        "bone_count": {"type": "integer", "minimum": 1},
+        "calibration_pose": {
+          "$ref": "#/$defs/calibrationPose",
+          "description": "The pose the TARGET skeleton was in when the bind was taken, in the target's bone_ids. Absent means the target's rest pose. Neutral-to-neutral binds are the normal case and both sides being absent is the normal spelling of one."
+        }
+      }
+    },
+
+    "scale": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "The solved uniform stature scale, source to target, applied AFTER unit_scale_to_metre. Uniform because a non-uniform stature scale is a modelling decision and not a bind."
+    },
+
+    "rotation": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {"type": "number"},
+      "description": "The solved source-to-target basis rotation as a unit quaternion in the manifest's declared quat_order (wxyz). Identity when the two rigs already share a basis."
+    },
+
+    "translation_m": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"type": "number"},
+      "description": "OPTIONAL. Solved root offset in metres, target model space, for rigs whose origin is not at the floor under the pelvis. Absent means zero."
+    },
+
+    "bones": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Per-bone correspondence and the offset that makes it true. The array is the bind: everything above is the frame it lives in.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_bone", "bone_id", "offset_rotation"],
+        "properties": {
+          "source_bone": {"type": "string", "description": "The foreign rig's own bone name, verbatim."},
+          "bone_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "The target skeleton's bone_id."},
+          "offset_rotation": {
+            "type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"},
+            "description": "The solved rest-offset quaternion [w,x,y,z] taking the source bone's calibration orientation onto the target bone's. This is the number every retargeter recomputes and nobody stores."
+          },
+          "offset_translation_m": {
+            "type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"},
+            "description": "OPTIONAL. Per-bone translation offset in metres, for the rigs that need one."
+          },
+          "residual_rad": {
+            "type": "number", "minimum": 0,
+            "description": "MEASURED angular residual for this bone after the bind is applied. Present makes this node epistemic 'measured' rather than an assertion: a consumer can decide for itself whether 0.22 rad on one joint is acceptable for its use, which it cannot do if the number is not there. Stage 6 measured 3.03e-14 rad where the correspondence is parent-to-child in both rigs and 0.2217 rad across an interposed animated joint — the same bind, two very different numbers, and only the per-bone value distinguishes them."
+          },
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "note": {"type": "string", "description": "Why this correspondence is what it is, when it is not obvious — an interposed rig joint folded in, a clavicle moved a spine segment."}
+        }
+      }
+    },
+
+    "residual": {
+      "description": "The summary of the per-bone residuals, so a consumer can judge the bind without walking the array. MEASURED, always: a bind that declares a summary it did not measure is the thing this field exists to prevent.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mean_rad", "max_rad", "max_bone_id"],
+      "properties": {
+        "mean_rad": {"type": "number", "minimum": 0},
+        "max_rad": {"type": "number", "minimum": 0},
+        "max_bone_id": {"type": "string", "description": "Which bone the maximum was on. A mean without its worst case hides exactly the joint a reviewer wants to see."},
+        "tolerance_rad": {"type": "number", "minimum": 0, "description": "The tolerance this bind was accepted against, when one was declared. Compare with core.anim.clip's retarget.tolerance_rad."},
+        "frames_measured": {"type": "integer", "minimum": 0, "description": "How many frames the residuals were measured over. 0 or absent means the calibration pose alone."}
+      }
+    },
+
+    "unmapped": {
+      "description": "What the bind could NOT match, listed rather than silently absent. A bind that hides what it dropped is the failure mode this node exists to make visible.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "source_bones": {
+          "type": "array", "items": {"type": "string"},
+          "description": "Foreign bones with no canonical correspondence: twist bones, IK handles, prop attachments, a second neck segment this skeleton cannot carry."
+        },
+        "target_bones": {
+          "type": "array", "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "description": "Target bone_ids the source cannot drive. A clip retargeted through this bind leaves them at rest, and a consumer that needs them now knows before it plays anything."
+        },
+        "note": {"type": "string"}
+      }
+    },
+
+    "solver": {
+      "description": "Who solved it and how. The producer block on the node version says which tool ran; this says what it did, because two runs of one tool with different methods are two different binds.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method"],
+      "properties": {
+        "method": {
+          "type": "string", "minLength": 3,
+          "description": "e.g. 'one-calibration-pose, per-bone rest-offset, uniform stature scale'. Prose, because the space of methods is open; the numbers above are what a consumer checks."
+        },
+        "calibration_frame_source": {
+          "type": "string",
+          "description": "Where the calibration pose came from when it was not authored: 'rest', 'bind-pose', 'clip-frame-0', 'auto-scan'. Stage 6 auto-scanned for the most T-like frame in a clip, which is a legitimate method and not the same claim as an authored pose."
+        },
+        "calibration_frame_index": {"type": "integer", "minimum": 0},
+        "verified_against": {
+          "type": "array", "items": {"type": "string"},
+          "description": "Paths or clip ids the bind's residuals were measured over."
+        }
+      }
+    },
+
+    "epistemic": {
+      "enum": ["authored", "measured", "inferred"],
+      "description": "'measured' when a solver produced this against declared inputs and the residuals are real. 'authored' when a human wrote the correspondence by hand. The node version's own epistemic stamp is the authority; this repeats it inside the payload so the payload is an island (law 3)."
+    },
+
+    "note": {"type": "string", "minLength": 8, "maxLength": 4000}
+  },
+
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9][A-Za-z0-9._@/-]*$"
+    },
+    "calibrationPose": {
+      "description": "Deliberately the same shape as core.skeleton.schema.json's calibration_pose, so a bind and a skeleton describe a pose identically and neither has to translate the other.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "rotations"],
+      "properties": {
+        "name": {"type": "string"},
+        "rotations": {
+          "type": "object",
+          "additionalProperties": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
+          "description": "bone name (source side) or bone_id (target side) -> local quaternion [w,x,y,z]. Bones not listed are at their rest rotation."
+        },
+        "tolerance_rad": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/facets.schema.json",
+  "title": "spec/facets.json — the semantic tag registry",
+  "description": "Validates the tag registry that travels inside every werk package. The registry is versioned payload, not a service: a package carries the exact vocabulary its tags were drawn from, so a tag never means something different five years later (law 1, law 2).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["registry", "version", "rules", "facets"],
+  "properties": {
+    "registry": {"const": "werk-facets"},
+    "version": {"type": "integer", "minimum": 1},
+    "created": {"type": "string", "format": "date-time"},
+    "description": {"type": "string"},
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tag_pattern", "free_tag_prefix", "unknown_tag_behavior", "multi_tag", "case"],
+      "properties": {
+        "tag_pattern": {"type": "string", "description": "Regular expression every canonical tag matches."},
+        "free_tag_prefix": {"type": "string", "description": "The namespace a tag outside the registry must use."},
+        "unknown_tag_behavior": {"type": "string"},
+        "multi_tag": {"type": "string"},
+        "case": {"type": "string"},
+        "ordering": {"type": "string"},
+        "deprecation": {"type": "string"}
+      }
+    },
+    "facets": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["description", "cardinality", "tags"],
+        "properties": {
+          "description": {"type": "string", "minLength": 1},
+          "cardinality": {
+            "enum": ["one", "many"],
+            "description": "'one' means a well-formed entity carries at most one tag from this facet; 'many' means several are normal."
+          },
+          "tags": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+          },
+          "aliases": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "description": "alias -> canonical tag. An importer normalises through this map; a canonical tag is never itself an alias key."
+          },
+          "deprecated": {
+            "type": "object",
+            "additionalProperties": {"type": ["string", "null"]},
+            "description": "deprecated tag -> replacement, or null when there is none. Deprecated tags stay readable forever; nothing is ever deleted from a registry (law 12)."
+          },
+          "tag_meta": {
+            "description": "Optional per-tag machine-checkable meaning. Law 8 applies to vocabularies too: where a tag stands for a measurable range, the range is a number here rather than an adjective in someone's head. Used by scale-class, whose tags would otherwise be pure opinion.",
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "gloss": {"type": "string"},
+                "longest_axis_min_m": {"type": "number", "minimum": 0},
+                "longest_axis_max_m": {"type": "number", "exclusiveMinimum": 0},
+                "example": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

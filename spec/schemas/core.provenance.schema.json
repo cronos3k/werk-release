@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.provenance.schema.json",
+  "title": "core.provenance — producers, inputs, costs, conjure prompts",
+  "description": "The long-form record of how this entity came to exist: the pipeline runs, what each one consumed and produced, what it cost, and the exact prompts if a model conjured anything. The manifest already carries the per-version producer and input_hash that law 5 requires; this node carries the detail that would bloat the manifest but that an audit, a rebuild or a rights question needs. Always 'enhances': deleting it costs history, never function.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "runs"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["run_id", "started", "tool", "produced"],
+        "properties": {
+          "run_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "started": {"type": "string", "format": "date-time"},
+          "finished": {"type": "string", "format": "date-time"},
+          "tool": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version"],
+            "properties": {
+              "name": {"type": "string"},
+              "version": {"type": "string"},
+              "commit": {"type": "string", "description": "Source revision, when the tool is versioned by one."},
+              "host": {"type": "string"},
+              "os": {"type": "string"},
+              "gpu": {"type": "string"}
+            }
+          },
+          "models": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "role"],
+              "properties": {
+                "id": {"type": "string", "description": "Exact model identity including revision. 'a language model' is not an identity."},
+                "role": {"type": "string", "description": "e.g. 'describe', 'segment', 'plan-sfx', 'generate-audio', 'score-clap', 'caption-audio', 'embed'."},
+                "quantization": {"type": "string"},
+                "sampling": {"type": "object", "description": "Seed, temperature, steps, guidance — whatever the run actually set. Present so the run is reproducible."}
+              }
+            }
+          },
+          "consumed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {"type": "string", "description": "Package-relative when the input is in this package. When the input came from outside, this is a descriptive label and 'external' is true — a werk never depends on an external file to LOAD, but it may honestly record where something came from."},
+                "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                "external": {"type": "boolean", "default": false},
+                "license": {"type": "string", "description": "License of an external input, when relevant to the package's own licence."}
+              }
+            }
+          },
+          "produced": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["node_id", "v"],
+              "properties": {
+                "node_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+                "v": {"type": "integer", "minimum": 1}
+              }
+            }
+          },
+          "prompts": {
+            "description": "The conjure prompts, verbatim. A generated artifact whose prompt is lost cannot be regenerated, varied or defended, so the prompt is payload.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["role", "text"],
+              "properties": {
+                "role": {"type": "string", "description": "e.g. 'system', 'user', 'audio-prompt', 'negative'."},
+                "text": {"type": "string"},
+                "for_node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+                "seed": {"type": "integer"}
+              }
+            }
+          },
+          "cost": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "What the run actually cost, measured. Useful for deciding whether to recompute a stale derived node or to trust it.",
+            "properties": {
+              "wall_seconds": {"type": "number", "minimum": 0},
+              "gpu_seconds": {"type": "number", "minimum": 0},
+              "energy_wh": {"type": "number", "minimum": 0, "description": "Measured at the card or the wall; 'estimated' belongs in note, not here."},
+              "tokens_in": {"type": "integer", "minimum": 0},
+              "tokens_out": {"type": "integer", "minimum": 0},
+              "currency": {"type": "string"},
+              "amount": {"type": "number", "minimum": 0}
+            }
+          },
+          "gates": {
+            "description": "The acceptance measurements this run made, and whether they passed. A failed gate recorded honestly is worth more than a missing one.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["name", "passed"],
+              "properties": {
+                "name": {"type": "string"},
+                "passed": {"type": "boolean"},
+                "value": {"type": "number"},
+                "threshold": {"type": "number"},
+                "unit": {"type": "string"}
+              }
+            }
+          },
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

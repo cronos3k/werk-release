@@ -1,0 +1,58 @@
+__pycache__/
+*.pyc
+
+# Rust build output — the crate is source; werk.dll is built, never committed.
+/core/target/
+
+# C/C++ smoke-test build output. tests/run_gate.py builds into
+# core/target/gate-tmp/, but a hand-run compile lands beside the source.
+*.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+*.dll
+*.so
+*.dylib
+*.lib
+
+# Agent tooling may drop session state here. Not part of the format.
+data/
+
+# Stage 11, the Blender adapter.
+# The gate's exported packages and the built add-on zip are OUTPUT: both are
+# reproducible from the tree by `python adapters/blender/test_gate.py` and
+# `python tools/blender/build_addon_zip.py`.
+/adapters/blender/_gate_out/
+/adapters/blender/dist/
+# Scratch directories the importer/exporter make beside a package and remove
+# again; listed so a crashed run cannot leave one in a commit.
+.werk-blender-tmp/
+# A downloaded portable Blender. It is open source and freely redistributable,
+# and it is also several hundred megabytes, which is not what a format
+# repository is for. tools/blender/README.md says how to get one.
+/tools/blender/*/
+!/tools/blender/README.md
+
+# Scratch from fixtures/build_crate_tex.py: the generated maps before Blender
+# re-encodes them into the package. Reproducible from that script; not the format.
+/fixtures/.werk-tex-tmp/
+
+# Rulings 18/19: the vendored native helpers build here. The SOURCES
+# (tools/vhacd/VHACD.h, tools/mikktspace/mikktspace.c) are the dependency and
+# are committed; the binaries, the compiler scratch and the measurement JSON
+# are output, reproducible with `python tools/build_native.py`.
+/tools/_build/
+
+# Files kept out of git and published as hash-pinned release assets
+# (RELEASE-ASSETS.md; fetch with `python tools/fetch_fixtures.py`).
+/fixtures/crate-v1.werk
+/fixtures/crate-v1-damaged.werk
+/fixtures/ista-varun-v1.werk
+/fixtures/gsplat-v1.werk
+/fixtures/image-cc0-v1.werk
+/fixtures/image-cc0-v1-damaged.werk
+/gauntlet/roundSR/selfrun-v1.werk
+/gauntlet/roundHC/pages/scanned/page-01.jpg
+/gauntlet/roundHC/pages/scanned/page-02.jpg
+/gauntlet/roundHC/pages/scanned/page-03.jpg

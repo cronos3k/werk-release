@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.tool.schema.json",
+  "title": "core.tool — a tool carried inside the package, as code",
+  "description": "Gregor's order, 2026-08-08: werk must record the tools used to create or convert its content AS PART OF THE DATA, and must be able to EMBED THE CODE of those tools and their configurations in the file. This node is that. It extends the core.loader doctrine (SPEC.md section 7) verbatim rather than inventing a second safety model: SOURCE is always allowed and reading it is the point; a PREBUILT binary is opt-in, inert by default, and MUST NEVER be executed automatically under any circumstance, including when the signature chain verifies. The difference from core.loader is scope, not rules — a loader reads werk packages, a tool made or transformed the content in one. A core.recipe's step may name this node with `tool.tool_node`, which is how 'which tool' stops being a hash somebody else has to resolve and becomes a thing in the file. Narrative spec: spec/SPEC.md section 3.17.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_id", "name", "version", "role", "form", "language", "entrypoint", "files", "license", "invocation"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+
+    "tool_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stable kebab-case id for this tool within the package. A recipe step, a provenance run and a core.tool.config all name the tool by the NODE id; this is the tool's own name for itself and survives being copied into a package whose node ids differ (law 4)."
+    },
+
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the tool is called where it lives, e.g. 'pipeline/p_gsplat.py'. Free-form: a tool's name is whatever its author calls it and kebab-casing it here would be inventing."
+    },
+
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "description": "REQUIRED, and the string 'not-recorded' is a legal, honest value — the same rule core.recipe's tool block states, for the same reason: an absent key would let a reader assume a version was checked."
+    },
+
+    "role": {
+      "enum": ["creator", "converter", "processor", "packager", "validator", "viewer"],
+      "description": "What this tool DID to the content in this package. creator: made it from nothing or from a prompt. converter: changed its representation without intending to change its meaning. processor: derived something new from it (a LOD, a collider, a preview). packager: assembled the container. validator: checked it and produced a report. viewer: renders or plays it and produced nothing that is in here. A tool that did two of these gets two nodes, because a role that is a list is a role nobody can filter on."
+    },
+
+    "form": {
+      "enum": ["source", "prebuilt", "source+prebuilt"],
+      "description": "SPEC.md section 7.1's vocabulary, unchanged. `source` is text a human or an agent can read, and reading it is the point. `prebuilt` is a compiled artifact and is INERT DATA: see `prebuilt` below and section 7.1's normative rule, which this node does not weaken."
+    },
+
+    "language": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The source language, e.g. 'python', 'rust', 'c', 'glsl', 'json' for a pure-configuration tool. Lowercase by convention, not by pattern, because language names are not werk ids."
+    },
+
+    "entrypoint": {
+      "type": "string",
+      "description": "Package-relative path of the file to start reading at. MUST be one of `files[].path`. For a tool that is a tree rather than a file, this is the file that would be run or imported."
+    },
+
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every file of the tool that this package carries, by path and hash. Duplicating the manifest's own files[] is deliberate and is the same construction core.recipe uses: the payload states what it claims to contain, the manifest states what the container contains, and a disagreement between two independent statements is exactly how a hand-edited package is caught.",
+      "items": {"$ref": "#/$defs/fileRef"}
+    },
+
+    "license": {
+      "description": "The tool's own licence, which is NOT the content's licence and is the thing people forget. A GPL converter embedded in a package does not make the package GPL, and a package that carries a tool whose terms it does not state is making a legal claim it cannot support (law 7). `file` names the licence text INSIDE this package where the package carries it; where it does not, `text` carries it inline, and where neither is possible `spdx_id` alone is the weakest legal answer and is marked as such by the absence of the other two.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "spdx_id": {"type": "string", "minLength": 1},
+        "file": {"$ref": "#/$defs/path"},
+        "text": {"type": "string", "minLength": 1},
+        "holder": {"type": "string"},
+        "note": {"type": "string"}
+      },
+      "anyOf": [
+        {"required": ["spdx_id"]},
+        {"required": ["file"]},
+        {"required": ["text"]}
+      ]
+    },
+
+    "invocation": {
+      "description": "How the tool was actually run. `example` is a command line a human can read and, where the toolchain is present, run; `argv` is the exact argument vector, which is the thing that is unambiguous when the example has quoting in it. At least one of them is required.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "example": {"type": "string", "minLength": 1},
+        "argv": {"type": "array", "items": {"type": "string"}},
+        "working_directory": {"type": "string", "description": "Relative to the package root when the invocation is meant to be reproducible against the extracted package; free text otherwise."},
+        "toolchain": {"type": "string", "description": "What must be installed to run it, e.g. 'python>=3.8'. This is NOT the loaderMeta.dependencies field and is not required to be empty: a tool is allowed to need scipy, because a tool is not a loader. Law 1 governs what a package must carry to be READ, and a package is readable without ever running its tools."},
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Packages, crates or libraries the tool needs that are not in the toolchain. MAY be non-empty — see `toolchain`. Listed so a consumer can tell whether re-running is a five-second or a five-hour proposition."
+        },
+        "note": {"type": "string"}
+      },
+      "anyOf": [{"required": ["example"]}, {"required": ["argv"]}]
+    },
+
+    "config": {
+      "description": "The configuration this tool ran with, INLINE, when it is small enough to read at a glance. For anything larger, or for a configuration that is itself a file the tool loaded, use a core.tool.config node and reference it from `config_nodes` — a config that is a 4000-line blob inside a schema-validated JSON is a config nobody reads. The keys are the tool's own; werk does not rename them.",
+      "type": "object"
+    },
+
+    "config_nodes": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "node_ids of core.tool.config nodes that record configurations this tool ran with. INTERNAL references, resolved inside this package (law 1) — never a URL and never a path outside."
+    },
+
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where the tool came from, when it came from somewhere. Informational and explicitly NOT a fetch instruction: the code is in the package and a reader must never go to the network for it.",
+      "properties": {
+        "url": {"type": "string"},
+        "revision": {"type": "string", "description": "Commit id. 'not-recorded' is legal and honest."},
+        "path_in_repository": {"type": "string"}
+      }
+    },
+
+    "prebuilt": {
+      "description": "Present only when `form` includes prebuilt. SPEC.md section 7.1 governs and is NOT relaxed here: a conformant tool MUST NOT execute, load, dlopen, link or JIT this artifact automatically under any circumstance, MUST treat it as inert data by default, and MAY offer to run it only when the signature chain verifies AND the signing identity is one the USER has explicitly marked trusted in that tool AND the user takes a deliberate per-package action. `built_from` MUST name a source entrypoint in THIS package, so a suspicious consumer can rebuild and compare rather than trust.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["built_from", "platform", "never_auto_execute"],
+      "properties": {
+        "built_from": {"$ref": "#/$defs/path"},
+        "platform": {"type": "string", "minLength": 1, "description": "e.g. 'x86_64-pc-windows-msvc'. A binary whose platform is unstated is a binary somebody will try to run on the wrong one."},
+        "never_auto_execute": {"type": "boolean", "const": true, "description": "A constant, not a switch. It is in the schema so that the rule is machine-visible to a consumer that never reads section 7.1, and it can only be true: a package cannot opt out of it."},
+        "reproducible_build_command": {"type": "string"},
+        "build_toolchain": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+
+    "produced": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "node_ids in this package that this tool produced or transformed. The manifest's provenance and recipe nodes are the authority; this is the tool's own claim, and where the two disagree a reader reports the disagreement rather than picking one (the same rule SPEC.md section 3.12 clause 5 states for recipe vs disclosure)."
+    },
+
+    "note": {"type": "string"}
+  },
+
+  "allOf": [
+    {
+      "if": {"properties": {"form": {"enum": ["prebuilt", "source+prebuilt"]}}, "required": ["form"]},
+      "then": {"required": ["prebuilt"]}
+    }
+  ],
+
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\][^\\\\]*$",
+      "description": "A package-relative path. Never absolute, never a URL, never containing a backslash."
+    },
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "size"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size": {"type": "integer", "minimum": 0},
+        "role": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+      }
+    }
+  }
+}

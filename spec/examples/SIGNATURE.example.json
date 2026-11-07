@@ -1,0 +1,23 @@
+{
+  "algorithm": "ed25519",
+  "chain": [
+    {
+      "index": 0,
+      "manifest_sha256": "7601951bcb139307309a76006a74c589fce3450ea3a9c64ec8a2ca2da6ded14d",
+      "note": "Signed with the PUBLISHED RFC 8032 section 7.1 test key so that anyone holding spec/MINI-SPECS.md section 12 can verify it. It proves nothing about authorship and is not a trust anchor.",
+      "prev_entry_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "public_key": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a",
+      "signature": "99b9cb20098d0a82fa08dda98ed49c1ce3532bb4e14064403dc28da1f2b3437ef94a4c56d4a8e239427359d2e31189e1733733a3cb84d8b9312f350633c93f0f",
+      "signed_at": "2026-08-08T09:00:00Z",
+      "signer": {
+        "kind": "service",
+        "name": "werk example key (RFC 8032 test vector 1)",
+        "role": "author",
+        "uri": "urn:werk:fixture:rfc8032-vector-1"
+      }
+    }
+  ],
+  "encoding": "hex-lowercase",
+  "manifest_sha256": "7601951bcb139307309a76006a74c589fce3450ea3a9c64ec8a2ca2da6ded14d",
+  "werk_signature": 1
+}
