@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.semantics.schema.json",
+  "title": "core.semantics — facet tags, style embedding, palette",
+  "description": "What this entity IS, in terms a search index can use. Law 9 in its purest form: this node is simultaneously the runtime's material/mood hint, the store's filter facets, and the nearest-neighbour index entry — one payload, three masters. The tag vocabulary is the registry in spec/facets.json, which travels in the package.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "facets_version", "facets"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "facets_version": {
+      "type": "integer",
+      "description": "The 'version' field of the spec/facets.json this file's tags were drawn from. A reader validating tags MUST use the registry in THIS package, never a newer one it happens to know."
+    },
+    "facets": {
+      "description": "One array per facet. Every tag MUST either appear in that facet's canonical list in spec/facets.json, or start with 'x.' (the free-tag escape hatch). Order within an array is significance-descending; the first tag is the one a single-tag UI shows.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style": {"$ref": "#/$defs/tagList"},
+        "function": {"$ref": "#/$defs/tagList"},
+        "environment": {"$ref": "#/$defs/tagList"},
+        "era": {"$ref": "#/$defs/tagList"},
+        "mood": {"$ref": "#/$defs/tagList"},
+        "condition": {"$ref": "#/$defs/tagList"},
+        "scale-class": {"$ref": "#/$defs/tagList"}
+      }
+    },
+    "tag_stamps": {
+      "description": "Optional per-tag epistemic stamps, keyed 'facet/tag'. A tag with no stamp inherits the node version's stamp from the manifest.",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9-]+/(x\\.)?[a-z0-9]+(-[a-z0-9]+)*$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["epistemic"],
+        "properties": {
+          "epistemic": {"enum": ["authored", "measured", "inferred"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "embedding": {
+      "description": "A style/appearance embedding for nearest-neighbour search. Carrying the vector inside the artifact means a store can index a freshly dropped file with no model loaded — but only if it knows which model produced it, hence 'model' is mandatory and vectors from different models are never comparable.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "dim", "vec", "normalized", "dtype"],
+      "properties": {
+        "model": {"type": "string", "minLength": 1, "description": "Exact model identity including revision, e.g. 'openclip-vit-l-14/laion2b-s32b-b82k'. An embedding whose model is unknown is noise."},
+        "dim": {"type": "integer", "minimum": 1, "maximum": 8192},
+        "dtype": {"const": "f32", "description": "JSON numbers, read as IEEE-754 binary32. Declared so a reader knows not to expect more precision than it gets."},
+        "normalized": {"type": "boolean", "description": "True when |vec| == 1 within 1e-5, so a consumer can use a dot product as cosine similarity without renormalising."},
+        "vec": {
+          "type": "array",
+          "items": {"type": "number"},
+          "description": "Exactly 'dim' values. A validator MUST check the length against dim; JSON Schema cannot express that cross-field constraint, so it is stated here as a normative reader check."
+        },
+        "input": {
+          "description": "What was embedded: which rendered views, or which text.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kind": {"enum": ["image-views", "text", "image-and-text"]},
+            "views": {"type": "array", "items": {"type": "string"}, "description": "Paths of the images that were embedded and averaged."},
+            "text": {"type": "string"}
+          }
+        }
+      }
+    },
+    "palette": {
+      "description": "The entity's dominant colours, for filtering, for thumbnail backgrounds, and for a runtime that tints particles or debris to match.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "colors"],
+      "properties": {
+        "method": {"type": "string", "description": "e.g. 'kmeans-8-on-6-orbit-views', 'authored'."},
+        "colors": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["hex_srgb", "linear_rgb", "weight"],
+            "properties": {
+              "hex_srgb": {"type": "string", "pattern": "^#[0-9a-f]{6}$", "description": "Lowercase, sRGB-encoded, for display."},
+              "linear_rgb": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": 0, "maximum": 1}, "description": "The same colour, linearised, for maths. Both are stored because converting between them is where colour bugs live."},
+              "weight": {"type": "number", "minimum": 0, "maximum": 1, "description": "Fraction of visible surface. Weights sum to 1.0 within 1e-3 WHEN THE PALETTE COVERS THE WHOLE SURFACE. A deliberately truncated top-N palette sums to less than 1, and MUST say so in `method` rather than renormalising: renormalised weights would disagree with the same palette carried in a core.embedding WKEM payload, and two spellings of one fact that disagree are worse than one spelling. Recorded as spec finding S-24, from the first package to carry both spellings."},
+              "name": {"type": "string", "description": "Optional human colour name."}
+            }
+          }
+        },
+        "dominant_index": {"type": "integer", "minimum": 0, "description": "Index into colors of the single colour that best represents the entity."},
+        "average_luminance": {"type": "number", "minimum": 0, "maximum": 1, "description": "Linear luminance of the visible surface, useful for choosing a contrasting thumbnail background."}
+      }
+    },
+    "description": {
+      "description": "One paragraph of natural language. Also the search index text (law 9).",
+      "type": "string",
+      "maxLength": 4000
+    },
+    "keywords": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Free text search terms outside the facet registry. Not validated, never load-bearing."
+    },
+    "note": {"type": "string"}
+  },
+  "$defs": {
+    "tagList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(x\\.)?[a-z0-9]+(-[a-z0-9]+)*$"
+      }
+    }
+  }
+}

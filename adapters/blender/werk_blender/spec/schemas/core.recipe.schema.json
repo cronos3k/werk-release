@@ -1,0 +1,411 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.recipe.schema.json",
+  "title": "werk core.recipe — the reproduction record for generated content",
+  "description": "BASE DOCTRINE: this node family belongs to every werk profile, not to one of them. A core.recipe is the complete, honest record of how a piece of generated content came to exist: the models, the prompts, the seeds, the samplers, the LoRAs, the pipeline graph, the tool versions, and every input medium. Law 1 (hermeticity) applies with one stated exception: every INPUT MEDIUM a recipe names MUST be present in this package and MUST be listed in this node's own files[], while MODEL WEIGHTS may be named by hash without being carried (see 'weights' below and SPEC.md section 3.11 decision D-REC-1). Law 5 applies without exception: a recipe declares how reproducible it actually is, and lists what was never recorded, because a recipe that quietly omits a parameter is worse than one that says the parameter is lost.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "recipe_version",
+    "target",
+    "reproducibility",
+    "reproducibility_note",
+    "steps",
+    "unrecorded"
+  ],
+  "properties": {
+    "recipe_version": {
+      "description": "Schema version of this payload. 1 for now; a later number is additive (law 12).",
+      "type": "integer",
+      "const": 1
+    },
+
+    "target": {
+      "description": "What this recipe produced, named by identity rather than by position (law 4). The target node and version are in this same package: a recipe for something not in the file would be a promise about another file.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "version", "files"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "version": {"type": "integer", "minimum": 1},
+        "files": {
+          "description": "The exact output files this recipe accounts for, by path and hash. Two independent statements of one fact: the manifest also hashes these paths, and a mismatch means the recipe and the payload have drifted apart.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/fileRef"}
+        }
+      }
+    },
+
+    "reproducibility": {
+      "description": "How much re-running this recipe can be expected to give back. DETERMINISTIC: re-running it on the recorded inputs, with the named tool versions and the named weights, returns the output BYTE FOR BYTE; everything needed to check that claim is either in this package or named by hash. STOCHASTIC: every parameter is recorded but one random source is not pinned, so a re-run draws another sample from the same distribution — the same recipe, not the same bytes. DESCRIPTIVE: the record is truthful but a re-run cannot be expected to reproduce the output at all — a hosted model whose weights, sampler and internal seed are not exposed, or a step whose parameters were never captured. The grade is a claim about THIS record, not a compliment to the pipeline; a hosted-API image is descriptive however good it looks, and saying so is the point.",
+      "enum": ["deterministic", "stochastic", "descriptive"]
+    },
+    "reproducibility_note": {
+      "description": "MANDATORY. One or two sentences saying WHY the grade above is the grade — which specific fact is missing or which specific fact makes the re-run exact. 'descriptive' with no reason is an unfalsifiable label.",
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 2000
+    },
+
+    "generated_at": {"type": "string", "format": "date-time"},
+
+    "pipeline": {
+      "description": "The shape of the generation as a whole, above the level of any single step.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "description": "hosted-api: the generation ran on someone else's machine behind an API. local: it ran on hardware the author controls, with weights the author holds. hybrid: both, in one chain. manual: a human did it, and the recipe records the human's procedure.",
+          "enum": ["hosted-api", "local", "hybrid", "manual"]
+        },
+        "graph": {
+          "description": "An embedded pipeline graph, VERBATIM — a ComfyUI workflow JSON, a node-graph export, a shell script. Verbatim matters: a graph a tool has re-serialised is a graph whose node ids may have moved, and the whole value of embedding it is that it can be loaded back into the thing that produced it. The file is in this package and is listed in this node's files[].",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["format", "file", "sha256"],
+          "properties": {
+            "format": {
+              "description": "What the graph file is, concretely enough to open it: e.g. 'comfyui-workflow-json', 'comfyui-api-prompt-json', 'invokeai-graph-json', 'shell-script', 'python-script'. Free text because the set is open, but a bare 'json' is not an answer.",
+              "type": "string",
+              "minLength": 3
+            },
+            "file": {"$ref": "#/$defs/path"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "verbatim": {
+              "description": "true when the file is the byte-exact export the producing tool wrote. false when it was reconstructed or reformatted, which downgrades what it proves.",
+              "type": "boolean",
+              "default": true
+            },
+            "note": {"type": "string", "maxLength": 2000}
+          }
+        }
+      }
+    },
+
+    "steps": {
+      "description": "The generation as an ORDERED list of steps. One entry for a single model call; several for a chain (compose then realize, generate then upscale). Order is file order and is load-bearing: step n's output is step n+1's input unless a step says otherwise.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/step"}
+    },
+
+    "postprocess": {
+      "description": "Deterministic, non-model operations applied after the last model step — a crop, a resize, a re-encode. They are recorded separately from steps because they are exactly reproducible and a reader can redo them, which is not true of a model call. Recording them matters more than it looks: a PNG re-encoded by a different library is a different file with the same pixels, and a reader comparing hashes needs to know that happened.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["op", "tool", "description"],
+        "properties": {
+          "op": {"type": "string", "minLength": 2, "description": "e.g. 'center-crop', 'resize-lanczos', 'png-encode', 'quantize'."},
+          "tool": {"$ref": "#/$defs/tool"},
+          "description": {"type": "string", "minLength": 8, "maxLength": 2000},
+          "params": {"type": "object"}
+        }
+      }
+    },
+
+    "unrecorded": {
+      "description": "MANDATORY, and it may be empty only when it is genuinely empty. The named facts about this generation that were NOT captured at the time and cannot be recovered — 'the google-genai client version', 'which self-correction iteration produced the saved pixels', 'the operator's sampler'. Law 5 says an inferred value is useful because it is labelled inferred; this array is the same idea one step further, for values that are not even inferred. A reader can then tell a recipe that is complete from one that is merely confident.",
+      "type": "array",
+      "items": {"type": "string", "minLength": 4, "maxLength": 500}
+    },
+
+    "note": {"type": "string", "maxLength": 4000}
+  },
+
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+
+    "path": {
+      "description": "Package-relative POSIX path. Same rule as the manifest's: no leading slash, no drive letter, no '..' segment, no backslash.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9][A-Za-z0-9._@/-]*$"
+    },
+
+    "fileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "size"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size": {"type": "integer", "minimum": 0},
+        "media_type": {"type": "string"},
+        "role": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+      }
+    },
+
+    "tool": {
+      "description": "The software that ran a step. 'version' is REQUIRED and the string 'not-recorded' is a legal, honest value — an absent key would let a reader assume a version was checked.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "source_file": {
+          "description": "Path INSIDE this package of the source that performed the step, when the package carries it. This is how a recipe stops being a claim and becomes a thing a reader can check.",
+          "$ref": "#/$defs/path"
+        },
+        "tool_node": {
+          "type": "string",
+          "description": "OPTIONAL, added Stage 12. node_id, IN THIS PACKAGE, of the core.tool node carrying this tool's code and licence. It answers 'which tool' by POINTING INTO THE FILE instead of naming a hash somebody else has to resolve — the same move `source_file` makes for one file, extended to a tool that is a tree, has a licence, has a role and has recorded configurations. Where both are present they MUST agree: the named node's `entrypoint` is `source_file`, and a reader that finds otherwise reports the disagreement rather than picking one. An internal reference and never a URL (law 1).",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "config_node": {
+          "type": "string",
+          "description": "OPTIONAL, added Stage 12. node_id of a core.tool.config node recording the exact configuration this step's tool ran with. `params` above stays the recipe's own summary of what the caller passed; the config node is the tool's full settings object, its config FILES carried verbatim, and its params_provenance stamp. Two records of one fact is deliberate here for the same reason it is in core.tool.files: a disagreement between two independent statements is how a hand-edited package is caught.",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "repository_revision": {"type": "string", "description": "Commit id, when one exists. 'not-recorded' is legal and honest."},
+        "host": {"type": "string"}
+      }
+    },
+
+    "step": {
+      "description": "One step of the production. `model` was required on EVERY step until Stage 12, which was right while every recipe described a GENERATION and wrong the moment one described a CONVERSION: a splat PLY turned into a werk payload by a 200-line Python file has no model, no weights and no seed, and a schema demanding one would be asking a producer to invent a fact. `model` is now required exactly for the roles that invoke one — plan, generate, edit, inpaint, upscale, interpolate — and optional for transcode, select, convert, ingest and other, where the `tool` block (always required, and which may now point at an embedded core.tool node) carries the whole answer. A generate step with no model is still invalid, which is where the requirement was earning anything. Recorded as finding S12-2.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "role", "tool"],
+      "allOf": [
+        {
+          "if": {"properties": {"role": {"enum": ["plan", "generate", "edit", "inpaint", "upscale", "interpolate"]}}, "required": ["role"]},
+          "then": {"required": ["model"]}
+        }
+      ],
+      "properties": {
+        "step_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "role": {
+          "description": "What this step did to the content. 'plan' covers a language model that wrote the prompt for a later step — it is part of the recipe even though it produced no pixels.",
+          "enum": ["plan", "generate", "edit", "inpaint", "upscale", "interpolate", "transcode", "select", "convert", "ingest", "other"]
+        },
+        "model": {"$ref": "#/$defs/model"},
+        "tool": {"$ref": "#/$defs/tool"},
+        "prompt": {"$ref": "#/$defs/prompt"},
+        "params": {
+          "description": "Every parameter the caller actually passed, verbatim, with the caller's own key names. Sampler, steps, cfg, scheduler, denoise, aspect_ratio, image_size, response modalities — whatever this model takes. Free-form ON PURPOSE: normalising a vendor's parameter names into a house vocabulary is how a recipe becomes a lossy paraphrase (the same argument SPEC.md section 3.9 makes for the audio package). Keys a later reader will not recognise are still keys it can hand back to the same API.",
+          "type": "object"
+        },
+        "seed": {"$ref": "#/$defs/seed"},
+        "loras": {
+          "description": "Adapters applied for this step, each by hash, because two LoRAs with the same name are a routine occurrence and a name is not an identity.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "sha256", "weight"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "sha256": {"$ref": "#/$defs/sha256"},
+              "weight": {"type": "number"},
+              "embedded_path": {"$ref": "#/$defs/path"},
+              "trigger_words": {"type": "array", "items": {"type": "string"}},
+              "note": {"type": "string", "maxLength": 1000}
+            }
+          }
+        },
+        "inputs": {
+          "description": "Every input MEDIUM this step consumed: conditioning images, masks, reference sheets, audio, a previous step's output. HERMETICITY (law 1) BITES HERE: each entry MUST be a path inside this package, and every one of those paths MUST also appear in this recipe node's files[]. A recipe that names an input it does not carry is a promise about another file, which the manifesto bans at the constitutional level. The one exception is an input produced by an earlier step of this same recipe, which is named by step_id instead.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role"],
+            "properties": {
+              "role": {"type": "string", "minLength": 2, "description": "What the model was told this input was: 'style-reference', 'identity-reference', 'location-plate', 'mask', 'init-image', 'previous-step'."},
+              "path": {"$ref": "#/$defs/path"},
+              "sha256": {"$ref": "#/$defs/sha256"},
+              "size": {"type": "integer", "minimum": 0},
+              "from_step": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+              "order": {"description": "Position in the call's input list, 0-based, when the order was significant to the model.", "type": "integer", "minimum": 0},
+              "note": {"type": "string", "maxLength": 1000}
+            }
+          }
+        },
+        "intermediates": {
+          "description": "Files this step produced and a LATER STEP CONSUMED, which the package deliberately does not carry. Added Stage 12 with the rule in SPEC.md section 3.17: an intermediate NEED NOT be carried when an embedded core.tool and an embedded input REPRODUCE it, and the recipe MUST then record its sha256, its size and the exact invocation, so the claim is checkable rather than asserted. That is not a loophole — a 15 MB intermediate that the file's own converter regenerates byte-for-byte from a 9 MB input the file carries is MORE verifiable than a copy, because a consumer can run the check instead of comparing two blobs it was handed. Where no embedded tool reproduces it, it is an input medium like any other and section 3.11's hermeticity rule applies unchanged.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "sha256", "size", "carried", "reproduced_by", "invocation"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1, "description": "What the file was called when it existed. NOT a package path: it is not in the package."},
+              "sha256": {"$ref": "#/$defs/sha256"},
+              "size": {"type": "integer", "minimum": 0},
+              "media_type": {"type": "string"},
+              "carried": {"type": "boolean", "const": false, "description": "A constant. An intermediate the package DOES carry is an output, not an intermediate, and belongs in `outputs`."},
+              "reproduced_by": {"type": "string", "description": "node_id of the core.tool in THIS package that regenerates it. Without one this record would be a promise about a file nobody has, which law 1 bans."},
+              "invocation": {"type": "string", "minLength": 1, "description": "The exact command that regenerates it from inputs this package carries."},
+              "note": {"type": "string"}
+            }
+          }
+        },
+
+        "outputs": {
+          "description": "What this step produced, when the package carries it. A chain whose intermediates were not kept says so in `intermediates` (Stage 12) or, where nothing reproduces them, in 'unrecorded'.",
+          "type": "array",
+          "items": {"$ref": "#/$defs/fileRef"}
+        },
+        "note": {"type": "string", "maxLength": 4000}
+      }
+    },
+
+    "model": {
+      "description": "The model that ran, identified well enough that a reader can tell whether it has the same one.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "hosted", "weights"],
+      "properties": {
+        "id": {
+          "description": "The model identifier as the caller named it, verbatim — 'gemini-3.1-flash-image', 'flux1-dev.safetensors', 'ltx-2.3-13b'. Never a marketing name where an id exists.",
+          "type": "string",
+          "minLength": 1
+        },
+        "family": {"type": "string", "description": "Optional coarse family, e.g. 'gemini-image', 'flux', 'stable-diffusion-xl'."},
+        "hosted": {
+          "description": "true when the weights ran on someone else's machine. A hosted model can never make a recipe 'deterministic': the operator may change the weights behind a stable id without telling anyone, and that is a property of hosting, not a criticism of a vendor.",
+          "type": "boolean"
+        },
+        "operator": {"type": "string", "description": "Who ran the hosted weights, when hosted is true."},
+        "endpoint": {"type": "string", "description": "Informational only. It is NOT a dependency and a reader MUST NOT fetch it; law 1 means nothing in this package is ever completed by a network request. It is recorded because 'which endpoint' is part of what happened."},
+        "weights": {"$ref": "#/$defs/weights"},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+
+    "weights": {
+      "description": "The weight files, by content hash. D-REC-1: model weights are the ONE thing a recipe may name without carrying. A 12 GB checkpoint inside every generated image is not a format, it is a mistake — so the rule is that weights are identified by hash, MAY be embedded, and when they are not the recipe says so in this object rather than staying silent. Input MEDIA get no such exemption: they are small, they are the thing the model actually saw, and they are embedded.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available"],
+      "properties": {
+        "available": {
+          "description": "true when the weight files are identified by hash below (embedded or not). false when they cannot be — the usual case for a hosted model, whose operator publishes no file to hash.",
+          "type": "boolean"
+        },
+        "reason": {
+          "description": "REQUIRED when available is false. Why no hash exists: 'hosted model, no published weight file', 'weights are proprietary and were not hashed at generation time'. The value of this field is that it distinguishes 'could not' from 'did not bother'.",
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 1000
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "sha256"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "sha256": {"$ref": "#/$defs/sha256"},
+              "size": {"type": "integer", "minimum": 0},
+              "quantisation": {"type": "string", "description": "e.g. 'fp16', 'fp8-e4m3', 'q4_k_m'. A quantised checkpoint is a different model and gets a different hash, but naming the scheme saves a reader the trouble of working that out."},
+              "embedded_path": {
+                "description": "Path inside this package when the weights really are carried. Absent means the hash is a name, not a payload — which is legal, and which is exactly what 'available: true, embedded_path absent' tells a reader.",
+                "$ref": "#/$defs/path"
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"available": {"const": false}}, "required": ["available"]},
+          "then": {"required": ["reason"]}
+        }
+      ]
+    },
+
+    "prompt": {
+      "description": "What the model was told. The positive text is mandatory for any step that took one; the negative may be genuinely absent, and 'absent' is different from 'empty'.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "positive": {"$ref": "#/$defs/promptText"},
+        "negative": {"$ref": "#/$defs/promptText"},
+        "negative_absent_reason": {
+          "description": "Why there is no negative prompt, when there is none: 'this model has no negative field; the exclusions were folded into the positive text'. Without this, absence and forgetfulness look identical.",
+          "type": "string",
+          "maxLength": 1000
+        },
+        "system": {"$ref": "#/$defs/promptText"},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+
+    "promptText": {
+      "description": "One prompt string, carried as a FILE rather than inline. Prompts run to thousands of characters, contain newlines and non-ASCII, and are the single field most often mangled by quoting — a file with a hash cannot be silently reformatted. The path is inside this package and appears in this node's files[].",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256", "provenance"],
+      "properties": {
+        "file": {"$ref": "#/$defs/path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "provenance": {
+          "description": "RECORDED: this text was persisted by the producing pipeline at generation time and is being copied here. RECONSTRUCTED: the pipeline did not persist the exact string sent, and this text was rebuilt from the pipeline's own source code — legitimate, common, and NOT the same thing, so it gets its own word. AUTHORED-AFTER: a human wrote down what they believe the prompt was, which is the weakest grade and must never be presented as the first.",
+          "enum": ["recorded", "reconstructed", "authored-after"]
+        },
+        "reconstruction": {
+          "description": "REQUIRED when provenance is 'reconstructed'. How the string was rebuilt and from what, precisely enough for a reader to redo it: which source file, which lines, which branch was taken. Where that source is carried in this package, name it in 'evidence'.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method"],
+          "properties": {
+            "method": {"type": "string", "minLength": 12, "maxLength": 4000},
+            "evidence": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["path", "sha256"],
+                "properties": {
+                  "path": {"$ref": "#/$defs/path"},
+                  "sha256": {"$ref": "#/$defs/sha256"},
+                  "lines": {"type": "string", "description": "e.g. '94-101'."},
+                  "note": {"type": "string", "maxLength": 1000}
+                }
+              }
+            }
+          }
+        },
+        "encoding": {"type": "string", "const": "utf-8"},
+        "note": {"type": "string", "maxLength": 2000}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"provenance": {"const": "reconstructed"}}, "required": ["provenance"]},
+          "then": {"required": ["reconstruction"]}
+        }
+      ]
+    },
+
+    "seed": {
+      "description": "The random seed, or an explicit statement that there was none to record. Both spellings are useful and they are not the same: a missing 'seed' key means nobody thought about it, while 'controlled: false' with a reason means somebody checked and there was nothing to write down.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlled"],
+      "properties": {
+        "controlled": {"type": "boolean"},
+        "value": {"type": "integer", "description": "The seed as the caller passed it. Required in spirit when controlled is true."},
+        "space": {"type": "string", "description": "e.g. 'u32', 'u64', 'python-random'. Two pipelines disagreeing about the width of a seed is a real bug."},
+        "reason": {
+          "description": "REQUIRED when controlled is false. Why no seed exists or was captured: 'the hosted image API exposes no seed parameter'.",
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 1000
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"controlled": {"const": false}}, "required": ["controlled"]},
+          "then": {"required": ["reason"]}
+        }
+      ]
+    }
+  }
+}

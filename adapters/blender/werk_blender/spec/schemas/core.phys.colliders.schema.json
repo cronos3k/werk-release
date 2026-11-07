@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.phys.colliders.schema.json",
+  "title": "core.phys.colliders — approximate collision volumes",
+  "description": "A sphere set and an oriented-box set, grouped per part. Cheap, universally supported primitives that every physics engine can consume without a cook step. A convex-decomposition mesh, when one exists, travels as its own GLB node and is linked by an 'enhances' edge; it is never required to make this node useful.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "space", "groups"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "space": {
+      "const": "part-local",
+      "description": "All primitives below are expressed in the local space of their group's part, i.e. after the part's transform chain from manifest parts[]. Declared because 'model space or part space' is exactly the question a reader must not have to guess."
+    },
+    "groups": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["part_id", "spheres", "boxes"],
+        "properties": {
+          "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "spheres": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["center", "radius"],
+              "properties": {
+                "center": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres"},
+                "radius": {"type": "number", "exclusiveMinimum": 0, "description": "metres"},
+                "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Which surface material this volume represents, so an impact can pick the right sound and the right friction."}
+              }
+            }
+          },
+          "boxes": {
+            "description": "Oriented bounding boxes. Half-extents, not full extents; a rotation quaternion, not a matrix.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["center", "half_extents", "rotation"],
+              "properties": {
+                "center": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres"},
+                "half_extents": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "exclusiveMinimum": 0}, "description": "metres, along the box's own axes"},
+                "rotation": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}, "description": "unit quaternion [w,x,y,z] taking box-local axes into part-local axes"},
+                "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+              }
+            }
+          },
+          "convex_hull_node": {
+            "description": "Optional node_id of a GLB node holding a convex decomposition. An 'enhances' relationship only.",
+            "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          }
+        }
+      }
+    },
+    "fit": {
+      "description": "How well these primitives approximate the real surface. Measured, so a consumer can decide whether to trust them for gameplay or only for broad phase.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {"type": "string", "description": "e.g. 'v-hacd-4.1', 'authored'"},
+        "hausdorff_max_m": {"type": "number", "minimum": 0, "description": "Largest distance from any surface point of the source mesh to the collider union."},
+        "volume_ratio": {"type": "number", "minimum": 0, "description": "collider union volume / source mesh volume. 1.0 is exact; above 1.0 is a fatter collider."}
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"]},
+    "note": {"type": "string"}
+  }
+}

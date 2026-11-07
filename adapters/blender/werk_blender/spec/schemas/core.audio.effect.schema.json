@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.audio.effect.schema.json",
+  "title": "core.audio.effect / core.audio.ambience — per-effect generation sidecar",
+  "description": "Adopted VERBATIM from the splat-foley per-effect sidecar (F:/splat-foley, sfx/<slug>.json) because that shape is already in production and re-inventing it would lose the field data. Every field below exists in real splat-foley output; werk adds only optional keys, all marked. One sidecar accompanies one effect and its WAV takes. An 'ambience' node uses this identical schema with category 'ambience'; the node type differs only so a browser can separate beds from one-shots. Law 9: this file is the generation record, the A/B audition list AND the quality gate evidence. CAREFUL: this schema and core.audio.package.schema.json use DIFFERENT NAMES FOR THE SAME VALUE, permanently, because both were adopted verbatim from a real pipeline rather than harmonised. Here the prompt is 'prompt_used'; in the package index it is effects[].prompt. Here the sample rate is audio_format.sample_rate_hz; the package index does not carry it at all. A reader that carries a field name across gets an empty string and no error. The full mapping table is in spec/SPEC.md section 3.9. This sidecar is the authority on ONE effect; the package index is the authority on the SET.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["slug", "prompt_used", "seconds", "loopable", "clap_score", "accepted"],
+  "properties": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "The effect's stable id. This is what an animation event's effect_id resolves to, and what a destruction piece's audio_effect_id names. Ids, not indices (law 4)."
+    },
+    "prompt_used": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The exact text-to-audio prompt that produced the accepted take. Kept verbatim so the take is reproducible and so a human can see why it sounds the way it does."
+    },
+    "seconds": {"type": "number", "exclusiveMinimum": 0, "description": "Requested generation length, seconds. The delivered length after refinement is refined.duration."},
+    "loopable": {"type": "boolean", "description": "True for continuous sounds (drag, roll, wind, ambience beds). A loopable take has been cross-faded; see refined.loop_crossfade_ms."},
+    "clap_score": {
+      "type": "number",
+      "description": "CLAP audio-text similarity between the accepted take and prompt_used. Higher is a better match to the prompt. This is a MEASURED number and is exactly why the epistemic stamp on this node is 'measured' rather than 'inferred'."
+    },
+    "attempts": {"type": "integer", "minimum": 1, "description": "How many generations were run before one was accepted."},
+    "accepted": {"type": "boolean", "description": "Whether the effect passed its quality gate. A rejected effect may still ship: it is honest payload, and a consumer can choose to skip anything with accepted false."},
+    "variations": {
+      "description": "Alternative takes kept for A/B. Each is a real WAV in the package.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "clap_score"],
+        "properties": {
+          "file": {"type": "string", "description": "File name of the variation WAV, as produced by splat-foley (e.g. '<slug>.var2.wav'). Resolved against the node's files[] in the manifest."},
+          "clap_score": {"type": ["number", "null"]}
+        }
+      }
+    },
+    "refined": {
+      "description": "What the post-generation editor did: where it cut, what it heard, and whether the refinement actually helped. When 'reason' is present the refinement was ROLLED BACK and the raw take shipped — the record of the failed attempt is kept deliberately, because a format that only records successes cannot be audited.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kept": {
+          "type": "string",
+          "description": "What the editor kept. Observed values: 'one_shot' (a single event isolated from the generation), 'rolled_back' (refinement discarded, raw take shipped), 'loop' (a loopable region cross-faded), 'full' (nothing trimmed). Free string rather than an enum, so a newer editor can report a new strategy without invalidating old files (law 12)."
+        },
+        "cut": {
+          "type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0},
+          "description": "[start_s, end_s] of the region kept from the raw generation. Note the field name says 'cut' and the value is what SURVIVED the cut; this is splat-foley's spelling and is preserved verbatim."
+        },
+        "event": {"$ref": "#/$defs/event", "description": "The single dominant event, when one was isolated."},
+        "n_events_raw": {"type": "integer", "minimum": 0, "description": "How many onset events the detector found in the raw generation."},
+        "events": {"type": "array", "items": {"$ref": "#/$defs/event"}, "description": "Every detected event in the raw generation, in time order."},
+        "heard": {
+          "type": "string",
+          "description": "An audio-captioning model's transcript of what is audible in the take, with intervals. INFERRED text: it is a model's opinion, it is frequently wrong about intervals, and it is kept because it makes a sound library searchable by what things sound like rather than by what they were meant to be."
+        },
+        "duration_raw": {"type": "number", "minimum": 0, "description": "Length of the raw generation, seconds."},
+        "duration": {"type": "number", "minimum": 0, "description": "Length of the delivered take, seconds. This is the authoritative playback length."},
+        "clap_score_refined": {"type": "number", "description": "CLAP score of the refined take. When this is lower than clap_score the refinement was rolled back and 'reason' says so."},
+        "loop_crossfade_ms": {"type": "number", "minimum": 0, "description": "Cross-fade length applied at the loop point, milliseconds. Present for loopable effects."},
+        "reason": {"type": "string", "description": "Why the refinement was rolled back, e.g. 'refined CLAP 0.508 < raw 0.579'."}
+      }
+    },
+
+    "category": {"enum": ["interaction", "ambience"], "description": "werk addition (optional): mirrors the plan's category, so an effect sidecar is readable without the package manifest (law 3)."},
+    "object": {"type": "string", "description": "werk addition (optional): the described object this effect belongs to."},
+    "material": {"type": "string", "description": "werk addition (optional): material class the sound represents."},
+    "interaction": {"type": "string", "description": "werk addition (optional): short verb phrase, e.g. 'dragged across rough concrete'."},
+    "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "werk addition (optional): joins this sound to manifest parts[]."},
+    "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "werk addition (optional): joins this sound to manifest materials[]."},
+    "audio_format": {
+      "description": "werk addition (optional but strongly recommended): the WAV parameters, declared rather than discovered by parsing. See spec/MINI-SPECS.md for the WAV container.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sample_rate_hz": {"type": "integer", "minimum": 1},
+        "channels": {"type": "integer", "minimum": 1, "maximum": 8},
+        "bit_depth": {"enum": [16, 24, 32]},
+        "sample_format": {"enum": ["pcm-int", "ieee-float"]},
+        "peak_dbfs": {"type": "number", "maximum": 0},
+        "rms_dbfs": {"type": "number", "maximum": 0}
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"], "description": "werk addition (optional): mirrors the manifest stamp."},
+    "note": {"type": "string"}
+  },
+  "$defs": {
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"type": "number", "minimum": 0, "description": "seconds from the start of the RAW generation"},
+        "end": {"type": "number", "minimum": 0, "description": "seconds from the start of the RAW generation"},
+        "peak_db": {"type": "number", "description": "peak level of the event, dBFS (negative)"}
+      }
+    }
+  }
+}

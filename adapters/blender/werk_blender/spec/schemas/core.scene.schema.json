@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.scene.schema.json",
+  "title": "core.scene — how the parts of a 3D entity are placed and shown, as a versioned record",
+  "description": "PROPOSED (ruling 5 of 2026-10-13, pending). Profile 3d-entity/1. The manifest's parts[] says where each part sits NOW and is not versioned; nothing in the core said whether a part is shown, how strongly, or in what tint, and nothing kept the placement an earlier save had. Three writers put exactly that into an extension node, and a reader that skips extensions then draws a hidden part, loses a tint and cannot restore an earlier arrangement. This node is the versioned home of that state: one JSON file per version, one entry per part. It carries NO geometry and names parts by part_id only. For the node's ACTIVE version every `transform` here equals the transform of the same part in MANIFEST.json parts[]; where a reader finds them disagreeing the manifest wins for placement and the disagreement is a report entry (the same rule SPEC.md section 3.10 states for a GLB's own node transforms). See spec/SPEC.md section 3.20. Standalone: no $ref to any other file.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "space", "parts"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "space": {
+      "description": "Transforms are parent-relative, exactly as in MANIFEST.json parts[]: the transform of a part is local to its `parent` part, and a root part's is in werk model space.",
+      "const": "parent-relative"
+    },
+    "parts": {
+      "description": "One entry per part this version of the scene describes. A part of MANIFEST.json parts[] that has no entry here is shown, fully opaque, untinted, at the placement parts[] gives - which is also what a package without any core.scene node means.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["part_id", "transform", "visible"],
+        "properties": {
+          "part_id": {
+            "description": "A part_id of MANIFEST.json parts[]. At most one entry per part.",
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "transform": {
+            "description": "TRS relative to the parent part, never a matrix. Applied in the order scale, then rotation, then translation: p_parent = translation + rotate(rotation, scale * p_local), componentwise scale.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["translation", "rotation", "scale"],
+            "properties": {
+              "translation": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres, [x,y,z]"},
+              "rotation": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}, "description": "unit quaternion [w,x,y,z] (conventions.quat_order)"},
+              "scale": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "not": {"const": 0}}, "description": "dimensionless, [x,y,z]; never zero; a negative component is a reflection along that axis"}
+            }
+          },
+          "visible": {
+            "description": "false: the part and every part whose parent chain passes through it are not drawn. The bytes are untouched and every node of the part still loads; this is a statement about display, not about content. A hidden part is said to be hidden HERE - never by a zero scale, which is not a legal scale.",
+            "type": "boolean"
+          },
+          "opacity": {
+            "description": "A multiplier on the part's own opacity, 0.0 (fully transparent) to 1.0 (unchanged). Absent means 1.0. It multiplies whatever the payload already says (a material's alpha, a Gaussian's opacity); it is not inherited by child parts.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "tint_linear_rgb": {
+            "description": "A multiplier on the part's colour, three numbers [r,g,b], each 0.0 or greater, applied componentwise to LINEAR colour values (after an sRGB payload has been linearised, before any lighting). Absent means [1,1,1]. Not inherited by child parts.",
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {"type": "number", "minimum": 0}
+          }
+        }
+      }
+    },
+    "note": {
+      "description": "Optional free text about this arrangement. The reason this VERSION exists is the version's mandatory work note in the manifest, not this field.",
+      "type": "string",
+      "maxLength": 2000
+    }
+  }
+}

@@ -1,0 +1,305 @@
+werk point cloud — layout grammar v1  (magic "WKPC")
+====================================================
+
+Applies to: `core.geom.points` — an unstructured set of points, each carrying
+a position and any number of DECLARED additional fields. A LiDAR sweep, a
+photogrammetric tie-point cloud, a scanner export, the preview derived from a
+Gaussian splat (`gsplat.layout.txt` section 7), the output of a mesh
+sampler — all of them are this node.
+
+Read `spec/layouts/ENVELOPE.layout.txt` FIRST. It defines the 4-byte magic,
+the u32 version, the u32 header length, the MessagePack header subset, the
+16-byte payload alignment and the section consistency rule. Everything below
+is the WKPC-specific part; nothing below overrides that file.
+
+--------------------------------------------------------------------------
+0. The design question, and the answer
+--------------------------------------------------------------------------
+
+Every other custom binary in werk has a FIXED set of sections: a flow field
+has an SDF and a flow array, a clip has a root track and a bone track. A point
+cloud does not, and pretending otherwise is how PLY, LAS and E57 all ended up
+with a per-field type system anyway. A scanner emits intensity and a return
+number; a photogrammetry package emits a confidence; a classifier emits a
+class id; a splat preview emits a colour; a research capture emits four
+things nobody else has ever heard of.
+
+So WKPC declares its fields as DATA, in the header, and each field is one
+payload section. That is not a new mechanism: ENVELOPE.layout.txt section 5a
+already requires a reader to find sections BY NAME and to skip-and-report the
+ones it does not know. A custom field in a WKPC is therefore already handled
+correctly by a reader written before that field existed — it reads `position`
+and whatever else it recognises, reports the rest as
+`section-skipped-unknown`, and is conformant. The header's `fields` array
+exists so that the skip is INFORMED: it tells the reader the field's semantic,
+its unit and its colour space, so a consumer can decide whether it wanted it
+rather than discovering a name it cannot interpret.
+
+Recorded as D-PC-1. The alternative — an interleaved record with a field table
+of byte offsets, which is what LAS does — was rejected because it makes every
+consumer stride past the fields it does not want, and because a per-field
+section is exactly what a GPU vertex buffer or a numpy column wants.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKPC"  = 57 4B 50 43
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  payload sections (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.geom.points"
+    "endianness"      = "le"
+    "payload_origin"  uint
+    "payload_size"    uint
+    "sections"        array of section maps
+
+  Mandatory WKPC keys:
+
+  key            type    meaning
+  -------------  ------  -----------------------------------------------
+  "count"        uint    N, the number of points. Every section's shape[0]
+                         MUST equal it. MAY be 0.
+  "length_unit"  str     MUST be "metre", matching the manifest's
+                         conventions.length_unit. Positions are in it.
+  "fields"       array   one map per field, in the same order as the
+                         payload sections. Section 4 defines the entries.
+                         MUST contain exactly one field whose "semantic" is
+                         "position", and it MUST be the first.
+
+  Optional WKPC keys:
+
+  key            type    meaning
+  -------------  ------  -----------------------------------------------
+  "bounds"       map     {"min":[3 floats],"max":[3 floats]} in metres. A
+                         HINT, exactly as advisory as WKGS's: a reader that
+                         needs the true box computes it. A writer that emits
+                         it MUST have computed it.
+  "source"       str     what produced the points, e.g. "gsplat-dc-band",
+                         "lidar", "photogrammetry", "mesh-sample". Free
+                         text; the authority is the node's producer block
+                         in the manifest.
+
+  Plus any optional common key from ENVELOPE.layout.txt section 3
+  ("note", "input_hash", "producer", "epistemic", "confidence").
+  A reader MUST ignore header keys it does not know (law 12).
+
+--------------------------------------------------------------------------
+3. Payload sections
+--------------------------------------------------------------------------
+
+  One section per entry of "fields", in the same order, so section k
+  describes field k. The first section is always the position field.
+
+  Section `k`'s name is `fields[k]["section"]`, and:
+
+      shape   == [count]                    when components == 1
+      shape   == [count, components]        when components  > 1
+      stride  == byte size of dtype * components
+      size    == stride * count
+
+  Against ENVELOPE.layout.txt section 3's algorithm: with components == 1 the
+  stride equals the element size and the FIRST branch gives
+  `size = stride * prod(shape) = stride * count`; with components > 1 the
+  stride is larger, the SECOND branch applies, `stride >= esz*shape[-1]`
+  holds with equality, and `size = stride * prod(shape[:-1]) = stride*count`.
+  The two agree, which is the point of the rule.
+
+  Padded strides are NOT used by this grammar: `stride` is exactly
+  `esz * components`. The envelope permits a larger stride so that records
+  with declared internal padding are expressible; a point cloud has no
+  records, only columns, so there is nothing to pad. A reader MUST still
+  honour a declared stride rather than assume this, because that is what
+  declared means. (D-PC-4.)
+
+--------------------------------------------------------------------------
+4. The field entry
+--------------------------------------------------------------------------
+
+  Each element of "fields" is a MessagePack map with these MANDATORY keys:
+
+  key           type    meaning
+  ------------  ------  ------------------------------------------------
+  "name"        str     kebab-case field id, unique within the file. This
+                        is the human-facing name, and it is what an
+                        exporter writes into a PLY property or a LAS
+                        dimension when converting back out.
+  "section"     str     the payload section carrying it. Same value as
+                        "name" for every field this grammar defines; a
+                        separate key because an extension may want a
+                        section name that is not a field name, and because
+                        "look it up" must never become "assume they match".
+  "semantic"    str     what the numbers MEAN, from the registry in
+                        section 5. This is the key a consumer dispatches
+                        on, never "name".
+  "dtype"       str     from ENVELOPE.layout.txt section 6's vocabulary.
+                        "record" is NOT permitted in a WKPC field.
+  "components"  uint    >= 1. The per-point component count.
+
+  and these OPTIONAL keys:
+
+  key             type    meaning
+  --------------  ------  ----------------------------------------------
+  "unit"          str     SI unit of the values, e.g. "metre". MANDATORY
+                          in practice for any semantic whose registry entry
+                          names one — see section 5.
+  "color_space"   str     for semantic "color": "linear-srgb" or "srgb".
+                          MANDATORY for that semantic; a colour whose space
+                          is unstated is a colour that will be gamma-wrong
+                          in half its consumers, and the manifest's
+                          conventions.color_space_default is a DEFAULT for
+                          nodes that do not declare, which this one does.
+  "value_range"   array   [min, max] the producer guarantees, as floats.
+                          A HINT for a consumer normalising for display.
+  "labels"        map     for semantic "classification": integer code (as a
+                          decimal string key) to human name. Carried as
+                          DATA because a class scheme that lives in a
+                          consumer's constants is a class scheme two
+                          consumers disagree about.
+  "note"          str     free text, never load-bearing.
+
+  A reader MUST ignore field keys it does not know.
+
+--------------------------------------------------------------------------
+5. The semantic registry, v1
+--------------------------------------------------------------------------
+
+  semantic          dtype        components  unit      notes
+  ----------------  -----------  ----------  --------  ---------------------
+  "position"        f32 or f64   3           metre     MANDATORY, exactly
+                                                       one, and first. werk
+                                                       model space: +Y up,
+                                                       -Z forward, +X right,
+                                                       right-handed.
+  "color"           u8 or f32    3 or 4      —         "color_space" is
+                                                       MANDATORY. u8 is
+                                                       0..255 mapping to
+                                                       0..1; f32 is 0..1. A
+                                                       4th component is
+                                                       alpha, straight (NOT
+                                                       premultiplied).
+  "normal"          f32          3           —         unit length within
+                                                       1e-4, model space.
+  "intensity"       u16 or f32   1           —         sensor return
+                                                       strength. Its scale
+                                                       is a property of the
+                                                       instrument and is not
+                                                       normalised by this
+                                                       format; declare
+                                                       "value_range".
+  "classification"  u8 or u16    1           —         a class code.
+                                                       "labels" SHOULD be
+                                                       present; a code
+                                                       without a label map
+                                                       is an integer nobody
+                                                       can act on.
+  "custom"          any          any         declare   the escape hatch. The
+                                                       field's "name" MUST
+                                                       begin with "x-".
+
+  A field whose "semantic" is not in this table is an error UNLESS it is
+  "custom"; a reader meeting one treats the field as unknown, skips its
+  section, and reports `field-semantic-unknown` (severity info). It does not
+  kill the node — the position is still there and the position is what a
+  point cloud is. (D-PC-3.)
+
+  The `x-` prefix rule mirrors `spec/facets.json`'s `x.` rule for tags and
+  exists for the same reason: a registry that anyone may extend silently is
+  a registry whose entries cannot be trusted, and a namespace that costs two
+  characters is cheap enough that nobody is tempted to squat in core.
+
+--------------------------------------------------------------------------
+6. What a reader MUST check
+--------------------------------------------------------------------------
+
+  Beyond ENVELOPE.layout.txt section 7's assertions:
+
+  1. `fields` is present, non-empty, and has exactly as many entries as
+     there are payload sections, in the same order.
+  2. `fields[0]["semantic"] == "position"`, its dtype is f32 or f64 and its
+     components is 3.
+  3. Exactly one field has semantic "position".
+  4. For every field: the named section exists, its dtype matches the
+     field's dtype, and its shape is `[count]` or `[count, components]`
+     agreeing with the field's `components`.
+  5. Every field with semantic "color" declares "color_space".
+  6. Every field with semantic "custom" has a name beginning with "x-".
+  7. No NaN and no infinity in any f32/f64 section (ENVELOPE section 6).
+
+  A failure in 1..4 or 7 kills the node. A failure in 5 or 6 is a `warn`
+  report entry and the node loads: a colour whose space is undeclared is a
+  colour a consumer may still show while saying it guessed, and refusing a
+  million points over a missing string is law 3's failure mode.
+
+--------------------------------------------------------------------------
+7. Ingesting a PLY, and what is deliberately dropped
+--------------------------------------------------------------------------
+
+  PLY is what point clouds arrive in. `ascii 1.0` and
+  `binary_little_endian 1.0` are both mandatory for a werk ingester and
+  `binary_big_endian 1.0` is optional-but-cheap; werk's own ingester reads
+  all three. The property mapping werk uses:
+
+      x, y, z                       -> position (f32 x3)
+      red, green, blue[, alpha]     -> color, u8, color_space "srgb"
+      r, g, b                       -> the same (a common spelling)
+      nx, ny, nz                    -> normal (f32 x3)
+      intensity / scalar_Intensity  -> intensity
+      classification / class        -> classification
+      anything else                 -> a "custom" field named "x-<prop>",
+                                       carried rather than dropped
+
+  Two things are DROPPED, and both are reported rather than silent:
+
+  * a `face` element or any list property. A WKPC is points; a PLY that
+    carries faces is a mesh and belongs in `core.geom.source` as a GLB. An
+    ingester that quietly discarded the faces would turn a mesh into a point
+    cloud without telling anyone.
+  * `nx, ny, nz` that are ALL EXACTLY ZERO for every point. That is the
+    signature of the INRIA splat writer reusing a point-cloud writer
+    (gsplat.layout.txt section 6), and carrying three million zeros as
+    "normals" would be worse than carrying nothing: a consumer would light
+    with them. The drop is reported with the count that triggered it.
+
+  The colour space of PLY `red/green/blue` is undeclared by PLY itself.
+  werk's ingester declares "srgb", because every tool that writes those
+  properties writes display-referred bytes, and it records the assumption in
+  the node's `input_params` so it is an assumption on the record rather than
+  a fact nobody chose. (D-PC-2.)
+
+--------------------------------------------------------------------------
+8. Decisions recorded here
+--------------------------------------------------------------------------
+
+  D-PC-1  Fields are declared data, one section each, rather than a fixed
+          section list or an interleaved record with a field table.
+          Argued in section 0.
+
+  D-PC-2  PLY `red/green/blue` is ingested as sRGB and the assumption is
+          recorded in `input_params`. The alternative, refusing to ingest
+          colour whose space is undeclared, would refuse essentially every
+          point cloud in existence.
+
+  D-PC-3  An unknown SEMANTIC is a skipped field, not a dead node, and it
+          degrades through exactly the path ENVELOPE.layout.txt section 5a
+          already defines for an unknown SECTION. Two kinds of unknown, one
+          behaviour.
+
+  D-PC-4  `stride` is exactly `esz * components` in this grammar and a
+          reader must still read the declared value. A grammar that says
+          "the stride is always X" and a reader that then stops reading it
+          is how a later revision with padded strides breaks every existing
+          consumer silently.
+
+  D-PC-5  No spatial index and no octree, for the same reason
+          gsplat.layout.txt gives in D-GS-4: it is derived data, it is
+          stale the moment anyone edits, and an extension that wants one has
+          `x.*` and its own binary.

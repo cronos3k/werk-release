@@ -1,0 +1,132 @@
+core.field.flow — layout grammar v1
+===================================
+
+Magic "WKFF" (57 4B 46 46), envelope version 1.
+Read spec/layouts/ENVELOPE.layout.txt first; this file only adds the
+kind-specific header keys and the payload sections.
+
+What it is
+----------
+A regular 3D grid sampled over an axis-aligned box that encloses the entity,
+carrying two co-located fields:
+
+  1. SDF        — signed distance to the entity surface, in METRES.
+                  Negative inside the solid, positive outside, zero on the
+                  surface. Sign convention is declared, not assumed.
+  2. flow       — the flow response: the 3-vector, in the entity's own model
+                  space, that a unit-speed medium (air or water) flowing in
+                  the +X direction would be deflected to at that cell, i.e.
+                  the normalised local velocity field around the obstacle.
+                  Magnitude is a speed ratio (1.0 = undisturbed free stream,
+                  0.0 = stagnant). It is a steady-state precomputation, and
+                  it is `enhances`, never `requires`.
+
+Two masters (law 9): the SDF grid serves runtime collision/soft-body queries
+AND the tooling side — it is what the imposter baker uses for depth-aware
+parallax and what the destruction node uses to seed fracture interiors.
+
+Header keys (in addition to the mandatory envelope keys)
+--------------------------------------------------------
+
+  key                type            meaning
+  -----------------  --------------  ---------------------------------------
+  "dims"             array<uint>[3]  [nx, ny, nz] — cell counts along model
+                                     X, Y, Z. All >= 2. Product must be
+                                     <= 2^26 (67108864) in core.
+  "cell_size_m"      float           edge length of one cubic cell, metres.
+                                     Cells are cubic; a non-cubic grid is
+                                     not representable in v1.
+  "origin_m"         array<float>[3] model-space position of the CENTRE of
+                                     cell (0,0,0), metres.
+  "sdf_sign"         str             MUST be "negative-inside". Declared so
+                                     the file states its own convention.
+  "flow_free_stream" array<float>[3] the undisturbed free-stream direction
+                                     the field was solved for, unit length,
+                                     model space. Canonically [1,0,0].
+  "flow_reynolds"    float           optional. Reynolds number of the solve,
+                                     or 0.0 if the solver was scale-free.
+  "sdf_range_m"      array<float>[2] optional [min,max] over the whole grid,
+                                     for cheap rejection without reading the
+                                     payload.
+
+  Cell centre position, normative:
+      pos(i,j,k) = origin_m + cell_size_m * (i, j, k)
+      for i in [0,nx), j in [0,ny), k in [0,nz)
+
+Index order (normative)
+-----------------------
+X is the FASTEST-varying index, then Y, then Z:
+
+      linear = (k * ny + j) * nx + i
+
+which is C order over shape [nz, ny, nx] — hence "shape" is written
+[nz, ny, nx] and NOT [nx, ny, nz]. This trips people; the header's "shape"
+is authoritative and a reader MUST use it rather than reconstructing from
+"dims".
+
+Payload sections
+----------------
+
+  section 0
+    "name"   : "sdf"
+    "dtype"  : "f32"
+    "shape"  : [nz, ny, nx]
+    "stride" : 4
+    "size"   : 4 * nx * ny * nz
+    Element (i,j,k) lives at
+        offset + 4 * ((k*ny + j)*nx + i)
+    Value: signed distance in metres, negative inside.
+
+  section 1
+    "name"   : "flow"
+    "dtype"  : "f32"
+    "shape"  : [nz, ny, nx, 3]
+    "stride" : 12                      (3 components x 4 bytes, tight)
+    "size"   : 12 * nx * ny * nz
+    Element (i,j,k) components (vx,vy,vz) live at
+        offset + 12 * ((k*ny + j)*nx + i) + 0, +4, +8
+    Values: model-space velocity ratio; see above.
+
+  Both sections MUST be present and MUST have identical nx/ny/nz. A file
+  carrying only the SDF is legal ONLY if section 1 has size 0 and shape
+  [0,0,0,3]; readers then treat flow as unavailable and continue (law 3).
+
+Sampling (normative, so two readers agree to the bit)
+-----------------------------------------------------
+Trilinear interpolation, clamped at the boundary:
+
+    g   = (p - origin_m) / cell_size_m           # continuous cell coords
+    i0  = clamp(floor(g.x), 0, nx-2)             # and likewise j0, k0
+    f   = g - (i0, j0, k0)                       # in [0,1] after clamping
+    lerp over x first, then y, then z, using the 8 corners
+        c000 = value(i0  , j0  , k0  )
+        c100 = value(i0+1, j0  , k0  ) ... etc.
+
+Outside the grid the SDF is EXTRAPOLATED as
+    sdf(p) = sdf(clamp(p, grid_min, grid_max)) + distance(p, clamped p)
+which is exact for a convex exterior and conservative otherwise. The flow
+field outside the grid is defined to be flow_free_stream.
+
+Worked size example
+-------------------
+dims [64, 64, 64], cell_size_m 0.03125, origin_m [-0.984375,-0.984375,
+-0.984375]:
+    sdf  size = 4  * 262144 =  1048576 bytes
+    flow size = 12 * 262144 =  3145728 bytes
+    payload_origin 48 (say), sdf offset 48, sdf end 1048624 -> next 16-byte
+    boundary 1048624 (already aligned: 1048624 % 16 == 0), flow offset
+    1048624, flow end 4194352, payload_size = 4194352 - 48 = 4194304.
+
+Decisions recorded here
+-----------------------
+  D-FF-1  Cells are cubic and the grid is axis-aligned in model space. A
+          rotated or anisotropic grid buys accuracy that a v1 consumer
+          cannot spend, and costs every reader a transform it can get wrong.
+  D-FF-2  Flow is stored as a full 3-vector rather than a compressed
+          direction+magnitude. Law 11: flat POD, no clever packing in core.
+  D-FF-3  SDF is f32 metres, not normalised or quantised. A quantised
+          variant belongs in x.*; core stays dumb and complete.
+  D-FF-4  "dims" is [nx,ny,nz] while "shape" is [nz,ny,nx]. Both are stated
+          because "dims" is how a human thinks about the box and "shape" is
+          how an array reader must index it. The redundancy is deliberate
+          and a reader MUST check that they are reverses of each other.

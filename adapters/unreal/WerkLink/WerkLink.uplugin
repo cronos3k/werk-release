@@ -1,0 +1,23 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "0.1",
+	"FriendlyName": "WerkLink",
+	"Description": "Import and export werk artifact containers (.werk): real UAssets in, conformant unsigned packages out. Editor only.",
+	"Category": "Editor",
+	"CreatedBy": "werk",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "WerkLink",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

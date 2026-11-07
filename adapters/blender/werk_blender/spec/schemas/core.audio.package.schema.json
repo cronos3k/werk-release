@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.audio.package.schema.json",
+  "title": "core.audio.package — the sound world index",
+  "description": "The splat-foley asset-package manifest, adopted verbatim as the index of an entity's sound world (see F:/splat-foley splatfoley/package.py build_manifest, FORMAT 'splat-foley-asset' VERSION 2). It lists the described objects, the effect plan and every take with its role and score. Inside a werk package it is redundant with MANIFEST.json for file discovery and that redundancy is deliberate: this node remains an island (law 3) that a sound tool can consume with no werk knowledge at all, and the werk manifest remains the authority on which bytes exist. Where they disagree, MANIFEST.json wins and a reader MUST report the discrepancy. CAREFUL: this schema and core.audio.effect.schema.json use DIFFERENT NAMES FOR THE SAME VALUE, permanently. Here the prompt is effects[].prompt; in the per-effect sidecar it is prompt_used. The full mapping table is in spec/SPEC.md section 3.9. This index is the authority on the SET of effects; the sidecar named by effects[].meta is the authority on any ONE of them.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "version", "asset", "effects"],
+  "properties": {
+    "format": {"const": "splat-foley-asset"},
+    "version": {"type": "integer", "minimum": 2, "description": "splat-foley package format version. 2 is what werk profile 1 was written against."},
+    "asset": {"type": "string", "description": "Source asset slug. Advisory; the werk entity's identity is manifest.entity.uuid."},
+    "source": {"type": ["string", "null"], "description": "Original source file name the sound world was derived from."},
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"type": ["string", "null"], "description": "e.g. 'mesh', 'splat'"},
+        "n_vertices": {"type": ["integer", "null"], "minimum": 0},
+        "n_faces": {"type": ["integer", "null"], "minimum": 0}
+      }
+    },
+    "model": {"type": ["string", "null"], "description": "Path of the source 3D file inside the original splat-foley package. Inside a werk package the geometry is a core.geom.* node and this field is historical record."},
+    "textures": {"type": "array", "items": {"type": "string"}},
+    "views": {"type": "array", "items": {"type": "string"}, "description": "Rendered orbit views the description and effect plan were derived from. These are the inputs whose hashes feed the node's input_hash (law 5)."},
+    "segments": {"type": "array", "items": {"type": "string"}, "description": "SAM segment crops."},
+    "objects": {
+      "description": "The described objects and their materials — the vision model's reading of the asset. INFERRED, always.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string"},
+          "materials": {"type": "array", "items": {"type": "string"}},
+          "size_class": {"type": "string", "description": "Observed values: 'tiny', 'small', 'medium', 'large', 'huge', 'unknown'."},
+          "condition": {"type": "string", "description": "Observed values: 'new', 'worn', 'weathered', 'damaged', 'unknown'."},
+          "notes": {"type": "string"},
+          "provenance": {"type": "string", "description": "'segment' when the object came from a SAM segment rather than the whole-asset description."},
+          "part_of": {"type": ["string", "null"], "description": "Name of the parent object, for sub-objects."},
+          "segment": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "view": {"type": "string"},
+              "bbox": {
+                "type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"},
+                "description": "[x, y, width, height] in PIXELS of the named view, origin at the top-left. The order is x,y,w,h and NOT x0,y0,x1,y1; stating it is the whole point of this schema existing."
+              },
+              "crop": {"type": "string"},
+              "area_frac": {"type": "number", "minimum": 0, "maximum": 1},
+              "stability": {"type": "number", "minimum": 0, "maximum": 1, "description": "SAM's own mask stability score."}
+            }
+          },
+          "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "werk addition (optional): resolves this described object to a manifest part."}
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["slug", "prompt", "seconds", "loopable"],
+        "properties": {
+          "slug": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "object": {"type": "string"},
+          "object_dir": {"type": "string", "description": "Slugified object name used as the audio subdirectory."},
+          "category": {"enum": ["interaction", "ambience"]},
+          "material": {"type": "string"},
+          "interaction": {"type": "string"},
+          "prompt": {"type": "string"},
+          "seconds": {"type": "number", "exclusiveMinimum": 0},
+          "loopable": {"type": "boolean"},
+          "accepted": {"type": ["boolean", "null"]},
+          "clap_score": {"type": ["number", "null"]},
+          "refined": {"type": ["object", "null"], "description": "Mirror of the per-effect sidecar's 'refined' block; see core.audio.effect.schema.json for its fields."},
+          "meta": {"type": "string", "description": "Path of the per-effect sidecar validated by core.audio.effect.schema.json."},
+          "takes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["file", "role"],
+              "properties": {
+                "file": {"type": "string"},
+                "role": {"enum": ["best", "raw", "variation"], "description": "'best' is the take a player uses. 'raw' is the pre-refinement original, kept for A/B. 'variation' is an alternative generation."},
+                "clap_score": {"type": ["number", "null"]}
+              }
+            }
+          },
+          "node_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "werk addition (optional): the core.audio.effect node that owns this effect's bytes."}
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "objects": {"type": "integer", "minimum": 0},
+        "effects": {"type": "integer", "minimum": 0},
+        "wavs": {"type": "integer", "minimum": 0}
+      },
+      "description": "Declared totals. A reader MUST compare them against the arrays and report a mismatch — a cheap truncation detector, in the spirit of law 8's corollary."
+    },
+    "preview_effect": {
+      "type": "string",
+      "description": "werk addition (optional): slug of the one-shot chosen as the package's hover preview, written early in the container per the preview-first byte layout (law 9)."
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.phys.body.schema.json",
+  "title": "core.phys.body — mass, centre of mass, inertia, densities",
+  "description": "Rigid-body mass properties in SI units. The inertia tensor is symmetric, so it is stored as its six independent components in a DECLARED order rather than as a 3x3 array whose transposition nobody can check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "space", "mass_kg", "center_of_mass_m", "inertia", "densities"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "space": {
+      "const": "model",
+      "description": "MODEL SPACE (S10-3, RULING, implemented). Every position and every axis in this node - center_of_mass_m and the inertia frame alike - is expressed in the entity model space, the same space core.phys.bounds uses. It is declared here because it previously was not: this schema required center_of_mass_m while saying nothing about the space it was in, its sibling core.phys.bounds declares const 'model', its sibling core.phys.colliders declares const 'part-local' and states in its own description that 'model space or part space is exactly the question a reader must not have to guess' - so the one field a reader had to guess about was in the family that forbids guessing. The only previous evidence was an inference from a sibling key (inertia.frame, const 'model-axes'), and the ruling agrees with it, so no existing conformant package changes meaning. The consequence worth stating: a transform sits between colliders and this node, and it is the part transform in MANIFEST.json parts[]. See spec/SPEC.md section 3.6a."
+    },
+    "mass_kg": {"type": "number", "exclusiveMinimum": 0},
+    "center_of_mass_m": {
+      "type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"},
+      "description": "Model space (declared by `space` above, S10-3), metres. Not part-local: core.phys.colliders is the part-local one of this family."
+    },
+    "inertia": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["about", "frame", "component_order", "components_kg_m2"],
+      "properties": {
+        "about": {"const": "center-of-mass", "description": "The point the tensor is taken about. Stating it removes the single most common inertia bug: a tensor about the origin used as if it were about the centre of mass."},
+        "frame": {"const": "model-axes", "description": "The tensor is expressed in the entity's model axes, NOT in its principal axes. principal_axes below gives the diagonalisation for consumers that want it."},
+        "component_order": {
+          "type": "array", "minItems": 6, "maxItems": 6,
+          "const": ["ixx", "iyy", "izz", "ixy", "ixz", "iyz"],
+          "description": "Declared explicitly. The full tensor is [[ixx,-ixy,-ixz],[-ixy,iyy,-iyz],[-ixz,-iyz,izz]] using the PRODUCTS-OF-INERTIA sign convention, i.e. ixy = integral of x*y dm and it enters the matrix negated. Half the physics literature stores the negated value directly; werk stores the positive integral and negates on assembly, and says so here."
+        },
+        "components_kg_m2": {
+          "type": "array", "minItems": 6, "maxItems": 6, "items": {"type": "number"},
+          "description": "In the order given by component_order. Units kg*m^2."
+        },
+        "principal_axes": {
+          "description": "Optional diagonalisation: the rotation taking model axes into principal axes, and the three principal moments in that frame.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["rotation", "moments_kg_m2"],
+          "properties": {
+            "rotation": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}, "description": "unit quaternion [w,x,y,z]"},
+            "moments_kg_m2": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": 0}}
+          }
+        }
+      }
+    },
+    "densities": {
+      "description": "Per-material density used to arrive at the mass. Present so a consumer can recompute mass after scaling or after swapping a material, rather than accepting a number it cannot check.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["material_id", "density_kg_m3", "volume_m3"],
+        "properties": {
+          "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "density_kg_m3": {"type": "number", "exclusiveMinimum": 0},
+          "volume_m3": {"type": "number", "minimum": 0},
+          "hollow": {"type": "boolean", "description": "True when the region was treated as a shell rather than a solid."},
+          "shell_thickness_m": {"type": "number", "exclusiveMinimum": 0, "description": "Required in spirit when hollow is true."},
+          "epistemic": {"enum": ["authored", "measured", "inferred"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        }
+      }
+    },
+    "method": {
+      "type": "string",
+      "description": "How mass properties were computed, e.g. 'divergence-theorem-over-triangles', 'voxel-1mm', 'authored'."
+    },
+    "friction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "static": {"type": "number", "minimum": 0, "description": "Dimensionless Coulomb coefficient against a reference dry steel plate."},
+        "dynamic": {"type": "number", "minimum": 0},
+        "restitution": {"type": "number", "minimum": 0, "maximum": 1, "description": "Coefficient of restitution against the same reference plate."},
+        "reference_surface": {"type": "string", "default": "dry-steel-plate", "description": "Friction is a property of a PAIR of surfaces, never of one. The reference surface is named so the numbers mean something."}
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"]},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "note": {"type": "string"}
+  }
+}
