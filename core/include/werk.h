@@ -110,7 +110,10 @@ enum werk_node_state {
 enum werk_signature {
     WERK_SIG_ABSENT  = 0,
     WERK_SIG_VALID   = 1,
-    WERK_SIG_INVALID = 2
+    WERK_SIG_INVALID = 2,
+    /* The chain declares an algorithm this library does not implement
+     * (SPEC.md section 10.1): not checked, neither valid nor damage. */
+    WERK_SIG_UNVERIFIED = 3
 };
 
 typedef struct WerkPackage werk_package;

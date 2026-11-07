@@ -81,7 +81,15 @@ fn print_summary(p: &Package) {
     println!("profile    : {}", p.manifest.profile());
     println!("manifest   : sha256 {}", p.manifest_sha256());
     println!("validated  : {}", p.manifest_validation.as_str());
-    println!("signature  : {}", p.signature_state.as_str());
+    // The fixed state word first (SPEC section 10 step 4: the token is not
+    // free prose), the reason after it.
+    match &p.signature_state {
+        werk::signature::SignatureState::Invalid(r)
+        | werk::signature::SignatureState::Unverified(r) => {
+            println!("signature  : {} — {}", p.signature_state.word(), r)
+        }
+        s => println!("signature  : {}", s.word()),
+    }
     println!(
         "census     : {} nodes: {} alive, {} skipped, {} dead",
         p.nodes.len(),

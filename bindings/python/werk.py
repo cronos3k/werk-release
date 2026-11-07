@@ -56,7 +56,8 @@ _STATUS = {
     -9: "bad-argument",
 }
 _NODE_STATUS = {0: "alive", 1: "skipped", 2: "dead"}
-_SIG_STATE = {0: "absent", 1: "signed-and-valid", 2: "present-and-invalid"}
+_SIG_STATE = {0: "absent", 1: "signed-and-valid", 2: "present-and-invalid",
+              3: "unverified"}
 
 
 class WerkError(Exception):
@@ -323,7 +324,8 @@ class Package:
 
     @property
     def signature_state(self):
-        """'absent' | 'signed-and-valid' | 'present-and-invalid'. Three states,
+        """'absent' | 'signed-and-valid' | 'present-and-invalid' | 'unverified'
+        (a chain in an algorithm the library does not implement). Three states,
         never two — collapsing the last two would defeat the doctrine."""
         return _SIG_STATE.get(self._lib.werk_signature_state(self._h), "unknown")
 

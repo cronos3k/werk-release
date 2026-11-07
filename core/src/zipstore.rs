@@ -211,6 +211,15 @@ impl ZipArchive {
                      which a werk writer MUST NOT set"
                 )));
             }
+            // Two central-directory records with one name: which bytes ARE that
+            // file is undecidable, and readers that pick different ones give
+            // different verdicts on one package (measured in the release
+            // cross-matrix). Refused whole, like any untraversable container.
+            if entries.iter().any(|e: &ZipEntry| e.name == name) {
+                return Err(Error::BadContainer(format!(
+                    "the zip holds two entries named `{name}`; which bytes are that file cannot be decided, so the container is refused"
+                )));
+            }
             entries.push(ZipEntry {
                 name,
                 flags,
