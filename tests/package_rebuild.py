@@ -96,7 +96,7 @@ def make_overlay(repo_root, entries, dest):
         if nm.endswith(".py") and os.path.isfile(os.path.join(fx, nm)):
             shutil.copyfile(os.path.join(fx, nm),
                             os.path.join(dest, "fixtures", nm))
-    for d in ("tools", "store"):
+    for d in ("tools", "store", "pipeline"):   # pipeline: det_png (N3)
         shutil.copytree(os.path.join(repo_root, d), os.path.join(dest, d),
                         ignore=shutil.ignore_patterns("__pycache__", "*.werk",
                                                       "target", ".gate*"))
