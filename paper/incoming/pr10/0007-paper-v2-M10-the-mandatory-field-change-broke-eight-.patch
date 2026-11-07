@@ -1,0 +1,59 @@
+From 9e61b81a55e940b5dfb4cd1404bca2aa0fa4e54c Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Fri, 16 Oct 2026 11:58:43 -0400
+Subject: [PATCH 7/8] paper v2 (M10): the mandatory-field change broke eight
+ writers, as listed
+
+The list in PAPER.md and NUMBERS.md 6.8 names four fixture builders, werkc,
+the Blender exporter, the pipeline and the C++ exporter: eight, not six.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/NUMBERS.md | 6 +++---
+ paper/v2/PAPER.md   | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/paper/v2/NUMBERS.md b/paper/v2/NUMBERS.md
+index 0b777e3..03cc104 100644
+--- a/paper/v2/NUMBERS.md
++++ b/paper/v2/NUMBERS.md
+@@ -75,7 +75,7 @@ Source keys:
+ | three signature states + the fourth token | — | M law 7; H decision 24 (S-7) **[v1]** |
+ | payload corruption keeps the signature valid; manifest corruption does not | — | H "Stage 2 results → 2. Damage gauntlet"; G "run 1 → Damage, unprompted" **[v1]** |
+ | `spec_sha256` mandatory globally, optional per node version | — | D ruling 5; RR §1 row 5 **[new]** |
+-| making it mandatory broke six writers | 6 | RR §5, S-R-2 and S-R-6 **[new]** |
++| making it mandatory broke eight writers | 8 | RR §5, S-R-2 and S-R-6 **[new]** |
+ | `core.disclosure` carries no enforcement; jurisdiction note | — | H "Stage 9 results → Design decisions" **[v1]** |
+ | licence doctrine: the format neither vets nor enforces | — | D ruling 21; R12B §1 **[new]** |
+ | `never_auto_execute` is a schema constant | — | R12 §1 "The design decisions"; S §3.17 **[new]** |
+@@ -492,8 +492,8 @@ Source key **RSF** points to `results/STAGE-SPECFIX-OW-RESULTS.md`; the open-wei
+ | Claim | Value | Source |
+ |---|---|---|
+ | 46 embedded spec files, digest `f087dbcb…e700`, C++ equals the Python reference | — | RR §2, S-R-6 bullet **[new]** |
+-| six writers broken by the mandatory field | four fixture builders, `werkc`, Blender exporter, pipeline, C++ exporter | RR §5, S-R-2 and S-R-6 **[new]** |
+-| the sixth found by a gate that had earlier refused to run | — | RR §2 "The Unreal 10B gate: refused first, then run" **[new]** |
++| eight writers broken by the mandatory field | four fixture builders, `werkc`, Blender exporter, pipeline, C++ exporter | RR §5, S-R-2 and S-R-6 **[new]** |
++| the last found by a gate that had earlier refused to run | — | RR §2 "The Unreal 10B gate: refused first, then run" **[new]** |
+ | first optional per-node digest, distinct from the file's own hash | `d7e34379…` vs `487505e7…` | RR §2 **[new]** |
+ 
+ ## 7. Threats to validity (§7)
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index bcdfaa4..6b6458f 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -1296,10 +1296,10 @@ byte-identical to what the Python reference computes from the same bytes. Three
+ independent implementations agreeing on one digest is the only kind of evidence a
+ hash algorithm written down in prose can have, and it is the same kind the
+ gauntlet produces, obtained without an agent. Making the field mandatory is
+-itself a reported result: it broke six writers at once — four fixture builders, a
++itself a reported result: it broke eight writers at once — four fixture builders, a
+ command-line tool, the Blender exporter, the pipeline and the C++ exporter — and
+ every one was a real gap, each having vendored a specification tree with no
+-statement of which revision. The sixth was found late, by a gate that had earlier
++statement of which revision. The last was found late, by a gate that had earlier
+ refused to run, which is the lesson worth carrying forward: *a mandatory-field
+ change is not done until every writer has been run*, and a gate that refuses is
+ not a gate that passed.
+-- 
+2.45.2.windows.1
+

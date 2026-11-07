@@ -1,0 +1,59 @@
+From 746360116cceb0e45ee65fdd7eada4a455d9b5f8 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Fri, 16 Oct 2026 16:57:44 -0400
+Subject: [PATCH 7/7] Replication report: the same gates on Linux
+
+Ubuntu 24.04 under WSL 2 at 6d547d0 gives the same result as Windows on
+every gate that ran. Notes two last-digit float effects: the ista-varun
+rebuild on glibc, and humanoid-retarget-v1, which does not rebuild byte
+for byte on either system and embeds the build machine's path.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ results/SECOND-LAB-REPLICATION.md | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+index b5a8743..e98bbdc 100644
+--- a/results/SECOND-LAB-REPLICATION.md
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -34,6 +34,7 @@ Sources (all logged by the replicator):
+ | S10 | audit of "unavailable" inputs | 2026-10-11 |
+ | S11 | `gsplat-v1` rebuild from its embedded source | 2026-10-11 |
+ | S13 | splat full-task grading, `RESULTS-fulltask-2026-10-12.md` | source dated 2026-10-12 |
++| S14 | Linux run, `linux-run/run*.sh` and their logs (local) | 2026-10-16 |
+ | S12 | Stage 2 re-runs at `6d547d0`: replicator's log of 2026-10-05, and the `main` column of the gate table in PR #6 (2026-10-11) | 2026-10-05, 2026-10-11 |
+ 
+ ## 2. Fixtures
+@@ -68,6 +69,28 @@ Sources (all logged by the replicator):
+ 
+ Store numbers in detail (S8): of 22 rows, every claim that the current fixtures can test is MATCH or EXPLAINED by the fixture rebuild. The real-corpus numbers (1.9970x, 0.2404 %, 0.27 %) were not measured, because the corpus is not distributed. One label is stale: `NUMBERS.md` calls Table 16 "Table 13".
+ 
++### 3.1 The same gates on Linux
++
++A second operating system, on the same machine: Ubuntu 24.04 under WSL 2, Python 3.12.3 with numpy 1.26.4 and Pillow 12.3.0, Rust 1.98.0, gcc. The repository was cloned at `6d547d0`, and the six released fixtures were copied in and checked against their pins (`fetch_fixtures.py --check`: all verified). Source S14.
++
++| gate | Linux at `6d547d0` | Windows at `6d547d0` |
++|---|---|---|
++| `cargo test` (core) | 44 passed | 44 passed |
++| Stage 2, `run_gate.py` | 11 PASS, 0 FAIL, 0 SKIP | 11 PASS |
++| Gate A | 10 PASS, 0 FAIL, 0 SKIP | 10 PASS |
++| Gate 6 | 23 PASS, 0 FAIL, 1 SKIP | 23 PASS, 1 SKIP |
++| Gate 9 | 14 PASS, 0 FAIL, 1 SKIP | 14 PASS, 1 SKIP |
++| Gate 12 | 16 PASS, 1 FAIL, 1 SKIP (the rebuild clause needs a private path; fixed in #6) | 16 PASS, 1 FAIL, 1 SKIP |
++| CC0 public / image / gsplat | 14 / 9 / 8 PASS, 0 FAIL | 14 / 9 / 8 PASS |
++| Store suite | 58 passed, 1 skipped | 58 passed, 1 skipped |
++
++Every gate gives the same result on both systems. Gate 3B, Blender and Unreal were not run on Linux.
++
++Two observations, neither a gate failure:
++
++- **Last-digit floats.** Values computed through the C maths library can differ in the last digit between Linux (glibc) and Windows (MSVC). A rebuild of `ista-varun-v1` on Linux differs from the pin only in `semantics/semantics.json` (largest relative difference 1.7e-16). #6 handles this case.
++- **`humanoid-retarget-v1.werk` does not rebuild byte for byte.** Gate 6 builds it when the file is missing. Builds on Windows (1 510 605 B) and Linux (1 510 598 B) both differ from the pin (1 514 545 B). The walk clip differs from the pin in the last digits of its floats, the fit results differ between the two systems the same way, and `x/retarget-report.json` embeds the absolute path of the build machine. The gate's tolerances (1e-9 and wider) are not affected.
++
+ ## 4. Rebuilds
+ 
+ | what | result | source |
+-- 
+2.45.2.windows.1
+

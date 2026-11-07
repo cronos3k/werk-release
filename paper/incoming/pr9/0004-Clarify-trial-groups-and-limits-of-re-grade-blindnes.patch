@@ -1,0 +1,134 @@
+From 96ac98fd0a1840c320e71c102d0bf06404ba06d5 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 20:22:34 -0400
+Subject: [PATCH 4/7] Clarify trial groups and limits of re-grade blindness
+
+Separate the August mesh/image trial from six mesh/sound trials. Cite full-task splat results and retain actual clause disagreements.
+
+Co-Authored-By: Codex (GPT-6) <noreply@openai.com>
+---
+ paper/v2/PAPER.md                 | 29 ++++++++++++++---------------
+ results/SECOND-LAB-REPLICATION.md | 25 ++++++++++++++++---------
+ 2 files changed, 30 insertions(+), 24 deletions(-)
+
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index 774fc07..f4286ce 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -1469,21 +1469,20 @@ causes: the host's application-control policy blocking freshly built unsigned
+ executables, or a clause whose input only this laboratory holds. *Experiment
+ artifacts.* The hardcopy generators reproduced `smiley-v1.werk`, `smiley.png` and
+ the degraded scan `page-01.jpg` byte for byte, and the control decoder recovered
+-the package with 0 of 4096 pixels different on both arms. A blind re-grade wrote
+-its criteria from the task prompts and grader source before reading any
+-published verdict, then re-executed every committed program it could in a clean
+-directory. It agreed with 30 of 39 published verdicts. Six of the nine
+-disagreements are a criteria difference: the published grade scores extracted
+-bytes, while the stricter reading also scores the listing and per-file
+-verification clauses of the task sentence. One is a grader limitation (exact
+-colours printed as fractions of 255 instead of integers), and two are
+-host-dependent. *Agents.* The second laboratory ran 12 fresh agent trials (Claude
+-Code CLI, `claude-opus-5-5`), each in an empty directory holding only the fixture,
+-graded by artifact and re-run in a clean directory. Round-1 task: 7 of 7 passed
+-(1 on `crate-tex-v1`, 3 on `mini-v1`, 3 on the pinned `crate-v1` with the round-1
+-sentence verbatim), with mesh and sound byte-exact in every run. Envelope task on
+-`mini-v1`: 3 of 3 decoded every value exactly. Splat task on `gsplat-v1`: 2 of 2,
+-with positions and colours matching the fixture on all 281 498 points. No run
++the package with 0 of 4096 pixels different on both arms. The replicator wrote re-grade criteria before the documented verdict comparison.
++The same operator collected and graded the evidence. Local file chronology records the sequence.
++This was not an independently blinded assessment. The re-grade agreed with 30 of 39 published verdicts.
++Four disagreements concern listing and full-verification clauses despite exact extracted bytes.
++One concerns PARTIAL versus FAIL labels. One concerns an embedded answer key.
++One concerns exact colours printed as fractions of 255. Two concern host execution limits.
++*Agents.* The second laboratory ran 12 fresh trials in four task groups:
++one August mesh/image trial, six recent mesh/sound trials, three envelope trials, and two splat trials.
++The August trial checked mesh and image extraction. All six recent mesh/sound trials passed with byte-exact payloads.
++All three envelope trials decoded every value exactly.
++Both splat trials passed the full-task grader in `RESULTS-fulltask-2026-10-12.md`.
++Their clean reruns reproduced all 281 498 positions and colours.
++The full-task grader also checked tool quotations and detection of a flipped specification byte.
++No run
+ executed or ported a bundled reader. One early run read back its own spilled tool
+ output from the harness's configuration directory (outside its workspace, but
+ holding only package text); the later trials were sealed, and three equivalent
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+index e6f6e93..3091d68 100644
+--- a/results/SECOND-LAB-REPLICATION.md
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -4,7 +4,7 @@ Replicator: Yuvraj Puyam, working independently of the author's laboratory.
+ Period: 2026-08-25 to 2026-10-11.
+ Status: consolidated report. Every number below comes from a logged run. Each section names its source and the source's date.
+ 
+-Summary: on a separate Windows 11 machine, every gate clause that public data can drive passed, unless the host's application-control policy blocked an executable. Three fixtures rebuilt byte-identically from inputs that the packages themselves embed. 12 of 12 fresh agent trials passed. Every FAIL on this host came from the application-control policy or from data only the author holds.
++Summary: on a separate Windows 11 machine, every gate clause that public data can drive passed, unless the host's application-control policy blocked an executable. Three fixtures rebuilt byte-identically from inputs that the packages themselves embed. The 12 trials comprise one August mesh/image trial, six recent mesh/sound trials, three envelope trials, and two splat trials. Both splat full-task verdicts come from `RESULTS-fulltask-2026-10-12.md`. Every FAIL on this host came from the application-control policy or from data only the author holds.
+ 
+ ## 1. Setup
+ 
+@@ -13,7 +13,7 @@ Summary: on a separate Windows 11 machine, every gate clause that public data ca
+ | host | Windows 11 Home 10.0.26200, Smart App Control ON (by decision) |
+ | repo | `cronos3k/werk` at `6d547d0`. The first checks (2026-08-25) ran at `cbe7cb1`. The Stage 2 gate, `store/` and `paper/` did not change between the two commits. |
+ | Rust | 1.98.0 (stable, MSVC) |
+-| C/C++ | MSVC 19.44; MinGW present |
++| C/C++ | MSVC 19.44; MinGW absent on this host |
+ | Python | 3.10.11, 3.13, 3.14.0; numpy 1.26.4; Pillow 12.3.0 (py3.10) and 11.3.0 (py3.13) |
+ | other | Blender 4.2.1 LTS; Git 2.51.0 |
+ | access | No access to the author's machines, private drives or environment. Fixtures came from the repo and the `fixtures-v1` release. |
+@@ -33,6 +33,7 @@ Sources (all logged by the replicator):
+ | S9 | fresh-agent trials, batch 2 (sealed), grading and isolation audit | 2026-10-07 |
+ | S10 | audit of "unavailable" inputs | 2026-10-11 |
+ | S11 | `gsplat-v1` rebuild from its embedded source | 2026-10-11 |
++| S13 | splat full-task grading, `RESULTS-fulltask-2026-10-12.md` | source dated 2026-10-12 |
+ | S12 | Stage 2 re-runs at `6d547d0`: replicator's log of 2026-10-05, and the `main` column of the gate table in PR #6 (2026-10-11) | 2026-10-05, 2026-10-11 |
+ 
+ ## 2. Fixtures
+@@ -90,14 +91,14 @@ Each trial gave a fresh agent an empty directory with only the fixture and the t
+ 
+ | task | fixture | trials | strict verdict | source |
+ |---|---|---|---|---|
+-| round 1 | `crate-tex-v1` | 1 | 1 PASS | S1 |
++| August mesh/image task | `crate-tex-v1` | 1 | 1 PASS | S1 |
+ | round 1 | `mini-v1` | 3 | 3 PASS | S6 |
+ | round 1 | `crate-v1` (pinned, round-1 sentence verbatim) | 3 | 3 PASS | S9 |
+ | envelope | `mini-v1` | 3 (1 in batch 1, 2 in batch 2) | 3 PASS, all values decoded exactly | S6, S9 |
+-| gsplat | `gsplat-v1` | 2 | 2 PASS; positions and colours match on all 281 498 points | S9 |
++| gsplat | `gsplat-v1` | 2 | 2 full-task PASS; all 281 498 positions and colours match | S13 |
+ | **all** | | **12** | **12 PASS** | |
+ 
+-Round 1 is 7 of 7. Mesh and sound were byte-exact in every round-1 run.
++The six recent mesh/sound trials passed with byte-exact payloads. The August trial separately checked mesh and image extraction.
+ 
+ | detail | value | source |
+ |---|---|---|
+@@ -127,9 +128,12 @@ Not enforced by the seal: Python, Bash and PowerShell processes run unsandboxed
+ 
+ Full per-trial logs are available on request. Trial transcripts are not committed.
+ 
+-## 6. Blind re-grade
++## 6. Re-grade with limited blindness
+ 
+-The replicator wrote grading criteria from the task prompts and grader source first. Only then were the published verdicts read. Every committed program that could run was re-executed in a clean directory.
++The replicator wrote criteria from the prompts and grader source before the documented verdict comparison.
++The same operator collected and graded the evidence. Local file chronology records the sequence, without independent blinding.
++The operator could already know some results from earlier work. This was not an independently blinded assessment.
++Every committed program that could run was re-executed in a clean directory.
+ 
+ | measure | count | source |
+ |---|---:|---|
+@@ -147,9 +151,12 @@ The S10 audit made the two round-2 runs gradeable (the prompt is quoted verbatim
+ | criteria: answer-key contamination (S-DS-8) | 1 |
+ | grader: the colour test checks a storage form, not a value (S-DS-6) | 1 |
+ | host-dependent | 2 |
+-| genuine disagreement on the agent's work | 0 |
++| aggregate agreement depends on the clauses selected | not a separate measured count |
+ 
+-In the four criteria cases, the extracted bytes are exact. The difference is only the listing and full-verification clauses.
++Four runs agree on extracted bytes but differ on listing and full-verification clauses.
++One mismatch concerns PARTIAL versus FAIL labels. One concerns an embedded answer key.
++One concerns exact colours printed as fractions. Two concern host execution limits.
++These are actual differences in the evidence required or the verdict label. Their causes do not remove the disagreements.
+ 
+ ## 7. Negative control (roundNC)
+ 
+-- 
+2.45.2.windows.1
+

@@ -1,0 +1,39 @@
+From 88523fb7d6b49ad386ac5665a9f45bff15f0e6c5 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 17:00:17 -0400
+Subject: [PATCH 5/8] =?UTF-8?q?paper=20v2=20(M7):=20the=20agentic=20arm=20?=
+ =?UTF-8?q?is=2015=20runs=20in=20the=20=C2=A77=20ledger=20too?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+NUMBERS.md §7 said 14/14 (4 + 2 + 1 + 4 + 2 + 1). Its own §5.12 and
+PAPER.md (§7 'Sample size', line 1311; conclusion, line 1687) say 15,
+with two hardcopy runs. gauntlet/RESULTS.md records both: the hardcopy
+round (Codex, 5/5) and the gap-completion round's replication (Kimi,
+6/6). So 4 + 2 + 1 + 4 + 2 + 2 = 15. The four-fifths bound still holds:
+the one-sided 95% lower bound on 15/15 is 0.05^(1/15) = 0.82.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/NUMBERS.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/paper/v2/NUMBERS.md b/paper/v2/NUMBERS.md
+index 768b2ce..0b777e3 100644
+--- a/paper/v2/NUMBERS.md
++++ b/paper/v2/NUMBERS.md
+@@ -500,8 +500,8 @@ Source key **RSF** points to `results/STAGE-SPECFIX-OW-RESULTS.md`; the open-wei
+ 
+ | Claim | Value | Source |
+ |---|---|---|
+-| 14/14 across the agentic arm | 4 + 2 + 1 + 4 + 2 + 1 | §5.11 above **[new]** |
+-| "consistent with a true rate above roughly four-fifths" | one-sided binomial reasoning on 14/14 | arithmetic on the counts above; stated as an interval, no external source **[new]** |
++| 15/15 across the agentic arm | 4 + 2 + 1 + 4 + 2 + 2 (two hardcopy runs: Codex 5/5 and the gap-completion round's Kimi 6/6) | §5.12 above **[new]** |
++| "consistent with a true rate above roughly four-fifths" | one-sided binomial reasoning on 15/15 | arithmetic on the counts above; stated as an interval, no external source **[new]** |
+ | three commercial families + five open-weights lineages | — | RXV §2.1; ROW §2; RSF §4.2 **[new]** |
+ | self-reported time inflation | 2.2–11× on all four cross-vendor runs | RXV §5.2 **[new]** |
+ | JS agent wrote its zip reader before opening the spec | — | G "run 1 → JavaScript" **[v1]** |
+-- 
+2.45.2.windows.1
+

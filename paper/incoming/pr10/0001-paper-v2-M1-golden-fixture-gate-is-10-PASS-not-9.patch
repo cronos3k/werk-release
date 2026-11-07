@@ -1,0 +1,49 @@
+From 913f41132141b50f89b1fa798ac01e47a883fdea Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 16:59:00 -0400
+Subject: [PATCH 1/8] paper v2 (M1): golden fixture gate is 10 PASS, not 9
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Table 11 gave 9 PASS for run_gate_a.py. The gate has 10 clauses
+(2 pins, load, round trip, damage, 3 bootstrap readers, extract,
+primary.*). NUMBERS.md §5.11 already records 'Stage 3A now 10 PASS'
+after the spec-fix wave. Measured here at 6d547d0: 10 PASS, 0 FAIL,
+0 SKIP. Table 11 and its ledger row now say 10.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/NUMBERS.md | 2 +-
+ paper/v2/PAPER.md   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/paper/v2/NUMBERS.md b/paper/v2/NUMBERS.md
+index f8d8732..cc99c98 100644
+--- a/paper/v2/NUMBERS.md
++++ b/paper/v2/NUMBERS.md
+@@ -375,7 +375,7 @@ Source key **RSF** points to `results/STAGE-SPECFIX-OW-RESULTS.md`; the open-wei
+ | Gate | Value | Source |
+ |---|---|---|
+ | reference core, three faces (`run_gate.py`) | 11 PASS, 0 FAIL, 1 SKIP | R12B §3 gate table **[new]** |
+-| golden fixture (`run_gate_a.py`) | 9 PASS, 0 FAIL | R12B §3 **[new]** |
++| golden fixture (`run_gate_a.py`) | 10 PASS, 0 FAIL | RSF §3 (gates re-run after the wave; the tenth clause is `primary.*`) **[new]** |
+ | enrichment pipeline (`run_gate_3b.py`) | 19 PASS, 0 FAIL, 0 WARN | R12B §3; RP "Headline" **[new]** |
+ | retarget (`run_gate_6.py`) | 34 PASS, 0 FAIL, 0 SKIP, 30.4 s | R12B §3 **[new]** |
+ | image profile (`run_gate_9.py`) | 15 PASS, 0 FAIL | R12B §3 **[new]** |
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index 3e5db35..ac1dbc8 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -981,7 +981,7 @@ Agent-implementability is a prerequisite, yet by itself it is far from adequate.
+ | Gate (harness) | Result |
+ |---|---|
+ | Reference core, three faces | 11 PASS, 0 FAIL, 1 SKIP |
+-| Golden fixture | 9 PASS, 0 FAIL |
++| Golden fixture | 10 PASS, 0 FAIL |
+ | Enrichment pipeline | 19 PASS, 0 FAIL, 0 WARN |
+ | Retarget, three foreign rigs | 34 PASS, 0 FAIL (30.4 s) |
+ | Image profile fixture | 15 PASS, 0 FAIL |
+-- 
+2.45.2.windows.1
+

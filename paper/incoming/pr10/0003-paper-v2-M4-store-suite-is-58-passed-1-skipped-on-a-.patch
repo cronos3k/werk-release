@@ -1,0 +1,46 @@
+From 42e7f546fe38a7fb275497deb48a40a9c3605048 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 16:59:57 -0400
+Subject: [PATCH 3/8] paper v2 (M4): store suite is 58 passed, 1 skipped on a
+ clean clone
+
+Table 11 said '59 tests, 0 failed'. One of the 59 tests
+(test_dedup.py, test_dedup_on_the_real_corpus) needs a corpus that is
+only on the author's machine, so a clean clone gives 58 passed,
+1 skipped. Measured here at 6d547d0. The total of 59 is unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/NUMBERS.md | 2 +-
+ paper/v2/PAPER.md   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/paper/v2/NUMBERS.md b/paper/v2/NUMBERS.md
+index 92cb0d4..f6f4503 100644
+--- a/paper/v2/NUMBERS.md
++++ b/paper/v2/NUMBERS.md
+@@ -385,7 +385,7 @@ Source key **RSF** points to `results/STAGE-SPECFIX-OW-RESULTS.md`; the open-wei
+ | Unreal engine-free core (`werk_gate.exe`) | 10 PASS, 0 FAIL, 0.31 s | RR §2 gate table **[new]** |
+ | Unreal live editor control (`proof_session.py`) | 6 PASS, 0 FAIL | H "Stage 10B results → Gate B" **[v1]** |
+ | game engine (`cargo test -p cub-werk`) | 43 passed, 0 failed (35 + 7 + 1) | R12B §3 **[new]** |
+-| store (`pytest store/tests`) | 59 passed | H "Stage 7 CDC results", preamble **[v1]** |
++| store (`pytest store/tests`) | 59 passed on the author's host; on a clean clone 58 passed, 1 skipped (`test_dedup.py` real-corpus test, needs the author's corpus) | H "Stage 7 CDC results", preamble; clean-clone run at `6d547d0` **[new]** |
+ | the single SKIP is this host's msys2 gcc | — | RR §2 "One SKIP, unchanged and honest" **[new]** |
+ 
+ ### 6.1 Reference core
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index 1be15be..6a735b0 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -991,7 +991,7 @@ Agent-implementability is a prerequisite, yet by itself it is far from adequate.
+ | Unreal engine-free core | 10 PASS, 0 FAIL (0.31 s) |
+ | Unreal live editor control | 6 PASS, 0 FAIL |
+ | Game engine consumer | 43 tests, 0 failed |
+-| Store, whole-blob and chunked | 59 tests, 0 failed |
++| Store, whole-blob and chunked | 59 tests; 58 pass on a clean clone, 1 needs the author's corpus |
+ 
+ The SKIP entry remains truthful and unaltered: on this system, MinGW’s gcc terminates with exit code 1, producing no output, for a program whose `main` returns zero, whereas the identical C loader source builds and succeeds under MSVC in the immediately following section. The harness reports which of those two outcomes occurred, instead of labeling a defective compiler as a fault in the source.
+ 
+-- 
+2.45.2.windows.1
+

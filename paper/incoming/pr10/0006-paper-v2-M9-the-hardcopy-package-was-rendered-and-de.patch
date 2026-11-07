@@ -1,0 +1,50 @@
+From 21ddf50e88609616f0558c384cab8599fa3526fb Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Fri, 16 Oct 2026 11:58:43 -0400
+Subject: [PATCH 6/8] paper v2 (M9): the hardcopy package was rendered and
+ degraded in simulation, not printed
+
+NUMBERS.md 5.9 says nothing was ever printed and degrade.py is a model of
+print-and-photograph. Three sentences in PAPER.md said otherwise.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/PAPER.md | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index 6a735b0..bcdfaa4 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -60,8 +60,8 @@ This paper’s central argument is that shaping a format *opposed* to that metri
+ 5. **`werk`**[^fn: The format's name is `werk` (German *Werk*: a work, an opus); files carry the extension `.werk`. The name is set in typewriter face throughout, to distinguish it from the ordinary German word. ^], a container doctrine whose acceptance gates are stated in terms of
+    the metric and whose specification travels inside every file it describes
+    (§2, §3), extended here to two artifact classes that stress it: an
+-   **executable** payload carried as source (§5.7) and a **printed** package
+-   whose only substrate is ink (§5.8).
++   **executable** payload carried as source (§5.7) and a **print-ready** package
++   whose only substrate is the page, here rendered and degraded in simulation (§5.8).
+ 6. **Ecosystem evidence that the metric is necessary but not sufficient**: seven
+    consumers with re-runnable gates, including a self-regenerating package, a
+    pixel-identical cross-engine texture round trip, and a prose-specified digest
+@@ -364,7 +364,7 @@ against the real package and feeds back the traceback; the bundled loaders are
+ never inlined, because pasting them in would make the loader metric meaningless.
+ The **self-run arm** changes the artifact rather than the implementer — the
+ payload is *executable*, and the task is to run it — and the **hardcopy arm**
+-changes the substrate, printing the package and handing the reader photographs.
++changes the substrate, rendering the package as pages and handing the reader simulated photographs of them.
+ 
+ The seven runs, in order. Round 1 ran four agents in Python, JavaScript, Rust and C against a 3D-entity package. Round 2 ran two agents in Python and Rust against an image package carrying a custom binary payload, chosen to close the gap round 1's own verdict identified: round 1's fixture had no custom binary at all, so the entire envelope apparatus went untested. Round 3, the mini-gauntlet, ran one agent against the Gaussian-splat package, with an explicit additional instruction not to execute anything that came out of the file. Round 4, the cross-vendor round, gave two other laboratories' frontier models round 1's task sentence verbatim and then round 3's, on the pinned committed fixtures. Round 5, the open-weights round, is the void arm, with a post-fix second arm that re-ran the failing models after their findings had been turned into specification text. Round 6, the self-run round, handed out a package carrying a language model and its runtime's source. Round 7, the hardcopy round, handed out three photographs.
+ 
+@@ -826,7 +826,7 @@ payload bytes per module net of parity against QR version 40-L's 0.09426, the
+ describable code is **1.07× denser**, precisely because it spends nothing on
+ in-symbol correction.
+ 
+-A fresh agent was given a directory holding only three degraded photographs —
++A fresh agent was given a directory holding only three synthetically degraded page images —
+ rotation of 0.55 to 0.90°, 1.1-pixel blur, a multiplicative illumination ramp to
+ 62 %, Gaussian noise of standard deviation 9/255, JPEG quality 82 — and one
+ sentence naming no format, no encoding and no file type. In **206.7 seconds** it
+-- 
+2.45.2.windows.1
+

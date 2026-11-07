@@ -1,0 +1,117 @@
+From 276da63c31ac02a01ed38d8ea806d5031ed26431 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Mon, 12 Oct 2026 00:54:15 -0400
+Subject: [PATCH 5/7] Scope exact-byte observations to their recorded
+ environments
+
+Name the environment beside each exact-byte observation.
+Mark unrecorded historical versions as unknown.
+Separate retained-asset reassembly from asset creation.
+
+Co-Authored-By: Codex (GPT-6) <noreply@openai.com>
+---
+ results/SECOND-LAB-REPLICATION.md | 36 ++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 17 deletions(-)
+
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+index 3091d68..2b29d27 100644
+--- a/results/SECOND-LAB-REPLICATION.md
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -4,7 +4,7 @@ Replicator: Yuvraj Puyam, working independently of the author's laboratory.
+ Period: 2026-08-25 to 2026-10-11.
+ Status: consolidated report. Every number below comes from a logged run. Each section names its source and the source's date.
+ 
+-Summary: on a separate Windows 11 machine, every gate clause that public data can drive passed, unless the host's application-control policy blocked an executable. Three fixtures rebuilt byte-identically from inputs that the packages themselves embed. The 12 trials comprise one August mesh/image trial, six recent mesh/sound trials, three envelope trials, and two splat trials. Both splat full-task verdicts come from `RESULTS-fulltask-2026-10-12.md`. Every FAIL on this host came from the application-control policy or from data only the author holds.
++Summary: public checks passed on original or explicitly stated substitute inputs. The tables retain host failures and unavailable checks. Three fixtures rebuilt byte-identically under the environments in section 4. These checks reassemble retained assets. The 12 trials cover four task groups, with full-task splat results from the source dated 2026-10-12.
+ 
+ ## 1. Setup
+ 
+@@ -14,7 +14,7 @@ Summary: on a separate Windows 11 machine, every gate clause that public data ca
+ | repo | `cronos3k/werk` at `6d547d0`. The first checks (2026-08-25) ran at `cbe7cb1`. The Stage 2 gate, `store/` and `paper/` did not change between the two commits. |
+ | Rust | 1.98.0 (stable, MSVC) |
+ | C/C++ | MSVC 19.44; MinGW absent on this host |
+-| Python | 3.10.11, 3.13, 3.14.0; numpy 1.26.4; Pillow 12.3.0 (py3.10) and 11.3.0 (py3.13) |
++| Python | 3.10.11, 3.13.7, 3.14.0; numpy 1.26.4; Pillow 12.3.0 (py3.10) and 11.3.0 (py3.13) |
+ | other | Blender 4.2.1 LTS; Git 2.51.0 |
+ | access | No access to the author's machines, private drives or environment. Fixtures came from the repo and the `fixtures-v1` release. |
+ 
+@@ -53,7 +53,7 @@ Sources (all logged by the replicator):
+ |---|---|---|---|---|
+ | Stage 2, `run_gate.py` (reference core, three faces) | **11 PASS, 0 FAIL, 0 SKIP** at `6d547d0` (re-runs 2026-10-05 and 2026-10-11). First run, 2026-08-25 at `cbe7cb1`: 9 PASS, 2 FAIL. | 11 PASS, 0 FAIL, 1 SKIP | The two August FAILs were Smart App Control blocking fresh unsigned test executables (`os error 4551`); cargo printed "19 passed, 0 failed" before the block. The later runs were not blocked. The paper's SKIP row exists only on a host where MinGW gcc fails silently. | S1, S5, S12 |
+ | Store suite, `pytest store/tests` | 58 passed, 1 skipped | 59 passed | The skipped test needs the private production corpus. | S1, S8 |
+-| Spec examples, `make-examples.py` then `git diff` | clean (byte-identical) | n/a | | S1 |
++| Spec examples, `make-examples.py` then `git diff` | clean (byte-identical) | n/a | | S1  Environment: Windows 11, historical interpreter patch unrecorded. Current Python locks do not establish its original environment. |
+ | `run_gate_cc0_public.py` | 14 PASS, 0 FAIL, 0 SKIP | 14 | | S2 |
+ | `run_gate_cc0_image.py` | 9 PASS, 0 FAIL, 0 SKIP | 9 | | S2 |
+ | `run_gate_cc0_gsplat.py` | 8 PASS, 0 FAIL, 0 SKIP | 8 | | S2 |
+@@ -64,7 +64,7 @@ Sources (all logged by the replicator):
+ | Gate 3B (enrichment pipeline) | 19 PASS, 0 FAIL, 0 WARN | 19 PASS | Ran on 3 in-repo inputs. One is exact, one matches on geometry only, one is a stand-in (section 7). | S10 |
+ | Blender adapter, `adapters/blender/test_gate.py` | 20 PASS, 0 FAIL, 0 SKIP, 5.3 s | 20 PASS, 6.3 s | | S10 |
+ | Unreal engine-free core, `werk_gate_main.cpp` | 10 PASS, 0 FAIL, 0.269 s | 10 PASS, 0.31 s | Built with MSVC 19.44 and the exact `cl` line of `build_gate.bat`. | S10 |
+-| Store CDC, `measure_gate_cdc.py` | edited 9.71 MiB package synced with 3.5887 % of its bytes; far side byte-exact | 3.63 % | The paper's value predates the fixture rebuild. The bytes moved are about the same. The denominator grew. | S4, S8 |
++| Store CDC, `measure_gate_cdc.py` | edited 9.71 MiB package synced with 3.5887 % of its bytes; far side byte-exact | 3.63 % | The paper's value predates the fixture rebuild. The bytes moved are about the same. The denominator grew. | S4, S8  Environment: Windows 11, source 6d547d0; historical interpreter patch unrecorded. The byte comparison applies to that logged transfer. |
+ 
+ Store numbers in detail (S8): of 22 rows, every claim that the current fixtures can test is MATCH or EXPLAINED by the fixture rebuild. The real-corpus numbers (1.9970x, 0.2404 %, 0.27 %) were not measured, because the corpus is not distributed. One label is stale: `NUMBERS.md` calls Table 16 "Table 13".
+ 
+@@ -72,16 +72,16 @@ Store numbers in detail (S8): of 22 rows, every claim that the current fixtures
+ 
+ | what | result | source |
+ |---|---|---|
+-| 4 CC0 builders, `--check-determinism` | all 4 deterministic on this host. Rebuilds differ from the shipped files only in the 3 CRLF spec files plus `MANIFEST.json` and `SIGNATURE.json`, as R1 predicts. | S2 |
+-| `build_crate_cc0.py` on Python 3.10 and 3.13 | same bytes (`df0ef71e...`) after the stack fix in PR #3 | S3 |
+-| `smiley.png`, `smiley-v1.werk` (hardcopy generators) | byte-identical to the committed files | S3 |
+-| degraded scan `page-01.jpg` | byte-identical to the released original `a0631045...` | S4 |
+-| `crate-v1.werk` and `crate-v1-damaged.werk`, rebuilt from inputs embedded in `crate-v1` | both byte-identical to the pins (`0a7a7341...`, `01348a10...`), 180 of 180 entries | S10 |
+-| `ista-varun-v1.werk`, rebuilt from inputs embedded in the package | byte-identical to the pin `923ab39f...`, 77 of 77 entries, with three stated substitutions: a reconstructed database row (only its prompt is used), the evidence file taken from the package, and PNG deflate with stock zlib | S10 |
+-| `gsplat-v1.werk`, rebuilt from its embedded `recipe/inputs/plush.splat` | 71 of 83 entries identical, including `splats/plush.wkgs`, `points/plush-dc.wkpc` and the source. The other 12 differ in the R1 CRLF spec snapshot, plus `MANIFEST.json`/`SIGNATURE.json` and recorded host metadata such as `runtime_version`. | S11 |
+-| `crate-tex-v1.werk` (Blender) | 62 of 67 entries identical, including all 3 textures. Whole-file identity is impossible by design: the manifest carries a wall-clock `created`. | S10 |
++| 4 CC0 builders, `--check-determinism` | all 4 deterministic on this host. Rebuilds differ from the shipped files only in the 3 CRLF spec files plus `MANIFEST.json` and `SIGNATURE.json`, as R1 predicts. | S2  Environment: Windows 11; Python 3.10.11; NumPy 1.26.4; Pillow 12.3.0 with zlib-ng. R1 spec bytes are separate from determinism. |
++| `build_crate_cc0.py` on Python 3.10 and 3.13 | same bytes (`df0ef71e...`) after the stack fix in PR #3 | S3  Environment: Windows 11; Python 3.10.11 and 3.13.7; NumPy 1.26.4 and 2.3.3 respectively. Both used the same corrected builder source. |
++| `smiley.png`, `smiley-v1.werk` (hardcopy generators) | byte-identical to the committed files | S3  Environment: Windows 11; historical generator interpreter patch unrecorded. Current installed dependencies are not historical pins. |
++| degraded scan `page-01.jpg` | byte-identical to the released original `a0631045...` | S4  Environment: Windows 11; historical Pillow and interpreter patch unrecorded. Identity applies to the retained scan and logged output. |
++| `crate-v1.werk` and `crate-v1-damaged.werk`, rebuilt from inputs embedded in `crate-v1` | both byte-identical to the pins (`0a7a7341...`, `01348a10...`), 180 of 180 entries | S10  Environment: Windows 11; audit checkout 6d547d0; embedded CRLF spec; original embedded assets. Historical interpreter patch unrecorded. |
++| `ista-varun-v1.werk`, rebuilt from inputs embedded in the package | byte-identical to the pin `923ab39f...`, 77 of 77 entries, with three stated substitutions: a reconstructed database row (only its prompt is used), the evidence file taken from the package, and PNG deflate with stock zlib | S10  Environment: Windows 11; Python 3.10.11; NumPy 1.26.4; Pillow 12.3.0; Python stock zlib 1.2.13, level 6, memLevel 9, Z_FILTERED. |
++| `gsplat-v1.werk`, rebuilt from its embedded `recipe/inputs/plush.splat` | 71 of 83 entries identical, including `splats/plush.wkgs`, `points/plush-dc.wkpc` and the source. The other 12 differ in the R1 CRLF spec snapshot, plus `MANIFEST.json`/`SIGNATURE.json` and recorded host metadata such as `runtime_version`. | S11  Environment: Windows 11; Python 3.10.11; NumPy 1.26.4; embedded source. The archived runtime_version is preserved separately from the current lock. |
++| `crate-tex-v1.werk` (Blender) | 62 of 67 entries identical, including all 3 textures. Whole-file identity is impossible by design: the manifest carries a wall-clock `created`. | S10  Environment: Windows 11; Blender 4.2.1 LTS; bundled Python 3.11.7; werk exporter 1.0.0. The timestamp prevents whole-archive identity. |
+ | Round 5 (open weights): cold re-run of the 6 committed programs | all 6 verdicts reproduced (4 PASS, 2 FAIL) | S3 |
+-| Hardcopy control, `verify_roundtrip.py` | PASS on both arms, 0 of 4096 pixels different | S3 |
++| Hardcopy control, `verify_roundtrip.py` | PASS on both arms, 0 of 4096 pixels different | S3  Environment: Windows 11; historical generator interpreter and Pillow versions unrecorded. This is pixel identity for the logged outputs. |
+ 
+ ## 5. Fresh-agent trials
+ 
+@@ -94,11 +94,11 @@ Each trial gave a fresh agent an empty directory with only the fixture and the t
+ | August mesh/image task | `crate-tex-v1` | 1 | 1 PASS | S1 |
+ | round 1 | `mini-v1` | 3 | 3 PASS | S6 |
+ | round 1 | `crate-v1` (pinned, round-1 sentence verbatim) | 3 | 3 PASS | S9 |
+-| envelope | `mini-v1` | 3 (1 in batch 1, 2 in batch 2) | 3 PASS, all values decoded exactly | S6, S9 |
+-| gsplat | `gsplat-v1` | 2 | 2 full-task PASS; all 281 498 positions and colours match | S13 |
++| envelope | `mini-v1` | 3 (1 in batch 1, 2 in batch 2) | 3 PASS, all values decoded exactly | S6, S9. Windows 11, Python 3.13.7, UTF-8 mode. |
++| gsplat | `gsplat-v1` | 2 | 2 full-task PASS; all 281 498 positions and colours match | S13. Windows 11, Python 3.13.7, UTF-8 mode. |
+ | **all** | | **12** | **12 PASS** | |
+ 
+-The six recent mesh/sound trials passed with byte-exact payloads. The August trial separately checked mesh and image extraction.
++The six recent mesh/sound trials passed with byte-exact payloads under Python 3.13.7 and UTF-8 mode on Windows 11. The August trial separately checked mesh and image extraction.
+ 
+ | detail | value | source |
+ |---|---|---|
+@@ -126,6 +126,8 @@ The batch-2 seal added a deny rule for the config directory. The same spill-file
+ 
+ Not enforced by the seal: Python, Bash and PowerShell processes run unsandboxed on native Windows. The CLEAN classes for scripts rest on reading every command and every agent-written script.
+ 
++The current environment locks are documented in `REPRODUCIBILITY.md` on branch `local/ledger`. Unrecorded historical versions remain unknown.
++
+ Full per-trial logs are available on request. Trial transcripts are not committed.
+ 
+ ## 6. Re-grade with limited blindness
+@@ -160,7 +162,7 @@ These are actual differences in the evidence required or the verdict label. Thei
+ 
+ ## 7. Negative control (roundNC)
+ 
+-The pre-registered negative-control round ran the same task on FBX, glTF and USDZ files with the same crate mesh and texture (3 trials per arm, 2026-10-11). On the frozen criteria werk passed 3 of 3 and the controls 0 of 9. That gap rests on rule R5 about "the primary mesh". With a value-exact single sub-mesh accepted, glTF and FBX also pass 3 of 3 and USDZ 1 of 3. The robust differences are verifiability (werk 1.0 cryptographic, USDZ CRC-32 only, FBX and glTF none) and the file declaring its primary mesh. Isolation: 0 violations. Details and all artifacts are in the roundNC pull request (`gauntlet/roundNC/RESULTS-NC.md`).
++The pre-registered negative-control round ran the same task on FBX, glTF and USDZ files with the same crate mesh and texture (3 trials per arm, 2026-10-11). On the frozen criteria werk passed 3 of 3 and the controls 0 of 9. That gap rests on rule R5 about "the primary mesh". The value comparisons used Windows 11 and Python 3.13.7 with UTF-8 mode. With a value-exact single sub-mesh accepted, glTF and FBX also pass 3 of 3 and USDZ 1 of 3. The robust differences are verifiability (werk 1.0 cryptographic, USDZ CRC-32 only, FBX and glTF none) and the file declaring its primary mesh. Isolation: 0 violations. Details and all artifacts are in the roundNC pull request (`gauntlet/roundNC/RESULTS-NC.md`).
+ 
+ ## 8. What remains unavailable
+ 
+-- 
+2.45.2.windows.1
+

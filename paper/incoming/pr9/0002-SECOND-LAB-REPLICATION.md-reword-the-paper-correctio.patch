@@ -1,0 +1,26 @@
+From 61dce1bd993dc23ac7ced2a436b91898fb4f0417 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 17:00:24 -0400
+Subject: [PATCH 2/7] SECOND-LAB-REPLICATION.md: reword the paper-corrections
+ pointer
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ results/SECOND-LAB-REPLICATION.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+index dbe850f..e05db01 100644
+--- a/results/SECOND-LAB-REPLICATION.md
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -180,6 +180,6 @@ The pre-registered negative-control round ran the same task on FBX, glTF and USD
+ | 5 | Gate A crashed with an uncaught `OSError` instead of recording a FAIL when the host blocked an executable. The same `run()` pattern is in Gates 9 and 12. Should the gates record the FAIL and continue? | S4 |
+ | 6 | A `requires` edge to an absent (not dead) node is undefined in SPEC §5. Readers chose 4 different behaviours. Which is correct? | S9 |
+ | 7 | For files that declare no primary mesh, should roundNC report a second PASS-rate row (amendment A1)? | roundNC |
+-| 8 | Table 11 still says Gate A "9 PASS"; §6.1 quotes the first-edition synthetic fixture (413 741 B, 26 files; committed: 684 925 B, 35 files). See also the open `fix/paper-corrections` branch. | S5 |
++| 8 | Table 11 still says Gate A "9 PASS"; §6.1 quotes the first-edition synthetic fixture (413 741 B, 26 files; committed: 684 925 B, 35 files). A separate `fix/paper-corrections` change addresses these. | S5 |
+ | 9 | Should the store real-corpus numbers be marked single-host, since the corpus is not distributed? | S8 |
+ | 10 | Can the older fixture builds or the INRIA PLY be published, so that those rows can be replicated? | S10 |
+-- 
+2.45.2.windows.1
+

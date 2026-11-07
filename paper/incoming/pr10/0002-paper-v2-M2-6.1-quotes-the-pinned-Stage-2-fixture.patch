@@ -1,0 +1,68 @@
+From 4d0b2580053db9c559fd123866acbac0368c68a3 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 16:59:08 -0400
+Subject: [PATCH 2/8] =?UTF-8?q?paper=20v2=20(M2):=20=C2=A76.1=20quotes=20t?=
+ =?UTF-8?q?he=20pinned=20Stage=202=20fixture?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+§6.1 quoted the first-edition build of tests/fixtures/crate.werk:
+413 741 B, 28 entries, 26 declared files, '26 of 26'. The pinned build
+(fixtures.json crate-synthetic, checked by run_gate.py) is 684 925 B,
+37 entries, 15 nodes, 35 declared files. Measured here: zipfile and
+MANIFEST.json give 37 entries and 35 files; werk_read.py, werk_read.rs
+and werk_read.c each verify 35 of 35. The ledger rows now cite the
+pinned build and keep the old values as history.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/NUMBERS.md | 4 ++--
+ paper/v2/PAPER.md   | 6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/paper/v2/NUMBERS.md b/paper/v2/NUMBERS.md
+index cc99c98..92cb0d4 100644
+--- a/paper/v2/NUMBERS.md
++++ b/paper/v2/NUMBERS.md
+@@ -392,11 +392,11 @@ Source key **RSF** points to `results/STAGE-SPECFIX-OW-RESULTS.md`; the open-wei
+ 
+ | Claim | Value | Source |
+ |---|---|---|
+-| fixture #1 | 413 741 B, 28 entries, 15 nodes, 26 declared files | H "Stage 2 results → Conformance fixture #1" **[v1]** |
++| fixture #1 (`tests/fixtures/crate.werk`, the pinned build) | 684 925 B, 37 entries, 15 nodes, 35 declared files | FX `crate-synthetic`; was 413 741 B, 28 entries, 26 files in H "Stage 2 results → Conformance fixture #1" **[new]** |
+ | three faces agree; one 879 616-byte library | 15 nodes, 14 alive / 1 skipped | H "Stage 2 results → 3. One .werk, three faces, one DLL" **[v1]** |
+ | round trip proven three ways; fixed DOS timestamp | — | H "Stage 2 results → 1." **[v1]** |
+ | re-hashed schema-invalid payload scenario | 0 hash mismatches, `payload-schema-invalid` | H "Stage 2 results → 2. Damage gauntlet" **[v1]** |
+-| three bootstrap readers standalone | 26/26 files over 15 nodes; stdlib Python, bare `rustc`, gcc and MSVC | H "Stage 2 results → 4." **[v1]** |
++| three bootstrap readers standalone | 35/35 files over 15 nodes; stdlib Python, bare `rustc`, gcc and MSVC | `run_gate.py` bootstrap rows on the pinned build; was 26/26 in H "Stage 2 results → 4." **[new]** |
+ | rest-pose payload identical to the spec's own example | 560 B, same sha256 | H "Stage 2 results → The one measurement…" **[v1]** |
+ 
+ ### 6.2 Game engine
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index ac1dbc8..1be15be 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -999,8 +999,8 @@ The SKIP entry remains truthful and unaltered: on this system, MinGW’s gcc ter
+ 
+ The reference core is a Rust dynamic library behind a C ABI, consumed by C++ as
+ header plus DLL and by Python over `ctypes`, with no package-manager
+-dependencies anywhere in the path. On the smallest fixture — 413 741 bytes, 28
+-entries, 15 nodes, 26 declared files — all three faces report the same 15 nodes,
++dependencies anywhere in the path. On the smallest fixture — 684 925 bytes, 37
++entries, 15 nodes, 35 declared files — all three faces report the same 15 nodes,
+ the same 14-alive/1-skipped split, the same signed-and-valid verdict and the same
+ manifest digest, and round-trip byte-identity holds from the zip, from the
+ committed directory form and from a freshly materialised directory, because the
+@@ -1009,7 +1009,7 @@ fixed timestamp. Its damage gauntlet asserts *exact* reports and *exact* survivo
+ rather than the absence of a crash, including a schema-invalid payload that was
+ *re-hashed*, so that zero hashes mismatch and only the schema can catch it.
+ Three single-file zero-dependency bootstrap readers ship inside every package,
+-sharing no code with each other or with the core, and all three verify 26 of 26
++sharing no code with each other or with the core, and all three verify 35 of 35
+ files standalone with byte-identical output under stdlib Python, bare `rustc` and
+ both `gcc -std=c99 -Wall -Wextra` and MSVC. One measurement shows that the code
+ and the specification agree rather than merely coexist: the fixture's binary
+-- 
+2.45.2.windows.1
+

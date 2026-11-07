@@ -1,0 +1,39 @@
+From ab04d779f4014d568e73a63ce37722bee1026811 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 17:01:21 -0400
+Subject: [PATCH 3/7] SECOND-LAB-REPLICATION.md: add the Stage 2 re-runs at
+ 6d547d0 (11/0/0)
+
+The report showed only the first Stage 2 run (2026-08-25, cbe7cb1, 9 PASS / 2 FAIL from
+Smart App Control). The gate was re-run at 6d547d0 on 2026-10-05 and 2026-10-11 with
+11 PASS, 0 FAIL, 0 SKIP. Both results are now shown, with a new source row S12.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ results/SECOND-LAB-REPLICATION.md | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+index e05db01..e6f6e93 100644
+--- a/results/SECOND-LAB-REPLICATION.md
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -33,6 +33,7 @@ Sources (all logged by the replicator):
+ | S9 | fresh-agent trials, batch 2 (sealed), grading and isolation audit | 2026-10-07 |
+ | S10 | audit of "unavailable" inputs | 2026-10-11 |
+ | S11 | `gsplat-v1` rebuild from its embedded source | 2026-10-11 |
++| S12 | Stage 2 re-runs at `6d547d0`: replicator's log of 2026-10-05, and the `main` column of the gate table in PR #6 (2026-10-11) | 2026-10-05, 2026-10-11 |
+ 
+ ## 2. Fixtures
+ 
+@@ -49,7 +50,7 @@ Sources (all logged by the replicator):
+ 
+ | gate | second lab | paper (author lab) | why they differ | source |
+ |---|---|---|---|---|
+-| Stage 2, `run_gate.py` (reference core, three faces) | 9 PASS, 2 FAIL | 11 PASS, 0 FAIL, 1 SKIP | Both FAILs: Smart App Control blocked fresh unsigned test executables (`os error 4551`). Cargo printed "19 passed, 0 failed" before the block. The SKIP row exists only on a host where MinGW gcc fails silently. | S1, S5 |
++| Stage 2, `run_gate.py` (reference core, three faces) | **11 PASS, 0 FAIL, 0 SKIP** at `6d547d0` (re-runs 2026-10-05 and 2026-10-11). First run, 2026-08-25 at `cbe7cb1`: 9 PASS, 2 FAIL. | 11 PASS, 0 FAIL, 1 SKIP | The two August FAILs were Smart App Control blocking fresh unsigned test executables (`os error 4551`); cargo printed "19 passed, 0 failed" before the block. The later runs were not blocked. The paper's SKIP row exists only on a host where MinGW gcc fails silently. | S1, S5, S12 |
+ | Store suite, `pytest store/tests` | 58 passed, 1 skipped | 59 passed | The skipped test needs the private production corpus. | S1, S8 |
+ | Spec examples, `make-examples.py` then `git diff` | clean (byte-identical) | n/a | | S1 |
+ | `run_gate_cc0_public.py` | 14 PASS, 0 FAIL, 0 SKIP | 14 | | S2 |
+-- 
+2.45.2.windows.1
+

@@ -1,0 +1,31 @@
+From 1333136f05520e75719d68b81739235b1481bb10 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 17:00:03 -0400
+Subject: [PATCH 4/8] paper v2 (M8): the store table is Table 16 in the ledger
+ too
+
+NUMBERS.md labelled the content-defined chunking table 'Table 13'.
+PAPER.md numbers its tables 1 to 17 in order; that table is Table 16
+(PAPER.md line 1262), and Table 13 is the Blender adapter table.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/NUMBERS.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/paper/v2/NUMBERS.md b/paper/v2/NUMBERS.md
+index f6f4503..768b2ce 100644
+--- a/paper/v2/NUMBERS.md
++++ b/paper/v2/NUMBERS.md
+@@ -482,7 +482,7 @@ Source key **RSF** points to `results/STAGE-SPECFIX-OW-RESULTS.md`; the open-wei
+ | zero third-party dependencies including the cryptography | — | H "Stage 7 results → What landed" **[v1]** |
+ | whole-blob corpus results | 1.9970×; 0.2404 %; 0.27 % | H "Stage 7 results → Corpus" **[v1]** |
+ | materialisation identical to the originals (whole-tree comparison) | — | H "Stage 7 results → Gate wording, checked literally" **[v1]** |
+-| Table 13 | 31.79 MiB logical; 26.72 → 21.89 MiB; 1.1897× → 1.4524×; 5.15 → 0.31 MiB | H "Stage 7 CDC results → Gate measurement" **[v1]** |
++| Table 16 | 31.79 MiB logical; 26.72 → 21.89 MiB; 1.1897× → 1.4524×; 5.15 → 0.31 MiB | H "Stage 7 CDC results → Gate measurement" **[v1]** |
+ | chunker parameters and the SHA-256-derived gear table | 64 KiB / 256 KiB / 1 MiB | H "Stage 7 CDC results → What landed" **[v1]** |
+ | 1 of 19 chunks changed; sync moved 3.63 % | — | H "Stage 7 CDC results → Gate measurement" **[v1]** |
+ | damaged fixture refused in 1.43 s, no reference recorded | — | H "Stage 7 CDC results → Gate measurement" **[v1]** |
+-- 
+2.45.2.windows.1
+

@@ -1,0 +1,33 @@
+From 37a3eab705f8000e3afb3869d2bf41c585be82d8 Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Fri, 16 Oct 2026 11:58:43 -0400
+Subject: [PATCH 8/8] paper v2 (M11): name the three Rust crates the core build
+ uses
+
+core/Cargo.toml declares serde_json, sha2 and ed25519-dalek, so "no
+package-manager dependencies anywhere in the path" is too strong.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/PAPER.md | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index 6b6458f..5440b7b 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -998,8 +998,9 @@ The SKIP entry remains truthful and unaltered: on this system, MinGW’s gcc ter
+ ### 6.1 The reference core: three faces of one library
+ 
+ The reference core is a Rust dynamic library behind a C ABI, consumed by C++ as
+-header plus DLL and by Python over `ctypes`, with no package-manager
+-dependencies anywhere in the path. On the smallest fixture — 684 925 bytes, 37
++header plus DLL and by Python over `ctypes`, with no package installation
++on the consuming side (the Rust build itself uses three crates: `serde_json`,
++`sha2` and `ed25519-dalek`). On the smallest fixture — 684 925 bytes, 37
+ entries, 15 nodes, 35 declared files — all three faces report the same 15 nodes,
+ the same 14-alive/1-skipped split, the same signed-and-valid verdict and the same
+ manifest digest, and round-trip byte-identity holds from the zip, from the
+-- 
+2.45.2.windows.1
+

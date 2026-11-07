@@ -1,0 +1,75 @@
+From 03bc8cc1d139bed43ba1178df583f26a4b25cf4d Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Fri, 16 Oct 2026 11:10:48 -0400
+Subject: [PATCH 6/7] Correct three statements in the replication report and
+ section 7 draft
+
+PR reference for the stack fix is #4 (PR #3 was closed). The environment
+locks are not on a public branch, so say they are available on request.
+The negative-control assets are not size-matched to the werk arm, and
+ista-varun-v1 still needs the author's sources for an original-input rebuild.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/PAPER.md                 | 6 +++---
+ results/SECOND-LAB-REPLICATION.md | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index f4286ce..0d33fb8 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -1455,8 +1455,8 @@ in the three spec files with historical CRLF line endings, plus the manifest and
+ signature that record them (ruling R1). Three packages went further and rebuilt
+ byte for byte from the inputs they embed: `crate-v1` and its damaged twin (180 of
+ 180 entries), and `ista-varun-v1` (77 of 77, with three stated substitutions), so
+-the Gate 9 builder clause that R3 scopes to this laboratory is reproducible from
+-the package. `gsplat-v1`, rebuilt from its embedded source, matched in 71 of 83
++the archive itself reassembles from the package. Rebuilding `ista-varun-v1` from
++its original inputs still needs this laboratory's sources (ruling R3). `gsplat-v1`, rebuilt from its embedded source, matched in 71 of 83
+ entries, including both payloads; the other 12 differ in the R1 spec snapshot,
+ the manifest and signature, and recorded host metadata. *Gates.* Golden fixture
+ 10 PASS, 0 FAIL. Retarget 23 PASS, the UE-rig clauses skipped (non-redistributable
+@@ -1490,7 +1490,7 @@ attempts were then blocked. Independently, all four agents in the first batch
+ found the stale `input_hash` the fixture actually carries, and the runs exposed an
+ unspecified case (a `requires` edge to an absent node) on which they chose four
+ different behaviours. A pre-registered negative control in the same harness
+-(FBX, glTF and USDZ files carrying the same crate) separated werk from the
++(FBX, glTF and USDZ files built from the same CC0 crate, but not size-matched to the werk arm, so exploratory) separated werk from the
+ controls on its frozen pass rate only through the rule that defines "the primary
+ mesh"; with a value-exact single sub-mesh accepted, glTF and FBX also passed 3 of
+ 3, and the robust differences were verifiability and the file declaring its own
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+index 2b29d27..b5a8743 100644
+--- a/results/SECOND-LAB-REPLICATION.md
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -73,7 +73,7 @@ Store numbers in detail (S8): of 22 rows, every claim that the current fixtures
+ | what | result | source |
+ |---|---|---|
+ | 4 CC0 builders, `--check-determinism` | all 4 deterministic on this host. Rebuilds differ from the shipped files only in the 3 CRLF spec files plus `MANIFEST.json` and `SIGNATURE.json`, as R1 predicts. | S2  Environment: Windows 11; Python 3.10.11; NumPy 1.26.4; Pillow 12.3.0 with zlib-ng. R1 spec bytes are separate from determinism. |
+-| `build_crate_cc0.py` on Python 3.10 and 3.13 | same bytes (`df0ef71e...`) after the stack fix in PR #3 | S3  Environment: Windows 11; Python 3.10.11 and 3.13.7; NumPy 1.26.4 and 2.3.3 respectively. Both used the same corrected builder source. |
++| `build_crate_cc0.py` on Python 3.10 and 3.13 | same bytes (`df0ef71e...`) after the stack fix in PR #4 | S3  Environment: Windows 11; Python 3.10.11 and 3.13.7; NumPy 1.26.4 and 2.3.3 respectively. Both used the same corrected builder source. |
+ | `smiley.png`, `smiley-v1.werk` (hardcopy generators) | byte-identical to the committed files | S3  Environment: Windows 11; historical generator interpreter patch unrecorded. Current installed dependencies are not historical pins. |
+ | degraded scan `page-01.jpg` | byte-identical to the released original `a0631045...` | S4  Environment: Windows 11; historical Pillow and interpreter patch unrecorded. Identity applies to the retained scan and logged output. |
+ | `crate-v1.werk` and `crate-v1-damaged.werk`, rebuilt from inputs embedded in `crate-v1` | both byte-identical to the pins (`0a7a7341...`, `01348a10...`), 180 of 180 entries | S10  Environment: Windows 11; audit checkout 6d547d0; embedded CRLF spec; original embedded assets. Historical interpreter patch unrecorded. |
+@@ -126,7 +126,7 @@ The batch-2 seal added a deny rule for the config directory. The same spill-file
+ 
+ Not enforced by the seal: Python, Bash and PowerShell processes run unsandboxed on native Windows. The CLEAN classes for scripts rest on reading every command and every agent-written script.
+ 
+-The current environment locks are documented in `REPRODUCIBILITY.md` on branch `local/ledger`. Unrecorded historical versions remain unknown.
++The current environment locks are recorded by the replicator and available on request. Unrecorded historical versions remain unknown.
+ 
+ Full per-trial logs are available on request. Trial transcripts are not committed.
+ 
+@@ -162,7 +162,7 @@ These are actual differences in the evidence required or the verdict label. Thei
+ 
+ ## 7. Negative control (roundNC)
+ 
+-The pre-registered negative-control round ran the same task on FBX, glTF and USDZ files with the same crate mesh and texture (3 trials per arm, 2026-10-11). On the frozen criteria werk passed 3 of 3 and the controls 0 of 9. That gap rests on rule R5 about "the primary mesh". The value comparisons used Windows 11 and Python 3.13.7 with UTF-8 mode. With a value-exact single sub-mesh accepted, glTF and FBX also pass 3 of 3 and USDZ 1 of 3. The robust differences are verifiability (werk 1.0 cryptographic, USDZ CRC-32 only, FBX and glTF none) and the file declaring its primary mesh. Isolation: 0 violations. Details and all artifacts are in the roundNC pull request (`gauntlet/roundNC/RESULTS-NC.md`).
++The pre-registered negative-control round ran the same task on FBX, glTF and USDZ files built from the CC0 crate (3 trials per arm, 2026-10-11). The assets are not matched: the control files carry the full crate (about 4 700 vertices), the werk arm used the 272-vertex crate in `mini-v1`, and the second payload is a texture in the controls and a sound in werk. So the round is exploratory. On the frozen criteria werk passed 3 of 3 and the controls 0 of 9. That gap rests on rule R5 about "the primary mesh". The value comparisons used Windows 11 and Python 3.13.7 with UTF-8 mode. With a value-exact single sub-mesh accepted, glTF and FBX also pass 3 of 3 and USDZ 1 of 3. The robust differences are verifiability (werk 1.0 cryptographic, USDZ CRC-32 only, FBX and glTF none) and the file declaring its primary mesh. Isolation: 0 violations. Details and all artifacts are in the roundNC pull request (`gauntlet/roundNC/RESULTS-NC.md`).
+ 
+ ## 8. What remains unavailable
+ 
+-- 
+2.45.2.windows.1
+

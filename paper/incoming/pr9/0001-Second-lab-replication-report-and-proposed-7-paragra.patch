@@ -1,0 +1,292 @@
+From a96681dd8a6e538c8e8971de04025421b590e9aa Mon Sep 17 00:00:00 2001
+From: yuvraj <yuvrajpuyam@gmail.com>
+Date: Sun, 11 Oct 2026 16:59:53 -0400
+Subject: [PATCH 1/7] =?UTF-8?q?Second-lab=20replication=20report=20and=20p?=
+ =?UTF-8?q?roposed=20=C2=A77=20paragraph?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+results/SECOND-LAB-REPLICATION.md consolidates the independent
+replication on a Windows 11 host at 6d547d0: fixtures, gates, rebuilds
+from embedded inputs, 12 fresh-agent trials, the blind re-grade, the
+negative-control pointer, what remains unavailable, and open questions.
+Every number comes from a logged run; each source is dated.
+
+paper/v2/PAPER.md §7: proposed "A second laboratory" paragraph, and a
+replacement for the sentence that left external validity open. This is
+a proposal for the author to edit freely.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ paper/v2/PAPER.md                 |  61 +++++++++-
+ results/SECOND-LAB-REPLICATION.md | 185 ++++++++++++++++++++++++++++++
+ 2 files changed, 243 insertions(+), 3 deletions(-)
+ create mode 100644 results/SECOND-LAB-REPLICATION.md
+
+diff --git a/paper/v2/PAPER.md b/paper/v2/PAPER.md
+index 3e5db35..774fc07 100644
+--- a/paper/v2/PAPER.md
++++ b/paper/v2/PAPER.md
+@@ -1438,9 +1438,64 @@ the extracted bytes itself and re-runs each program in a clean directory, and
+ independent readers that share no code check each other's output. The separation
+ that makes the experiment meaningful is between implementer and measurer rather
+ than between human and machine (§10), and is enforced by isolation rather than by
+-provenance — but a reader should treat every result here as *this format,
+-measured by this laboratory*, with external validity open until someone else runs
+-the protocol end to end.
++provenance — but a reader should treat the agent results here as *this format,
++measured by this laboratory*. The gates, fixtures and committed run artifacts have
++now been re-measured by a second laboratory, which also ran 12 fresh isolated
++agent trials of its own (next paragraph). Those trials used one model family;
++external validity across implementers outside that family rests on rounds 4 to 9.
++
++**A second laboratory.** An independent replicator (Y. Puyam) re-ran the public
++parts of the protocol from a fresh clone on a separate machine (Windows 11 Home,
++Rust 1.98.0 MSVC, Python 3.10 and 3.13, Blender 4.2.1 LTS), with no access to
++this laboratory's environment. *Fixtures.* All six Table 17 fixtures, the three
++experiment packages (`mini-v1`, `selfrun-v1`, `smiley-v1`) and the eight CC0
++fixtures matched their published SHA-256 values. All four CC0 builders were
++deterministic on that host; their rebuilds differed from the shipped files only
++in the three spec files with historical CRLF line endings, plus the manifest and
++signature that record them (ruling R1). Three packages went further and rebuilt
++byte for byte from the inputs they embed: `crate-v1` and its damaged twin (180 of
++180 entries), and `ista-varun-v1` (77 of 77, with three stated substitutions), so
++the Gate 9 builder clause that R3 scopes to this laboratory is reproducible from
++the package. `gsplat-v1`, rebuilt from its embedded source, matched in 71 of 83
++entries, including both payloads; the other 12 differ in the R1 spec snapshot,
++the manifest and signature, and recorded host metadata. *Gates.* Golden fixture
++10 PASS, 0 FAIL. Retarget 23 PASS, the UE-rig clauses skipped (non-redistributable
++source). Image profile 14 PASS. Splat 15 PASS, including byte-identical
++self-regeneration from the package's own embedded tools. Enrichment pipeline 19
++PASS on in-repository inputs. Blender adapter 20 PASS, 0 FAIL, 0 SKIP. Unreal
++engine-free core 10 PASS. Public CC0 gates 14, 9 and 8 PASS. Store suite 58
++passed, one skipped (private corpus). Every FAIL on that machine had one of two
++causes: the host's application-control policy blocking freshly built unsigned
++executables, or a clause whose input only this laboratory holds. *Experiment
++artifacts.* The hardcopy generators reproduced `smiley-v1.werk`, `smiley.png` and
++the degraded scan `page-01.jpg` byte for byte, and the control decoder recovered
++the package with 0 of 4096 pixels different on both arms. A blind re-grade wrote
++its criteria from the task prompts and grader source before reading any
++published verdict, then re-executed every committed program it could in a clean
++directory. It agreed with 30 of 39 published verdicts. Six of the nine
++disagreements are a criteria difference: the published grade scores extracted
++bytes, while the stricter reading also scores the listing and per-file
++verification clauses of the task sentence. One is a grader limitation (exact
++colours printed as fractions of 255 instead of integers), and two are
++host-dependent. *Agents.* The second laboratory ran 12 fresh agent trials (Claude
++Code CLI, `claude-opus-5-5`), each in an empty directory holding only the fixture,
++graded by artifact and re-run in a clean directory. Round-1 task: 7 of 7 passed
++(1 on `crate-tex-v1`, 3 on `mini-v1`, 3 on the pinned `crate-v1` with the round-1
++sentence verbatim), with mesh and sound byte-exact in every run. Envelope task on
++`mini-v1`: 3 of 3 decoded every value exactly. Splat task on `gsplat-v1`: 2 of 2,
++with positions and colours matching the fixture on all 281 498 points. No run
++executed or ported a bundled reader. One early run read back its own spilled tool
++output from the harness's configuration directory (outside its workspace, but
++holding only package text); the later trials were sealed, and three equivalent
++attempts were then blocked. Independently, all four agents in the first batch
++found the stale `input_hash` the fixture actually carries, and the runs exposed an
++unspecified case (a `requires` edge to an absent node) on which they chose four
++different behaviours. A pre-registered negative control in the same harness
++(FBX, glTF and USDZ files carrying the same crate) separated werk from the
++controls on its frozen pass rate only through the rule that defines "the primary
++mesh"; with a value-exact single sub-mesh accepted, glTF and FBX also passed 3 of
++3, and the robust differences were verifiability and the file declaring its own
++primary mesh.
+ 
+ ---
+ 
+diff --git a/results/SECOND-LAB-REPLICATION.md b/results/SECOND-LAB-REPLICATION.md
+new file mode 100644
+index 0000000..dbe850f
+--- /dev/null
++++ b/results/SECOND-LAB-REPLICATION.md
+@@ -0,0 +1,185 @@
++# Second-lab replication of werk
++
++Replicator: Yuvraj Puyam, working independently of the author's laboratory.
++Period: 2026-08-25 to 2026-10-11.
++Status: consolidated report. Every number below comes from a logged run. Each section names its source and the source's date.
++
++Summary: on a separate Windows 11 machine, every gate clause that public data can drive passed, unless the host's application-control policy blocked an executable. Three fixtures rebuilt byte-identically from inputs that the packages themselves embed. 12 of 12 fresh agent trials passed. Every FAIL on this host came from the application-control policy or from data only the author holds.
++
++## 1. Setup
++
++| item | value |
++|---|---|
++| host | Windows 11 Home 10.0.26200, Smart App Control ON (by decision) |
++| repo | `cronos3k/werk` at `6d547d0`. The first checks (2026-08-25) ran at `cbe7cb1`. The Stage 2 gate, `store/` and `paper/` did not change between the two commits. |
++| Rust | 1.98.0 (stable, MSVC) |
++| C/C++ | MSVC 19.44; MinGW present |
++| Python | 3.10.11, 3.13, 3.14.0; numpy 1.26.4; Pillow 12.3.0 (py3.10) and 11.3.0 (py3.13) |
++| other | Blender 4.2.1 LTS; Git 2.51.0 |
++| access | No access to the author's machines, private drives or environment. Fixtures came from the repo and the `fixtures-v1` release. |
++
++Sources (all logged by the replicator):
++
++| id | source | date |
++|---|---|---|
++| S1 | independent verification report (fresh clone, Stage 2, store, first agent trial) | 2026-08-25 |
++| S2 | CC0 gate replication | 2026-09-22 |
++| S3 | replication log | 2026-09-27 |
++| S4 | replication log (released fixtures, gates A, 6, 9, 12) | 2026-09-30 |
++| S5 | paper numbers check | 2026-10-05 |
++| S6 | fresh-agent trials, batch 1, grading and isolation audit | 2026-10-05 |
++| S7 | blind re-grade, comparison with published verdicts | 2026-10-05, updated by S10 |
++| S8 | store measurements | 2026-10-06 |
++| S9 | fresh-agent trials, batch 2 (sealed), grading and isolation audit | 2026-10-07 |
++| S10 | audit of "unavailable" inputs | 2026-10-11 |
++| S11 | `gsplat-v1` rebuild from its embedded source | 2026-10-11 |
++
++## 2. Fixtures
++
++| check | result | source |
++|---|---|---|
++| 6 fixtures of Table 17 (`fixtures-v1` release) | all sha256 equal to the pins | S4, S5 |
++| 3 experiment packages (`mini-v1`, `selfrun-v1`, `smiley-v1`) | equal to the pins | S5 |
++| 8 CC0 fixtures | equal to `fixtures/CC0-FIXTURES.md` | S2 |
++| spec fingerprint of the six Table 17 fixtures | `3984a555...` (historical CRLF value, ruling R1) | S5 |
++| spec fingerprint of the LF checkout and of every LF rebuild | `5f43e398...` (canonical, R1) | S2, S5 |
++| `tools/fetch_fixtures.py --check` | "All fixtures present and verified." | S4 |
++
++## 3. Gates
++
++| gate | second lab | paper (author lab) | why they differ | source |
++|---|---|---|---|---|
++| Stage 2, `run_gate.py` (reference core, three faces) | 9 PASS, 2 FAIL | 11 PASS, 0 FAIL, 1 SKIP | Both FAILs: Smart App Control blocked fresh unsigned test executables (`os error 4551`). Cargo printed "19 passed, 0 failed" before the block. The SKIP row exists only on a host where MinGW gcc fails silently. | S1, S5 |
++| Store suite, `pytest store/tests` | 58 passed, 1 skipped | 59 passed | The skipped test needs the private production corpus. | S1, S8 |
++| Spec examples, `make-examples.py` then `git diff` | clean (byte-identical) | n/a | | S1 |
++| `run_gate_cc0_public.py` | 14 PASS, 0 FAIL, 0 SKIP | 14 | | S2 |
++| `run_gate_cc0_image.py` | 9 PASS, 0 FAIL, 0 SKIP | 9 | | S2 |
++| `run_gate_cc0_gsplat.py` | 8 PASS, 0 FAIL, 0 SKIP | 8 | | S2 |
++| Gate A, `run_gate_a.py` (golden fixture) | 10 PASS, 0 FAIL, 0 SKIP | 9 PASS (Table 11) | The gate has 10 clauses. The paper's ledger also says 10. Table 11 is stale. | S4, S5 |
++| Gate 6, `run_gate_6.py` (retarget) | 23 PASS, 0 FAIL, 1 SKIP | 34 PASS | The UE mannequin rig is not redistributable. Without it the gate has 24 rows by its own arithmetic. | S4, S5 |
++| Gate 9, `run_gate_9.py` (image profile) | 14 PASS, 0 FAIL, 1 SKIP | 15 PASS | The SKIP is the builder clause (R3, author lab). Section 4 shows that this rebuild is reproducible from the package. | S4, S10 |
++| Gate 12, `run_gate_12.py` (splat) | 15 PASS, 2 FAIL, 1 SKIP | 18 PASS | FAIL 1: Smart App Control on `werk_read.c`. FAIL 2: the rebuild clause needs a private source path. SKIP: the private INRIA PLY. The self-regeneration clause PASSES. | S4 |
++| Gate 3B (enrichment pipeline) | 19 PASS, 0 FAIL, 0 WARN | 19 PASS | Ran on 3 in-repo inputs. One is exact, one matches on geometry only, one is a stand-in (section 7). | S10 |
++| Blender adapter, `adapters/blender/test_gate.py` | 20 PASS, 0 FAIL, 0 SKIP, 5.3 s | 20 PASS, 6.3 s | | S10 |
++| Unreal engine-free core, `werk_gate_main.cpp` | 10 PASS, 0 FAIL, 0.269 s | 10 PASS, 0.31 s | Built with MSVC 19.44 and the exact `cl` line of `build_gate.bat`. | S10 |
++| Store CDC, `measure_gate_cdc.py` | edited 9.71 MiB package synced with 3.5887 % of its bytes; far side byte-exact | 3.63 % | The paper's value predates the fixture rebuild. The bytes moved are about the same. The denominator grew. | S4, S8 |
++
++Store numbers in detail (S8): of 22 rows, every claim that the current fixtures can test is MATCH or EXPLAINED by the fixture rebuild. The real-corpus numbers (1.9970x, 0.2404 %, 0.27 %) were not measured, because the corpus is not distributed. One label is stale: `NUMBERS.md` calls Table 16 "Table 13".
++
++## 4. Rebuilds
++
++| what | result | source |
++|---|---|---|
++| 4 CC0 builders, `--check-determinism` | all 4 deterministic on this host. Rebuilds differ from the shipped files only in the 3 CRLF spec files plus `MANIFEST.json` and `SIGNATURE.json`, as R1 predicts. | S2 |
++| `build_crate_cc0.py` on Python 3.10 and 3.13 | same bytes (`df0ef71e...`) after the stack fix in PR #3 | S3 |
++| `smiley.png`, `smiley-v1.werk` (hardcopy generators) | byte-identical to the committed files | S3 |
++| degraded scan `page-01.jpg` | byte-identical to the released original `a0631045...` | S4 |
++| `crate-v1.werk` and `crate-v1-damaged.werk`, rebuilt from inputs embedded in `crate-v1` | both byte-identical to the pins (`0a7a7341...`, `01348a10...`), 180 of 180 entries | S10 |
++| `ista-varun-v1.werk`, rebuilt from inputs embedded in the package | byte-identical to the pin `923ab39f...`, 77 of 77 entries, with three stated substitutions: a reconstructed database row (only its prompt is used), the evidence file taken from the package, and PNG deflate with stock zlib | S10 |
++| `gsplat-v1.werk`, rebuilt from its embedded `recipe/inputs/plush.splat` | 71 of 83 entries identical, including `splats/plush.wkgs`, `points/plush-dc.wkpc` and the source. The other 12 differ in the R1 CRLF spec snapshot, plus `MANIFEST.json`/`SIGNATURE.json` and recorded host metadata such as `runtime_version`. | S11 |
++| `crate-tex-v1.werk` (Blender) | 62 of 67 entries identical, including all 3 textures. Whole-file identity is impossible by design: the manifest carries a wall-clock `created`. | S10 |
++| Round 5 (open weights): cold re-run of the 6 committed programs | all 6 verdicts reproduced (4 PASS, 2 FAIL) | S3 |
++| Hardcopy control, `verify_roundtrip.py` | PASS on both arms, 0 of 4096 pixels different | S3 |
++
++## 5. Fresh-agent trials
++
++Each trial gave a fresh agent an empty directory with only the fixture and the task prompt. Grading was by artifact: the replicator re-ran each final program in a clean directory and hashed the outputs independently.
++
++### 5.1 Results
++
++| task | fixture | trials | strict verdict | source |
++|---|---|---|---|---|
++| round 1 | `crate-tex-v1` | 1 | 1 PASS | S1 |
++| round 1 | `mini-v1` | 3 | 3 PASS | S6 |
++| round 1 | `crate-v1` (pinned, round-1 sentence verbatim) | 3 | 3 PASS | S9 |
++| envelope | `mini-v1` | 3 (1 in batch 1, 2 in batch 2) | 3 PASS, all values decoded exactly | S6, S9 |
++| gsplat | `gsplat-v1` | 2 | 2 PASS; positions and colours match on all 281 498 points | S9 |
++| **all** | | **12** | **12 PASS** | |
++
++Round 1 is 7 of 7. Mesh and sound were byte-exact in every round-1 run.
++
++| detail | value | source |
++|---|---|---|
++| model | `claude-opus-5-5` in batches 1 and 2 (Claude Code 2.1.290 and 2.1.292). One model family across all 12 trials. | S6, S9 |
++| bundled readers executed or ported | 0 of 12 | S1, S6, S9 |
++| web requests | 0 | S6, S9 |
++| cost and wall clock, batch 1 (4 trials) | $10.43, 1465.0 s | S6 |
++| cost and wall clock, batch 2 (7 trials) | $18.333, 2643.6 s | S9 |
++| known fixture defect found without being told | stale `input_hash` on `rest-poses` (S-DS-7), 4 of 4 in batch 1 | S6 |
++| unspecified case exposed | a `requires` edge to an absent node; 6 runs on `mini-v1` showed 4 different behaviours | S9 |
++
++Stated limits (from S6 and S9): n is small; one model and one vendor; prior knowledge of zip, glTF and 3DGS is constrained, not ruled out; the envelope count is echoable from an in-file hex dump (S-DS-8), the per-entry floats are not. The `crate-tex-v1` trial (S1) had one harness interruption and was resumed.
++
++### 5.2 Isolation
++
++| batch | harness | CLEAN | ATTEMPTED-BUT-BLOCKED | VIOLATION | source |
++|---|---|---:|---:|---:|---|
++| first trial (`crate-tex-v1`) | unsealed | not classified | | | S1 |
++| batch 1 (4 trials) | unsealed, user config | 3 | 0 | 1 (technical) | S6 |
++| batch 2 (7 trials) | sealed: own config dir, read block, deny rules, no MCP | 4 | 3 | 0 | S9 |
++
++The batch-1 violation (r1-t3): the agent read two harness spill files outside its workspace. Claude Code had saved the agent's own oversized tool output there. The content was text from inside the package, so no outside information entered the run. It still counts as a violation by the letter of the constraint.
++
++The batch-2 seal added a deny rule for the config directory. The same spill-file read happened 3 times and was denied each time. The seal check before the batch confirmed that the probes were denied.
++
++Not enforced by the seal: Python, Bash and PowerShell processes run unsandboxed on native Windows. The CLEAN classes for scripts rest on reading every command and every agent-written script.
++
++Full per-trial logs are available on request. Trial transcripts are not committed.
++
++## 6. Blind re-grade
++
++The replicator wrote grading criteria from the task prompts and grader source first. Only then were the published verdicts read. Every committed program that could run was re-executed in a clean directory.
++
++| measure | count | source |
++|---|---:|---|
++| runs graded | 39 | S7, S10 |
++| agree | 30 | S7, S10 |
++| mismatch | 9 | S7 |
++| discarded by protocol, graded by neither side | 5 | S7 |
++
++The S10 audit made the two round-2 runs gradeable (the prompt is quoted verbatim in `gauntlet/RESULTS.md`). Both programs PASS on the current fixture, which is a substitute for the original build. Both agree with the published verdict.
++
++| mismatch cause | runs |
++|---|---:|
++| criteria: the published open-weights grade scores extracted bytes only; the stricter reading also scores the node listing and verification of every declared hash | 4 |
++| labelling: the same failure is PARTIAL in one published record and FAIL in another | 1 |
++| criteria: answer-key contamination (S-DS-8) | 1 |
++| grader: the colour test checks a storage form, not a value (S-DS-6) | 1 |
++| host-dependent | 2 |
++| genuine disagreement on the agent's work | 0 |
++
++In the four criteria cases, the extracted bytes are exact. The difference is only the listing and full-verification clauses.
++
++## 7. Negative control (roundNC)
++
++The pre-registered negative-control round ran the same task on FBX, glTF and USDZ files with the same crate mesh and texture (3 trials per arm, 2026-10-11). On the frozen criteria werk passed 3 of 3 and the controls 0 of 9. That gap rests on rule R5 about "the primary mesh". With a value-exact single sub-mesh accepted, glTF and FBX also pass 3 of 3 and USDZ 1 of 3. The robust differences are verifiability (werk 1.0 cryptographic, USDZ CRC-32 only, FBX and glTF none) and the file declaring its primary mesh. Isolation: 0 violations. Details and all artifacts are in the roundNC pull request (`gauntlet/roundNC/RESULTS-NC.md`).
++
++## 8. What remains unavailable
++
++| item | why | could it be closed? | source |
++|---|---|---|---|
++| Gate 12 INRIA PLY ingest (`marble-cellar.ply`) and the §3.2 quaternion statistics | not in any package, the repo or git | the author could ship the PLY or a declared crop | S10 |
++| Gate 6 UE mannequin export; Unreal round trip (16) and live editor (6) | Epic content, not redistributable; needs UE 5.7 | a UE 5.7 install (60 to 115 GB); the recorded export hash would then check the result | S10 |
++| store real-corpus numbers and the 59th store test | private production corpus | only the author | S8, S10 |
++| CUB game-engine gate | author lab only (R2); no CUB code in the repo | no | S10 |
++| older fixture builds (pre-fix `mini-v1`, XV-era `crate-v1` and `gsplat-v1`, round-2 `ista-varun` builds) | not in git or on disk; their spec tree is older than the first commit | only the author | S10 |
++| Gate 3B lantern input | Khronos sample asset, not in the repo | a download (needs permission) | S10 |
++| Gate 3B wooden-crate textures | the 2k JPEGs are not in the repo | a download | S10 |
++| self-run kimi rebuild, gcc recipe leg | no mingw gcc on this host; the MSVC build reproduces both vectors | an MSYS2 install | S10 |
++| self-run and hardcopy agent arms | not run; all inputs are present and pinned | yes, by launching agents | S10 |
++| Smart App Control clauses (Stage 2 cargo steps, Gate 12 `werk_read.c`) | host policy | another host, or SAC off | S1, S4 |
++
++## 9. Open questions for the author
++
++| # | question | source |
++|---|---|---|
++| 1 | Is the published grade "payload bytes" only, or every clause of the task sentence (listing, verify every declared hash)? Four open-weights verdicts change with the answer. | S7 |
++| 2 | Ruling R3 says the Gate 9 builder clause is author-lab only. `ista-varun-v1` rebuilds byte-identically from what it embeds. Should R3 be narrowed? The same holds for the Gate A `--rebuild` path on `crate-v1`. | S10 |
++| 3 | `ista-varun-v1` previews need a stock-zlib Pillow; the CC0 image pin (Pillow 12.3.0) uses zlib-ng. One environment cannot rebuild both. Which environment is canonical? | S10 |
++| 4 | Gate 12 records FAIL for a missing private source, while Gate 9 records SKIP for the same case. Should Gate 12 SKIP as author lab? | S4 |
++| 5 | Gate A crashed with an uncaught `OSError` instead of recording a FAIL when the host blocked an executable. The same `run()` pattern is in Gates 9 and 12. Should the gates record the FAIL and continue? | S4 |
++| 6 | A `requires` edge to an absent (not dead) node is undefined in SPEC §5. Readers chose 4 different behaviours. Which is correct? | S9 |
++| 7 | For files that declare no primary mesh, should roundNC report a second PASS-rate row (amendment A1)? | roundNC |
++| 8 | Table 11 still says Gate A "9 PASS"; §6.1 quotes the first-edition synthetic fixture (413 741 B, 26 files; committed: 684 925 B, 35 files). See also the open `fix/paper-corrections` branch. | S5 |
++| 9 | Should the store real-corpus numbers be marked single-host, since the corpus is not distributed? | S8 |
++| 10 | Can the older fixture builds or the INRIA PLY be published, so that those rows can be replicated? | S10 |
+-- 
+2.45.2.windows.1
+
