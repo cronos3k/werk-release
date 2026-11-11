@@ -6,7 +6,7 @@ UNAVAILABLE means the evidence cannot support an independent rerun. It is not an
 The original verdict remains unchanged in every ledger row. Current substitutes never establish historical-input equality.
 
 The revised mesh scorer verifies resolved primary bytes. Full-task decisions also require listing and declared-hash verification.
-PARTIAL preserves a correct mesh or missing non-extraction clauses. The source criteria are in `<second-lab>/blind-regrade/CRITERIA.md`.
+PARTIAL preserves a correct mesh or missing non-extraction clauses. The source criteria are in [criteria-2026-10-05.md](criteria-2026-10-05.md). The rules are in [rubric.md](rubric.md).
 Envelope decisions compare the two stored records, rather than counts alone. Seven splat decisions reuse the existing full-task report.
 Hardcopy decisions use actual recovered bytes. Six diagnostic checks remain separate from the recovery verdict.
 The self-run scorer now supplies only model data and tokenizer data. It does not supply expected output files.

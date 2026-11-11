@@ -55,7 +55,7 @@ The ledger stores intact extractions by exact byte identity and unchanged foreig
 | author/round2/python | labelled current-fixture substitute | 1 | yes | no | 2 | 1 | yes | no |
 | author/round2/rust | labelled current-fixture substitute | 0 | yes | no | 2 | 0 | yes | no |
 | author/round3/splat | not rerun | unavailable | unknown or not applicable | unknown or not applicable | not applicable | unavailable | unknown or not applicable | unknown or not applicable |
-| author/roundXV/openai | labelled current-fixture substitute | 1 | no | no | 1 | 1 | no | no |
+| author/roundXV/openai | labelled current-fixture substitute | 1 | yes (corrected 2026-11-11) | no | 1 | 1 | yes (corrected 2026-11-11) | no |
 | author/roundXV/openai-gsplat | labelled current-fixture substitute | 1 | no | no | 0 | 1 | no | no |
 | author/roundXV/moonshot | labelled current-fixture substitute | 2 | yes | no | 1 | 2 | yes | no |
 | author/roundXV/moonshot-gsplat | labelled current-fixture substitute | 0 | yes | no | 0 | 0 | yes | no |

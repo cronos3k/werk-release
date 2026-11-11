@@ -1,8 +1,5 @@
 # Second-lab evidence
 
-> **Exploratory data.** Read [EXPLORATORY.md](EXPLORATORY.md) first: where these
-> files came from, the path mapping, and the provisional rulings on how to read them.
-
 This folder holds the evidence from an independent second lab.
 The core is an attempt ledger: one row per agent attempt, across both labs.
 "Author" rows are the original rounds. "Second" rows are the second-lab trials.
@@ -39,6 +36,7 @@ Each line of [ledger/attempts.jsonl](ledger/attempts.jsonl) is one JSON object.
 | [audits/attempt-inventory.md](audits/attempt-inventory.md) | Ledger size, hash checks and count checks |
 | [audits/hash-and-count-check.json](audits/hash-and-count-check.json) | Checker output from the original host |
 | [audits/regrade.md](audits/regrade.md) | The re-grade of all 68 retained attempts |
+| [audits/rubric.md](audits/rubric.md) | The scoring rubric behind every changed verdict, with a checker that re-derives the round-1 verdicts |
 | [audits/damage-probes.md](audits/damage-probes.md) | One-byte damage probes on each retained program |
 | [audits/damage-evidence.json](audits/damage-evidence.json) | Per-attempt damage probe data |
 | [audits/gate-coverage.md](audits/gate-coverage.md) | Summary of the clause coverage table |
