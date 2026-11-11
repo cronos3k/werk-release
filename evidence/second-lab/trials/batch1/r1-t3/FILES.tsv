@@ -1,0 +1,8 @@
+path	bytes	sha256_original	status	sha256_committed
+REPORT.md	12071	176f6b70f8fdf7c614690cc162f792de20fb74b7994a5d4029543fa13ab0e0af	copied, rebuilt from the session log	
+tools/cat.py	196	766b3346322dcf3cd04cab6ed8cfa1636db578a6ec843f72583754eb5ba59417	copied, rebuilt from the session log	
+tools/ihash_diag.py	591	7b110f0b2b02bd18dbe75da4f196a6ae76f4f2e5b49044ef4faba5f8f8f7c994	copied, rebuilt from the session log	
+tools/ls.py	268	5c1c054f277e644ce57c52d0b64f8b3a46f21a5dcd16a58006956854cea2df6c	copied, rebuilt from the session log	
+tools/peek.py	406	a0b9fce215f37dff5b77ff2400eb9c03b92605661b82af1d0fa41ea0e2ccd33d	copied, rebuilt from the session log	
+tools/zgrep.py	546	6dc624fa1f07dc3a725fc6a3cea57ca3c4005b7cd2d29d2422207f33d135693f	copied, rebuilt from the session log	
+werk_reader.py	39429	aaf8eb9940e6297ba9a2e6af3410fa8c077fd966c6396d5c95de1bb014154371	copied, rebuilt from the session log	

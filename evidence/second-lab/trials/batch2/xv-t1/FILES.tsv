@@ -1,0 +1,27 @@
+path	bytes	sha256_original	status	sha256_committed
+REPORT.md	16152	aff4b7d840d4e7fd6b0f5130915f3ab59b2a8deed7f2ff3f39de10358030804d	copied	
+TIMING.txt	27	372a7cd5dd6ea61b083a08dc98e2ad96f7351f1852feb525a0b77f4e3efa330f	copied	
+__pycache__/werk_open.cpython-314.pyc	51042	30c3e2b6a9b3a2ab5e6c2a424fa2a112bc91f6a9dc8068899fa1260cf580a697	skipped: Python bytecode	
+claude-result.json	7037	e125358a33a2b7b2fc7e9e273539f36cd612081e0dca7fc207b0fb36d673c09d	copied, local paths replaced	0b387389bf5da66fadc2c1f8f06df399be514585e544fd5dd5ec36cafc31a958
+claude-stderr.log	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	copied	
+crate-v1.werk	13684477	0a7a7341d5d508c75925a8c3be0b6c8ccdcced607d9bdd0b26f04e264f029106	not copied: identical to fixture crate-v1.werk	
+damage-tests/glb-flip.werk	13684477	e47764c2a8ce4c7cb5269d0b0f0c5ab339973577a4518e3dc5f42b872590e91f	not copied: larger than 1 MB, regenerate with the program	
+damage-tests/manifest-flip.werk	13684477	681ef1af1b91883a8723505c81dbc68787603751282b798c68d07fbd6de61b09	not copied: larger than 1 MB, regenerate with the program	
+damage-tests/out-glb-flip.werk/audio/sfx/crate-impact-hard-surface.wav	17644	1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e	not copied: identical to package entry crate-v1.werk:audio/sfx/crate-impact-hard-surface.wav	
+damage-tests/out-manifest-flip.werk/audio/sfx/crate-impact-hard-surface.wav	17644	1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e	not copied: identical to package entry crate-v1.werk:audio/sfx/crate-impact-hard-surface.wav	
+damage-tests/out-manifest-flip.werk/geometry/game.glb	16736	eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce	not copied: identical to package entry crate-v1.werk:geometry/game.glb	
+damage-tests/out-wav-flip.werk/geometry/game.glb	16736	eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce	not copied: identical to package entry crate-v1.werk:geometry/game.glb	
+damage-tests/wav-flip.werk	13684477	ba7f9724bebb85ab31c5f6ca26181f1bc3359d1c6f58ef699b6f7cd7e844d62b	not copied: larger than 1 MB, regenerate with the program	
+extracted/audio/sfx/crate-impact-hard-surface.wav	17644	1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e	not copied: identical to package entry crate-v1.werk:audio/sfx/crate-impact-hard-surface.wav	
+extracted/geometry/game.glb	16736	eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce	not copied: identical to package entry crate-v1.werk:geometry/game.glb	
+run-output.txt	28843	ead3180a250bb54942c25bb89a90475ad387dc163b3c0348e0faad290e23eec9	copied, local paths replaced	477a336fa5acbafc53625d17a8b9d62a18b307379c56a4039f9696a4212e1f91
+tools/cat.py	512	dfbcf106b0f7a3b7c7b74b908993bcfd5adb1ac22035f7ff0dc74df5e91b3072	copied	
+tools/grepm.py	529	0adaeb6319f9bd93b6fd28d9fd8ef61cfebea4ade3c6e22593430304acb9079c	copied	
+tools/heads.py	308	d553cc0b224e177f2dde89102429ae540f4922052dad93e4113c7fbacc3eb54c	copied	
+tools/mannotes.py	504	2b4caa81557acb04d0cd1765f237c5523c325d2e0b45ed035f8d1c58ca86c117	copied	
+tools/mansum.py	908	3097596305115957b056dfbbeeeef08488351ce1076c2f3b5f5c38a536adfb83	copied	
+tools/peek.py	447	e453552f08637e59b827862292af22806350a08738f4baa4fbf616c6c2096149	copied	
+tools/runlog.py	467	0e8a719550dea994b9e14e19c70f1506ea77ee6a8d47b23a3b36b75d13fad58b	copied	
+tools/selftest.py	1944	521a5d5288d88d0de659c403f31acfd9f204f858072eb6ee626e53fa3715186e	copied	
+tools/ziplist.py	306	8473307fda41fd0594e1be7578117f56f70a2dfdba73a21a6ea267f1c3f1fd5c	copied	
+werk_open.py	34095	293653a83c16ba099ed5a43b68b6e2d36281a4d0ea02b3abbb90650c00425e88	copied	

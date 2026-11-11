@@ -26,6 +26,7 @@ Each line of [ledger/attempts.jsonl](ledger/attempts.jsonl) is one JSON object.
 |---|---|
 | [ledger/](ledger/) | The attempt ledger, its schema, the fixture inventory, the count mappings and the checker |
 | [audits/](audits/) | Short notes and data for each audit step (see below) |
+| [trials/](trials/) | Programs, reports and outputs of the 11 retained second-lab trials, with a checker that re-runs them |
 | [locks/](locks/) | Environment pins: installed packages, interpreters, the Cargo lock and per-builder sources |
 | [clause-coverage.md](clause-coverage.md) | One row per gate clause, with its input basis and evidence |
 | [reproducibility.md](reproducibility.md) | Which environment each exact-byte claim needs |

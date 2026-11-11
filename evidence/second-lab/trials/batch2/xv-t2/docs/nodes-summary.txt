@@ -1,0 +1,336 @@
+top keys: ['werk', 'profile', 'entity', 'conventions', 'container', 'primary', 'license', 'spec_sha256', 'conventions_map', 'schemas', 'layouts', 'parts', 'materials', 'nodes']
+werk = {"major": 1, "minor": 0}
+profile = "3d-entity/1"
+container = {"form": "zip", "zip_compression": "store", "entry_order": ["MANIFEST.json", "SIGNATURE.json", "LICENSE", "README.txt", "loaders/", "spec/", "semantics/", "audio/sfx/crate-impact-hard-surface.wav", "materials/", "physics/", "properties/", "provenance/", "geometry/", "audio/", "x/"], "preview_prefix_
+primary = {"mesh": "geom-game", "sound": "audio-crate-impact-hard-surface"}
+license = {"spdx_id": "CC-BY-4.0", "file": "LICENSE", "sha256": "5cf4c8595ca919f21c891d41cb5391c389c188206f705bb01bbc746f10990c53"}
+spec_sha256 = "3984a5550b8a4be95501c37544d36b90ac2f3834bdddf8007597a41405450ebd"
+conventions_map = "spec/conventions-map.json"
+layouts = {}
+
+== geom-source  [core.geom.source] active=1 part=crate edges=[]
+   v1 authored producer={'tool': 'splat-foley', 'version': '0.4'} {}
+   note: The mesh exactly as the splat-foley run produced it: positions, u8 vertex colours, no normals. Kept verbatim because it is the anchor every derivation is checked against, and a rewritten source is not
+     - geometry/source.glb 10192 role=None []
+
+== geom-game  [core.geom.game] active=1 part=crate edges=[('geom-source', 'enhances', 'derived-from')]
+   v1 measured producer={'tool': 'fixtures/build_golden.py', 'version': '1'} {"input_files": ["geometry/source.glb"], "input_hash": "a2abdc62912ecc7bd690517a3e4853a48e36131c6947195e052a99c099859311", "input_params": {}}
+   note: Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPEC 3.10 requires NORMAL and requires COLOR_0 to be linear.
+     - geometry/game.glb 16736 role=None []
+
+== material-wood  [core.material] active=1 part=crate edges=[('geom-game', 'enhances', 'shades')]
+   v1 authored producer={'tool': 'fixtures/build_golden.py', 'version': '1'} {}
+   note: Authored PBR parameters for the crate's only material.
+     - materials/wood.json 525 role=None []
+
+== bounds  [core.phys.bounds] active=1 part=crate edges=[('geom-game', 'requires', 'bounds-of')]
+   v1 measured producer={'tool': 'fixtures/build_golden.py', 'version': '1'} {"input_files": ["geometry/game.glb"], "input_hash": "0b7c2f932e5ee71497ba7c7384a63a2312d2f1441f3e7718d84ab1696ec9d2f4", "input_params": {}}
+   note: Measured bounds for culling, placement and LOD selection maths.
+     - physics/bounds.json 654 role=None []
+
+== evidence-views  [x.splat-foley.views] active=1 part=None edges=[('geom-source', 'enhances', 'rendered-from')]
+   meta keys: ['count', 'images', 'why']
+   v1 measured producer={'tool': 'splat-foley', 'version': '0.4'} {"input_files": ["geometry/source.glb"], "input_hash": "a2abdc62912ecc7bd690517a3e4853a48e36131c6947195e052a99c099859311", "input_params": {}}
+   note: Six orbit views rendered from the source mesh. They are the pixels the vision model actually saw, kept so the inferred description can be audited rather than trusted.
+     - x/splat-foley/views/view_00.png 38511 role=view []
+     - x/splat-foley/views/view_01.png 17858 role=view []
+     - x/splat-foley/views/view_02.png 43078 role=view []
+     - x/splat-foley/views/view_03.png 37718 role=view []
+     - x/splat-foley/views/view_04.png 18703 role=view []
+     - x/splat-foley/views/view_05.png 42934 role=view []
+
+== evidence-segments  [x.splat-foley.segments] active=1 part=None edges=[('evidence-views', 'requires', 'cropped-from')]
+   meta keys: ['count', 'images']
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'segment-anything'} {"input_files": ["x/splat-foley/views/view_00.png", "x/splat-foley/views/view_01.png", "x/splat-foley/views/view_02.png", "x/splat-foley/views/view_03.png", "x/splat-foley/views/view_04.png", "x/splat-foley/views/view_05.png"], "input_hash": "4c5df9d
+   note: SAM segment crops: the sub-object regions the description and the sound plan were derived from.
+     - x/splat-foley/segments/seg_00.png 37183 role=crop []
+     - x/splat-foley/segments/seg_01.png 2198 role=crop []
+     - x/splat-foley/segments/seg_02.png 40526 role=crop []
+     - x/splat-foley/segments/seg_03.png 2390 role=crop []
+     - x/splat-foley/segments/seg_04.png 2493 role=crop []
+     - x/splat-foley/segments/seg_05.png 1912 role=crop []
+     - x/splat-foley/segments/seg_06.png 1992 role=crop []
+     - x/splat-foley/segments/seg_07.png 2959 role=crop []
+     - x/splat-foley/segments/seg_08.png 17851 role=crop []
+     - x/splat-foley/segments/seg_09.png 2683 role=crop []
+
+== audio-package  [core.audio.package] active=1 part=crate edges=[('evidence-views', 'enhances', 'described-from'), ('geom-game', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'qwen2.5-vl-7b-instruct'} {"input_files": ["x/splat-foley/views/view_00.png", "x/splat-foley/views/view_01.png", "x/splat-foley/views/view_02.png", "x/splat-foley/views/view_03.png", "x/splat-foley/views/view_04.png", "x/splat-foley/views/view_05.png"], "input_hash": "4c5df9d
+   note: The sound world index: what was described, what was planned, which takes exist and which gate scores they earned - including the ones that were rolled back.
+     - audio/package.json 44158 role=None []
+
+== audio-crate-dragged-rough-concrete  [core.audio.effect] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.5789, "payload_file": "audio/sfx/crate-dragged-rough-concrete.wav"}
+   note: Sound for 'wooden crate': dragged across rough concrete. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-dragged-rough-concrete.json 2028 role=descriptor ['media_type']
+     - audio/sfx/crate-dragged-rough-concrete.wav 192044 role=best ['media_type']
+     - audio/sfx/crate-dragged-rough-concrete.var2.wav 192044 role=variation ['media_type']
+     - audio/sfx/crate-dragged-rough-concrete.var3.wav 192044 role=variation ['media_type']
+
+== audio-crate-impact-hard-surface  [core.audio.effect] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.4016, "payload_file": "audio/sfx/crate-impact-hard-surface.wav"}
+   note: Sound for 'wooden crate': hit by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-impact-hard-surface.json 1783 role=descriptor ['media_type']
+     - audio/sfx/crate-impact-hard-surface.wav 17644 role=best ['media_type']
+     - audio/sfx/crate-impact-hard-surface.raw.wav 96044 role=raw ['media_type']
+     - audio/sfx/crate-impact-hard-surface.var2.wav 96044 role=variation ['media_type']
+     - audio/sfx/crate-impact-hard-surface.var3.wav 96044 role=variation ['media_type']
+
+== audio-crate-kicked-hard  [core.audio.effect] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.3324, "payload_file": "audio/sfx/crate-kicked-hard.wav"}
+   note: Sound for 'wooden crate': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-kicked-hard.json 1764 role=descriptor ['media_type']
+     - audio/sfx/crate-kicked-hard.wav 64044 role=best ['media_type']
+     - audio/sfx/crate-kicked-hard.var2.wav 64044 role=variation ['media_type']
+     - audio/sfx/crate-kicked-hard.var3.wav 64044 role=variation ['media_type']
+
+== audio-crate-scraped-edge  [core.audio.effect] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.5877, "payload_file": "audio/sfx/crate-scraped-edge.wav"}
+   note: Sound for 'wooden crate': scraped along edge. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-scraped-edge.json 1701 role=descriptor ['media_type']
+     - audio/sfx/crate-scraped-edge.wav 160044 role=best ['media_type']
+     - audio/sfx/crate-scraped-edge.var2.wav 160044 role=variation ['media_type']
+     - audio/sfx/crate-scraped-edge.var3.wav 160044 role=variation ['media_type']
+
+== audio-crate-tipped-over  [core.audio.effect] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.5144, "payload_file": "audio/sfx/crate-tipped-over.wav"}
+   note: Sound for 'wooden crate': tipped over onto side. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-tipped-over.json 1784 role=descriptor ['media_type']
+     - audio/sfx/crate-tipped-over.wav 106286 role=best ['media_type']
+     - audio/sfx/crate-tipped-over.raw.wav 128044 role=raw ['media_type']
+     - audio/sfx/crate-tipped-over.var2.wav 128044 role=variation ['media_type']
+     - audio/sfx/crate-tipped-over.var3.wav 128044 role=variation ['media_type']
+
+== audio-crate-set-down-hard  [core.audio.effect] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.3065, "payload_file": "audio/sfx/crate-set-down-hard.wav"}
+   note: Sound for 'wooden crate': set down firmly. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-set-down-hard.json 1653 role=descriptor ['media_type']
+     - audio/sfx/crate-set-down-hard.wav 21164 role=best ['media_type']
+     - audio/sfx/crate-set-down-hard.raw.wav 64044 role=raw ['media_type']
+     - audio/sfx/crate-set-down-hard.var2.wav 64044 role=variation ['media_type']
+     - audio/sfx/crate-set-down-hard.var3.wav 64044 role=variation ['media_type']
+
+== audio-plank-dragged-wood-floor  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.4592, "payload_file": "audio/sfx/plank-dragged-wood-floor.wav"}
+   note: Sound for 'wooden plank': dragged across wooden floor. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/plank-dragged-wood-floor.json 1637 role=descriptor ['media_type']
+     - audio/sfx/plank-dragged-wood-floor.wav 160044 role=best ['media_type']
+     - audio/sfx/plank-dragged-wood-floor.var2.wav 160044 role=variation ['media_type']
+     - audio/sfx/plank-dragged-wood-floor.var3.wav 160044 role=variation ['media_type']
+
+== audio-plank-impact-hard-surface  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.4574, "payload_file": "audio/sfx/plank-impact-hard-surface.wav"}
+   note: Sound for 'wooden plank': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/plank-impact-hard-surface.json 2246 role=descriptor ['media_type']
+     - audio/sfx/plank-impact-hard-surface.wav 13802 role=best ['media_type']
+     - audio/sfx/plank-impact-hard-surface.raw.wav 96044 role=raw ['media_type']
+     - audio/sfx/plank-impact-hard-surface.var2.wav 96044 role=variation ['media_type']
+     - audio/sfx/plank-impact-hard-surface.var3.wav 96044 role=variation ['media_type']
+
+== audio-plank-kicked-hard  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.3245, "payload_file": "audio/sfx/plank-kicked-hard.wav"}
+   note: Sound for 'wooden plank': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/plank-kicked-hard.json 2093 role=descriptor ['media_type']
+     - audio/sfx/plank-kicked-hard.wav 128044 role=best ['media_type']
+     - audio/sfx/plank-kicked-hard.var2.wav 128044 role=variation ['media_type']
+     - audio/sfx/plank-kicked-hard.var3.wav 128044 role=variation ['media_type']
+
+== audio-plank-scraped-edge  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.3785, "payload_file": "audio/sfx/plank-scraped-edge.wav"}
+   note: Sound for 'wooden plank': scraped along edge. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/plank-scraped-edge.json 2010 role=descriptor ['media_type']
+     - audio/sfx/plank-scraped-edge.wav 51244 role=best ['media_type']
+     - audio/sfx/plank-scraped-edge.raw.wav 160044 role=raw ['media_type']
+     - audio/sfx/plank-scraped-edge.var2.wav 160044 role=variation ['media_type']
+     - audio/sfx/plank-scraped-edge.var3.wav 160044 role=variation ['media_type']
+
+== audio-corner-joined-beams  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.4798, "payload_file": "audio/sfx/corner-joined-beams.wav"}
+   note: Sound for 'wooden crate corner': pressed under load. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/corner-joined-beams.json 1621 role=descriptor ['media_type']
+     - audio/sfx/corner-joined-beams.wav 89964 role=best ['media_type']
+     - audio/sfx/corner-joined-beams.raw.wav 192044 role=raw ['media_type']
+     - audio/sfx/corner-joined-beams.var2.wav 192044 role=variation ['media_type']
+     - audio/sfx/corner-joined-beams.var3.wav 192044 role=variation ['media_type']
+
+== audio-beam-impact-hard-surface  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.423, "payload_file": "audio/sfx/beam-impact-hard-surface.wav"}
+   note: Sound for 'wooden beam': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/beam-impact-hard-surface.json 1740 role=descriptor ['media_type']
+     - audio/sfx/beam-impact-hard-surface.wav 38124 role=best ['media_type']
+     - audio/sfx/beam-impact-hard-surface.raw.wav 96044 role=raw ['media_type']
+     - audio/sfx/beam-impact-hard-surface.var2.wav 96044 role=variation ['media_type']
+     - audio/sfx/beam-impact-hard-surface.var3.wav 96044 role=variation ['media_type']
+
+== audio-beam-kicked-hard  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.5301, "payload_file": "audio/sfx/beam-kicked-hard.wav"}
+   note: Sound for 'wooden beam': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/beam-kicked-hard.json 1878 role=descriptor ['media_type']
+     - audio/sfx/beam-kicked-hard.wav 79084 role=best ['media_type']
+     - audio/sfx/beam-kicked-hard.raw.wav 128044 role=raw ['media_type']
+     - audio/sfx/beam-kicked-hard.var2.wav 128044 role=variation ['media_type']
+     - audio/sfx/beam-kicked-hard.var3.wav 128044 role=variation ['media_type']
+
+== audio-dowel-impact-hard-surface  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.4871, "payload_file": "audio/sfx/dowel-impact-hard-surface.wav"}
+   note: Sound for 'wooden dowel': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/dowel-impact-hard-surface.json 1850 role=descriptor ['media_type']
+     - audio/sfx/dowel-impact-hard-surface.wav 15404 role=best ['media_type']
+     - audio/sfx/dowel-impact-hard-surface.raw.wav 96044 role=raw ['media_type']
+     - audio/sfx/dowel-impact-hard-surface.var2.wav 96044 role=variation ['media_type']
+     - audio/sfx/dowel-impact-hard-surface.var3.wav 96044 role=variation ['media_type']
+
+== audio-dowel-kicked-hard  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.6378, "payload_file": "audio/sfx/dowel-kicked-hard.wav"}
+   note: Sound for 'wooden dowel': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/dowel-kicked-hard.json 1786 role=descriptor ['media_type']
+     - audio/sfx/dowel-kicked-hard.wav 57644 role=best ['media_type']
+     - audio/sfx/dowel-kicked-hard.raw.wav 128044 role=raw ['media_type']
+     - audio/sfx/dowel-kicked-hard.var2.wav 128044 role=variation ['media_type']
+     - audio/sfx/dowel-kicked-hard.var3.wav 128044 role=variation ['media_type']
+
+== audio-front-face-impact-hard-surface  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.4019, "payload_file": "audio/sfx/front-face-impact-hard-surface.wav"}
+   note: Sound for 'wooden crate front': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/front-face-impact-hard-surface.json 1922 role=descriptor ['media_type']
+     - audio/sfx/front-face-impact-hard-surface.wav 13164 role=best ['media_type']
+     - audio/sfx/front-face-impact-hard-surface.raw.wav 96044 role=raw ['media_type']
+     - audio/sfx/front-face-impact-hard-surface.var2.wav 96044 role=variation ['media_type']
+     - audio/sfx/front-face-impact-hard-surface.var3.wav 96044 role=variation ['media_type']
+
+== audio-front-face-kicked-hard  [core.audio.effect] active=1 part=None edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.3567, "payload_file": "audio/sfx/front-face-kicked-hard.wav"}
+   note: Sound for 'wooden crate front': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/front-face-kicked-hard.json 1855 role=descriptor ['media_type']
+     - audio/sfx/front-face-kicked-hard.wav 128044 role=best ['media_type']
+     - audio/sfx/front-face-kicked-hard.var2.wav 128044 role=variation ['media_type']
+     - audio/sfx/front-face-kicked-hard.var3.wav 128044 role=variation ['media_type']
+
+== audio-crate-wind-forest  [core.audio.ambience] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.2558, "payload_file": "audio/sfx/crate-wind-forest.wav"}
+   note: Sound for 'wooden crate': wind blowing through gaps. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-wind-forest.json 1436 role=descriptor ['media_type']
+     - audio/sfx/crate-wind-forest.wav 473004 role=best ['media_type']
+     - audio/sfx/crate-wind-forest.raw.wav 480044 role=raw ['media_type']
+     - audio/sfx/crate-wind-forest.var2.wav 480044 role=variation ['media_type']
+     - audio/sfx/crate-wind-forest.var3.wav 480044 role=variation ['media_type']
+
+== audio-crate-wind-desert  [core.audio.ambience] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.3182, "payload_file": "audio/sfx/crate-wind-desert.wav"}
+   note: Sound for 'wooden crate': wind blowing across open surface. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-wind-desert.json 1703 role=descriptor ['media_type']
+     - audio/sfx/crate-wind-desert.wav 473004 role=best ['media_type']
+     - audio/sfx/crate-wind-desert.raw.wav 480044 role=raw ['media_type']
+     - audio/sfx/crate-wind-desert.var2.wav 480044 role=variation ['media_type']
+     - audio/sfx/crate-wind-desert.var3.wav 480044 role=variation ['media_type']
+
+== audio-crate-wind-forest-dense  [core.audio.ambience] active=1 part=crate edges=[('audio-package', 'enhances', 'sounds-for')]
+   v1 inferred producer={'tool': 'splat-foley', 'version': '0.4', 'model': 'stable-audio-open-1.0'} {"input_files": ["audio/package.json"], "input_hash": "cb2af7104bdbbf2276088861c596ccac8f93fe6431b7152f138d08f40f8e1171", "input_params": {}, "confidence": 0.2832, "payload_file": "audio/sfx/crate-wind-forest-dense.wav"}
+   note: Sound for 'wooden crate': wind blowing through dense forest. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     - audio/sfx/crate-wind-forest-dense.json 1529 role=descriptor ['media_type']
+     - audio/sfx/crate-wind-forest-dense.wav 480044 role=best ['media_type']
+     - audio/sfx/crate-wind-forest-dense.var2.wav 480044 role=variation ['media_type']
+     - audio/sfx/crate-wind-forest-dense.var3.wav 480044 role=variation ['media_type']
+
+== semantics  [core.semantics] active=1 part=None edges=[('geom-game', 'enhances', 'describes')]
+   v1 authored producer={'tool': 'fixtures/build_golden.py', 'version': '1'} {}
+   note: Hand-authored facet tags, palette and search text. This node alone renders a browser listing (law 9).
+     - semantics/semantics.json 2589 role=None []
+
+== props  [core.props] active=1 part=None edges=[('material-wood', 'enhances', 'properties-of')]
+   v1 authored producer={'tool': 'fixtures/build_golden.py', 'version': '1'} {}
+   note: Authored simulation properties for the crate's wood, with every value carrying its own unit and stamp.
+     - properties/properties.json 3470 role=None []
+
+== provenance  [core.provenance] active=1 part=None edges=[]
+   v1 authored producer={'tool': 'fixtures/build_golden.py', 'version': '1'} {}
+   note: Who made what, from what, with which models, and which gates it had to pass.
+     - provenance/provenance.json 4264 role=None []
+
+== spec  [core.spec] active=1 part=None edges=[]
+   v1 authored producer={'tool': 'werk', 'version': '0.1'} {}
+   note: The format specification, its schemas and its binary layout grammars, travelling inside the file it describes (law 2).
+     - spec/MINI-SPECS.md 40147 role=None []
+     - spec/PROFILE-IMAGE.md 13274 role=None []
+     - spec/README.md 10855 role=None []
+     - spec/SPEC.md 104388 role=None []
+     - spec/X-C2PA-EXPORT.md 7461 role=None []
+     - spec/conventions-map.image.json 2416 role=None []
+     - spec/conventions-map.json 9269 role=None []
+     - spec/examples/MANIFEST.example.json 20080 role=None []
+     - spec/examples/SIGNATURE.example.json 1084 role=None []
+     - spec/examples/embedding.example.hex.txt 4444 role=None []
+     - spec/examples/embedding.example.wkem 512 role=None []
+     - spec/examples/gsplat.example.hex.txt 9796 role=None []
+     - spec/examples/gsplat.example.wkgs 1120 role=None []
+     - spec/examples/make-examples.py 57655 role=None []
+     - spec/examples/restposes.example.hex.txt 4308 role=None []
+     - spec/examples/restposes.example.wkrp 560 role=None []
+     - spec/examples/signature.example.txt 4544 role=None []
+     - spec/extensions/x.cub.v1.baked.layout.txt 9359 role=None []
+     - spec/extensions/x.cub.v1.md 8783 role=None []
+     - spec/facets.json 11978 role=None []
+     - spec/layouts/ENVELOPE.layout.txt 26372 role=None []
+     - spec/layouts/animclip.layout.txt 16800 role=None []
+     - spec/layouts/embedding.layout.txt 14361 role=None []
+     - spec/layouts/flowfield.layout.txt 6263 role=None []
+     - spec/layouts/gsplat.layout.txt 23918 role=None []
+     - spec/layouts/imposter.layout.txt 10446 role=None []
+     - spec/layouts/points.layout.txt 16663 role=None []
+     - spec/layouts/restposes.layout.txt 5958 role=None []
+     - spec/layouts/skeleton.layout.txt 5964 role=None []
+     - spec/schemas/conventions-map.schema.json 4614 role=None []
+     - spec/schemas/core.anim.clip.schema.json 9585 role=None []
+     - spec/schemas/core.audio.effect.schema.json 8628 role=None []
+     - spec/schemas/core.audio.package.schema.json 7320 role=None []
+     - spec/schemas/core.destruct.schema.json 6319 role=None []
+     - spec/schemas/core.disclosure.schema.json 11515 role=None []
+     - spec/schemas/core.imposter.schema.json 6708 role=None []
+     - spec/schemas/core.material.schema.json 4823 role=None []
+     - spec/schemas/core.phys.body.schema.json 6157 role=None []
+     - spec/schemas/core.phys.bounds.schema.json 3164 role=None []
+     - spec/schemas/core.phys.colliders.schema.json 4116 role=None []
+     - spec/schemas/core.props.schema.json 11666 role=None []
+     - spec/schemas/core.provenance.schema.json 6140 role=None []
+     - spec/schemas/core.recipe.schema.json 26485 role=None []
+     - spec/schemas/core.retarget.bind.schema.json 13337 role=None []
+     - spec/schemas/core.semantics.schema.json 6917 role=None []
+     - spec/schemas/core.skeleton.schema.json 11464 role=None []
+     - spec/schemas/core.tool.config.schema.json 7321 role=None []
+     - spec/schemas/core.tool.schema.json 10894 role=None []
+     - spec/schemas/facets.schema.json 3593 role=None []
+     - spec/schemas/manifest.image.schema.json 28278 role=None []
+     - spec/schemas/manifest.schema.json 46174 role=None []
+     - spec/schemas/signature.schema.json 11209 role=None []
+     - spec/schemas/x.c2pa.export.schema.json 4935 role=None []
+     - spec/skeleton/canonical-humanoid-v1.json 22429 role=None []
+     - spec/skeleton/core.hands.v1.json 26112 role=None []
+     - spec/skeleton/derive-canonical-humanoid.py 19852 role=None []
+
+== loader-python  [core.loader] active=1 part=None edges=[]
+   meta keys: ['language', 'form', 'entrypoint', 'toolchain', 'dependencies', 'capabilities']
+   v1 authored producer={'tool': 'werk', 'version': '0.1'} {}
+   note: A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+     - loaders/werk_read.py 42226 role=None []
+
+== loader-rust  [core.loader] active=1 part=None edges=[]
+   meta keys: ['language', 'form', 'entrypoint', 'toolchain', 'dependencies', 'capabilities', 'build_command']
+   v1 authored producer={'tool': 'werk', 'version': '0.1'} {}
+   note: A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+     - loaders/werk_read.rs 98761 role=None []
+
+== loader-c  [core.loader] active=1 part=None edges=[]
+   meta keys: ['language', 'form', 'entrypoint', 'toolchain', 'dependencies', 'capabilities', 'build_command']
+   v1 authored producer={'tool': 'werk', 'version': '0.1'} {}
+   note: A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+     - loaders/werk_read.c 111051 role=None []
+
+== license  [core.license] active=1 part=None edges=[]
+   v1 authored producer={'tool': 'werk', 'version': '0.1'} {}
+   note: The full licence text, embedded, never a link (law 7).
+     - LICENSE 2132 role=None []
+
+== readme  [core.readme] active=1 part=None edges=[]
+   v1 authored producer={'tool': 'werk', 'version': '0.1'} {}
+   note: One page for a human who opened this file and wants to know what it is.
+     - README.txt 1264 role=None []

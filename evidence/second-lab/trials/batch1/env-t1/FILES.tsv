@@ -1,0 +1,4 @@
+path	bytes	sha256_original	status	sha256_committed
+REPORT.md	17395	872868c49d68caa114a469d3e11cc2bbf83f14944af39c6d1da36a160b8b8423	copied, rebuilt from the session log	
+tools/tamper_test.py	1126	f14bb022cdcd6c1c85e4dd51c0cfa0bfabc29406bcf34ecac1e2f870054c0ef4	copied, rebuilt from the session log	
+tools/werk_inspect.py	27290	38889a246c7c4c82ed47fad146885b1626d0e1c7fca03ea2a91f12441a7fad47	copied, rebuilt from the session log	
