@@ -24,6 +24,8 @@ Recorded: **2026-10-13**
 | `fixtures/humanoid-retarget-v1.werk` | 1 794 117 | `b0dda1993f3ca5ddfa1bdfe50f02d1f2ef98f69b76d8f3531f5c04b3c0910239` | 80 | 78 | 9 | `3d-entity/1` |
 | `fixtures/gsplat-v1.werk` | 30 519 513 | `fbe7b32c3f2f9b1c311d718a5ed1d66b962331f26b4be689e2e4665454e3a86f` | 91 | 89 | 17 | `3d-entity/1` |
 | `tests/fixtures/crate.werk` | 877 496 | `3646ca4290baf8a2b000961d1ca6b5d8ee867cb414a8711edbf46ec05b647c23` | 38 | 36 | 15 | `3d-entity/1` |
+| `gauntlet/roundOW/mini-v1.werk` | 1 133 968 | `7fe1714b5ee2b4ce84619d28991dd3103dc5329a3da5cf903264982261ddfe41` | 36 | 34 | 14 | `3d-entity/1` |
+| `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk` | 960 061 | `f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837` | 36 | 34 | 14 | `3d-entity/1` |
 | `fixtures/crate-cc0-lean-v1.werk` | 1 543 293 | `0e3149db90b086fa964caa362c44bde57a970c891b9ebb9dff36437c0220fc50` | 78 | 76 | 13 | `3d-entity/1` |
 | `fixtures/crate-cc0-lean-v1-damaged.werk` | 1 544 496 | `83ccaa77aa063406501cccdd795306ec0551959733f90c538407fd919d17b8db` | 79 | 77 | 14 | `3d-entity/1` |
 | `fixtures/crate-cc0-full-v1.werk` | 1 604 099 | `a596a302470c1741e91e8dc0053a61af600bcbb4461b48ea8903eaf41b933a4d` | 84 | 82 | 18 | `3d-entity/1` |
@@ -98,6 +100,22 @@ The minimal synthetic fixture: every custom-binary path exercised, small enough 
 * built by `cargo run --bin werkc -- build-fixture tests/fixtures`
 * manifest sha256 `673808f7063c7a53a9acd83962cb1d0815aece553bb3b779322154faa04215df`
 * `spec_sha256` `58324e2d409f05e4c7d0b5980c93db19dcc400211bb8d0e13df25560e1a3445d`
+
+### `gauntlet/roundOW/mini-v1.werk`
+
+The small-context fixture, rebuilt under the ruling on #11: the same 36 entries as the package the trials ran on, minus its three edges to absent nodes (SPEC section 5), so it verifies clean. It carries a trimmed spec/ tree (the documents its own node types need), so its spec_sha256 is the hash of that subset. The trials' bytes are kept at gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk.
+
+* built by `gauntlet/roundOW/build_mini_fixture.py`
+* manifest sha256 `b9482a9f5af02d723121629952ce3c918b335132fdb47b8578d5c4ebc32e3417`
+* `spec_sha256` `611191fec35b8839e511b8b4075f818330c93ca035485b894247ec54a9fe12ad`
+
+### `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk`
+
+The exact mini-v1.werk that the open-weights, DeepSeek and second-lab trials ran on, built from an earlier spec revision. It carries three edges to absent nodes, so a conformant reader reports one dead node. Kept so pinned trials stay checkable.
+
+* built by `an earlier build_mini_fixture.py (kept, not rebuilt)`
+* manifest sha256 `f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839`
+* `spec_sha256` `5ada229078738ce45d1b65e1a9ba5eb2df0a10ea261254da21c46df73831d4ad`
 
 ### `fixtures/crate-cc0-lean-v1.werk`
 
@@ -174,4 +192,8 @@ The ONLY fixture whose zip entries are DEFLATED (method 8): the lean CC0 crate's
 Every fixture in this table carries the same `spec_sha256`, which is
 the point of the field (S-29): they were all built from one revision
 of `spec/`, and a package built from another one says so in a single
-comparison rather than by a schema diff nobody runs.
+comparison rather than by a schema diff nobody runs. Three rows differ
+on purpose: `crate-synthetic` and `mini-v1` carry a trimmed `spec/`
+tree (byte-identical documents, fewer of them), so the field hashes
+that subset; `mini-v1-historical` is the earlier build the trials ran
+on and carries the earlier spec revision.

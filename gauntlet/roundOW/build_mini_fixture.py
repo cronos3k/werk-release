@@ -6,11 +6,15 @@ Deterministic. Produces the small-context fixture from bytes that are
 already inside two PINNED, COMMITTED fixtures; it invents no payload and it
 touches neither of them.
 
-`gauntlet/roundOW/mini-v1.werk` is FROZEN. It is the record of the trials
-that ran on it, and pinned hashes and other work refer to it. It was built by
-an earlier version of this script that kept three edges into dropped nodes
-(see "WHAT IT DROPS"). Do not rebuild it in place: the default output is now
-`mini-v2.werk`, which does not exist yet and is a follow-up.
+Its output is `gauntlet/roundOW/mini-v1.werk`. Ruling on #11: the same 36
+entries as the package the trials ran on, minus its three edges into dropped
+nodes (see "WHAT IT DROPS"), so it verifies clean. Only MANIFEST.json and
+SIGNATURE.json differ from that package's entries.
+
+The trials ran on the earlier mini-v1.werk (sha256 f7bdcc85...e9837), built
+by an earlier version of this script that kept the three edges. Those exact
+bytes are kept at gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk, so every
+pinned trial stays checkable.
 
 WHY IT EXISTS. The open-weights round's operative protocol inlines everything
 the model may read. `fixtures/crate-v1.werk`'s package is 107 388 tokens
@@ -50,13 +54,13 @@ WHAT IT DROPS: 26 of the 28 audio nodes, the rendered evidence views, the props
 node, and all but one segment crop.
 
 That is NOT "nothing structural", as this docstring used to say. Dropping a
-node leaves every edge into it pointing at nothing. mini-v1.werk carries three
-such edges: `geom-game --enhances--> geom-source`,
+node leaves every edge into it pointing at nothing. The historical mini-v1
+(f7bdcc85...) carries three such edges: `geom-game --enhances--> geom-source`,
 `audio-crate-impact-hard-surface --enhances--> audio-package`, and
 `evidence-segments --requires--> evidence-views`. The last one is the case
 SPEC section 5 now rules on: a `requires` edge to an absent node kills the
 source node (`requires-missing-node`, severity error), so every conformant
-reader reports `evidence-segments` dead in mini-v1.werk and exits 1. SPEC
+reader reports `evidence-segments` dead in that file and exits 1. SPEC
 section 5 also says a writer MUST NOT emit such an edge. This script now
 drops every edge whose target it did not keep, and says which ones it
 dropped. The node `evidence-segments` is kept: it is the package's only
@@ -67,7 +71,7 @@ point, and the package is re-signed with the same publicly derived DEV key the
 golden fixture uses, so the signature is `signed-and-valid` and every one of the
 four signature states remains reachable.
 
-Usage:  python build_mini_fixture.py [--out gauntlet/roundOW/mini-v2.werk]
+Usage:  python build_mini_fixture.py [--out PATH]   (default: mini-v1.werk here)
 """
 
 import argparse
@@ -84,7 +88,7 @@ import build_golden as BG                                    # noqa: E402
 
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 from payload_file import annotate_payload_files              # noqa: E402
-from edge_targets import refuse_dangling_requires            # noqa: E402
+from edge_targets import refuse_dangling_edges               # noqa: E402
 
 SRC = os.path.join(ROOT, "fixtures", "crate-v1.werk")
 ENV_SRC = os.path.join(ROOT, "tests", "fixtures", "crate.werk")
@@ -137,10 +141,8 @@ KEEP_SPEC = [
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default=os.path.join(HERE, "mini-v2.werk"))
+    ap.add_argument("--out", default=os.path.join(HERE, "mini-v1.werk"))
     args = ap.parse_args()
-    if os.path.basename(args.out) == "mini-v1.werk":
-        raise SystemExit("mini-v1.werk is frozen (see the docstring); write a new file")
 
     zs = zipfile.ZipFile(SRC)
     man = json.loads(zs.read("MANIFEST.json"))
@@ -245,8 +247,8 @@ def main():
     # taking files[0] and shipping the descriptor as the sound -- now has an
     # answer inside MANIFEST.json itself.
     annotate_payload_files(nodes)
-    # SPEC 5: never write a `requires` edge to a node not in nodes[].
-    refuse_dangling_requires(nodes)
+    # SPEC 5: never write an edge to a node not in nodes[].
+    refuse_dangling_edges(nodes)
 
     # converge preview_prefix_bytes exactly as build_golden.assemble does
     preview = 0

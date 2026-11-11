@@ -93,6 +93,32 @@
       "builder": "cargo run --bin werkc -- build-fixture tests/fixtures",
       "purpose": "The minimal synthetic fixture: every custom-binary path exercised, small enough to check by hand, signed with the RFC 8032 test key."
     },
+    "mini-v1": {
+      "path": "gauntlet/roundOW/mini-v1.werk",
+      "size_bytes": 1133968,
+      "sha256": "7fe1714b5ee2b4ce84619d28991dd3103dc5329a3da5cf903264982261ddfe41",
+      "zip_entries": 36,
+      "declared_files": 34,
+      "nodes": 14,
+      "profile": "3d-entity/1",
+      "manifest_sha256": "b9482a9f5af02d723121629952ce3c918b335132fdb47b8578d5c4ebc32e3417",
+      "spec_sha256": "611191fec35b8839e511b8b4075f818330c93ca035485b894247ec54a9fe12ad",
+      "builder": "gauntlet/roundOW/build_mini_fixture.py",
+      "purpose": "The small-context fixture, rebuilt under the ruling on #11: the same 36 entries as the package the trials ran on, minus its three edges to absent nodes (SPEC section 5), so it verifies clean. It carries a trimmed spec/ tree (the documents its own node types need), so its spec_sha256 is the hash of that subset. The trials' bytes are kept at gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk."
+    },
+    "mini-v1-historical": {
+      "path": "gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk",
+      "size_bytes": 960061,
+      "sha256": "f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837",
+      "zip_entries": 36,
+      "declared_files": 34,
+      "nodes": 14,
+      "profile": "3d-entity/1",
+      "manifest_sha256": "f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839",
+      "spec_sha256": "5ada229078738ce45d1b65e1a9ba5eb2df0a10ea261254da21c46df73831d4ad",
+      "builder": "an earlier build_mini_fixture.py (kept, not rebuilt)",
+      "purpose": "The exact mini-v1.werk that the open-weights, DeepSeek and second-lab trials ran on, built from an earlier spec revision. It carries three edges to absent nodes, so a conformant reader reports one dead node. Kept so pinned trials stay checkable."
+    },
     "crate-cc0-lean-v1": {
       "path": "fixtures/crate-cc0-lean-v1.werk",
       "size_bytes": 1543293,

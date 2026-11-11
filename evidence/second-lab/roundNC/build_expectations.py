@@ -45,7 +45,9 @@ import nc_mesh  # noqa: E402
 # PROVISIONAL until every dry-run passes; then COMPLETE (the freeze).
 CONTROLS_STATUS = "COMPLETE"
 
-WERK_FIXTURE = "gauntlet/roundOW/mini-v1.werk"
+# The round ran on these bytes. Since the ruling on #11 rebuilt mini-v1.werk,
+# they are kept at gauntlet/roundOW/historical/ (release port, W9).
+WERK_FIXTURE = "gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk"
 WERK_SHA256 = "f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837"
 
 # The glTF fixture as the plan names it (section 1.2). Not built yet.
@@ -198,7 +200,7 @@ def build_werk(repo, datadir):
 
     e = {
         "status": "COMPLETE",
-        "fixture_files": [{"path": WERK_FIXTURE, "name": "mini-v1.werk",
+        "fixture_files": [{"path": "gauntlet/roundOW/mini-v1.werk", "name": "mini-v1.werk",
                            "sha256": got, "size": os.path.getsize(fx),
                            "role": "container"}],
         "payloads": payloads,

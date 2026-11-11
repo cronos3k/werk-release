@@ -14,7 +14,8 @@ one place. werk-core has the same check (`werk::manifest::dangling_edges`,
 `Package::add_node`. Both refuse an edge of EITHER kind: the specification's
 MUST NOT is for every edge, and the code says what the text says.
 
-The first package that broke the rule was gauntlet/roundOW/mini-v1.werk: its
+The first package that broke the rule was the historical mini-v1.werk (now at
+gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk): its
 builder dropped a node and kept an edge into it.
 """
 
