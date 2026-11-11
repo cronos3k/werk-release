@@ -165,6 +165,11 @@ def main():
     fixtures = {'crate-v1.werk': Path(a.fixtures) / 'crate-v1.werk',
                 'gsplat-v1.werk': Path(a.fixtures) / 'gsplat-v1.werk',
                 'mini-v1.werk': REPO / 'gauntlet' / 'roundOW' / 'mini-v1.werk'}
+    # After the ruling on #11, mini-v1.werk is rebuilt without its dangling
+    # edges. The bytes the trials ran on are then kept here.
+    historical = REPO / 'gauntlet' / 'roundOW' / 'historical' / 'mini-v1-f7bdcc85.werk'
+    if historical.exists():
+        fixtures['mini-v1.werk'] = historical
     for name, path in fixtures.items():
         if not path.exists():
             sys.exit('missing fixture %s (see --fixtures)' % path)

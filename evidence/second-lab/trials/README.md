@@ -12,7 +12,7 @@ So 11 of the 12 trials can be checked from these files. The August trial cannot.
 
 ## Check the trials yourself
 
-You need Python 3.10 or later, standard library only. You also need `fixtures/crate-v1.werk` and `fixtures/gsplat-v1.werk` from `tools/fetch_fixtures.py` or the `fixtures-v1` release. `mini-v1.werk` is in `gauntlet/roundOW/`.
+You need Python 3.10 or later, standard library only. You also need `fixtures/crate-v1.werk` and `fixtures/gsplat-v1.werk` from `tools/fetch_fixtures.py` or the `fixtures-v1` release. The trials ran on `gauntlet/roundOW/mini-v1.werk` as it was before the ruling on #11 (`f7bdcc85...`). Once #11 rebuilds that file, the old bytes are at `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk`, and the checker uses them.
 
 ```
 python results/second-lab/trials/check_trials.py
