@@ -22,6 +22,7 @@ it does not do.
 | `FVertexInstanceID::Invalid` -> `FVertexInstanceID(INDEX_NONE)` | `WerkLinkImport.cpp` | the two C4996 deprecation warnings of 5.8 |
 | plug-in version 0.1 -> 0.2 | `WerkLink.uplugin` | |
 | **release-fixes reader rules** (26e3e14): MINI-SPECS 5.4's six zip rules (duplicate names and flag bit 3 refuse the container, lossy UTF-8 names, CD is the authority, method-0 data checked by the manifest hash); SPEC 12.1 (malformed node dead under its id; `nodes` missing / manifest not an object refuse); SPEC 6 (SIGNATURE.json must be an object naming this manifest's sha256, else `present-and-invalid`; foreign algorithm warns) | `Private/Core/werk_zip.cpp`, `werk_manifest.{h,cpp}`, `werk_report.h` | WerkLink reads with its own C++, not werk-core; measured against the release readers on 21 damaged variants (`tests/agree_release_fixes.py`, gate part A2) |
+| **MINI-SPECS 5.4 on manifest paths, version-scoped** (SPEC 10 step 5 [B], 10.1, 12.1): an unsafe `files[]` path costs its version (`schema-invalid`, never read from the zip, fall back to the newest valid earlier version, exit 1); the version walk never tries a version newer than `active` | `Private/Core/werk_manifest.cpp`, `werk_report.h` | the reader read `../x` straight from the zip (exit 0) where every other release reader says exit 1; 7 more A2 variants (the libraries' cross-matrix unsafe-path cases) |
 
 `tests/roundtrip_gate.py` (the repository's commandlet gate) is **rebaselined from the fixture
 manifests**: the "files verified" count and the node count are derived from each fixture by the
@@ -69,8 +70,8 @@ print(r["exit"], r["summary"], e["exit"], e["summary"])
 
 Part A builds the engine-free core with MSVC (`tests/build_gate.bat`) and runs its selftests
 (the edge guard and the zip rules included) on crate-v1, its damaged twin and the deflated
-fixture; part A2 checks WerkLink's reader verdicts against `python -m werk` and werkc on 21
-damaged variants. Part B runs the
+fixture; part A2 checks WerkLink's reader verdicts against `python -m werk` and werkc on 28
+variants (21 damaged, 7 unsafe-path / version-walk cases). Part B runs the
 rebaselined commandlet round trip. Part C runs `UnrealEditor-Cmd -run=pythonscript` with
 `tests/ue_python_gate.py`: every `3d-entity/1` fixture of the release is imported, everything the
 import created is exported, every export is re-imported, and every export is verified by every
