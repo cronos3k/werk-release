@@ -79,7 +79,8 @@ static int Verdict(const char* Path)
     }
     for (const ReportEntry& E : Rep.All())
     {
-        if (E.severity == Severity::Error && Codes.find(E.code) == std::string::npos)
+        if (E.severity == Severity::Error
+            && ("," + Codes + ",").find("," + E.code + ",") == std::string::npos)
         {
             Codes += (Codes.empty() ? "" : ",") + E.code;
         }

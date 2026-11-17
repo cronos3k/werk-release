@@ -32,6 +32,9 @@ namespace code
     inline constexpr const char* SizeMismatch            = "size-mismatch";
     inline constexpr const char* EnvelopeInvalid         = "envelope-invalid";
     inline constexpr const char* PayloadSchemaInvalid    = "payload-schema-invalid";
+    // MINI-SPECS 5.4 path rule applied to a files[] path (SPEC 10 step 5 [B]):
+    // the same code the libraries and werk-core report; costs only that version.
+    inline constexpr const char* SchemaInvalid           = "schema-invalid";
     inline constexpr const char* NodeSkippedUnknownType  = "node-skipped-unknown-type";
     inline constexpr const char* NodeSkippedNotImplement = "node-skipped-not-implemented";
     inline constexpr const char* Zip64Unsupported        = "zip64-unsupported";

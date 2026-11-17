@@ -1,5 +1,6 @@
 #include "werk_manifest.h"
 
+#include <algorithm>
 #include <cstdio>
 #include <cstring>
 
@@ -7,6 +8,14 @@
 
 namespace werk
 {
+
+// MINI-SPECS 5.4 for a path MANIFEST.json declares: the zip-name rule
+// (relative, forward slashes, no `..` segment, no drive letter, no leading
+// slash) plus no NUL, which a JSON string can carry and a zip name cannot.
+static bool IsSafeManifestPath(const std::string& Path)
+{
+    return Path.find('\0') == std::string::npos && IsSafeZipName(Path);
+}
 
 namespace
 {
@@ -397,9 +406,14 @@ bool Package::ParseManifest(Report& Rep)
                             F.mediaType = FO->GetString("media_type");
                             F.role = FO->GetString("role");
                             // Checklist step 9: this index IS the whitelist.
-                            // Nothing outside it will ever be opened.
-                            FileHashIndex[F.path] = F.sha256;
-                            FileSizeIndex[F.path] = F.size;
+                            // Nothing outside it will ever be opened -- and an
+                            // unsafe path (MINI-SPECS 5.4) never enters it, so
+                            // ReadPayload refuses it too; ResolveVersions reports it.
+                            if (IsSafeManifestPath(F.path))
+                            {
+                                FileHashIndex[F.path] = F.sha256;
+                                FileSizeIndex[F.path] = F.size;
+                            }
                             NV.files.push_back(std::move(F));
                         }
                     }
@@ -600,6 +614,16 @@ bool Package::ConventionsSatisfiedFor(const std::string& NodeType, std::string& 
     return true;
 }
 
+// MINI-SPECS 5.4 applied to a path MANIFEST.json declares: relative, forward
+// slashes, no `..` segment, no drive letter, no leading slash, no NUL -- the
+// zip-name rule plus NUL (a JSON string can carry U+0000).
+static std::string UnsafePathMessage(const Node& N, const NodeVersion& NV, const std::string& Path)
+{
+    return N.nodeId + " v" + std::to_string(NV.v) + ": files[] path \"" + Path
+           + "\" is not a package path (MINI-SPECS 5.4: relative, forward slashes, no `..` segment, "
+             "no drive letter); this version is unusable";
+}
+
 void Package::ResolveVersions(Report& Rep)
 {
     for (Node& N : NodeList)
@@ -615,7 +639,9 @@ void Package::ResolveVersions(Report& Rep)
             continue;
         }
 
-        // Order to try: `active` first, then earlier versions newest-first.
+        // Order to try (SPEC 10 step 5 [B]): `active` first, then the EARLIER
+        // versions newest-first -- never a version newer than `active`, as in
+        // werk-core, the three bootstrap loaders and the libraries.
         std::vector<int> Order;
         for (size_t i = 0; i < N.versions.size(); ++i)
         {
@@ -624,23 +650,45 @@ void Package::ResolveVersions(Report& Rep)
                 Order.push_back(int(i));
             }
         }
-        for (int i = int(N.versions.size()) - 1; i >= 0; --i)
         {
-            if (N.versions[size_t(i)].v != N.active)
+            std::vector<int> Earlier;
+            for (size_t i = 0; i < N.versions.size(); ++i)
             {
-                Order.push_back(i);
+                if (N.versions[i].v < N.active)
+                {
+                    Earlier.push_back(int(i));
+                }
             }
+            std::stable_sort(Earlier.begin(), Earlier.end(), [&N](int A, int B) {
+                return N.versions[size_t(A)].v > N.versions[size_t(B)].v;
+            });
+            Order.insert(Order.end(), Earlier.begin(), Earlier.end());
         }
+        std::vector<bool> Tried(N.versions.size(), false);
 
         bool bResolved = false;
         for (size_t Try = 0; Try < Order.size(); ++Try)
         {
             const int Idx = Order[Try];
             const NodeVersion& NV = N.versions[size_t(Idx)];
+            Tried[size_t(Idx)] = true;
             bool bOk = true;
 
+            // MINI-SPECS 5.4 / SPEC 10 step 5 [B], 10.1, 12.1: an unsafe files[]
+            // path makes its VERSION unusable (never the node, never the
+            // package); it is not read from the zip, whatever the zip holds.
             for (const FileRef& F : NV.files)
             {
+                if (!IsSafeManifestPath(F.path))
+                {
+                    Rep.Error(code::SchemaInvalid, N.nodeId, UnsafePathMessage(N, NV, F.path));
+                    bOk = false;
+                }
+            }
+
+            for (size_t Fi = 0; bOk && Fi < NV.files.size(); ++Fi)
+            {
+                const FileRef& F = NV.files[Fi];
                 std::vector<uint8_t> Bytes;
                 Report Local;
                 if (!Reader.Read(F.path, Bytes, Local))
@@ -686,6 +734,24 @@ void Package::ResolveVersions(Report& Rep)
                                  + " did not verify; fell back to version " + std::to_string(NV.v));
                 }
                 break;
+            }
+        }
+
+        // An unsafe path in a version the walk did not need (newer than
+        // `active`, older than the resolved one) is still an error in the
+        // manifest and is reported, as werk-core and the libraries report it.
+        for (size_t i = 0; i < N.versions.size(); ++i)
+        {
+            if (Tried[i])
+            {
+                continue;
+            }
+            for (const FileRef& F : N.versions[i].files)
+            {
+                if (!IsSafeManifestPath(F.path))
+                {
+                    Rep.Error(code::SchemaInvalid, N.nodeId, UnsafePathMessage(N, N.versions[i], F.path));
+                }
             }
         }
 

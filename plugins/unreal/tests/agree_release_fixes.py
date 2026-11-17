@@ -89,6 +89,63 @@ def variants(fx):
     yield "manifest-unparseable", [(n, b"{not json\n" if n == "MANIFEST.json" else d) for n, d in tex]
     yield "manifest-absent", [(n, d) for n, d in tex if n != "MANIFEST.json"]
 
+    # MINI-SPECS 5.4 applied to manifest-declared paths, version-scoped (SPEC 10 step 5 [B],
+    # 10.1, 12.1): the cross-matrix unsafe-path cases of libs/tests/cross_matrix.py, rebuilt
+    # on crate-tex-v1. An unsafe files[] path costs only ITS version: a single-version node
+    # dies, a multi-version node falls back to the newest valid earlier version, an unsafe
+    # path in a version the walk did not need is still reported; `schema-invalid`, exit 1.
+    yield "unsafe-path", unsafe(tex, "README.txt")
+    mv = two_versions(tex, MV_NODE)
+    yield "multiversion-baseline", mv
+    yield "unsafe-path-multiversion", unsafe(mv, MV_V2)
+    yield "unsafe-path-payload-file", unsafe(mv, MV_V2, payload_file=True)
+    yield "unsafe-path-old-version", unsafe(mv, MV_V1)
+    # SPEC 10 step 5 [B]: the walk never goes to a version NEWER than `active` -- it is not
+    # tried (an unsafe path in it is reported all the same) and it cannot rescue the node.
+    older = with_manifest(mv, lambda m: node(m, MV_NODE).__setitem__("active", 1))
+    yield "unsafe-path-newer-version", unsafe(older, MV_V2)
+    yield "newer-version-not-tried", [(n, (d[:-1] + bytes([d[-1] ^ 1])) if n == MV_V1 else d)
+                                      for n, d in older]
+
+
+UNSAFE = "../evil.png"
+MV_NODE = "tex-crate-tex-albedo"
+MV_V1 = "textures/tex-crate-tex-albedo.png"
+MV_V2 = "textures/tex-crate-tex-albedo@2.png"
+
+
+def two_versions(items, nid):
+    """crate-tex-v1 with a v2 of `nid` (a copy of v1 under a new path, the same bytes),
+    active 2 -- the shape of the cross-matrix `append` step."""
+    data = dict(items)[MV_V1]
+
+    def fn(m):
+        n = [x for x in m["nodes"] if x["node_id"] == nid][0]
+        v2 = json.loads(json.dumps(n["versions"][0]))
+        v2["v"] = 2
+        v2["files"][0]["path"] = MV_V2
+        v2["note"] = "Re-exported the albedo -- v2."
+        n["versions"].append(v2)
+        n["active"] = 2
+    return with_manifest(items, fn) + [(MV_V2, data)]
+
+
+def unsafe(items, path, payload_file=False):
+    """Rename one declared file to ../evil.png in MANIFEST.json and in the zip (same bytes,
+    same sha256 and size), as cross_matrix.py's @unsafe-path does."""
+    def fn(m):
+        hit = 0
+        for n in m["nodes"]:
+            for v in n["versions"]:
+                for f in v["files"]:
+                    if f["path"] == path:
+                        f["path"] = UNSAFE
+                        hit += 1
+                        if payload_file:
+                            v["payload_file"] = UNSAFE
+        assert hit == 1, path
+    return [(UNSAFE if n == path else n, d) for n, d in with_manifest(items, fn)]
+
 
 def patch_bytes(path, kind):
     b = bytearray(open(path, "rb").read())
@@ -158,6 +215,9 @@ def main():
                   or (w["signature"] == "unverified" and py["signature"] in ("signed-and-valid", "unverified"))
                   or (w["exit"] == 2 and py["exit"] == 2))
         ok = w["exit"] == py["exit"] == rc["exit"] and w["dead"] == py["dead"] and sig_ok
+        if name.startswith("unsafe-path"):
+            # the same report code as the libraries: schema-invalid
+            ok = ok and "schema-invalid" in w["codes"].split(",") and "schema-invalid" in py["codes"].split(",")
         ok_all = ok_all and ok
         rows.append({"case": name, "ok": ok, "werklink": w, "python": py, "werkc": rc})
         print("[%s] %-32s werklink exit %d sig %s dead %s | py exit %d sig %s dead %s | werkc exit %d" % (
