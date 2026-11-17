@@ -205,10 +205,26 @@ def cases(I, big_mb):
         ("tampered-manifest", "zip", [["pack-image", "{out}"] + full_img + sign1, ["@tamper-manifest"]]),
         ("duplicate-entry", "zip", [["pack-image", "{out}"] + img, ["@duplicate-entry", "README.txt"]]),
         ("truncated", "zip", [["pack-image", "{out}"] + img, ["@truncate", "1000"]]),
-        # MINI-SPECS 5.4 path rule, node scope (SPEC 12.1): a files[] path
-        # `../evil.txt` (and a zip entry by that name) kills its node; the
-        # package loads, nothing is written outside the target folder.
+        # MINI-SPECS 5.4 path rule: a files[] path `../evil.txt` (and a zip
+        # entry by that name) makes its version unusable -- here the node's
+        # only version, so the node is dead; the package loads, nothing is
+        # written outside the target folder.
         ("unsafe-path", "zip", [["pack-image", "{out}"] + img, ["@unsafe-path", "README.txt"]]),
+        # ... and in a node with several versions the unsafe path costs only
+        # ITS version (SPEC 10 step 5, 12.1; MINI-SPECS 5.4): in the active
+        # version the node falls back to v1 (alive, an error entry, exit 1);
+        # in a superseded version the node stays on v2 and the manifest error
+        # is still reported (exit 1). Every reader, full and bootstrap.
+        ("unsafe-path-multiversion", "zip", [
+            ["pack-mesh", "{out}"] + full_mesh,
+            ["append", "{in}", "{out}", "--node", "tex-albedo", "--file", "textures/albedo.png=" + I + "/preview.png",
+             "--note", "Re-exported the albedo at 16 px — v2.", "--created", T1],
+            ["@unsafe-path", "textures/albedo.png"]]),
+        ("unsafe-path-old-version", "zip", [
+            ["pack-mesh", "{out}"] + full_mesh,
+            ["append", "{in}", "{out}", "--node", "tex-albedo", "--file", "textures/albedo.png=" + I + "/preview.png",
+             "--note", "Re-exported the albedo at 16 px — v2.", "--created", T1],
+            ["@unsafe-path", "textures/albedo@1.png"]]),
         # SPEC 5 "Edge targets": a `requires` edge to a node absent from
         # nodes[] kills its source (requires-missing-node); the rest loads.
         ("requires-missing", "zip", [["pack-image", "{out}"] + img, ["@requires-missing", "readme"]]),
@@ -481,10 +497,13 @@ def agree(results, boot_free=False):
         if not ok_sig:
             return False, "%s says signature %s where the full readers say %s" % (r, v["signature"], fs)
         # SPEC 10.1 (release-fixes): a loader's --strict is "an error entry
-        # exists" -- a dead node, or a chain it found present-and-invalid.
+        # exists" -- a dead node, or a chain it found present-and-invalid,
+        # or (only where the full readers also exit 1) an error the loader
+        # sees in a version it walked, e.g. an unsafe path it fell back from.
         want_exit = 1 if (v["dead_nodes"] or v["signature"] == "present-and-invalid") else 0
-        if v["exit_status"] != want_exit:
-            return False, "%s --strict exit %s, expected %s" % (r, v["exit_status"], want_exit)
+        allowed = {want_exit} | ({1} if ref[2].get("exit_status") == 1 else set())
+        if v["exit_status"] not in allowed:
+            return False, "%s --strict exit %s, expected %s" % (r, v["exit_status"], sorted(allowed))
     return True, ""
 
 

@@ -604,14 +604,11 @@ class Package:
                 # node alive (W2 damage_agree, finding b).
                 if not isinstance(f.get("path"), str):
                     return "a files[] entry has no path"
-                # MINI-SPECS 5.4: a package path is relative, forward-slashed,
-                # with no `..` segment. One that is not names no file this
-                # reader will touch: the node is dead, the package is not --
-                # as in the core (schema), the C and Rust loaders and the
-                # libraries. This reader used to load such a node and then
-                # refuse the whole package at --extract.
-                if _unsafe_path(f["path"]):
-                    return "a files[] entry has an unsafe path %r" % f["path"]
+                # An unsafe path (MINI-SPECS 5.4) is NOT a structural defect
+                # of the node (SPEC 12.1's list): it makes its VERSION
+                # unusable -- _verify_version -- and the node falls back to
+                # the newest valid earlier version (SPEC 10 step 5), as in
+                # werk-core, the C and Rust loaders and the libraries.
                 if not isinstance(f.get("sha256"), str):
                     return "a files[] entry has no sha256"
                 if not is_int(f.get("size")) or f["size"] < 0:
@@ -769,6 +766,14 @@ class Package:
         problems = []
         for f in ver.get("files", []):
             path = f.get("path", "")
+            if _unsafe_path(path):
+                # MINI-SPECS 5.4: names no file this reader will open; this
+                # version is unusable, the node may fall back (SPEC 10 step 5).
+                problems.append(("error", "schema-invalid",
+                                 "%s v%s: files[] path %r is not a package path (MINI-SPECS "
+                                 "5.4); this version is unusable"
+                                 % (node["node_id"], ver.get("v"), path)))
+                continue
             try:
                 data = self.blob(path)
             except KeyError:

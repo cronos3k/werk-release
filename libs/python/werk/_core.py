@@ -391,9 +391,20 @@ ZIP64_REMEDY = ("werk does not use zip64: a package past the zip32 ceiling (4 Gi
                 "65534 entries) is carried in DIRECTORY form, which is the same format")
 
 
+def _unsafe(path):
+    """MINI-SPECS 5.4: relative, forward slashes, no `..` segment, no drive
+    letter, no leading slash (and no NUL)."""
+    return (not path or path.startswith("/") or "\\" in path or "\x00" in path
+            or ".." in path.split("/") or (len(path) > 1 and path[1] == ":"))
+
+
+def _unsafe_msg(tag, path):
+    return ("%s: files[] path %r is not a package path (MINI-SPECS 5.4: relative, forward "
+            "slashes, no `..` segment, no drive letter); this version is unusable" % (tag, path))
+
+
 def _reject_unsafe(path):
-    if (not path or path.startswith("/") or "\\" in path or ".." in path.split("/")
-            or (len(path) > 1 and path[1] == ":")):
+    if _unsafe(path):
         raise ValueError("refusing an unsafe package path: %r" % (path,))
 
 
@@ -1095,8 +1106,10 @@ class Package(object):
             if not isinstance(path, string_types):
                 problems.append(("error", "file-missing", "%s: a file record has no path" % tag))
                 continue
+            if _unsafe(path):
+                problems.append(("error", "schema-invalid", _unsafe_msg(tag, path)))
+                continue
             try:
-                _reject_unsafe(path)
                 got, size = self._file_hash(path)
             except KeyError:
                 problems.append(("error", "file-missing", "%s: %s is not in the container" % (tag, path)))
@@ -1143,7 +1156,9 @@ class Package(object):
                             and not isinstance(v.get("v"), bool)
                             and (not isinstance(active, integer_types) or v["v"] <= active)),
                            key=lambda v: -v["v"])
+            tried = set()
             for cand in cands:
+                tried.add(id(cand))
                 if "compacted" in cand:
                     self._add("info", "version-compacted", node.node_id,
                               "%s v%d was compacted" % (node.node_id, cand["v"]))
@@ -1158,6 +1173,18 @@ class Package(object):
                     break
                 for sev, code, msg in problems:
                     self._add(sev, code, node.node_id, msg)
+            # MINI-SPECS 5.4 / SPEC 10 step 5: an unsafe path makes its VERSION
+            # unusable, never the node; one in a version the walk did not need
+            # (newer than `active`, older than the resolved one) is still an
+            # error in the manifest, reported -- as werk-core reports it.
+            for v in node.versions:
+                if not isinstance(v, dict) or id(v) in tried or not isinstance(v.get("files"), list):
+                    continue
+                for f in v["files"]:
+                    p = f.get("path") if isinstance(f, dict) else None
+                    if isinstance(p, string_types) and _unsafe(p):
+                        self._add("error", "schema-invalid", node.node_id,
+                                  _unsafe_msg("%s v%s" % (node.node_id, v.get("v")), p))
             if node.resolved is None:
                 node.status, node.reason = "dead", "no usable version"
                 self._add("error", "node-dead", node.node_id, "%s: no usable version" % node.node_id)

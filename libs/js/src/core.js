@@ -1034,8 +1034,16 @@ function bytesEqAscii(b, o, s) { for (var i = 0; i < s.length; i++) { if (B.at(b
 // ---------------------------------------------------------------- containers
 var ZIP64_REMEDY = "werk does not use zip64: a package past the zip32 ceiling (4 GiB, 65534 entries) is carried in DIRECTORY form, which is the same format";
 
+// MINI-SPECS 5.4: relative, forward slashes, no `..` segment, no drive letter,
+// no leading slash (and no NUL).
+function isUnsafePath(p) {
+  return !p || p.charAt(0) === "/" || p.indexOf("\\") >= 0 || p.indexOf("\u0000") >= 0 || contains(p.split("/"), "..") || (p.length > 1 && p.charAt(1) === ":");
+}
+function unsafeMsg(tag, p) {
+  return tag + ": files[] path " + p + " is not a package path (MINI-SPECS 5.4: relative, forward slashes, no `..` segment, no drive letter); this version is unusable";
+}
 function rejectUnsafe(p) {
-  if (!p || p.charAt(0) === "/" || p.indexOf("\\") >= 0 || contains(p.split("/"), "..") || (p.length > 1 && p.charAt(1) === ":")) {
+  if (isUnsafePath(p)) {
     throw new WerkError("refusing an unsafe package path: " + p, "unsafe-path");
   }
 }
@@ -1553,7 +1561,8 @@ Package.prototype.verifyVersion = function (node, ver) {
   for (i = 0; i < files.length; i++) {
     var f = files[i], path = isObj(f) ? f.path : null, h;
     if (typeof path !== "string") { problems.push(["error", "file-missing", tag + ": a file record has no path"]); continue; }
-    try { rejectUnsafe(path); h = this.fileHash(path); }
+    if (isUnsafePath(path)) { problems.push(["error", "schema-invalid", unsafeMsg(tag, path)]); continue; }
+    try { h = this.fileHash(path); }
     catch (e) {
       if (e.missing) { problems.push(["error", "file-missing", tag + ": " + path + " is not in the container"]); }
       else if (e.code === "zip-entry-invalid") { problems.push(["error", "zip-entry-invalid", tag + ": " + e.message]); }
@@ -1596,7 +1605,9 @@ Package.prototype.walk = function () {
       if (isObj(v) && isInt(v.v) && (!isInt(active) || v.v <= active)) { cands.push(v); }
     }
     cands.sort(function (a, b) { return b.v - a.v; });
+    var tried = [];
     for (j = 0; j < cands.length; j++) {
+      tried.push(cands[j]);
       if (hasOwn(cands[j], "compacted")) { this.add("info", "version-compacted", node.nodeId, node.nodeId + " v" + cands[j].v + " was compacted"); continue; }
       problems = this.verifyVersion(node, cands[j]);
       if (!problems.length) {
@@ -1605,6 +1616,18 @@ Package.prototype.walk = function () {
         break;
       }
       for (var k = 0; k < problems.length; k++) { this.add(problems[k][0], problems[k][1], node.nodeId, problems[k][2]); }
+    }
+    // MINI-SPECS 5.4 / SPEC 10 step 5: an unsafe path makes its VERSION unusable,
+    // never the node; one in a version the walk did not need (newer than
+    // `active`, older than the resolved one) is still an error, reported -- as
+    // werk-core reports it.
+    for (j = 0; j < node.versions.length; j++) {
+      var uv = node.versions[j];
+      if (!isObj(uv) || contains(tried, uv) || !isArray(uv.files)) { continue; }
+      for (var q = 0; q < uv.files.length; q++) {
+        var up = isObj(uv.files[q]) ? uv.files[q].path : null;
+        if (typeof up === "string" && isUnsafePath(up)) { this.add("error", "schema-invalid", node.nodeId, unsafeMsg(node.nodeId + " v" + uv.v, up)); }
+      }
     }
     if (node.resolved === null) { node.status = "dead"; node.reason = "no usable version"; this.add("error", "node-dead", node.nodeId, node.nodeId + ": no usable version"); continue; }
     var ver = node.version(), declared = this.declaredFormats(node, ver), files = ver.files;

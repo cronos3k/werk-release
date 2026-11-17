@@ -599,6 +599,24 @@ impl Package {
             }
             let mut problems = Vec::new();
             for f in &cand.files {
+                // MINI-SPECS 5.4: a path that is not relative, forward-slashed
+                // and free of `..` names no file this reader will open. The
+                // version is unusable; the node falls back to the newest
+                // valid earlier version, or dies if there is none (SPEC 10
+                // step 5) -- the C, Rust and Python loaders and the libraries
+                // scope it the same way.
+                if !is_safe_package_path(&f.path) {
+                    problems.push(entry(
+                        Severity::Error,
+                        Code::SchemaInvalid,
+                        Some(&id),
+                        Some(cand.v),
+                        Some(&f.path),
+                        "unsafe package path (MINI-SPECS 5.4: relative, forward slashes, no `..` segment, \
+                         no drive letter); this version is unusable",
+                    ));
+                    continue;
+                }
                 match self.blob(&f.path) {
                     // A refusal is reported under ITS name. Before ruling 9 of
                     // 2026-10-13 every one of these was `file-missing`, so a
@@ -709,8 +727,17 @@ impl Package {
         let unknown = if lenient { v.unknown_keywords() } else { Vec::new() };
         for e in v.validate(&self.manifest.raw) {
             if let Some(k) = kills.as_deref_mut() {
-                if let Some(i) = node_index_of(&e.instance_path) {
-                    k.entry(i).or_default().push(e.to_string());
+                // An unsafe files[] `path` inside one version is
+                // that VERSION's damage, not the node's: resolve_node refuses
+                // the version and falls back (SPEC 10 step 5), as every other
+                // reader does. The finding is still reported below.
+                let version_scoped = version_path_of(&e.instance_path)
+                    && matches!(self.manifest.raw.pointer(&e.instance_path),
+                                Some(Value::String(p)) if !is_safe_package_path(p));
+                if !version_scoped {
+                    if let Some(i) = node_index_of(&e.instance_path) {
+                        k.entry(i).or_default().push(e.to_string());
+                    }
                 }
             }
             self.report.push(severity, Code::SchemaInvalid, None, None, None, format!("{prefix}{e}"));
@@ -2098,6 +2125,24 @@ fn payload_path_of(ntype: &str, v: &VersionView) -> Option<String> {
 
 fn failures_to_entries(_id: &str, _f: &[String]) -> Vec<crate::report::ReportEntry> {
     Vec::new()
+}
+
+/// `/nodes/<i>/versions/<j>/files/<k>/path`: one file record of one version.
+fn version_path_of(pointer: &str) -> bool {
+    let segs: Vec<&str> = pointer.split('/').collect();
+    matches!(segs.as_slice(), ["", "nodes", _, "versions", _, "files", _, "path"])
+}
+
+/// MINI-SPECS 5.4, the rule every werk reader applies before it opens a
+/// declared path: relative, forward slashes, no `..` segment, no drive
+/// letter, no leading slash, no NUL.
+pub(crate) fn is_safe_package_path(p: &str) -> bool {
+    !(p.is_empty()
+        || p.starts_with('/')
+        || p.contains('\\')
+        || p.contains('\0')
+        || p.split('/').any(|s| s == "..")
+        || (p.len() >= 2 && p.as_bytes()[1] == b':'))
 }
 
 fn node_index_of(pointer: &str) -> Option<usize> {
