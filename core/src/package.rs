@@ -109,6 +109,9 @@ pub struct Package {
     source: Source,
     pub manifest: Manifest,
     pub signature_raw: Option<Value>,
+    /// SIGNATURE.json is in the container but is not a readable chain (not
+    /// UTF-8 JSON, not an object, or the entry itself is damaged).
+    pub signature_damage: Option<String>,
     pub signature_state: SignatureState,
     pub nodes: Vec<NodeState>,
     pub report: LoadReport,
@@ -196,15 +199,25 @@ impl Package {
         })?;
         let manifest = Manifest::parse(manifest_bytes)?;
 
-        let signature_raw = read_source(&source, SIGNATURE_NAME)
-            .ok()
-            .and_then(|b| serde_json::from_slice::<Value>(&b).ok());
+        // Absent means NOT IN THE CONTAINER. A SIGNATURE.json that is there
+        // but cannot be read as a chain is a present signature that is
+        // damaged: present-and-invalid (SPEC section 6), never `absent` —
+        // collapsing the two is exactly what section 6 forbids.
+        let (signature_raw, signature_damage) = match read_source(&source, SIGNATURE_NAME) {
+            Err(Error::NoSuchItem(_)) => (None, None),
+            Err(e) => (None, Some(format!("SIGNATURE.json is present but cannot be read: {e}"))),
+            Ok(b) => match signature::parse_raw(&b) {
+                Ok(v) => (Some(v), None),
+                Err(r) => (None, Some(r)),
+            },
+        };
 
         let mut pkg = Package {
             origin: path,
             source,
             manifest,
             signature_raw,
+            signature_damage,
             signature_state: SignatureState::Absent,
             nodes: Vec::new(),
             report: LoadReport::default(),
@@ -357,6 +370,18 @@ impl Package {
 
         // 3. Signature — three states, always stated.
         self.signature_state = match &self.signature_raw {
+            None if self.signature_damage.is_some() => {
+                let r = self.signature_damage.clone().unwrap_or_default();
+                self.report.push(
+                    Severity::Error,
+                    Code::SignatureInvalid,
+                    None,
+                    None,
+                    Some(SIGNATURE_NAME),
+                    r.clone(),
+                );
+                SignatureState::Invalid(r)
+            }
             None => {
                 self.report.push(
                     Severity::Info,
@@ -369,7 +394,13 @@ impl Package {
                 SignatureState::Absent
             }
             Some(sig) => {
-                if let Ok(v) = Validator::new(SIGNATURE_SCHEMA) {
+                // A chain in an algorithm this reader does not implement is
+                // `unverified` (SPEC section 10.1); it is not held against the
+                // Ed25519 chain schema, because it is not that chain.
+                let foreign_alg = matches!(sig.get("algorithm"),
+                    Some(Value::String(a)) if a != "ed25519");
+                if foreign_alg {
+                } else if let Ok(v) = Validator::new(SIGNATURE_SCHEMA) {
                     for e in v.validate(sig) {
                         self.report.push(
                             Severity::Error,
@@ -402,6 +433,14 @@ impl Package {
                         None,
                         r.clone(),
                     ),
+                    SignatureState::Unverified(r) => self.report.push(
+                        Severity::Warn,
+                        Code::SignatureUnverified,
+                        None,
+                        None,
+                        None,
+                        r.clone(),
+                    ),
                     SignatureState::Absent => {}
                 }
                 st
@@ -413,8 +452,34 @@ impl Package {
         for r in self.manifest.nodes() {
             match r {
                 Err((i, msg)) => {
-                    self.report.push(Severity::Error, Code::NodeDead, None, None, None, msg.clone());
-                    let _ = i;
+                    // SPEC section 12.1: a node whose own structure is
+                    // unusable is DEAD -- it stays in the census under its
+                    // id (when it has one) and is reported by the dead-node
+                    // loop below, exactly as the loaders and the libraries
+                    // report it. It used to vanish from `nodes` with an
+                    // anonymous report entry: 17 nodes, 0 dead, where every
+                    // other reader said 18 nodes, 1 dead.
+                    let node_id = self
+                        .manifest
+                        .raw
+                        .pointer(&format!("/nodes/{i}/node_id"))
+                        .and_then(Value::as_str)
+                        .map(str::to_string)
+                        .unwrap_or_else(|| format!("<node {i}>"));
+                    let view = crate::manifest::NodeView {
+                        index: i,
+                        node_id,
+                        ntype: "<malformed>".into(),
+                        active: 0,
+                        versions: Vec::new(),
+                        edges: Vec::new(),
+                        meta: None,
+                    };
+                    states.push(NodeState {
+                        view,
+                        status: NodeStatus::Dead(format!("malformed node: {msg}")),
+                        resolved: None,
+                    });
                 }
                 Ok(view) => {
                     let mut status = NodeStatus::Alive;
@@ -1925,6 +1990,7 @@ impl Package {
             }
         }
         self.signature_raw = sig;
+        self.signature_damage = None;
         self.cache.borrow_mut().remove(SIGNATURE_NAME);
         self.analyse();
     }

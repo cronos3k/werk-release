@@ -1,0 +1,49 @@
+{
+  "$id": "https://werk.format/spec/schemas/x.gridcraft.vba.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Descriptor of a VBA macro project preserved verbatim (node type x.gridcraft.vba). The project is the file `vbaProject.bin` of this node, byte for byte as it was in the source file. Its bytes are NOT a compound file, so this package carries no definition of them; they are kept only so that saving the workbook again does not destroy them. GridCraft does not run macros; the project is kept so that saving a macro-enabled workbook does not destroy its macros.",
+  "properties": {
+    "file_name": {
+      "const": "vbaProject.bin",
+      "description": "The file of this node that holds the project: the one whose path ends in `/vbaProject.bin`.",
+      "type": "string"
+    },
+    "format": {
+      "const": "undefined",
+      "description": "The bytes are in no format this package defines.",
+      "type": "string"
+    },
+    "never_auto_execute": {
+      "const": true,
+      "description": "ALWAYS true, and not a switch: this node carries EMBEDDED CODE. A consumer MUST NOT execute, load, compile or interpret it automatically - not on open, not on preview, not on any event. Reading it as data (listing modules, showing source text) is not executing it. Running it is a deliberate act of a person who has inspected it, outside this format.",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "sha256": {
+      "description": "Lowercase hex sha256 of the project's bytes.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "size": {
+      "description": "Size of the project in bytes.",
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "never_auto_execute",
+    "format",
+    "file_name",
+    "size",
+    "sha256"
+  ],
+  "title": "x.gridcraft.vba - a VBA project preserved verbatim, never executed",
+  "type": "object"
+}

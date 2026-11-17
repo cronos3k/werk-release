@@ -87,7 +87,11 @@ def main():
     gate = G.Gate("REFERENCE")
     record = load_record()
     fixtures = record["fixtures"] if "fixtures" in record else record
-    keys = sorted(k for k in fixtures if not k.startswith("_"))
+    # mini-v1-historical is the frozen package the recorded trials ran on
+    # (earlier spec and loaders, kept byte for byte so they stay checkable);
+    # it is pinned in fixtures.json but is not held to THIS spec and loaders.
+    FROZEN = {"mini-v1-historical"}
+    keys = sorted(k for k in fixtures if not k.startswith("_") and k not in FROZEN)
 
     # ---- bytes -------------------------------------------------------------
     repo = tree("spec", "loaders")

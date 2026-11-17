@@ -3,11 +3,11 @@
   "chain": [
     {
       "index": 0,
-      "manifest_sha256": "7d012ef712f04d763c42d88ce1ed1e680925137ada5893efd608595f49ba51db",
+      "manifest_sha256": "a2cdfa19407f4424e798bbb291159b2d59752aeb509ef96b9b6d0bac93b477b9",
       "note": "Signed with a PUBLICLY KNOWN test key so the chain can be verified by anyone reading spec/MINI-SPECS.md section 12. It proves nothing about authorship and is not a trust anchor.",
       "prev_entry_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
       "public_key": "d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a",
-      "signature": "052fb26b15db55bcf81eae860645b8ed063e43a0c58a7a96f8ea7786792fc5686a3f737c34c9e363c89ec1e4caa9f0114b5792bfd569e025f17b29021b77c402",
+      "signature": "ed0524bb670cfeb8ac0a54a02c72849f671b95a95603bdfcd6d07a4ce6c30a8874df7f96caae4d980ba58ca14f3242def2180b8ece5d38edb7f2aef70a2d7800",
       "signed_at": "2026-08-08T09:00:00Z",
       "signer": {
         "kind": "service",
@@ -18,6 +18,6 @@
     }
   ],
   "encoding": "hex-lowercase",
-  "manifest_sha256": "7d012ef712f04d763c42d88ce1ed1e680925137ada5893efd608595f49ba51db",
+  "manifest_sha256": "a2cdfa19407f4424e798bbb291159b2d59752aeb509ef96b9b6d0bac93b477b9",
   "werk_signature": 1
 }

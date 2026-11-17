@@ -264,12 +264,40 @@ def main(argv=None):
         fresh = os.path.join(WORK, SPEC[key])
         same.append(os.path.isfile(fresh)
                     and sha256_file(fresh) == sha256_file(os.path.join(FIX, SPEC[key])))
+    def differing(key):
+        # Name what differs instead of guessing why (finding N11: this text
+        # used to say "the fixtures predate the spec" whatever the cause, and
+        # the measured cause was the host's Pillow/zlib).
+        import zipfile
+        try:
+            a = zipfile.ZipFile(os.path.join(WORK, SPEC[key]))
+            b = zipfile.ZipFile(os.path.join(FIX, SPEC[key]))
+            na, nb = set(a.namelist()), set(b.namelist())
+            d = sorted(n for n in na & nb if a.read(n) != b.read(n))
+            d += sorted("only-in-rebuild:" + n for n in na - nb)
+            d += sorted("only-in-shipped:" + n for n in nb - na)
+            return ", ".join(d[:8]) or "framing only"
+        except Exception as e:  # noqa: BLE001
+            return "not comparable: %s" % e
+
+    def pillow_note():
+        try:
+            import PIL
+            v = PIL.__version__
+        except Exception:  # noqa: BLE001
+            return "Pillow not importable"
+        return ("Pillow %s (pinned 12.3.0 in fixtures/requirements-build.txt%s)"
+                % (v, "" if v == "12.3.0" else "; the Lanczos resample differs "
+                   "between Pillow releases"))
+
     record("image: builder is deterministic (rebuild identical)",
            "PASS" if ok and all(same) else "FAIL",
            "two builds byte-identical, and identical to the shipped pinned fixtures"
            if ok and all(same) else
-           ("two builds agree but DIFFER from the shipped fixtures: the fixtures "
-            "predate the spec they would be rebuilt with" if ok else
+           ("two builds agree but DIFFER from the shipped fixtures; entries that "
+            "differ: %s; %s" % ("; ".join(
+                "%s: %s" % (k, differing(k)) for k, s_ in zip(("clean", "damaged"), same)
+                if not s_), pillow_note()) if ok else
             (out.strip()[-160:] or "no output")))
 
     print()

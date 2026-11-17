@@ -1,0 +1,216 @@
+{
+  "owner": "slide-202",
+  "schema_version": 1,
+  "shapes": [
+    {
+      "h": 160.0,
+      "paths": [
+        {
+          "d": "M 80.00000000000001 0 L 98.88514098743279 61.114991930060505 L 160 61.11456180001682 L 110.5568 98.88527390492607 L 129.4427190999916 160 L 80 122.2285919300605 L 30.557280900008426 160 L 49.443200000000004 98.88527390492607 L 0 61.11456180001684 L 61.1148590125672 61.114991930060505 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/0",
+      "preset": "star5",
+      "shape": 221,
+      "text_rect": [
+        24.721599999999995,
+        24.721599999999995,
+        135.2784,
+        135.2784
+      ],
+      "w": 160.0
+    },
+    {
+      "h": 100.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 200 0 L 200 100 L 0 100 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/1",
+      "preset": "rect",
+      "shape": 222,
+      "text_rect": [
+        0.0,
+        0.0,
+        200.0,
+        100.0
+      ],
+      "w": 200.0
+    },
+    {
+      "h": 50.0,
+      "paths": [
+        {
+          "d": "M 50 25 C 50 38.807118745769834 38.807118745769834 50 25 50 C 11.192881254230167 50 0.000000000000003552713678800501 38.80711874576984 0 25.000000000000004 C -0.000000000000003552713678800501 11.19288125423017 11.19288125423016 0.000000000000003552713678800501 24.999999999999996 0 C 38.80711874576983 -0.000000000000003552713678800501 50 11.19288125423016 50 24.999999999999993 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/1/kind/children/0",
+      "preset": "ellipse",
+      "shape": 223,
+      "text_rect": [
+        7.3225,
+        7.3225,
+        42.6775,
+        42.6775
+      ],
+      "w": 50.0
+    },
+    {
+      "h": 50.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 50 0 L 50 50 L 0 50 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/1/kind/children/1",
+      "preset": "rect",
+      "shape": 224,
+      "text_rect": [
+        0.0,
+        0.0,
+        50.0,
+        50.0
+      ],
+      "w": 50.0
+    },
+    {
+      "h": 30.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 40 30",
+          "even_odd": false,
+          "fill": "none",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/2",
+      "preset": "line",
+      "shape": 225,
+      "text_rect": [
+        0.0,
+        0.0,
+        40.0,
+        30.0
+      ],
+      "w": 40.0
+    },
+    {
+      "h": 60.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 240 0 L 240 60 L 0 60 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/3",
+      "preset": "rect",
+      "shape": 226,
+      "text_rect": [
+        0.0,
+        0.0,
+        240.0,
+        60.0
+      ],
+      "w": 240.0
+    },
+    {
+      "h": 240.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 360 0 L 360 240 L 0 240 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/4",
+      "preset": "rect",
+      "shape": 227,
+      "text_rect": [
+        0.0,
+        0.0,
+        360.0,
+        240.0
+      ],
+      "w": 360.0
+    },
+    {
+      "h": 64.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 64 0 L 64 64 L 0 64 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/5",
+      "preset": "rect",
+      "shape": 228,
+      "text_rect": [
+        0.0,
+        0.0,
+        64.0,
+        64.0
+      ],
+      "w": 64.0
+    },
+    {
+      "h": 60.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 100 0 L 100 60 L 0 60 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/6",
+      "preset": "rect",
+      "shape": 229,
+      "text_rect": [
+        0.0,
+        0.0,
+        100.0,
+        60.0
+      ],
+      "w": 100.0
+    },
+    {
+      "h": 120.0,
+      "paths": [
+        {
+          "d": "M 0 0 L 160 0 L 160 120 L 0 120 L 0 0 Z",
+          "even_odd": false,
+          "fill": "norm",
+          "stroke": true
+        }
+      ],
+      "pointer": "/slide/shapes/8",
+      "preset": "rect",
+      "shape": 231,
+      "text_rect": [
+        0.0,
+        0.0,
+        160.0,
+        120.0
+      ],
+      "w": 160.0
+    }
+  ]
+}

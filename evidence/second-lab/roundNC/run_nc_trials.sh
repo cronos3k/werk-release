@@ -69,7 +69,8 @@ PIN_P_FBX=c82c5ff6cf7a8f545b91b48aee6d83f11afbb71e5b6a51f7f8d5424c93297988
 PIN_P_GLTF=3bfec5fe499f3db6b6bc1c9fc6841dd303148f924bfe934e2620a24230d244a9
 PIN_P_USDZ=b68cbea04eb7d52ddd23f20949b6ff10dcc26383f4b83a9d02e1f4cc8984ec93
 
-F_WERK=$REPO/gauntlet/roundOW/mini-v1.werk
+# the bytes the round ran on (mini-v1.werk was rebuilt under the ruling on #11)
+F_WERK=$REPO/gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk
 F_FBX=$NC/crate-nc-v1.fbx
 F_GLTF=$NC/crate-nc-v1.gltf
 F_BIN=$NC/crate-nc-v1.bin
@@ -154,7 +155,7 @@ run_agent () {
   else
     cp "$pfile" "$dir/PROMPT.txt"
     prompt=$(cat "$dir/PROMPT.txt")
-    local f; for f in "$@"; do cp "$f" "$dir/"; done
+    local f; for f in "$@"; do case "$f" in *mini-v1-f7bdcc85.werk) cp "$f" "$dir/mini-v1.werk" ;; *) cp "$f" "$dir/" ;; esac; done
     # echo rule: no expected hash value may sit in the workspace
     $PY "$NC/grade_nc.py" --format "$fmt" --echo-check "$(winp "$dir")" \
         --json "$(winp "$RUN/_echo/$name.json")" > "$RUN/_echo/$name.log" 2>&1

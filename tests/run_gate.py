@@ -62,6 +62,14 @@ def which(name):
     return shutil.which(name)
 
 
+def compiler_env(cc):
+    """Its own bin directory first on PATH (see tests/gate_common.py)."""
+    env = dict(os.environ)
+    if cc:
+        env["PATH"] = os.path.dirname(os.path.abspath(cc)) + os.pathsep + env.get("PATH", "")
+    return env
+
+
 def find_cl():
     """MSVC is not on PATH by default; locate it the way splat-foley does."""
     if which("cl"):
@@ -239,7 +247,8 @@ def main(argv):
             exe = os.path.join(WORK, "smoke_gcc.exe" if os.name == "nt" else "smoke_gcc")
             rc, out, _ = run(["g++", "-std=c++17",
                               "-I" + os.path.join(ROOT, "core", "include"),
-                              os.path.join(cpp_dir, "smoke.cpp"), dll, "-o", exe])
+                              os.path.join(cpp_dir, "smoke.cpp"), dll, "-o", exe],
+                             env=compiler_env(which("g++")))
             if rc == 0:
                 built = ("g++", exe)
             else:
@@ -290,23 +299,30 @@ def main(argv):
     exe = os.path.join(WORK, "werk_read_c.exe" if os.name == "nt" else "werk_read_c")
     built_c = False
     if cc:
+        # The compiler's own bin directory goes first on PATH. Without that,
+        # a MinGW gcc behind another MinGW's bin (Git for Windows puts its
+        # /mingw64/bin early on PATH) cannot load its own DLLs: cc1 exits 127,
+        # nothing is printed, gcc exits 1. Until the release fix this gate
+        # reported that as "broken toolchain" and SKIPped (the paper's one
+        # honest SKIP); the measured cause was the PATH (finding N2).
         rc, out, _ = run([cc, "-std=c99", "-O2", "-o", exe,
-                          os.path.join(loaders, "werk_read.c")])
+                          os.path.join(loaders, "werk_read.c")],
+                         env=compiler_env(cc))
         built_c = rc == 0
         if not built_c:
-            # A compiler that exits nonzero and says NOTHING has not rejected
-            # the source; it has failed to run. (Observed 2026-08-08: this
-            # host's mingw gcc cannot compile `int main(void){return 0;}`
-            # either — cc1 dies silently.) Reporting that as a source failure
-            # would be the harness asserting something it did not measure, so
-            # it is a SKIP with the reason and the other compiler is tried.
+            # A compiler that exits nonzero and says NOTHING, even with its
+            # own bin first on PATH, has not rejected the source; it has
+            # failed to run. Reporting that as a source failure would be the
+            # harness asserting something it did not measure, so it is a SKIP
+            # with the reason and the other compiler is tried.
             if out.strip():
                 record("bootstrap: werk_read.c compile", "FAIL", out.strip()[-200:])
             else:
                 record("bootstrap: werk_read.c (%s)" % os.path.basename(cc),
                        "SKIP",
-                       "%s exited %d with no diagnostics: broken toolchain on "
-                       "this host, not a source failure" % (cc, rc))
+                       "%s exited %d with no diagnostics although its own bin "
+                       "directory was first on PATH: the compiler did not run "
+                       "(not a source failure)" % (cc, rc))
     if not built_c and cl:
         cmd = 'cl /nologo /O2 /W3 "%s" /Fe:"%s"' % (
             os.path.join(loaders, "werk_read.c"), exe)

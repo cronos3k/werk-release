@@ -541,6 +541,7 @@ def collect(src, out_dir):
     # -- spec/ and loaders/ ---------------------------------------------
     spec_files = []
     for dirpath, _dirs, names in os.walk(os.path.join(ROOT, "spec")):
+        _dirs.sort()  # else the filesystem's order (ext4: hash order)
         for nm in sorted(names):
             if nm.endswith(".pyc"):
                 continue

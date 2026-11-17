@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/signature.schema.json",
+  "title": "SIGNATURE.json — the Ed25519 custody chain",
+  "description": "Law 7. An append-only chain in which each signer — human and producing agent both — signs the manifest hash, and the manifest hashes every file, so one signature covers the entire package state transitively. Enrichment APPENDS; it never overwrites earlier custody. SIGNATURE.json is the one file besides MANIFEST.json that is not listed in any node's files[], because it signs the manifest that would otherwise have to hash it. Its absence is a legitimate state (anonymous), not an error.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "werk_signature",
+    "algorithm",
+    "encoding",
+    "manifest_sha256",
+    "chain"
+  ],
+  "$comment": "MESSAGE CONSTRUCTION (normative). The bytes an entry signs are the UTF-8 encoding of exactly this string, with LF line endings and no trailing newline: 'werk-sig/1' LF chain[i].manifest_sha256 LF prev_entry_sha256 LF signed_at LF signer.uri LF signer.kind . The manifest hash in the message is THE ENTRY'S OWN, not the top-level one: each signer signs the manifest state as it stood when they signed, which is what lets enrichment append a link without invalidating every earlier one (law 7: 'Enrichment appends; it never overwrites earlier custody'). Nothing else is covered directly, and nothing else needs to be: an entry's manifest_sha256 covers every byte of every node in that state through the manifest's per-file hashes, and prev_entry_sha256 covers every earlier link. VERIFICATION: for each entry in order, rebuild that string from THAT entry's fields, check Ed25519(public_key, message, signature), and check that prev_entry_sha256 matches. Then check that the LAST entry's manifest_sha256 equals the sha256 of the MANIFEST.json bytes actually present, and that the top-level manifest_sha256 equals it too. Earlier entries name manifest states that are no longer present; they are not re-checkable against bytes and MUST NOT be treated as failures — they are custody over a superseded state, which is exactly what a history is. THREE STATES, which a conformant tool MUST surface distinctly: signed-and-valid (chain present, every link verifies); absent (no SIGNATURE.json: anonymous, by choice or by stripping; nothing breaks but the absence is visible); present-and-invalid (a link fails: tampering under an existing signature, and the state that catches bad actors). A tool that collapses 'absent' and 'invalid' into one warning has defeated the doctrine. HONEST LIMIT: a chain has no external root of trust, so an attacker who rewrites the whole file can produce a self-consistent chain of their own keys. What the chain proves is that the named keys signed the named states; whether a key is one you trust is a question this file cannot answer and does not pretend to.",
+  "properties": {
+    "werk_signature": {
+      "type": "integer",
+      "const": 1,
+      "description": "Version of this chain format."
+    },
+    "algorithm": {
+      "const": "ed25519",
+      "description": "RFC 8032 Ed25519, pure (not ph, not ctx). Test vectors in spec/MINI-SPECS.md so an implementer can prove their library before trusting it."
+    },
+    "encoding": {
+      "const": "hex-lowercase",
+      "description": "Every key, signature and hash in this file is lowercase hexadecimal with no prefix and no separators. One encoding for the whole format; base64 was rejected precisely because two encodings mean two bugs."
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 over the EXACT BYTES of MANIFEST.json as they appear in the container, with no reserialisation, no reformatting and no key reordering. A verifier hashes the file it has; it never re-encodes first. This is the CURRENT state of the package and it MUST equal the last chain entry's manifest_sha256 — it is a convenience for a reader that wants the anchor without walking the chain, never a second authority. Each entry carries its own manifest_sha256 and signs that; see the message construction above."
+    },
+    "chain": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Entries in append order. Entry 0 is the original author. A verifier walks the array from 0 upward and MUST reject the whole chain if any link fails, while still loading the package (an invalid signature is a trust verdict, not a parse failure).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "index",
+          "signer",
+          "public_key",
+          "signed_at",
+          "manifest_sha256",
+          "prev_entry_sha256",
+          "signature"
+        ],
+        "properties": {
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Position in the chain. MUST equal the array index."
+          },
+          "manifest_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "The manifest state THIS signer signed: sha256 over the exact bytes of MANIFEST.json as they stood at that moment. Successive entries may repeat a value (two parties co-signing one state) or differ (enrichment added a node and re-anchored). The last entry's value MUST equal the sha256 of the MANIFEST.json actually in the container; earlier values name states that are gone and are not re-checkable from this package alone — that is a history, not a fault. This per-entry field is what makes the chain survive enrichment: with one shared anchor, appending a link after any manifest change would break every earlier link (recorded as Stage 2 spec finding S-1, resolved as Stage 1 decision 17)."
+          },
+          "signer": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "uri",
+              "kind"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uri": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A resolvable identifier for the signer — mailto:, https:, did:, or an organisation-internal scheme. It is IDENTITY, not a dependency: nothing in the package needs it to resolve for the package to load, which keeps law 1 intact."
+              },
+              "kind": {
+                "enum": [
+                  "human",
+                  "agent",
+                  "service"
+                ],
+                "description": "Both the human and the producing agent sign. An agent's signature is what makes 'a model made this' a checkable fact rather than a claim in a note."
+              },
+              "role": {
+                "type": "string",
+                "description": "e.g. 'author', 'enrichment', 'review', 'republish'."
+              }
+            }
+          },
+          "public_key": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "The 32-byte Ed25519 public key, hex."
+          },
+          "signed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "RFC 3339 timestamp, UTC, with a 'Z' suffix and second precision, e.g. '2026-08-08T11:04:00Z'. The exact string is part of the signed message, so it must be reproduced byte-for-byte when verifying."
+          },
+          "prev_entry_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "For index 0: 64 zero characters. For index n>0: sha256 of the UTF-8 bytes of the previous entry's 'signature' field (its 128 hex characters). Chaining on the previous signature, not on the previous entry's whole JSON, means the link survives any whitespace change and cannot be broken by a pretty-printer."
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{128}$",
+            "description": "The 64-byte Ed25519 signature, hex."
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Why this signer touched the package. Free text, not covered by the signature's fixed message — see the message construction below, which deliberately covers only fields whose meaning is unambiguous."
+          },
+          "covers_nodes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+            },
+            "description": "Optional: which node_ids this signer claims to have produced or reviewed. Advisory; the signature covers the whole manifest regardless."
+          }
+        }
+      }
+    },
+    "compaction_log": {
+      "description": "Law 6: compaction is an explicit, signed, logged choice, never silent housekeeping. Every compaction that removed bytes from this package is recorded here and each record is itself signed by an appended chain entry.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "at",
+          "by",
+          "reason",
+          "removed",
+          "chain_index"
+        ],
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "by": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 8
+          },
+          "removed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "node_id",
+                "v",
+                "paths",
+                "sha256"
+              ],
+              "properties": {
+                "node_id": {
+                  "type": "string"
+                },
+                "v": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "sha256": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "description": "Hashes of the removed bytes, so a store that still holds them can restore the version exactly."
+                }
+              }
+            }
+          },
+          "chain_index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Index of the chain entry that signed this compaction."
+          }
+        }
+      }
+    }
+  }
+}

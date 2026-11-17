@@ -1,0 +1,431 @@
+werk 3D Gaussian splat — layout grammar v1  (magic "WKGS")
+==========================================================
+
+Applies to: `core.geom.gsplat` — a set of 3D Gaussians, the primitive that
+3D-Gaussian-Splatting produces and that every splat renderer consumes.
+
+Read `spec/layouts/ENVELOPE.layout.txt` FIRST. It defines the 4-byte magic,
+the u32 version, the u32 header length, the MessagePack header subset, the
+16-byte payload alignment, the section consistency rule and the quaternion
+sign rule. Everything below is the WKGS-specific part; nothing below overrides
+that file except where it says so explicitly (it does not).
+
+The companion grammar is `spec/layouts/points.layout.txt` (magic "WKPC"), and
+the two are deliberately close relatives: section 7 below specifies how a WKGS
+degrades into a WKPC, and that path is normative rather than a suggestion.
+
+**THE WORKED EXAMPLE IS `spec/examples/gsplat.example.hex.txt`.** A real
+1120-byte WKGS -- three Gaussians, `sh_degree` 1, so `sh-rest` is non-empty --
+annotated byte by byte from the magic through every section to the decoded
+values, with its binary beside it as `spec/examples/gsplat.example.wkgs`. Read
+it before writing a decoder and check your decoder against it. It exists
+because a grammar is not a decoder: the strongest model in the open-weights
+gauntlet read section 4 of ENVELOPE.layout.txt, declined to implement it, and
+printed fabricated floats labelled "demonstration" (spec finding S-OW-3).
+
+--------------------------------------------------------------------------
+0. What this payload is, and the one thing it refuses to do
+--------------------------------------------------------------------------
+
+A 3D Gaussian splat is N records of: a mean (a position), an anisotropic
+covariance factored into a scale and a rotation, an opacity, and a
+view-dependent colour expressed as spherical-harmonic coefficients. Rendering
+one is a sort and a blend; understanding one is entirely a question of WHICH
+SPACE each of those five numbers is in, and that is what this file pins.
+
+The refusal: **werk stores the ACTIVATED values, and it says so in the file.**
+The training-time representation stores `log` scales and `logit` opacity
+because an optimiser wants an unconstrained parameterisation. A file format
+has no optimiser. A consumer that reads a scale wants metres; a consumer that
+reads an opacity wants a number it can multiply by. Storing the raw parameters
+would mean every reader in every language reimplements `exp` and `sigmoid`
+correctly or renders something plausible and wrong — and "plausible and wrong"
+is the failure mode this whole format exists to make impossible.
+
+So `scale_space` is `"linear"` and `opacity_space` is `"linear"` in grammar
+revision 1, both are stated as header keys anyway (the same argument
+`endianness` makes: a file states its own facts rather than relying on this
+document), and section 6 gives the exact inverse so that a package can be
+turned back into training-ready parameters without guessing. Recorded as
+decision D-GS-1.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKGS"  = 57 4B 47 53
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  payload sections (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.geom.gsplat"
+    "endianness"      = "le"
+    "payload_origin"  uint
+    "payload_size"    uint
+    "sections"        array of section maps
+
+  Mandatory WKGS keys:
+
+  key                type    meaning
+  -----------------  ------  ---------------------------------------------
+  "count"            uint    N, the number of Gaussians. Every section's
+                             shape[0] MUST equal it. MAY be 0 (an empty
+                             splat is a legal splat: every section is then
+                             present with size 0, per ENVELOPE section 5).
+  "sh_degree"        uint    0, 1, 2 or 3. The maximum spherical-harmonic
+                             band carried. 0 means colour is a constant per
+                             Gaussian and there is no view dependence.
+  "sh_coeff_count"   uint    K, and it MUST equal (sh_degree+1)**2. Stated
+                             as well as derivable because law 8's corollary
+                             says a reader never computes what a writer can
+                             declare, and because it is the number a reader
+                             sizes a buffer with.
+  "sh_coeff_order"   str     MUST be "coefficient-major" — see section 4.
+  "quat_order"       str     MUST be "wxyz", matching the manifest's
+                             conventions.quat_order. Present because a splat
+                             PLY does NOT declare its own order and half the
+                             ecosystem writes xyzw; see section 6.
+  "scale_space"      str     MUST be "linear" (section 0).
+  "opacity_space"    str     MUST be "linear" (section 0).
+  "length_unit"      str     MUST be "metre", matching the manifest's
+                             conventions.length_unit. Means and scales are
+                             both in it.
+
+  Optional WKGS keys:
+
+  key                type    meaning
+  -----------------  ------  ---------------------------------------------
+  "source_convention" str    The field convention the payload was ingested
+                             FROM, when it was ingested from something:
+                             "inria-3dgs/1" is the PLY convention section 6
+                             specifies. Informational; the authority on what
+                             this file contains is the keys above.
+  "activation"       map     What was applied on the way in, as strings, so
+                             a reader can see the arithmetic rather than
+                             infer it: e.g. {"scale":"exp","opacity":
+                             "sigmoid","sh":"identity"}. Informational for
+                             the same reason.
+  "bounds"           map     {"min":[3 floats],"max":[3 floats]} — the
+                             axis-aligned box containing every mean, in
+                             metres. A HINT for a consumer sizing a view or
+                             a grid, exactly as advisory as
+                             container.preview_prefix_bytes: a reader that
+                             needs the true box computes it from the means.
+                             A writer that emits it MUST have computed it.
+  "opacity_note"     str     Free text about opacity provenance, e.g. that a
+                             logit inverse was clamped. Never load-bearing.
+
+  Plus any optional common key from ENVELOPE.layout.txt section 3
+  ("note", "input_hash", "producer", "epistemic", "confidence").
+  A reader MUST ignore header keys it does not know (law 12).
+
+--------------------------------------------------------------------------
+3. Payload sections
+--------------------------------------------------------------------------
+
+  Exactly six sections, in this order, all of them present even when empty.
+
+  name         dtype  shape             stride  arithmetic that MUST hold
+  -----------  -----  ----------------  ------  --------------------------
+  "means"      f32    [count,3]         12      size == 12 * count
+  "scales"     f32    [count,3]         12      size == 12 * count
+  "rotations"  f32    [count,4]         16      size == 16 * count
+  "opacities"  f32    [count]           4       size ==  4 * count
+  "sh-dc"      f32    [count,3]         12      size == 12 * count
+  "sh-rest"    f32    [count,K-1,3]     12      size == 12*count*(K-1)
+
+  Against ENVELOPE.layout.txt section 3's algorithm:
+
+    means/scales/sh-dc  esz 4 != 12 -> second branch, 12 >= 4*3, size =
+                        12 * prod(shape[:-1]) = 12*count
+    rotations           esz 4 != 16 -> second branch, 16 >= 4*4, size =
+                        16*count
+    opacities           esz 4 == 4   -> FIRST branch, size = 4*count
+    sh-rest             esz 4 != 12 -> second branch, 12 >= 4*3, size =
+                        12*count*(K-1); with sh_degree 0, K-1 = 0, the
+                        product is 0 and the section is present with size 0
+
+  Record i of every section describes Gaussian i. There is no index, no
+  sort order and no spatial structure: the ordering is whatever the producer
+  emitted, and a consumer that needs depth order sorts at draw time, which
+  is what a splat renderer does anyway. (D-GS-4.)
+
+  "means"      the Gaussian centre, in METRES, in werk model space: +Y up,
+               -Z forward, +X right, right-handed. A splat trained in a
+               COLMAP frame is NOT in this space; converting it is the
+               ingester's job and the ingester records the transform it
+               applied in the node's input_params. This layout describes
+               what is in the file, and what is in the file is werk space.
+
+  "scales"     the per-axis standard deviation of the Gaussian along its own
+               local axes, in METRES, LINEAR and strictly greater than zero.
+               The covariance a renderer needs is
+                   Sigma = R * diag(s.x^2, s.y^2, s.z^2) * R^T
+               with R the rotation matrix of the quaternion in "rotations".
+               Note the SQUARE: `scales` are standard deviations, not
+               variances. Getting that wrong is a splat that renders at the
+               wrong size and nothing else, which is why it is written here
+               as an equation rather than left to a convention.
+
+  "rotations"  a unit quaternion per Gaussian, component order **w,x,y,z**,
+               rotating from the Gaussian's local axes into model space.
+               ENVELOPE.layout.txt section 6 governs: |q| within 1e-6 of 1,
+               and writers MUST emit the w >= 0 representative.
+
+  "opacities"  alpha in [0,1], LINEAR. 0 is invisible, 1 is opaque. It
+               multiplies the Gaussian's evaluated density, and a renderer's
+               per-fragment alpha is `opacity * exp(-0.5 * d^T Sigma^-1 d)`.
+
+  "sh-dc"      the degree-0 spherical-harmonic coefficient, three values per
+               Gaussian in R,G,B order. This is NOT a colour: see section 5
+               for the one line that turns it into one.
+
+  "sh-rest"    coefficients 1..K-1, COEFFICIENT-MAJOR (section 4). Size 0
+               when sh_degree is 0, and a reader MUST accept that rather
+               than treat a zero-size section as damage.
+
+--------------------------------------------------------------------------
+4. "coefficient-major", stated so it cannot be read two ways
+--------------------------------------------------------------------------
+
+  Let N = count, K = sh_coeff_count. Coefficient 0 lives in "sh-dc";
+  coefficients 1..K-1 live in "sh-rest" as an [N, K-1, 3] array in C order.
+  So the byte offset, inside "sh-rest", of channel `ch` of coefficient `c`
+  (1 <= c <= K-1, 0 <= ch <= 2) for Gaussian `i` is:
+
+      offset = ((i * (K-1)) + (c-1)) * 12 + ch * 4
+
+  i.e. for one Gaussian the file holds coefficient 1's R,G,B, then
+  coefficient 2's R,G,B, and so on. That is COEFFICIENT-MAJOR.
+
+  **The source convention is the opposite one**, and this is the single most
+  expensive mistake available in this file. The INRIA reference writes
+  `f_rest_*` CHANNEL-MAJOR: all K-1 coefficients of red, then all K-1 of
+  green, then all K-1 of blue. An ingester therefore transposes, and a
+  renderer written against the PLY layout and pointed at a WKGS payload
+  without transposing produces an image with plausible colours and wrong
+  view-dependence — the kind of wrong that survives review. Section 6 gives
+  the index arithmetic in both directions.
+
+  Why werk stores the transpose rather than adopting the source order:
+  evaluating spherical harmonics is a loop over COEFFICIENTS accumulating
+  into an RGB triple, so coefficient-major is the order the consumer reads
+  in, and the channel-major order is an artefact of how the training code
+  happened to shape a tensor. Law 9 says a layout serves its consumers;
+  there is exactly one place to pay the transpose and it is the ingester.
+  Recorded as D-GS-2.
+
+  The band layout inside c = 0..K-1 is the standard real spherical harmonic
+  ordering used by the reference implementation, i.e. by increasing degree
+  l = 0,1,2,3 and within a degree by increasing order m = -l..+l:
+
+      c:  0 | 1  2  3 | 4  5  6  7  8 | 9 10 11 12 13 14 15
+      l:  0 | 1  1  1 | 2  2  2  2  2 | 3  3  3  3  3  3  3
+      m:  0 |-1  0 +1 |-2 -1  0 +1 +2 |-3 -2 -1  0 +1 +2 +3
+
+  The manifest's `conventions.sh_l1_order` describes a DIFFERENT thing (the
+  basis order an x.* extension uses for per-vertex L1 irradiance) and does
+  not govern this payload. `conventions.sh_coeff_order` is the one that
+  does; see SPEC.md section 3.16. Recorded as D-GS-3, because two SH
+  conventions in one format that mean different things is exactly the kind
+  of collision a reader is entitled to be warned about.
+
+--------------------------------------------------------------------------
+5. From coefficients to a colour
+--------------------------------------------------------------------------
+
+  The degree-0 basis function is the constant
+
+      C0 = 0.28209479177387814          ( = 1 / (2*sqrt(pi)) )
+
+  and the reference renderer's view-independent colour is
+
+      rgb_linear = clamp(0.5 + C0 * sh_dc, 0, 1)
+
+  componentwise, in LINEAR sRGB primaries (not sRGB-encoded: apply the
+  transfer function before display; MINI-SPECS.md section 7 has it).
+
+  The 0.5 offset is not decorative. The training code centres colour on 0.5
+  so that a zeroed coefficient is mid-grey rather than black, and a reader
+  that drops it renders a splat that is uniformly too dark by exactly half
+  the range. It is written here as an equation for the same reason section 3
+  writes the covariance out: a constant a reader has to know from elsewhere
+  is a promise about another file (law 1).
+
+  With sh_degree > 0 the full evaluation for a view direction d (unit, in
+  model space, pointing FROM the Gaussian TOWARD the camera) is the usual
+  real-SH sum over the K coefficients with the basis in section 4's order,
+  plus the same 0.5 offset and clamp. werk does not restate the degree-1..3
+  basis functions here, and that is deliberate: a consumer that only wants a
+  colour uses the line above and is correct to within view-dependence, and a
+  consumer implementing full SH already has the basis. What werk pins is the
+  ORDER, which is the part nobody agrees on.
+
+--------------------------------------------------------------------------
+6. Ingesting an INRIA-convention splat PLY, completely
+--------------------------------------------------------------------------
+
+  This is the source format in practice: `graphdeco-inria/gaussian-splatting`
+  and every trainer that followed it write one PLY `vertex` element with f32
+  properties in this order:
+
+      x y z                    the mean, in the trainer's own frame
+      nx ny nz                 ALWAYS ZERO. The reference code reuses a
+                               point-cloud writer. A reader that treats them
+                               as normals gets a black render. werk DROPS
+                               them and reports that it did.
+      f_dc_0 f_dc_1 f_dc_2     coefficient 0, R then G then B
+      f_rest_0 .. f_rest_M     coefficients 1..K-1, CHANNEL-MAJOR,
+                               M = 3*(K-1) - 1
+      opacity                  LOGIT space
+      scale_0 scale_1 scale_2  natural-LOG space
+      rot_0 rot_1 rot_2 rot_3  a unit quaternion, order NOT declared
+
+  The complete mapping into the sections of section 3:
+
+      means[i]        = (x, y, z)                        after the ingester's
+                                                         declared frame change,
+                                                         if any
+      scales[i]       = exp(scale_0, scale_1, scale_2)
+      opacities[i]    = 1 / (1 + exp(-opacity))
+      rotations[i]    = normalise(rot_*) reordered to wxyz, sign-canonicalised
+      sh-dc[i]        = (f_dc_0, f_dc_1, f_dc_2)         identity
+      sh-rest[i,c-1,ch] = f_rest_[ ch*(K-1) + (c-1) ]    the transpose
+
+  and the exact inverses, so a package can be turned back into a trainable
+  checkpoint:
+
+      scale_j         = log(scales[i][j])
+      opacity         = log(a / (1 - a))  with a = opacities[i]
+      f_rest_[ch*(K-1)+(c-1)] = sh-rest[i,c-1,ch]
+
+  **THE OPACITY INVERSE IS NOT TOTAL, AND THIS IS THE PLACE THAT SAYS SO.**
+  `a = 0` and `a = 1` have no logit, and ENVELOPE.layout.txt section 6
+  forbids an infinity in any core payload. A producer converting INTO the
+  logit space MUST clamp, MUST choose a clamp it can state, and SHOULD
+  record how many records it clamped — werk's own ingester clamps to
+  [0.5/255, 254.5/255] when its source quantised alpha to a byte, which is
+  half a quantisation step in from each end, and records the count in the
+  node's `input_params`. A reader converting OUT of werk into a trainer
+  faces the same wall in the same place, and a package whose `opacities`
+  contain exact 0.0 or 1.0 is telling it so honestly rather than storing an
+  infinity and hoping. (D-GS-5.)
+
+  **THE QUATERNION ORDER IS THE UNDECLARED FIELD**, and it is undeclared in
+  the source, not here. The reference implementation stores w first; several
+  widely used exporters store w last under the identical property names, and
+  nothing in a PLY header distinguishes them. An ingester therefore either
+  is TOLD the order or INFERS it, and in both cases it MUST record which,
+  and how, in the node's `input_params` — werk's ingester records the two
+  mean absolute components its inference compared, so a weak inference is
+  visible as a weak inference. On a real trained splat the statistic can be
+  genuinely weak (measured: 0.4578 vs 0.4627/0.4768/0.4509 on a 1.92 M
+  Gaussian scene, which decides nothing), and a guess that is recorded and a
+  guess that is silent are different things. Recorded as spec finding S12-3.
+
+--------------------------------------------------------------------------
+7. Graceful degradation into a point cloud — NORMATIVE (law 9, law 3)
+--------------------------------------------------------------------------
+
+  A consumer that does not implement Gaussian splatting is not thereby
+  entitled to nothing. The means are positions and the DC band is a colour,
+  so every WKGS payload contains a point cloud, exactly, with no
+  approximation and no resampling:
+
+      position[i]     = means[i]
+      color[i]        = clamp(0.5 + C0 * sh-dc[i], 0, 1)   (section 5)
+
+  This is normative in two directions, and both matter:
+
+  * A reader that understands only positions and colours **MUST** be able to
+    consume a WKGS by reading exactly two of its six sections, "means" and
+    "sh-dc", skipping the other four by the section table without parsing
+    them. It reports that it did so. It is a CONFORMANT consumer of the
+    node, not a degraded one — nothing in the format asks it to apologise
+    for not being a splat renderer.
+  * A writer that emits a WKGS **SHOULD** also emit the derived
+    `core.geom.points` node (magic "WKPC") with an `enhances` edge from the
+    splat, because a store's browser and a physics pass want the point cloud
+    as a payload they can hash and cache rather than as an arithmetic they
+    have to perform. When it does, that node is `epistemic: "measured"`, its
+    `input_files` name the WKGS payload, and the arithmetic above is its
+    whole derivation — so a consumer can RECOMPUTE it and check, which is
+    law 5's validate-or-recompute applied to a preview.
+
+  The two statements are not redundant. The first says the degradation
+  always exists; the second says a good writer materialises it. A package
+  with only the splat is conformant, and a reader must not fail on one.
+
+--------------------------------------------------------------------------
+8. What a reader MUST check
+--------------------------------------------------------------------------
+
+  Beyond ENVELOPE.layout.txt section 7's assertions:
+
+  1. `sh_coeff_count == (sh_degree+1)**2`, and sh_degree in 0..3.
+  2. Every section's shape[0] == count, and "sh-rest"'s shape[1] ==
+     sh_coeff_count - 1.
+  3. All six section names are present, in the order of section 3.
+  4. `quat_order == "wxyz"`, `scale_space == "linear"`,
+     `opacity_space == "linear"`, `length_unit == "metre"`.
+  5. No NaN and no infinity anywhere (ENVELOPE section 6).
+
+  and SHOULD check, reporting rather than failing, because each of these is
+  a producer's mistake rather than a malformed file and a reader that
+  refuses the node loses 100 % of the data over 0.001 % of it:
+
+  6. every scale strictly greater than 0;
+  7. every opacity within [0,1];
+  8. every |q| within 1e-6 of 1, and every w >= 0.
+
+  A failed check in 1..5 kills the node (law 3: report it, load the rest of
+  the package). A failed check in 6..8 is a report entry with severity
+  `warn` and the node still loads, and the report names the first offending
+  index so the complaint is actionable.
+
+--------------------------------------------------------------------------
+9. Decisions recorded here
+--------------------------------------------------------------------------
+
+  D-GS-1  Activated values, not training parameters. Argued in section 0.
+          The alternative — store log/logit and let readers activate — was
+          rejected because it puts `exp` and `sigmoid` in every reader in
+          every language for the benefit of the one consumer in a thousand
+          that is resuming training, and because section 6's inverse makes
+          that consumer's job three lines rather than impossible.
+
+  D-GS-2  Coefficient-major SH, transposed from the source's channel-major.
+          Argued in section 4. The transpose is paid once, by the ingester,
+          in the direction the consumers read.
+
+  D-GS-3  `sh_coeff_order` is a NEW convention rather than a reuse of
+          `sh_l1_order`. They describe different things — one is the basis
+          order for an extension's per-vertex L1 irradiance, one is the
+          memory order of a per-Gaussian coefficient array — and collapsing
+          them would produce a convention whose value means two things.
+
+  D-GS-4  No spatial index, no sort. A splat renderer sorts by view depth
+          every frame; a stored order would be stale on the first frame and
+          would double the payload's size if it were an index. A consumer
+          that wants an octree builds one, and an extension that wants to
+          ship one uses `x.*` and its own binary.
+
+  D-GS-5  Opacity is stored linear and exact 0.0/1.0 are LEGAL, even though
+          they have no logit. The alternative (forbid the endpoints so the
+          inverse is total) would make a conformant renderer's most common
+          value — a fully opaque Gaussian — illegal, which is a format
+          contorting itself for the convenience of a re-export path.
+
+  D-GS-6  Six sections rather than one interleaved record. Interleaving
+          would halve the number of declared offsets and would force every
+          consumer to stride past the SH coefficients it does not want; the
+          degradation path of section 7 in particular becomes two contiguous
+          reads instead of a strided walk over 56+ bytes per Gaussian. Flat
+          per-attribute streams are also what a GPU wants as vertex buffers.

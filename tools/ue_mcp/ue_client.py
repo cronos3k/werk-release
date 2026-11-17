@@ -106,7 +106,7 @@ class UE:
             except Exception:
                 continue
         raise UEError("no Unreal Remote Control server answered on %d..%d. "
-                      "Is the editor running? See adapters/unreal/TESTBED.md."
+                      "Is the editor running? See plugins/unreal/TESTBED.md."
                       % (ports[0], ports[-1]))
 
     # -- raw -----------------------------------------------------------------
@@ -212,7 +212,7 @@ class UE:
     #
     # So the client raises the window itself, through user32, and says that it
     # did. This makes a screenshot an INTERACTIVE-session capability, which is a
-    # real limitation and is recorded as one in adapters/unreal/TESTBED.md
+    # real limitation and is recorded as one in plugins/unreal/TESTBED.md
     # rather than left to be discovered by someone whose CI produces no images.
     _FOCUS = r"""
 Add-Type @"

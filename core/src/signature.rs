@@ -20,6 +20,13 @@
 //!   * signed-and-valid
 //!   * absent — anonymous, and visibly so
 //!   * present-and-invalid — tampering under an existing signature
+//!
+//! plus SPEC section 10 step 4's fourth word, `unverified` ("I did not
+//! check"): a chain whose declared `algorithm` this crate does not implement
+//! (SPEC section 10.1, the `signature_algorithm` row) is neither valid nor
+//! damage. A SIGNATURE.json that is present but cannot be read as a chain at
+//! all (not UTF-8, not JSON, not an object) is present-and-invalid, never
+//! absent.
 
 use crate::error::{Error, Result};
 use crate::hashing::{from_hex, sha256_hex, to_hex};
@@ -31,6 +38,8 @@ pub enum SignatureState {
     Absent,
     Valid,
     Invalid(String),
+    /// The chain names an algorithm this crate does not implement.
+    Unverified(String),
 }
 
 impl SignatureState {
@@ -39,13 +48,26 @@ impl SignatureState {
             SignatureState::Absent => 0,
             SignatureState::Valid => 1,
             SignatureState::Invalid(_) => 2,
+            SignatureState::Unverified(_) => 3,
         }
     }
+    /// The fixed state word of SPEC section 10 step 4 — exactly one of
+    /// `signed-and-valid`, `absent`, `present-and-invalid`, `unverified`.
+    pub fn word(&self) -> &'static str {
+        match self {
+            SignatureState::Absent => "absent",
+            SignatureState::Valid => "signed-and-valid",
+            SignatureState::Invalid(_) => "present-and-invalid",
+            SignatureState::Unverified(_) => "unverified",
+        }
+    }
+    /// The reason for `present-and-invalid` / `unverified`; the state word
+    /// itself for the other two. (Free prose; the word is the token.)
     pub fn as_str(&self) -> &str {
         match self {
             SignatureState::Absent => "absent",
             SignatureState::Valid => "signed-and-valid",
-            SignatureState::Invalid(r) => r,
+            SignatureState::Invalid(r) | SignatureState::Unverified(r) => r,
         }
     }
 }
@@ -64,8 +86,34 @@ pub fn signed_message(
 pub const ZERO_PREV: &str =
     "0000000000000000000000000000000000000000000000000000000000000000";
 
+/// A SIGNATURE.json that IS present, from its raw bytes. Bytes that are not
+/// a JSON object are damage to a present signature — present-and-invalid
+/// (SPEC section 6), never `absent`; the `Err` is the reason.
+pub fn parse_raw(raw: &[u8]) -> std::result::Result<Value, String> {
+    match serde_json::from_slice::<Value>(raw) {
+        Ok(v) if v.is_object() => Ok(v),
+        Ok(_) => Err("SIGNATURE.json is present but is not a JSON object".into()),
+        Err(e) => Err(format!("SIGNATURE.json is present but is not valid UTF-8 JSON: {e}")),
+    }
+}
+
 /// Verify the whole chain against the manifest bytes as they sit on disk.
 pub fn verify_chain(sig: &Value, manifest_bytes: &[u8]) -> SignatureState {
+    // SPEC section 10.1, `signature_algorithm`: refusing an algorithm is the
+    // `unverified` state, not damage — and never `signed-and-valid`, whatever
+    // an Ed25519 check over the same hex would say.
+    match sig.get("algorithm") {
+        Some(Value::String(a)) if a == "ed25519" => {}
+        Some(Value::String(a)) => {
+            return SignatureState::Unverified(format!(
+                "SIGNATURE.json declares algorithm `{a}`; this reader implements only `ed25519` and did not verify the chain"
+            ))
+        }
+        Some(_) => {
+            return SignatureState::Invalid("SIGNATURE.json `algorithm` is not a string".into())
+        }
+        None => return SignatureState::Invalid("SIGNATURE.json has no `algorithm`".into()),
+    }
     let declared = match sig.get("manifest_sha256").and_then(Value::as_str) {
         Some(s) => s,
         None => return SignatureState::Invalid("SIGNATURE.json has no manifest_sha256".into()),

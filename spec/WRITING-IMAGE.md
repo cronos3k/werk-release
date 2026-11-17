@@ -186,10 +186,44 @@ thousand images shows each from a ranged read.
     python loaders/werk_read.py <your package> --verify --strict
 
 Exit status 0 and `N/N files verified`; for the example **6 nodes, every one
-live**, and `N` is 4 plus the number of `spec/` and `loaders/` files you
-copied. A full reader additionally validates the manifest against its schema —
-which is where a missing `resample` or a `measured` version without inputs is
-caught — and recomputes `spec_sha256` and `input_hash`.
+live** when the donor carries one `core.loader` node, one more per further
+reader it carries, and `N` is 4 plus the number of `spec/` and `loaders/`
+files you copied. A full reader additionally validates the manifest against
+its schema — which is where a missing `resample` or a `measured` version
+without inputs is caught — and recomputes `spec_sha256` and `input_hash`.
+
+**What "valid" means, as rules you can check yourself.** Running a reader is
+a convenient check, not the definition. A valid package satisfies all of
+these, and a conformant reader reports every one that breaks:
+
+1. **Container.** Directory form, or a zip per `WRITING-3D-ENTITY.md` §6: method 0, no flag bit 3,
+   no zip64, no name twice, no name with a leading `/`, a `\` or a `..`
+   segment.
+2. **Manifest bytes.** `MANIFEST.json` is UTF-8 without a BOM and is one
+   JSON object with a `nodes` array.
+3. **Schema.** The manifest is valid against the schema its
+   `manifest_schema` names, which is a file of the `core.spec` node; every
+   JSON payload is valid against `schemas[<its node type>]`.
+4. **Nodes.** Every `node_id` is unique and kebab-case; `active` names a
+   version in `versions[]`; every version has `v`, `files`, `note`,
+   `producer`, `epistemic` and `created`.
+5. **Bytes.** Every path in every version's `files[]` is in the container
+   with exactly its `size` and `sha256`, and every file in the container
+   except `MANIFEST.json` and `SIGNATURE.json` is in some version's
+   `files[]` (nothing floats).
+6. **Edges.** Every `edges[].to` names a node in `nodes[]`.
+7. **Recomputed values.** `spec_sha256` is the digest of `WRITING-3D-ENTITY.md` §5's construction;
+   `license.sha256` is the sha256 of `LICENSE`; every `input_hash` is the
+   construction of `SPEC.md` §2 over its `input_files`.
+8. **Conventions.** `conventions` holds exactly the profile's values.
+9. **Signature**, if there is one: `SPEC.md` §6 verifies every link and the
+   last entry's `manifest_sha256` is the manifest's sha256.
+
+The bundled loader checks what it walks — 1, 2, `active`, 5 and 6 — and
+does not validate schemas, recompute 7's values or verify Ed25519;
+`werkc verify` (the reference core) additionally validates the schemas,
+recomputes 7 and verifies the chain.
+
 
 ## 8. What "minimal" left out
 

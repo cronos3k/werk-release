@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.disclosure.schema.json",
+  "title": "werk core.disclosure — machine-readable facts about synthetic content",
+  "description": "BASE DOCTRINE: this node family belongs to every werk profile. It carries FACTS about how a work came to exist — was it AI-generated, by what, with what human involvement, with what markers, under what training-data statement. THE FORMAT SHIPS FACTS; THE VIEWER APPLIES JURISDICTION. There is no enforcement anywhere in this schema or in the format around it: no locks, no DRM, no mandatory viewer behaviour, no policy gate, no field that a conformant reader is obliged to obey. Anyone with a compiler may write a viewer that ignores every value in this file, and that freedom is intentional and constitutional — it is what 'open and clean' means. The format's only MUST-level demands are about honest READING and REPORTING, and they are in SPEC.md section 3.12. What a viewer then DOES is the viewer's responsibility under its own local law, and never the format's.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "disclosure_version",
+    "ai_generated",
+    "generation_scope",
+    "declared_by",
+    "declared_at"
+  ],
+  "properties": {
+    "disclosure_version": {"type": "integer", "const": 1},
+
+    "ai_generated": {
+      "description": "true when a generative model produced the content of this work, in whole or in part. This is a FACT ABOUT PRODUCTION, not a judgement about the result and not a legal conclusion. A reader that finds this key MUST report it as it stands; a reader that does not find this NODE reports 'no disclosure recorded', which is a different sentence from 'not AI-generated' and must not be collapsed into it.",
+      "type": "boolean"
+    },
+    "ai_modified": {
+      "description": "true when a generative model altered content it did not create — an inpaint, an upscale, a style transfer over a photograph. A work can be ai_modified without being ai_generated, and the distinction is the one most often lost when this is squeezed into a single boolean.",
+      "type": "boolean"
+    },
+    "generation_scope": {
+      "description": "How much of the work the model made. 'whole-work': everything a consumer sees came out of a model. 'partial': some of it did, and 'scope_note' says which parts. 'none': no generative model was involved in the content (a package may still carry a disclosure node saying exactly that, and saying it explicitly is worth more than staying silent).",
+      "enum": ["whole-work", "partial", "none"]
+    },
+    "scope_note": {
+      "description": "REQUIRED when generation_scope is 'partial'. Which parts, in plain language.",
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 2000
+    },
+
+    "declared_by": {
+      "description": "Who is making these statements. A disclosure is an assertion by a party, not an emanation from the bytes, and a reader is entitled to know whose assertion it is. Where a signature chain exists (law 7) it is what binds this claim to that party; where it does not, this is a name and nothing more, and a tool MUST NOT present it as verified.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "kind"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["human", "organisation", "agent", "service"]},
+        "uri": {"type": "string", "description": "Resolvable identity, matching a SIGNATURE.json signer uri where one exists."}
+      }
+    },
+    "declared_at": {"type": "string", "format": "date-time"},
+
+    "recipe_node": {
+      "description": "node_id of the core.recipe that backs these statements, when there is one. A disclosure with a recipe beside it is checkable; a disclosure alone is a claim. Both are legal.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+
+    "models": {
+      "description": "The models involved, as facts. This duplicates part of core.recipe ON PURPOSE (law 9, every payload serves two masters): a listing tool showing 'made with X' should not have to parse a full reproduction record, and a package may carry a disclosure without carrying a recipe at all. Where both exist they MUST agree, and a reader that finds them disagreeing reports it rather than picking one.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "role"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "minLength": 2, "description": "e.g. 'generate', 'edit', 'upscale', 'plan'."},
+          "operator": {"type": "string"},
+          "hosted": {"type": "boolean"},
+          "version_note": {"type": "string", "maxLength": 1000, "description": "Hosted model ids are not versions: the weights behind a stable id may change without notice. Say so here rather than implying an id pins a model."}
+        }
+      }
+    },
+
+    "human_authorship": {
+      "description": "What a human contributed. Deliberately descriptive rather than a percentage: 'how much of this is human' has no unit, and inventing one would be the kind of laundered number law 5 exists to prevent.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimed"],
+      "properties": {
+        "claimed": {"type": "boolean"},
+        "description": {"type": "string", "maxLength": 4000, "description": "e.g. 'the subject description, the style register and the exclusion list were written by a human; the pixels were not'."},
+        "contributors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "contribution"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "contribution": {"type": "string", "minLength": 3},
+              "uri": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+
+    "synthetic_markers": {
+      "description": "FACTS about markers that are or are not present, and nothing else. Note what this object cannot do: a package saying 'watermark: none' has not been checked by anyone, and a package saying 'watermark: present' has not proved it. These are declarations, they are covered by the signature chain like every other byte, and a tool that treats them as detections is misreporting the file.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "declared_watermarks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "present"],
+            "properties": {
+              "kind": {"type": "string", "minLength": 2, "description": "e.g. 'synthid', 'invisible-frequency', 'visible-overlay', 'metadata-only'."},
+              "present": {"type": "boolean"},
+              "detectable_by": {"type": "string", "description": "What would detect it, when anything would. Absent means the declarer does not know."},
+              "note": {"type": "string", "maxLength": 1000}
+            }
+          }
+        },
+        "c2pa_manifest_present": {
+          "description": "Whether a C2PA manifest travels in this package. werk does not implement C2PA; see spec/X-C2PA-EXPORT.md for what the intended mapping is and, more importantly, for what it is not.",
+          "type": "boolean"
+        },
+        "embedded_metadata_stripped": {
+          "description": "true when the producing pipeline is known to have dropped the original container metadata (EXIF, XMP, PNG text chunks). Worth stating: a reader finding no tEXt chunk in the PNG cannot otherwise tell 'never written' from 'removed'.",
+          "type": "boolean"
+        }
+      }
+    },
+
+    "training_data_statement": {
+      "description": "What is known about what the model was trained on — which, for most models a reader will meet, is 'the operator has not disclosed it'. Recording that explicitly is the point: it turns an absence into a stated fact instead of an implication.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "enum": ["not-disclosed-by-operator", "partially-disclosed", "disclosed", "self-trained", "unknown"]
+        },
+        "text": {"type": "string", "maxLength": 8000},
+        "source": {"type": "string", "description": "Where the statement came from — a published model card, a licence, the author's own training run. A training-data claim with no source is a rumour."},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "embedded_path": {"$ref": "#/$defs/path", "description": "Path inside this package of the full statement, when it is carried. Law 1: a training-data statement that is a URL is a promise about another file."}
+      }
+    },
+
+    "subject": {
+      "description": "Facts about what the work depicts, limited to the ones that change how a viewer should read it. Deliberately small: this is not a content-rating system and must not grow into one.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "depicts_real_person": {"type": "boolean"},
+        "depicts_real_event": {"type": "boolean"},
+        "fictional_universe": {"type": "string", "description": "Named when the subject is fiction, so a viewer is not left to guess whether a person shown ever existed."},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+
+    "statements": {
+      "description": "Free-form additional declarations, each stamped with its own epistemic status (law 5) so a disclosure cannot smuggle a guess in beside a fact. Use this rather than inventing keys: an unknown key is a validation error, an unknown statement id is data a reader skips (law 12).",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "text", "epistemic"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "text": {"type": "string", "minLength": 4, "maxLength": 4000},
+          "epistemic": {"enum": ["authored", "measured", "inferred"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "basis": {"type": "string", "maxLength": 2000}
+        }
+      }
+    },
+
+    "jurisdiction_note": {
+      "description": "OPTIONAL and INFORMATIONAL, and the schema will not let it become anything else. An author may record which regime they had in mind while writing these facts. It confers nothing: it is not a compliance claim, it does not bind a viewer, and a tool MUST NOT report a package as compliant with anything on the strength of it. The reason the field exists at all is that authors will otherwise write the same sentence into a note where no reader can find it.",
+      "type": "string",
+      "maxLength": 2000
+    }
+  },
+
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9][A-Za-z0-9._@/-]*$"
+    }
+  },
+
+  "allOf": [
+    {
+      "if": {"properties": {"generation_scope": {"const": "partial"}}, "required": ["generation_scope"]},
+      "then": {"required": ["scope_note"]}
+    }
+  ]
+}

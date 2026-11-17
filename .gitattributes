@@ -3,6 +3,26 @@
 # Everything is LF in the working tree and in the repository, on every OS.
 * text=auto eol=lf
 
+# The specification and the bootstrap loaders are HASHED CONTENT of every
+# package a builder writes (spec_sha256, every files[].sha256), so their bytes
+# must be the repository's in EVERY clone, whatever core.autocrlf, core.eol or
+# the platform says. `text=auto` leaves the text/binary decision to git's
+# heuristic; for these trees it is not a heuristic: they are text, LF, always
+# (finding N1 of the release evidence: the paper's fixtures had been built
+# from a working tree whose spec files were CRLF, and no clone could
+# reproduce them). The binary examples under spec/examples/ are restored to
+# binary by the extension rules below, which come later and therefore win.
+spec/** text eol=lf
+loaders/** text eol=lf
+plugins/blender/werk_blender/spec/** text eol=lf
+plugins/blender/werk_blender/vendor/** text eol=lf
+# The libraries vendor the same spec/ + loaders/ bytes (libs/bundle and the
+# Python package's copy) and the plug-ins vendor the single-file libraries.
+libs/bundle/** text eol=lf
+libs/python/werk/bundle/** text eol=lf
+libs/python/werk_single.py text eol=lf
+libs/js/dist/** text eol=lf
+
 # Payload fixtures are bytes and are never translated.
 *.png binary
 *.wav binary
@@ -35,3 +55,12 @@ fixtures/*.werk binary
 # normalised line ending on checkout and both checks fail, on the machine that
 # did nothing wrong.
 retarget/testdata/** binary
+
+# Plug-ins: the Office profile definitions are copied byte for byte into the
+# packages werk-office writes (their hashes are in those manifests), and the
+# remaining binary payload kinds the plug-ins carry.
+plugins/office/profiles/** binary
+*.zlib binary
+*.wkx binary
+*.wkxz binary
+*.uasset binary

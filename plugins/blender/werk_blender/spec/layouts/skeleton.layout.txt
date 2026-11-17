@@ -1,0 +1,125 @@
+core.skeleton (binary mirror) — layout grammar v1
+=================================================
+
+Magic "WKSK" (57 4B 53 4B), envelope version 1.
+Read spec/layouts/ENVELOPE.layout.txt first.
+
+Status: the NORMATIVE form of a skeleton in werk is JSON —
+spec/schemas/core.skeleton.schema.json, with the canonical humanoid at
+spec/skeleton/canonical-humanoid-v1.json. This binary form is an OPTIONAL
+mirror for rigs large enough that JSON parse time matters (thousands of
+bones: crowds, foliage, cloth cages).
+
+If a package contains a WKSK file it MUST also contain the JSON skeleton it
+mirrors, and the WKSK header MUST carry "mirror_of" = the sha256 of that
+JSON file, so a reader can prove the mirror is not stale (law 5,
+validate-or-recompute). A reader MAY use either; a reader that finds them
+inconsistent MUST prefer the JSON and report the mismatch.
+
+Header keys (in addition to the mandatory envelope keys)
+--------------------------------------------------------
+
+  key              type    meaning
+  ---------------  ------  --------------------------------------------
+  "skeleton_id"    str     kebab-case id, e.g. "canonical-humanoid-v1".
+  "bone_count"     uint    number of bone records. >= 1, <= 65535.
+  "mirror_of"      str     lowercase hex sha256 of the JSON skeleton this
+                           mirrors. MANDATORY.
+  "up_axis"        str     "y" — restated here so the file is an island.
+  "forward_axis"   str     "-z"
+  "handedness"     str     "right"
+  "quat_order"     str     "wxyz"
+  "units_per_meter" float  1.0
+  "reference_height_m" float  optional. The stature the rest pose was
+                           authored for, metres. 1.75 for the canonical
+                           humanoid.
+
+Payload sections
+----------------
+
+  section 0
+    "name"   : "bones"
+    "dtype"  : "record"
+    "shape"  : [bone_count]
+    "stride" : 48
+    "size"   : 48 * bone_count
+
+    record layout, 48 bytes, little-endian:
+
+      offset  size  type   field
+      ------  ----  -----  ---------------------------------------------
+       +0      2    i16    parent      index of the parent bone record,
+                                       or -1 for a root. MUST be < this
+                                       record's own index: records are
+                                       stored in topological order,
+                                       parents before children.
+       +2      2    u16    flags       bit 0 (0x1) = LEAF (no children)
+                                       bit 1 (0x2) = LOCOMOTION_ROOT
+                                       bit 2 (0x4) = MIRRORED_PAIR (this
+                                         bone has a left/right twin)
+                                       other bits reserved, MUST be 0
+       +4      4    f32    rest_quat_w  local rest rotation relative to
+       +8      4    f32    rest_quat_x  the parent bone's frame
+      +12      4    f32    rest_quat_y
+      +16      4    f32    rest_quat_z
+      +20      4    f32    rest_t_x     local rest translation, metres,
+      +24      4    f32    rest_t_y     expressed in the PARENT bone's
+      +28      4    f32    rest_t_z     frame
+      +32      4    f32    length       bone length in metres, head to
+                                        tail. > 0.
+      +36      4    u32    name_offset  byte offset of this bone's id
+                                        WITHIN section 1
+      +40      4    u32    name_len     length of the id in BYTES (not
+                                        codepoints), UTF-8, no NUL
+      +44      4    u32    reserved     MUST be 0
+
+    Stride is 48 rather than the packed 44 so that every record starts on a
+    16-byte boundary relative to the section, which keeps SIMD loads of the
+    quaternion aligned. The 4 reserved bytes are declared, not accidental.
+
+  section 1
+    "name"   : "names"
+    "dtype"  : "u8"
+    "shape"  : [size]
+    "stride" : 1
+    "size"   : total bytes of the string table
+
+    A flat UTF-8 byte blob. Ids are NOT NUL-terminated and NOT necessarily
+    unique-prefixed; use name_offset and name_len. Ids are kebab-case ASCII
+    in core, but the table is UTF-8 so an x.* rig may use anything.
+
+Composition (normative, and identical to the JSON form)
+-------------------------------------------------------
+The model-space matrix of bone b is
+
+    M(b) = M(parent(b)) * T(rest_t(b)) * R(rest_quat(b))
+    M(root) = T(rest_t(root)) * R(rest_quat(root))
+
+with T a pure translation and R the rotation matrix of a unit quaternion in
+w,x,y,z order, column-vector convention (v' = M * v), right-handed. The
+rotation matrix from q = (w,x,y,z):
+
+    | 1-2(y^2+z^2)   2(xy - wz)     2(xz + wy)   |
+    | 2(xy + wz)     1-2(x^2+z^2)   2(yz - wx)   |
+    | 2(xz - wy)     2(yz + wx)     1-2(x^2+y^2) |
+
+Bone-local axis convention (declared, not assumed):
+    local +Y points from the bone's head toward its tail (along the bone)
+    local +Z points along the bone's declared "back" reference direction
+    local +X = local_Y x local_Z, completing a right-handed basis
+The bone's head is at M(b) * (0,0,0); its tail is at M(b) * (0,length,0).
+
+Decisions recorded here
+-----------------------
+  D-SK-1  JSON is normative, binary is an optional verified mirror. A
+          23-bone humanoid is 8 KB of JSON; making every reader implement a
+          binary format to load it would lower agent-implementability
+          (law 10) for no measurable gain.
+  D-SK-2  "mirror_of" is mandatory, so a mirror can never silently drift
+          from its source. This is law 5 applied to a redundancy inside one
+          package rather than across a pipeline.
+  D-SK-3  48-byte stride with declared reserved bytes rather than a packed
+          44. Alignment is a real cost; hidden padding is a real bug; a
+          declared reserved field is neither.
+  D-SK-4  parent is i16 with -1 for root, capping bone_count at 65535. A
+          rig larger than that is not a skeleton, it is a point cloud.

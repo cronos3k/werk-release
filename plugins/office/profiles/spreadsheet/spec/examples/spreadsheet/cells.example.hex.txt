@@ -1,0 +1,383 @@
+cells.example.wkx — 1744 bytes — annotated hex dump
+sha256 47660b755cebc7a3346dd178e1ecf7ff75e76365c5440bd6bd32892d2a51e4bb
+
+The one band of the core.sheet.cells store of the example sheet "Prices" (uid 1), INFLATED:
+14 stored cells. In a capsule these bytes are stored as a zlib stream
+(cells.rows-0000000.example.wkx.zlib; the index that names it is cells.example.json).
+Grammar: spec/layouts/core.sheet.cells.layout.txt. The sheet:
+
+       A        B            C           D
+  1    Item     Price        Bought      =SEQUENCE(2)
+  2    Tea      4.5          45000       (spilled 2, not stored here)
+  3    Coffee   3            (empty, formatted)
+  4    Total    =SUM(B2:B3)
+  5    TRUE     #N/A
+
+Offsets are hexadecimal, from the start of the file. Integers and floats in the SECTIONS are
+little-endian; inside the MessagePack header they are big-endian (ENVELOPE.layout.txt section 4).
+
+--- fixed prefix -------------------------------------------------------------
+  000000  57 4b 58 30 01 00 00 00 33 04 00 00              WKX0....3...
+  [0..4)   magic       = "WKX0"
+  [4..8)   version     = 1          (u32 LE)
+  [8..12)  header_len  = 1075        (u32 LE)
+
+--- header: 1075 bytes of MessagePack at [12..1087) ---------------------------
+  00000c  8b ab 61 72 72 61 79 5f 63 6f 75 6e 74 00 aa 63  ..array_count..c
+  00001c  65 6c 6c 5f 63 6f 75 6e 74 0e ad 65 6c 65 6d 65  ell_count..eleme
+  00002c  6e 74 5f 63 6f 75 6e 74 00 aa 65 6e 64 69 61 6e  nt_count..endian
+  00003c  6e 65 73 73 a2 6c 65 ad 66 6f 72 6d 75 6c 61 5f  ness.le.formula_
+  00004c  63 6f 75 6e 74 02 a4 6b 69 6e 64 b0 63 6f 72 65  count..kind.core
+  00005c  2e 73 68 65 65 74 2e 63 65 6c 6c 73 ae 70 61 79  .sheet.cells.pay
+  00006c  6c 6f 61 64 5f 6f 72 69 67 69 6e cd 04 40 ac 70  load_origin..@.p
+  00007c  61 79 6c 6f 61 64 5f 73 69 7a 65 cd 02 90 a8 73  ayload_size....s
+  00008c  65 63 74 69 6f 6e 73 dc 00 10 86 a5 64 74 79 70  ections.....dtyp
+  00009c  65 a3 75 33 32 a4 6e 61 6d 65 a3 72 6f 77 a6 6f  e.u32.name.row.o
+  0000ac  66 66 73 65 74 cd 04 40 a5 73 68 61 70 65 91 0e  ffset..@.shape..
+  0000bc  a4 73 69 7a 65 38 a6 73 74 72 69 64 65 04 86 a5  .size8.stride...
+  0000cc  64 74 79 70 65 a3 75 33 32 a4 6e 61 6d 65 a3 63  dtype.u32.name.c
+  0000dc  6f 6c a6 6f 66 66 73 65 74 cd 04 80 a5 73 68 61  ol.offset....sha
+  0000ec  70 65 91 0e a4 73 69 7a 65 38 a6 73 74 72 69 64  pe...size8.strid
+  0000fc  65 04 86 a5 64 74 79 70 65 a2 75 38 a4 6e 61 6d  e...dtype.u8.nam
+  00010c  65 a4 6b 69 6e 64 a6 6f 66 66 73 65 74 cd 04 c0  e.kind.offset...
+  00011c  a5 73 68 61 70 65 91 0e a4 73 69 7a 65 0e a6 73  .shape...size..s
+  00012c  74 72 69 64 65 01 86 a5 64 74 79 70 65 a3 66 36  tride...dtype.f6
+  00013c  34 a4 6e 61 6d 65 a6 6e 75 6d 62 65 72 a6 6f 66  4.name.number.of
+  00014c  66 73 65 74 cd 04 d0 a5 73 68 61 70 65 91 0e a4  fset....shape...
+  00015c  73 69 7a 65 70 a6 73 74 72 69 64 65 08 86 a5 64  sizep.stride...d
+  00016c  74 79 70 65 a3 75 33 32 a4 6e 61 6d 65 a3 72 65  type.u32.name.re
+  00017c  66 a6 6f 66 66 73 65 74 cd 05 40 a5 73 68 61 70  f.offset..@.shap
+  00018c  65 91 0e a4 73 69 7a 65 38 a6 73 74 72 69 64 65  e...size8.stride
+  00019c  04 86 a5 64 74 79 70 65 a3 75 33 32 a4 6e 61 6d  ...dtype.u32.nam
+  0001ac  65 a5 73 74 79 6c 65 a6 6f 66 66 73 65 74 cd 05  e.style.offset..
+  0001bc  80 a5 73 68 61 70 65 91 0e a4 73 69 7a 65 38 a6  ..shape...size8.
+  0001cc  73 74 72 69 64 65 04 86 a5 64 74 79 70 65 a3 75  stride...dtype.u
+  0001dc  33 32 a4 6e 61 6d 65 a7 66 6f 72 6d 75 6c 61 a6  32.name.formula.
+  0001ec  6f 66 66 73 65 74 cd 05 c0 a5 73 68 61 70 65 91  offset....shape.
+  0001fc  0e a4 73 69 7a 65 38 a6 73 74 72 69 64 65 04 86  ..size8.stride..
+  00020c  a5 64 74 79 70 65 a3 75 36 34 a4 6e 61 6d 65 ac  .dtype.u64.name.
+  00021c  74 65 78 74 2d 6f 66 66 73 65 74 73 a6 6f 66 66  text-offsets.off
+  00022c  73 65 74 cd 06 00 a5 73 68 61 70 65 91 07 a4 73  set....shape...s
+  00023c  69 7a 65 38 a6 73 74 72 69 64 65 08 86 a5 64 74  ize8.stride...dt
+  00024c  79 70 65 a2 75 38 a4 6e 61 6d 65 aa 74 65 78 74  ype.u8.name.text
+  00025c  2d 62 79 74 65 73 a6 6f 66 66 73 65 74 cd 06 40  -bytes.offset..@
+  00026c  a5 73 68 61 70 65 91 1d a4 73 69 7a 65 1d a6 73  .shape...size..s
+  00027c  74 72 69 64 65 01 86 a5 64 74 79 70 65 a3 75 33  tride...dtype.u3
+  00028c  32 a4 6e 61 6d 65 aa 61 72 72 61 79 2d 64 69 6d  2.name.array-dim
+  00029c  73 a6 6f 66 66 73 65 74 cd 06 60 a5 73 68 61 70  s.offset..`.shap
+  0002ac  65 92 00 04 a4 73 69 7a 65 00 a6 73 74 72 69 64  e....size..strid
+  0002bc  65 10 86 a5 64 74 79 70 65 a2 75 38 a4 6e 61 6d  e...dtype.u8.nam
+  0002cc  65 a9 65 6c 65 6d 2d 6b 69 6e 64 a6 6f 66 66 73  e.elem-kind.offs
+  0002dc  65 74 cd 06 60 a5 73 68 61 70 65 91 00 a4 73 69  et..`.shape...si
+  0002ec  7a 65 00 a6 73 74 72 69 64 65 01 86 a5 64 74 79  ze..stride...dty
+  0002fc  70 65 a3 66 36 34 a4 6e 61 6d 65 ab 65 6c 65 6d  pe.f64.name.elem
+  00030c  2d 6e 75 6d 62 65 72 a6 6f 66 66 73 65 74 cd 06  -number.offset..
+  00031c  60 a5 73 68 61 70 65 91 00 a4 73 69 7a 65 00 a6  `.shape...size..
+  00032c  73 74 72 69 64 65 08 86 a5 64 74 79 70 65 a3 75  stride...dtype.u
+  00033c  33 32 a4 6e 61 6d 65 a8 65 6c 65 6d 2d 72 65 66  32.name.elem-ref
+  00034c  a6 6f 66 66 73 65 74 cd 06 60 a5 73 68 61 70 65  .offset..`.shape
+  00035c  91 00 a4 73 69 7a 65 00 a6 73 74 72 69 64 65 04  ...size..stride.
+  00036c  86 a5 64 74 79 70 65 a3 75 36 34 a4 6e 61 6d 65  ..dtype.u64.name
+  00037c  af 66 6f 72 6d 75 6c 61 2d 6f 66 66 73 65 74 73  .formula-offsets
+  00038c  a6 6f 66 66 73 65 74 cd 06 60 a5 73 68 61 70 65  .offset..`.shape
+  00039c  91 03 a4 73 69 7a 65 18 a6 73 74 72 69 64 65 08  ...size..stride.
+  0003ac  86 a5 64 74 79 70 65 a2 75 38 a4 6e 61 6d 65 ad  ..dtype.u8.name.
+  0003bc  66 6f 72 6d 75 6c 61 2d 62 79 74 65 73 a6 6f 66  formula-bytes.of
+  0003cc  66 73 65 74 cd 06 80 a5 73 68 61 70 65 91 15 a4  fset....shape...
+  0003dc  73 69 7a 65 15 a6 73 74 72 69 64 65 01 86 a5 64  size..stride...d
+  0003ec  74 79 70 65 a3 75 33 32 a4 6e 61 6d 65 ad 66 6f  type.u32.name.fo
+  0003fc  72 6d 75 6c 61 2d 61 72 72 61 79 a6 6f 66 66 73  rmula-array.offs
+  00040c  65 74 cd 06 a0 a5 73 68 61 70 65 92 02 05 a4 73  et....shape....s
+  00041c  69 7a 65 28 a6 73 74 72 69 64 65 14 a9 73 68 65  ize(.stride..she
+  00042c  65 74 5f 75 69 64 01 aa 74 65 78 74 5f 63 6f 75  et_uid..text_cou
+  00043c  6e 74 06                                         nt.
+  decoded (keys in their stored order, which is sorted by UTF-8 bytes):
+    {
+      "array_count": 0,
+      "cell_count": 14,
+      "element_count": 0,
+      "endianness": "le",
+      "formula_count": 2,
+      "kind": "core.sheet.cells",
+      "payload_origin": 1088,
+      "payload_size": 656,
+      "sections": [
+        {
+          "dtype": "u32",
+          "name": "row",
+          "offset": 1088,
+          "shape": [
+            14
+          ],
+          "size": 56,
+          "stride": 4
+        },
+        {
+          "dtype": "u32",
+          "name": "col",
+          "offset": 1152,
+          "shape": [
+            14
+          ],
+          "size": 56,
+          "stride": 4
+        },
+        {
+          "dtype": "u8",
+          "name": "kind",
+          "offset": 1216,
+          "shape": [
+            14
+          ],
+          "size": 14,
+          "stride": 1
+        },
+        {
+          "dtype": "f64",
+          "name": "number",
+          "offset": 1232,
+          "shape": [
+            14
+          ],
+          "size": 112,
+          "stride": 8
+        },
+        {
+          "dtype": "u32",
+          "name": "ref",
+          "offset": 1344,
+          "shape": [
+            14
+          ],
+          "size": 56,
+          "stride": 4
+        },
+        {
+          "dtype": "u32",
+          "name": "style",
+          "offset": 1408,
+          "shape": [
+            14
+          ],
+          "size": 56,
+          "stride": 4
+        },
+        {
+          "dtype": "u32",
+          "name": "formula",
+          "offset": 1472,
+          "shape": [
+            14
+          ],
+          "size": 56,
+          "stride": 4
+        },
+        {
+          "dtype": "u64",
+          "name": "text-offsets",
+          "offset": 1536,
+          "shape": [
+            7
+          ],
+          "size": 56,
+          "stride": 8
+        },
+        {
+          "dtype": "u8",
+          "name": "text-bytes",
+          "offset": 1600,
+          "shape": [
+            29
+          ],
+          "size": 29,
+          "stride": 1
+        },
+        {
+          "dtype": "u32",
+          "name": "array-dims",
+          "offset": 1632,
+          "shape": [
+            0,
+            4
+          ],
+          "size": 0,
+          "stride": 16
+        },
+        {
+          "dtype": "u8",
+          "name": "elem-kind",
+          "offset": 1632,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 1
+        },
+        {
+          "dtype": "f64",
+          "name": "elem-number",
+          "offset": 1632,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 8
+        },
+        {
+          "dtype": "u32",
+          "name": "elem-ref",
+          "offset": 1632,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 4
+        },
+        {
+          "dtype": "u64",
+          "name": "formula-offsets",
+          "offset": 1632,
+          "shape": [
+            3
+          ],
+          "size": 24,
+          "stride": 8
+        },
+        {
+          "dtype": "u8",
+          "name": "formula-bytes",
+          "offset": 1664,
+          "shape": [
+            21
+          ],
+          "size": 21,
+          "stride": 1
+        },
+        {
+          "dtype": "u32",
+          "name": "formula-array",
+          "offset": 1696,
+          "shape": [
+            2,
+            5
+          ],
+          "size": 40,
+          "stride": 20
+        }
+      ],
+      "sheet_uid": 1,
+      "text_count": 6
+    }
+
+  payload_origin = 16 * ceil((12 + 1075) / 16) = 1088; bytes [1087..1088) are zero padding.
+
+--- section `row`: offset 1088 (0x440), size 56, dtype u32, shape [14], stride 4 ---
+  000440  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  000450  01 00 00 00 01 00 00 00 01 00 00 00 02 00 00 00  ................
+  000460  02 00 00 00 02 00 00 00 03 00 00 00 03 00 00 00  ................
+  000470  04 00 00 00 04 00 00 00                          ........
+  = 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4
+
+--- section `col`: offset 1152 (0x480), size 56, dtype u32, shape [14], stride 4 ---
+  000480  00 00 00 00 01 00 00 00 02 00 00 00 03 00 00 00  ................
+  000490  00 00 00 00 01 00 00 00 02 00 00 00 00 00 00 00  ................
+  0004a0  01 00 00 00 02 00 00 00 00 00 00 00 01 00 00 00  ................
+  0004b0  00 00 00 00 01 00 00 00                          ........
+  = 0, 1, 2, 3, 0, 1, 2, 0, 1, 2, 0, 1, 0, 1
+
+--- section `kind`: offset 1216 (0x4c0), size 14, dtype u8, shape [14], stride 1 ---
+  0004c0  02 02 02 00 02 01 01 02 01 00 02 00 03 04        ..............
+  = 2, 2, 2, 0, 2, 1, 1, 2, 1, 0, 2, 0, 3, 4
+
+--- section `number`: offset 1232 (0x4d0), size 112, dtype f64, shape [14], stride 8 ---
+  0004d0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  0004e0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  0004f0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 12 40  ...............@
+  000500  00 00 00 00 00 f9 e5 40 00 00 00 00 00 00 00 00  .......@........
+  000510  00 00 00 00 00 00 08 40 00 00 00 00 00 00 00 00  .......@........
+  000520  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  000530  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  = 0.0, 0.0, 0.0, 0.0, 0.0, 4.5, 45000.0, 0.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0
+
+--- section `ref`: offset 1344 (0x540), size 56, dtype u32, shape [14], stride 4 ---
+  000540  00 00 00 00 01 00 00 00 02 00 00 00 00 00 00 00  ................
+  000550  03 00 00 00 00 00 00 00 00 00 00 00 04 00 00 00  ................
+  000560  00 00 00 00 00 00 00 00 05 00 00 00 00 00 00 00  ................
+  000570  01 00 00 00 07 00 00 00                          ........
+  = 0, 1, 2, 0, 3, 0, 0, 4, 0, 0, 5, 0, 1, 7
+
+--- section `style`: offset 1408 (0x580), size 56, dtype u32, shape [14], stride 4 ---
+  000580  02 00 00 00 02 00 00 00 02 00 00 00 00 00 00 00  ................
+  000590  00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
+  0005a0  00 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00  ................
+  0005b0  00 00 00 00 00 00 00 00                          ........
+  = 2, 2, 2, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0, 0
+
+--- section `formula`: offset 1472 (0x5c0), size 56, dtype u32, shape [14], stride 4 ---
+  0005c0  ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00  ................
+  0005d0  ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff  ................
+  0005e0  ff ff ff ff ff ff ff ff ff ff ff ff 01 00 00 00  ................
+  0005f0  ff ff ff ff ff ff ff ff                          ........
+  = 4294967295, 4294967295, 4294967295, 0, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 4294967295, 1, 4294967295, 4294967295
+
+--- section `text-offsets`: offset 1536 (0x600), size 56, dtype u64, shape [7], stride 8 ---
+  000600  00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00  ................
+  000610  09 00 00 00 00 00 00 00 0f 00 00 00 00 00 00 00  ................
+  000620  12 00 00 00 00 00 00 00 18 00 00 00 00 00 00 00  ................
+  000630  1d 00 00 00 00 00 00 00                          ........
+  = 0, 4, 9, 15, 18, 24, 29
+
+--- section `text-bytes`: offset 1600 (0x640), size 29, dtype u8, shape [29], stride 1 ---
+  000640  49 74 65 6d 50 72 69 63 65 42 6f 75 67 68 74 54  ItemPriceBoughtT
+  000650  65 61 43 6f 66 66 65 65 54 6f 74 61 6c           eaCoffeeTotal
+  = "ItemPriceBoughtTeaCoffeeTotal"
+
+--- section `array-dims`: offset 1632 (0x660), size 0, dtype u32, shape [0, 4], stride 16 ---
+  (empty)
+
+--- section `elem-kind`: offset 1632 (0x660), size 0, dtype u8, shape [0], stride 1 ---
+  (empty)
+
+--- section `elem-number`: offset 1632 (0x660), size 0, dtype f64, shape [0], stride 8 ---
+  (empty)
+
+--- section `elem-ref`: offset 1632 (0x660), size 0, dtype u32, shape [0], stride 4 ---
+  (empty)
+
+--- section `formula-offsets`: offset 1632 (0x660), size 24, dtype u64, shape [3], stride 8 ---
+  000660  00 00 00 00 00 00 00 00 0b 00 00 00 00 00 00 00  ................
+  000670  15 00 00 00 00 00 00 00                          ........
+  = 0, 11, 21
+
+--- section `formula-bytes`: offset 1664 (0x680), size 21, dtype u8, shape [21], stride 1 ---
+  000680  53 45 51 55 45 4e 43 45 28 32 29 53 55 4d 28 42  SEQUENCE(2)SUM(B
+  000690  32 3a 42 33 29                                   2:B3)
+  = "SEQUENCE(2)SUM(B2:B3)"
+
+--- section `formula-array`: offset 1696 (0x6a0), size 40, dtype u32, shape [2, 5], stride 20 ---
+  0006a0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  0006b0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  0006c0  00 00 00 00 00 00 00 00                          ........
+  = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+--- what it decodes to -------------------------------------------------------
+  cell  row col  kind                  style  formula
+  A1      0   0  2 text "Item"             2  -
+  B1      0   1  2 text "Price"            2  -
+  C1      0   2  2 text "Bought"           2  -
+  D1      0   3  0 empty (see computed)     0  SEQUENCE(2)
+  A2      1   0  2 text "Tea"              0  -
+  B2      1   1  1 number 4.5              0  -
+  C2      1   2  1 number 45000.0          1  -
+  A3      2   0  2 text "Coffee"           0  -
+  B3      2   1  1 number 3.0              0  -
+  C3      2   2  0 empty                   2  -
+  A4      3   0  2 text "Total"            0  -
+  B4      3   1  0 empty (see computed)     0  SUM(B2:B3)
+  A5      4   0  3 boolean TRUE            0  -
+  B5      4   1  4 error #N/A              0  -
+
+  String table: 0 "Item", 1 "Price", 2 "Bought", 3 "Tea", 4 "Coffee", 5 "Total" (order of first use,
+  row by row). Formula table: 0 "SEQUENCE(2)", 1 "SUM(B2:B3)"; neither is an array formula.
+  C2 is the NUMBER 45000 with style 1, whose number format is yyyy-mm-dd: the date 2023-03-15
+  in the D1900 date system (layout section 4).

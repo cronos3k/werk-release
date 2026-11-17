@@ -106,6 +106,7 @@ pub enum Code {
     SignatureAbsent,
     SignatureValid,
     SignatureInvalid,
+    SignatureUnverified,
     /// A prebuilt loader binary was found. It is inert data and was NOT run.
     PrebuiltNotExecuted,
     /// A derived version's declared input_hash does not match its inputs.
@@ -144,6 +145,7 @@ impl Code {
             Code::SignatureAbsent => "signature-absent",
             Code::SignatureValid => "signature-valid",
             Code::SignatureInvalid => "signature-invalid",
+            Code::SignatureUnverified => "signature-unverified",
             Code::PrebuiltNotExecuted => "prebuilt-not-executed",
             Code::StaleDerivedData => "stale-derived-data",
         }

@@ -129,12 +129,18 @@ impl ZipArchive {
             return Err(Error::BadContainer("file is too short to be a zip".into()));
         }
         // Scan backwards for the EOCD signature. The comment is the only thing
-        // that may follow it, and it is at most 65535 bytes.
+        // that may follow it, and it is at most 65535 bytes. MINI-SPECS 5.4's
+        // reader rule: the EOCD is the highest record whose comment length
+        // accounts for exactly the rest of the file (a signature that merely
+        // occurs inside a comment or after damage is not one), so every
+        // reference reader finds the same record or none.
         let start = n.saturating_sub(22 + 65535);
         let mut eocd = None;
         let mut i = n - 22;
         loop {
-            if u32le(&bytes, i) == Some(SIG_EOCD) {
+            if u32le(&bytes, i) == Some(SIG_EOCD)
+                && u16le(&bytes, i + 20).map_or(false, |c| i + 22 + c as usize == n)
+            {
                 eocd = Some(i);
                 break;
             }
@@ -209,6 +215,15 @@ impl ZipArchive {
                 return Err(Error::BadContainer(format!(
                     "entry `{name}` sets general-purpose flag bit 3 (data descriptor), \
                      which a werk writer MUST NOT set"
+                )));
+            }
+            // Two central-directory records with one name: which bytes ARE that
+            // file is undecidable, and readers that pick different ones give
+            // different verdicts on one package (measured in the release
+            // cross-matrix). Refused whole, like any untraversable container.
+            if entries.iter().any(|e: &ZipEntry| e.name == name) {
+                return Err(Error::BadContainer(format!(
+                    "the zip holds two entries named `{name}`; which bytes are that file cannot be decided, so the container is refused"
                 )));
             }
             entries.push(ZipEntry {

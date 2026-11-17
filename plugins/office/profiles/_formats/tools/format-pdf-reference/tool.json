@@ -1,0 +1,47 @@
+{
+  "config": {
+    "definition": "spec/formats/pdf.md",
+    "format": "pdf",
+    "test_vectors": [
+      "hello",
+      "syntax",
+      "filters",
+      "xref-stream",
+      "hybrid",
+      "incremental",
+      "pages",
+      "content",
+      "lenient",
+      "reportlab-flate-a85",
+      "qpdf-objstm-xrefstream",
+      "qpdf-linearized",
+      "mupdf-incremental",
+      "pypdf-compressed",
+      "pillow-dct"
+    ]
+  },
+  "entrypoint": "tools/format-pdf-reference/pdf_dump.py",
+  "files": [
+    {
+      "path": "tools/format-pdf-reference/pdf_dump.py",
+      "role": "source",
+      "sha256": "fc9b33242975ec8210a980a33495606dc71ba59dc51aadb5869dd4e232fa1d8b",
+      "size": 45816
+    }
+  ],
+  "form": "source",
+  "invocation": {
+    "dependencies": [],
+    "example": "python tools/format-pdf-reference/pdf_dump.py <input file> > <output>   # writes the text listing: version, trailer, every in-use object in canonical form with decoded-stream hashes, pages with content hashes, fonts to stdout",
+    "toolchain": "python>=3.8"
+  },
+  "language": "python",
+  "license": {
+    "spdx_id": "MIT OR Apache-2.0"
+  },
+  "name": "pdf reference decoder",
+  "role": "viewer",
+  "schema_version": 1,
+  "tool_id": "format-pdf-reference",
+  "version": "1"
+}

@@ -175,9 +175,11 @@ pub unsafe extern "C" fn werk_manifest_bytes(
     }
 }
 
-/// 0 = absent, 1 = signed-and-valid, 2 = present-and-invalid. Three states,
-/// never two: SPEC.md section 6 is explicit that collapsing the last two into
-/// one warning defeats the doctrine, so the ABI cannot express the collapse.
+/// 0 = absent, 1 = signed-and-valid, 2 = present-and-invalid, 3 = unverified
+/// (the chain names an algorithm this library does not implement; SPEC.md
+/// section 10.1). Three states, never two: SPEC.md section 6 is explicit that
+/// collapsing absent and invalid into one warning defeats the doctrine, so the
+/// ABI cannot express the collapse.
 #[no_mangle]
 pub unsafe extern "C" fn werk_signature_state(h: *mut WerkPackage) -> i32 {
     match pkg(h) {

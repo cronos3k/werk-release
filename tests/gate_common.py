@@ -57,8 +57,23 @@ class Gate(object):
         return 1 if (nfail or nskip) else 0
 
 
-def run(cmd, cwd=None, timeout=1800):
-    p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, timeout=timeout)
+def compiler_env(cc):
+    """The environment to run a C/C++ compiler in: its OWN bin directory first
+    on PATH. A MinGW gcc loads its DLLs (libgmp, zlib1, libzstd, ...) through
+    PATH; when another MinGW's bin precedes it -- Git for Windows puts its
+    /mingw64/bin there -- cc1 fails to load (exit 127, nothing printed) and gcc
+    exits 1 with no diagnostics. Measured on the author's host (finding N2 of
+    the release evidence); the toolchain was never broken, the PATH was."""
+    env = dict(os.environ)
+    d = os.path.dirname(os.path.abspath(cc)) if cc else ""
+    if d:
+        env["PATH"] = d + os.pathsep + env.get("PATH", "")
+    return env
+
+
+def run(cmd, cwd=None, timeout=1800, env=None):
+    p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, timeout=timeout,
+                       env=env)
     out = (p.stdout or b"").decode("utf-8", "replace") + \
           (p.stderr or b"").decode("utf-8", "replace")
     return p.returncode, out
@@ -141,11 +156,13 @@ def native_loaders():
         built, why = False, "no C compiler found"
         cc = shutil.which("gcc") or shutil.which("clang")
         if cc:
-            rc, text = run([cc, "-std=c99", "-O2", "-o", exe, src])
+            rc, text = run([cc, "-std=c99", "-O2", "-o", exe, src],
+                           env=compiler_env(cc))
             built = rc == 0
             why = ("%s exited %d: %s" % (os.path.basename(cc), rc,
-                                         text.strip()[-160:] or "no diagnostics "
-                                         "(a broken toolchain, not a source failure)"))
+                                         text.strip()[-160:] or "no diagnostics, "
+                                         "with its own bin first on PATH (the compiler "
+                                         "did not run; not a source failure)"))
         if not built and os.name == "nt":
             rc, text = _msvc('cl /nologo /O2 /W3 "%s" /Fe:"%s" /Fo:"%s.obj"'
                              % (src, exe, exe), NATIVE)

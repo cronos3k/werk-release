@@ -50,12 +50,23 @@ def record(name, status, detail=""):
     print("[%s] %-40s %s" % (status, name, detail))
 
 
-def run(cmd, cwd=None):
+def compiler_env(cc):
+    """The compiler's own bin directory first on PATH, so a MinGW gcc loads
+    its own DLLs rather than another MinGW's (finding N2; see
+    tests/gate_common.py)."""
+    env = dict(os.environ)
+    if cc:
+        env["PATH"] = os.path.dirname(os.path.abspath(cc)) + os.pathsep + env.get("PATH", "")
+    return env
+
+
+def run(cmd, cwd=None, env=None):
     # A host that refuses to start a freshly built executable (Windows
     # Smart App Control: OSError WinError 4551) must be recorded as a
     # FAIL with the reason, not crash the gate with a traceback.
     try:
-        p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True)
+        p = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True,
+                           env=env)
     except OSError as e:
         return 1, "could not start %s (host refused or missing): %r" % (cmd[0], e)
     return p.returncode, (p.stdout or "") + (p.stderr or "")
@@ -278,18 +289,14 @@ def main(argv=None):
             ev_path = os.path.join(rb, "pipeline-source.txt")
             with open(ev_path, "wb") as fh:
                 fh.write(shipped[pr.IMAGE_EVIDENCE])
-            stock, zdesc = pr.zlib_is_stock()
-            # Which deflater wrote the pinned preview PNGs is a property of
-            # the pin, not of this host: a pin built through a Pillow linked
-            # against zlib-ng carries zlib-ng streams, one re-deflated with
-            # stock zlib carries stock streams. Try Pillow's own stream first,
-            # then (where this interpreter's zlib is stock) the stock
-            # re-deflate, and keep the attempt that reproduces the pin
-            # (review B, PR #6 problem 2).
+            # The preview PNGs are encoded by the builder's own deterministic
+            # encoder (pipeline/det_png.py), not by whichever zlib Pillow's
+            # wheel links, so one attempt is the whole question (release
+            # finding N3: the pinned streams used to be Pillow's, zlib-ng on
+            # Windows and stock zlib on Linux, and this clause failed on Linux).
+            zdesc = "PNG streams by pipeline/det_png.py (no zlib deflate)"
             pin_sha = sha256_file(IMAGE_WERK)
-            attempts = [("pillow", [])]
-            if stock:
-                attempts.append(("stock", ["--restock"]))
+            attempts = [("builder", [])]
             matched = False
             for label, extra in attempts:
                 out_a = out + "-" + label
@@ -302,13 +309,8 @@ def main(argv=None):
                            and sha256_file(rebuilt_path) == pin_sha)
                 if matched:
                     break
-            if matched:
-                zdesc += "; the pin's preview PNGs are reproduced by: " + (
-                    "Pillow's own deflate stream" if label == "pillow"
-                    else "a stock-zlib re-deflate")
-            else:
-                zdesc += ("; no deflater tried (%s) reproduces the pin"
-                          % ", ".join(l for l, _ in attempts))
+            if not matched:
+                zdesc += "; the rebuild does not reproduce the pin"
             if rc != 0 or not os.path.isfile(rebuilt_path):
                 for nm in (n1, n2):
                     record(nm, "FAIL", "builder exit %d: %s"
@@ -318,8 +320,7 @@ def main(argv=None):
                 pngs = [nm for nm in shipped if nm.startswith("image/")
                         and nm.endswith(".png") and nm not in inputs]
                 c = pr.compare(shipped, again, inputs, png_by_pixels=pngs)
-                subs = pr.IMAGE_SUBSTITUTIONS if label == "stock" else \
-                    pr.IMAGE_SUBSTITUTIONS[:-1]
+                subs = pr.IMAGE_SUBSTITUTIONS
                 measured = {
                     "entries_total": c["total"],
                     "entries_identical": c["identical"],
@@ -336,7 +337,7 @@ def main(argv=None):
                          zdesc, " | ".join(subs)))
                 if whole == pin:
                     record(n1, "PASS", d1)
-                elif stock and c["json_float_only"] and set(c["differ"]) <= (
+                elif c["json_float_only"] and set(c["differ"]) <= (
                         {"MANIFEST.json", "SIGNATURE.json"}
                         | set(c["json_float_only"])):
                     record(n1, "SKIP", "byte identity depends on this host's "
@@ -345,12 +346,6 @@ def main(argv=None):
                            "plus the manifest and signature that hash them; "
                            "%s" % (", ".join(c["json_float_only"]),
                                    c["json_max_rel_diff"], d1))
-                elif not stock:
-                    record(n1, "SKIP", "needs a stock zlib to re-deflate the "
-                           "preview PNGs; run the gate under a CPython whose "
-                           "zlib module is stock (3.13 or earlier on Windows); "
-                           "differ: %s; %s"
-                           % (", ".join(c["differ"]), d1))
                 else:
                     record(n1, "FAIL", "differ: %s; %s"
                            % (", ".join(c["differ"]), d1))
@@ -437,7 +432,7 @@ def main(argv=None):
     built = False
     if cc:
         rc, out = run([cc, "-std=c99", "-O2", "-o", c_exe,
-                       os.path.join(loaders, "werk_read.c")])
+                       os.path.join(loaders, "werk_read.c")], env=compiler_env(cc))
         built = rc == 0
     if not built:
         built = build_c_with_msvc(os.path.join(loaders, "werk_read.c"), c_exe)

@@ -17,22 +17,24 @@ Recorded: **2026-10-13**
 
 | fixture | bytes | sha256 | zip entries | declared files | nodes | profile |
 |---|---:|---|---:|---:|---:|---|
-| `fixtures/crate-v1.werk` | 13 936 014 | `fc8fe4f8a8e80843437785356b34c86420a481fde5ae12eb6a1ed1be1f306ed0` | 188 | 186 | 36 | `3d-entity/1` |
-| `fixtures/crate-v1-damaged.werk` | 13 937 166 | `059324b60c975fc24ba3e55ab7e506cc6ba7d3fedacaeafe40b3bc30657eff53` | 189 | 187 | 37 | `3d-entity/1` |
-| `fixtures/crate-tex-v1.werk` | 1 146 946 | `27e6574476d4186abebd38ecabca6f42356fae6ef619a35362be1cb8285c3b86` | 75 | 74 | 11 | `3d-entity/1` |
-| `fixtures/ista-varun-v1.werk` | 10 477 946 | `11cb754fc0f040304b5f5b9d61d9a0ae807196feefae3770f16c3bfde4655c36` | 85 | 83 | 15 | `image/1` |
-| `fixtures/humanoid-retarget-v1.werk` | 1 764 924 | `1f9a45e515e0c2ef6ef06a69a76a6324e9f3337cde11b621b84a80f4efbc728d` | 80 | 78 | 9 | `3d-entity/1` |
-| `fixtures/gsplat-v1.werk` | 30 489 490 | `36482595d13ecf5bc748f75b09bb78b8c3c2936ae6695e19f48a99b2acee7f2b` | 91 | 89 | 17 | `3d-entity/1` |
-| `tests/fixtures/crate.werk` | 853 051 | `5e27e17c7fc3b721fb8ebf210123e07da8a085893c75b04008afc2ff47ff5354` | 38 | 36 | 15 | `3d-entity/1` |
-| `fixtures/crate-cc0-lean-v1.werk` | 1 481 529 | `299ded3d7d9f9935b4aa1611a57ce1ebe062746f03a2eccc9fc947b9620f60cc` | 78 | 76 | 13 | `3d-entity/1` |
-| `fixtures/crate-cc0-lean-v1-damaged.werk` | 1 482 732 | `51752bd1b2160ea2d71e50306204850f72e6831e104be46befc0697d3913c51c` | 79 | 77 | 14 | `3d-entity/1` |
-| `fixtures/crate-cc0-full-v1.werk` | 1 535 104 | `4b62cd9ab61cda099762f5b7fa6bb7b828c018e8abbb41f6e4be028e03281e31` | 84 | 82 | 18 | `3d-entity/1` |
-| `fixtures/crate-cc0-full-v1-damaged.werk` | 1 536 307 | `3ae6b6356472d92187da3e04a41bacf945baae716642e804bb1b6b2f4af07d63` | 85 | 83 | 19 | `3d-entity/1` |
-| `fixtures/image-cc0-v1.werk` | 5 535 758 | `582489761b29f2a2f02a2539b9d642684cb94fe1e6fb89eeb9b173fb5de27358` | 76 | 74 | 11 | `image/1` |
-| `fixtures/image-cc0-v1-damaged.werk` | 5 536 807 | `d841db4d83f66ac292a0da641ca27883178a5db6ed56762de35af608c8cb0fac` | 77 | 75 | 12 | `image/1` |
-| `fixtures/gsplat-cc0-v1.werk` | 1 750 927 | `43f9bea9a027c911e9e437d1f48c8f99d23e474d87ba1640d8855ea590947046` | 75 | 73 | 10 | `3d-entity/1` |
-| `fixtures/gsplat-cc0-v1-damaged.werk` | 1 751 977 | `44d5334d2ed5323fe66c1b92040d8dde96aa3f70f04a6136b4f900538d257832` | 76 | 74 | 11 | `3d-entity/1` |
-| `fixtures/crate-cc0-lean-v1-deflated.werk` | 596 366 | `185d5e693e4f17a93beecaa559f1d20e75e3a37bd5c2ebe65151a61722b937cb` | 78 | 76 | 13 | `3d-entity/1` |
+| `fixtures/crate-v1.werk` | 13 967 352 | `661b0ae30cd128513091990eb8a11e9783cbce962f6049658f126dbee04f277e` | 188 | 186 | 36 | `3d-entity/1` |
+| `fixtures/crate-v1-damaged.werk` | 13 968 504 | `45a60598297c2e8ac0380c64408a53c3928affaf997f12dae29c261ac1242a1a` | 189 | 187 | 37 | `3d-entity/1` |
+| `fixtures/crate-tex-v1.werk` | 1 166 660 | `84da0ec25c0ef64afe8ce18050f4913c79481333ffd3c808774aca28f16d6470` | 75 | 74 | 11 | `3d-entity/1` |
+| `fixtures/ista-varun-v1.werk` | 10 883 047 | `8dd4d655ead6ea9c644960e56d5666b08d7c31bc50565d107076a7a14f7c4afd` | 85 | 83 | 15 | `image/1` |
+| `fixtures/humanoid-retarget-v1.werk` | 1 796 040 | `bff166166918b15fe81bfd8351feb60f877d734cf495aff75ee786277ae09941` | 80 | 78 | 9 | `3d-entity/1` |
+| `fixtures/gsplat-v1.werk` | 30 521 436 | `9214bb4bdb1fbcd6136676d1b75334b77b0620f5e879fa843c70bf160beb5c81` | 91 | 89 | 17 | `3d-entity/1` |
+| `tests/fixtures/crate.werk` | 879 419 | `f427abb9dc46a9f75391724d070c55a9c7e83e16657bb531b0ae0c85d9de57fa` | 38 | 36 | 15 | `3d-entity/1` |
+| `gauntlet/roundOW/mini-v1.werk` | 1 135 891 | `510fae4c9e8b1af75e31c9a19eab279bbe785127de2240551efa11be59b4afe8` | 36 | 34 | 14 | `3d-entity/1` |
+| `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk` | 960 061 | `f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837` | 36 | 34 | 14 | `3d-entity/1` |
+| `fixtures/crate-cc0-lean-v1.werk` | 1 545 216 | `b22af08a18e84686130a350812ecfc83be82b87039a57a68a1552c9cc4fa44aa` | 78 | 76 | 13 | `3d-entity/1` |
+| `fixtures/crate-cc0-lean-v1-damaged.werk` | 1 546 419 | `473f6cc0654dd4484d8e04f682836264acac6853b33baef658b9e45da499f2ac` | 79 | 77 | 14 | `3d-entity/1` |
+| `fixtures/crate-cc0-full-v1.werk` | 1 606 022 | `376cc517f3814bd620f9495c0537265e8f3cb0d412683e92f5476b05d5072b49` | 84 | 82 | 18 | `3d-entity/1` |
+| `fixtures/crate-cc0-full-v1-damaged.werk` | 1 607 225 | `0625b7a38858650b0ec0e61d1bb6407ab600a86b69183b465bae6a307d700640` | 85 | 83 | 19 | `3d-entity/1` |
+| `fixtures/image-cc0-v1.werk` | 5 805 528 | `b8222720e46aa183d241e70c65b87e98acc25fbbfad5d435f3125f2294db1895` | 76 | 74 | 11 | `image/1` |
+| `fixtures/image-cc0-v1-damaged.werk` | 5 806 577 | `17fce14223e2578e720f3a38938798d4b470eace12bad433ed8fa3229590caef` | 77 | 75 | 12 | `image/1` |
+| `fixtures/gsplat-cc0-v1.werk` | 1 782 265 | `8624695616ad55a0e3cb404d5c87da87c97e2b1e9264f2d7e1ea665e22f0d84a` | 75 | 73 | 10 | `3d-entity/1` |
+| `fixtures/gsplat-cc0-v1-damaged.werk` | 1 783 315 | `10e6f06a9640248766704f431e587485e93fd05cd8a049dd4340455631c5ba48` | 76 | 74 | 11 | `3d-entity/1` |
+| `fixtures/crate-cc0-lean-v1-deflated.werk` | 648 450 | `debe6dcb3e20d626eeaace177ecf43199865637b2088ec59e65c08c670e2d943` | 78 | 76 | 13 | `3d-entity/1` |
 
 **Zip entries and declared files are different counts and are named
 differently on purpose.** They differ by exactly two: `MANIFEST.json`
@@ -48,130 +50,150 @@ the signature signs the manifest (SPEC §2, D-MAN-1). Calling entries
 The golden sample: profile 3d-entity/1, built from a real splat-foley run. A complete audio family, no custom binaries, vertex-coloured so it has no core.tex.
 
 * built by `fixtures/build_golden.py`
-* manifest sha256 `623f51a095bcdc7a45e7073c599c366c74640c999351d5c68230b562c2ddecd3`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `14238da3871f3b2c031dd4bdd152098df9d32a1fabf9a9d93857423e459cc93d`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/crate-v1-damaged.werk`
 
 The golden sample with one flipped byte in a WAV and one unknown node type, so a reader's damage path is measured rather than argued about.
 
 * built by `fixtures/build_golden.py`
-* manifest sha256 `c12a73c6e875f63e8b7bf5827cc3bdfd0c0219e7615e854f1dd7bcb321b126e2`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `94d61c0945baf68bea97757853fb832ae42603df7aeb75b6dd425f7ba8bedb84`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/crate-tex-v1.werk`
 
 The TEXTURED fixture: three generated maps and their material slots, built through the gate-proven Blender exporter so the texture path has a measured input.
 
 * built by `fixtures/build_crate_tex.py`
-* manifest sha256 `b77dc999578da6604ae4b1f70e933bf054cb136e16af8bf84913bac70a310742`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `c95201a108a2ba0507a2c39507339d699a8b1682b794dcde9fe502ccef2a21ff`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/ista-varun-v1.werk`
 
 Profile image/1: a real AI-generated image with its true recipe, a core.disclosure, a WKEM envelope payload, and the S-18 shared-file case on purpose.
 
 * built by `fixtures/build_image_fixture.py`
-* manifest sha256 `746ed62f04115073a4b3ea700d2a0f7aaf307cd98d9dd5d7889d115d708bfca6`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `20c27a0bb4eac9f7815eea18fe459779ac91368a011886cb68f641dd4dfc7dbc`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/humanoid-retarget-v1.werk`
 
 The first package to carry a core.skeleton and a core.anim.clip: CMU take 02_01 retargeted onto the canonical humanoid, so WKAC stops being unexercised.
 
 * built by `fixtures/build_retarget_fixture.py`
-* manifest sha256 `41c7c2f2988208fa078c3d8108091677b4f7831cc86dd48818677c8362ce2934`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `d7d496adce43fb603b12ece2ac3e28cdd454c6ca31baf76a444f6554f7d13671`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/gsplat-v1.werk`
 
 Stage 12: a REAL captured 3D Gaussian splat (281 498 Gaussians), its exact DC-band point-cloud degradation, and the SOURCE CODE of the three tools that made them -- the first package to carry a WKGS, a WKPC, a core.tool or a core.tool.config, and the first whose gate regenerates the payload by running the file's own embedded converters on the file's own embedded input.
 
 * built by `fixtures/build_gsplat_fixture.py`
-* manifest sha256 `77e5b462c511ce998b58860fb3afafcbf0b4f2977c4a4d7c78a7c5a920c7afe7`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `7efd03d8ec8d003b8222970cf6f9c716c766b42cfb7f76f07bfc02624463dd10`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `tests/fixtures/crate.werk`
 
 The minimal synthetic fixture: every custom-binary path exercised, small enough to check by hand, signed with the RFC 8032 test key.
 
 * built by `cargo run --bin werkc -- build-fixture tests/fixtures`
-* manifest sha256 `7d012ef712f04d763c42d88ce1ed1e680925137ada5893efd608595f49ba51db`
-* `spec_sha256` `ddba2d95643428fef156279cee081d6f0fb2c235334435d8a460db3f41d43803`
+* manifest sha256 `a2cdfa19407f4424e798bbb291159b2d59752aeb509ef96b9b6d0bac93b477b9`
+* `spec_sha256` `58324e2d409f05e4c7d0b5980c93db19dcc400211bb8d0e13df25560e1a3445d`
+
+### `gauntlet/roundOW/mini-v1.werk`
+
+The small-context fixture, rebuilt under the ruling on #11: the same 36 entries as the package the trials ran on, minus its three edges to absent nodes (SPEC section 5), so it verifies clean. It carries a trimmed spec/ tree (the documents its own node types need), so its spec_sha256 is the hash of that subset. The trials' bytes are kept at gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk.
+
+* built by `gauntlet/roundOW/build_mini_fixture.py`
+* manifest sha256 `58decdc72529b82912d370714b18c856b57ad7d2d5c488d533f4f60dc3f8837e`
+* `spec_sha256` `611191fec35b8839e511b8b4075f818330c93ca035485b894247ec54a9fe12ad`
+
+### `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk`
+
+The exact mini-v1.werk that the open-weights, DeepSeek and second-lab trials ran on, built from an earlier spec revision. It carries three edges to absent nodes, so a conformant reader reports one dead node. Kept so pinned trials stay checkable.
+
+* built by `an earlier build_mini_fixture.py (kept, not rebuilt)`
+* manifest sha256 `f9452216c6c4513f6fe5fe612f332eec327ec31bd252e6ab1e1ef7706a749839`
+* `spec_sha256` `5ada229078738ce45d1b65e1a9ba5eb2df0a10ea261254da21c46df73831d4ad`
 
 ### `fixtures/crate-cc0-lean-v1.werk`
 
 The public-domain crate, lean: mesh, three procedural textures, material, measured bounds, a disclosure. Rebuildable from this repository alone.
 
 * built by `fixtures/build_crate_cc0.py --variant lean`
-* manifest sha256 `5c1ae772f5fbb7c63a2f945a46fcc88cc01894e01db1ede3d377803a83af0123`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `78f13a60b1d80ac839c1de21af311836c204a7aef5273b0dd3c25580e4e9c733`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/crate-cc0-lean-v1-damaged.werk`
 
 The lean CC0 crate with one flipped payload byte and one unknown node type.
 
 * built by `fixtures/build_crate_cc0.py --variant lean`
-* manifest sha256 `c4977d68e48e1783a93ebdfcf243b9e6e20a6d300d5de16293e05cb42434132f`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `218b89f168e581508583803a48e0293755c770c8c6d0ace29be4fa18f664a404`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/crate-cc0-full-v1.werk`
 
 The public-domain crate, full: lean plus a synthetic WAV, evidence images, semantics and properties.
 
 * built by `fixtures/build_crate_cc0.py --variant full`
-* manifest sha256 `ff40e0684e255f46eefe913394129378bbd4560abf4f46b606654b8f4443a6f8`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `4e7cb8884b4861fc5ff95371ad29e61ad88117d3d139f38515d89d391d1ff42d`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/crate-cc0-full-v1-damaged.werk`
 
 The full CC0 crate with one flipped payload byte and one unknown node type.
 
 * built by `fixtures/build_crate_cc0.py --variant full`
-* manifest sha256 `4a7f9e849aecad8d3b41fb98dc9f334224bb291922810d3d44c4ed05d30ae55e`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `0ee5e5dc7c69bf54cf5241310e3b62b7b303746194c130992f7dba03bc3d4d46`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/image-cc0-v1.werk`
 
 Profile image/1 from public-domain inputs: the publicly reproducible twin of ista-varun-v1 (ruling R3 of 2026-09-09).
 
 * built by `fixtures/build_image_cc0.py`
-* manifest sha256 `00d61c68dcf6fe7d40ff8d3b34b6b002c5106310c08f8af92d20d53df2226177`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `3123dad44880204efc53c9eac2cd44ef638d955ba579718f973c4c19f4f75700`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/image-cc0-v1-damaged.werk`
 
 The CC0 image package with one flipped payload byte and one unknown node type.
 
 * built by `fixtures/build_image_cc0.py`
-* manifest sha256 `83ff32d76cb55da1e5d67e6d8904824ce9e9e4c049d56366b942442182602502`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `2590d362f09350d4982e3fa3218402ae39d919d6fe4560a48a972e62f5464088`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/gsplat-cc0-v1.werk`
 
 A synthetic public-domain Gaussian splat and its DC-band point cloud: the publicly reproducible twin of gsplat-v1.
 
 * built by `fixtures/build_gsplat_cc0.py`
-* manifest sha256 `e25336a03c41418ad8f524f47ad962463f628774e789ed3f387c720ba4a12960`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `f234b89490f8337f0b45b0cb804ff50f00550eb581e150b0f478db650be4af32`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/gsplat-cc0-v1-damaged.werk`
 
 The CC0 splat package with one flipped payload byte.
 
 * built by `fixtures/build_gsplat_cc0.py`
-* manifest sha256 `eed0c8acd4ce77bb102d29ce830128592e9a9ec240c75afda996c786826be090`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `c3133f131936c0227d8e50147bcfd9ca091817b93e79aefd3dc211a6ef1ef611`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 ### `fixtures/crate-cc0-lean-v1-deflated.werk`
 
 The ONLY fixture whose zip entries are DEFLATED (method 8): the lean CC0 crate's content, byte for byte, compressed by zlib, so that the four reference readers' inflate is tested against streams none of them wrote (ruling 9 of 2026-10-13). Its bytes depend on the zlib version that built it.
 
 * built by `fixtures/build_deflated_fixture.py`
-* manifest sha256 `de9517f7c79faacfe230cf8d9ed22412e3b896670125ab1547e1f8d52c17e3ee`
-* `spec_sha256` `c46c3435eaf3dcb9003e6b3671470b5ab126e07ff1a6d0f06b050975d3dbe633`
+* manifest sha256 `59d150718a7883ec9c1e36e8e353d9ffbf6b1f0ebc8090487ab99889ed38cb45`
+* `spec_sha256` `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3`
 
 Every fixture in this table carries the same `spec_sha256`, which is
 the point of the field (S-29): they were all built from one revision
 of `spec/`, and a package built from another one says so in a single
-comparison rather than by a schema diff nobody runs.
+comparison rather than by a schema diff nobody runs. Three rows differ
+on purpose: `crate-synthetic` and `mini-v1` carry a trimmed `spec/`
+tree (byte-identical documents, fewer of them), so the field hashes
+that subset; `mini-v1-historical` is the earlier build the trials ran
+on and carries the earlier spec revision.

@@ -43,7 +43,7 @@ Notes on the table.
 
 * The single SKIP in the first row is the one the paper describes: this
   host's MinGW gcc exits 1 with no diagnostics; the same C source compiles and
-  passes under MSVC in the next clause.
+  passes under MSVC in the next clause. *(Correction, release finding N2: the toolchain was not broken. Git for Windows' `/mingw64/bin` preceded MSYS2's on PATH, so `cc1.exe` could not load its DLLs (exit 127, nothing printed); with the compiler's own `bin` first on PATH it builds the loader. The gates now run every compiler that way.)*
 * The two FAILs before are the same clause in both gates, "the builder
   reproduces the shipped fixture byte for byte" (gate 9: the image builder;
   gate 12: rebuild `e7d3af8d…` against shipped `ede0aee6…`). The shipped

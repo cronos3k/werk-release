@@ -315,7 +315,7 @@ materialization + node-granular sync + CDC chunking + multi-root GC.
 dedup ratio measured on a real asset corpus.
 
 ## Stage 11 — Blender adapter ✅
-`adapters/blender/werk_blender/`: a Blender 4.x add-on that imports and
+`plugins/blender/werk_blender/`: a Blender 4.x add-on that imports and
 exports werk 3D entities, installable as a zip and callable headless, with
 zero external dependencies (stdlib + `bpy`, werk parsing vendored
 byte-identically from `loaders/werk_read.py`).
@@ -325,7 +325,7 @@ and tags surviving, and the exported package verified by werk-core and by
 `werk_read.py` standalone; timings recorded.
 
 DONE 2026-08-08, gate **MEASURED and PASSED** on a real Blender:
-`python adapters/blender/test_gate.py` → **16 PASS, 0 FAIL, 0 SKIP** in 3.5 s
+`python plugins/blender/test_gate.py` → **16 PASS, 0 FAIL, 0 SKIP** in 3.5 s
 under **Blender 4.2.1 LTS**, a system install found by the gate's own search.
 
 | | |
@@ -443,7 +443,7 @@ Seven inconsistencies found while re-tracing are **filed, not fixed**
 wants a re-run of `tests/run_gate_12.py` to settle.
 
 ## Stage 10 — WerkLink, the Unreal Engine adapter ✅
-`adapters/unreal/WerkLink` — one editor-only UE5 plugin, two directions.
+`plugins/unreal/WerkLink` — one editor-only UE5 plugin, two directions.
 Import `.werk` → `UStaticMesh` (with LODs), `UTexture2D`, `UMaterialInstance`,
 simple collision, `USoundWave`, plus bounds/props/semantics as metadata.
 Export selected assets + their real dependency closure → a conformant unsigned
@@ -501,11 +501,11 @@ texture slots in BOTH directions; a shipped master material
 import works out of the box; material instances assigned to the meshes they
 govern; `core.image.*` (profile 2) imported as textures; a textured conformance
 fixture, `fixtures/crate-tex-v1.werk`; the testbed at `<lab>\UnrealWerkTest\`
-(outside git) with `adapters/unreal/TESTBED.md`; and an MCP server
+(outside git) with `plugins/unreal/TESTBED.md`; and an MCP server
 (`tools/ue_mcp/werk_ue_mcp.py`, registered in `.mcp.json`) over Epic's Remote
 Control API.
 
-Gates, both MEASURED on this box: `python adapters/unreal/tests/roundtrip_gate.py`
+Gates, both MEASURED on this box: `python plugins/unreal/tests/roundtrip_gate.py`
 → **16 PASS, 0 FAIL**, including all three textures round-tripping
 **pixel-identical**; `python tools/ue_mcp/proof_session.py` → **6 PASS, 0 FAIL**
 with screenshots under `<lab>\UnrealWerkTest\proof\`.

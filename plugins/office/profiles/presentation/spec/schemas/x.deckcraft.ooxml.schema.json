@@ -1,0 +1,17 @@
+{
+"$schema":"https://json-schema.org/draft/2020-12/schema",
+"additionalProperties":false,
+"description":"Extension: XML fragments kept verbatim from an imported Office Open XML presentation for ONE owner node, so that exporting back to that format loses nothing. Opaque to this profile: a reader may skip the node and loses no content this profile defines.",
+"properties":{
+"entries":{"description":"The fragments, in the order of a depth-first walk of the owner's payload.","items":{"additionalProperties":false,"description":"One fragment.","properties":{"pointer":{"description":"RFC 6901 JSON Pointer, into the owner's payload, of the member this fragment is the value of. The last token is one of `raw_ext`, `raw`, `raw_extra`, `raw3d`, `xml`, `omml`; the member is absent from the owner's payload.","format":"werk-content-text","type":"string"},"xml":{"description":"The fragment: well-formed XML text in the Office Open XML vocabulary (ECMA-376), exactly as imported.","format":"werk-content-text","type":"string"}},"required":["pointer","xml"],"type":"object"},"type":"array"},
+"owner":{"description":"The node_id of the node the fragments belong to.","format":"werk-node-ref","type":"string"},
+"schema_version":{"const":1,"description":"The revision of this payload's schema. Always 1."}
+},
+"required":[
+"schema_version",
+"owner",
+"entries"
+],
+"title":"x.deckcraft.ooxml",
+"type":"object"
+}

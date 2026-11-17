@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "slide": {
+    "animations": [],
+    "comments": [],
+    "hidden": false,
+    "id": 202,
+    "layout": 49,
+    "name": "Every kind of shape",
+    "notes": {
+      "body": {},
+      "paragraphs": []
+    },
+    "shapes": [
+      {
+        "decorative": false,
+        "descr": "",
+        "fill": {
+          "kind": "gradient",
+          "rotate_with_shape": true,
+          "shape": {
+            "angle": 90.0,
+            "kind": "linear",
+            "scaled": false
+          },
+          "stops": [
+            {
+              "color": {
+                "base": {
+                  "kind": "scheme",
+                  "slot": "accent1"
+                }
+              },
+              "pos": 0.0
+            },
+            {
+              "color": {
+                "base": {
+                  "kind": "scheme",
+                  "slot": "accent1"
+                },
+                "mods": [
+                  {
+                    "op": "lumMod",
+                    "val": 60000
+                  }
+                ]
+              },
+              "pos": 1.0
+            }
+          ]
+        },
+        "geom": {
+          "adj": [
+            19098.0
+          ],
+          "kind": "preset",
+          "name": "star5"
+        },
+        "hidden": false,
+        "id": 221,
+        "kind": {
+          "type": "shape"
+        },
+        "line": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "rgb",
+                "rgb": {
+                  "a": 255,
+                  "b": 0,
+                  "g": 0,
+                  "r": 0
+                }
+              }
+            },
+            "kind": "solid"
+          },
+          "width": 1.5
+        },
+        "locked": false,
+        "name": "Star",
+        "text": {
+          "body": {},
+          "paragraphs": [
+            {
+              "level": 0,
+              "runs": [
+                {
+                  "text": "New"
+                }
+              ]
+            }
+          ]
+        },
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 160.0,
+          "w": 160.0,
+          "x": 40.0,
+          "y": 40.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 222,
+        "kind": {
+          "child": {
+            "h": 50.0,
+            "w": 100.0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          "children": [
+            {
+              "decorative": false,
+              "descr": "",
+              "fill": {
+                "color": {
+                  "base": {
+                    "kind": "scheme",
+                    "slot": "accent2"
+                  }
+                },
+                "kind": "solid"
+              },
+              "geom": {
+                "kind": "preset",
+                "name": "ellipse"
+              },
+              "hidden": false,
+              "id": 223,
+              "kind": {
+                "type": "shape"
+              },
+              "locked": false,
+              "name": "Left",
+              "text_box": false,
+              "title": "",
+              "xfrm": {
+                "h": 50.0,
+                "w": 50.0,
+                "x": 0.0,
+                "y": 0.0
+              }
+            },
+            {
+              "decorative": false,
+              "descr": "",
+              "fill": {
+                "color": {
+                  "base": {
+                    "kind": "scheme",
+                    "slot": "accent3"
+                  }
+                },
+                "kind": "solid"
+              },
+              "geom": {
+                "kind": "preset",
+                "name": "rect"
+              },
+              "hidden": false,
+              "id": 224,
+              "kind": {
+                "type": "shape"
+              },
+              "locked": false,
+              "name": "Right",
+              "text_box": false,
+              "title": "",
+              "xfrm": {
+                "h": 50.0,
+                "w": 50.0,
+                "x": 50.0,
+                "y": 0.0
+              }
+            }
+          ],
+          "type": "group"
+        },
+        "locked": false,
+        "name": "Pair",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 100.0,
+          "w": 200.0,
+          "x": 240.0,
+          "y": 40.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "line"
+        },
+        "hidden": false,
+        "id": 225,
+        "kind": {
+          "start": {
+            "shape": 221,
+            "site": 3
+          },
+          "type": "connector"
+        },
+        "line": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "width": 1.0
+        },
+        "locked": false,
+        "name": "Connector",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 30.0,
+          "w": 40.0,
+          "x": 200.0,
+          "y": 90.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 226,
+        "kind": {
+          "band_col": false,
+          "band_row": true,
+          "cols": [
+            120.0,
+            120.0
+          ],
+          "first_col": false,
+          "first_row": true,
+          "last_col": false,
+          "last_row": false,
+          "rows": [
+            {
+              "cells": [
+                {
+                  "borders": [
+                    null,
+                    null,
+                    null,
+                    null
+                  ],
+                  "grid_span": 1,
+                  "h_merge": false,
+                  "row_span": 1,
+                  "text": {
+                    "body": {},
+                    "paragraphs": [
+                      {
+                        "level": 0,
+                        "runs": [
+                          {
+                            "text": "Region"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "v_merge": false
+                },
+                {
+                  "borders": [
+                    null,
+                    null,
+                    null,
+                    null
+                  ],
+                  "grid_span": 1,
+                  "h_merge": false,
+                  "row_span": 1,
+                  "text": {
+                    "body": {},
+                    "paragraphs": [
+                      {
+                        "level": 0,
+                        "runs": [
+                          {
+                            "text": "Sales"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "v_merge": false
+                }
+              ],
+              "height": 30.0
+            },
+            {
+              "cells": [
+                {
+                  "borders": [
+                    null,
+                    null,
+                    null,
+                    null
+                  ],
+                  "grid_span": 1,
+                  "h_merge": false,
+                  "row_span": 1,
+                  "text": {
+                    "body": {},
+                    "paragraphs": [
+                      {
+                        "level": 0,
+                        "runs": [
+                          {
+                            "text": "North"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "v_merge": false
+                },
+                {
+                  "borders": [
+                    null,
+                    null,
+                    null,
+                    null
+                  ],
+                  "grid_span": 1,
+                  "h_merge": false,
+                  "row_span": 1,
+                  "text": {
+                    "body": {},
+                    "paragraphs": [
+                      {
+                        "level": 0,
+                        "runs": [
+                          {
+                            "text": "4.2"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "v_merge": false
+                }
+              ],
+              "height": 30.0
+            }
+          ],
+          "style": "medium2-accent1",
+          "type": "table"
+        },
+        "locked": false,
+        "name": "Table",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 60.0,
+          "w": 240.0,
+          "x": 480.0,
+          "y": 40.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 227,
+        "kind": {
+          "axis_titles": {
+            "category": null,
+            "value": null
+          },
+          "categories": [
+            "Q1",
+            "Q2",
+            "Q3"
+          ],
+          "data_labels": false,
+          "gap_width": 2.19,
+          "gridlines": true,
+          "hole_size": 0.5,
+          "kind": "column",
+          "legend": "b",
+          "overlap": -0.27,
+          "palette": "colorful1",
+          "series": [
+            {
+              "name": "North",
+              "point_fills": [],
+              "secondary_axis": false,
+              "sizes": [],
+              "smooth": false,
+              "values": [
+                4.2,
+                2.8,
+                null
+              ],
+              "x_values": []
+            },
+            {
+              "name": "South",
+              "point_fills": [],
+              "secondary_axis": false,
+              "sizes": [],
+              "smooth": false,
+              "values": [
+                2.6,
+                4.1,
+                1.9
+              ],
+              "x_values": []
+            }
+          ],
+          "style": 2,
+          "title": "Sales by quarter",
+          "type": "chart",
+          "vary_colors": false
+        },
+        "locked": false,
+        "name": "Chart",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 240.0,
+          "w": 360.0,
+          "x": 40.0,
+          "y": 240.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 228,
+        "kind": {
+          "autoplay": true,
+          "bookmarks": [
+            {
+              "ms": 0,
+              "name": "Start"
+            }
+          ],
+          "duration_ms": 0,
+          "fade_in_ms": 0,
+          "fade_out_ms": 0,
+          "full_screen": false,
+          "height": 0,
+          "hide_while_not_playing": false,
+          "loop_play": false,
+          "media": 302,
+          "play_across_slides": false,
+          "rewind": false,
+          "trim_end_ms": 0,
+          "trim_start_ms": 0,
+          "type": "media",
+          "video": true,
+          "volume": 1.0,
+          "width": 0
+        },
+        "locked": false,
+        "name": "Animation",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 64.0,
+          "w": 64.0,
+          "x": 440.0,
+          "y": 240.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 229,
+        "kind": {
+          "strokes": [
+            {
+              "color": {
+                "a": 255,
+                "b": 30,
+                "g": 30,
+                "r": 200
+              },
+              "highlighter": false,
+              "points": [
+                {
+                  "pressure": 0.5,
+                  "x": 520.0,
+                  "y": 250.0
+                },
+                {
+                  "pressure": 1.0,
+                  "x": 560.0,
+                  "y": 290.0
+                },
+                {
+                  "pressure": 0.75,
+                  "x": 620.0,
+                  "y": 245.0
+                }
+              ],
+              "width": 3.0
+            }
+          ],
+          "type": "ink"
+        },
+        "locked": false,
+        "name": "Ink",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 60.0,
+          "w": 100.0,
+          "x": 520.0,
+          "y": 240.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "fill": {
+          "color": {
+            "base": {
+              "kind": "scheme",
+              "slot": "accent4"
+            }
+          },
+          "kind": "solid"
+        },
+        "geom": {
+          "kind": "custom",
+          "paths": [
+            {
+              "d": "M 0 100 L 50 0 L 100 100 Z",
+              "fill": "norm",
+              "h": 100.0,
+              "stroke": true,
+              "w": 100.0
+            }
+          ]
+        },
+        "hidden": false,
+        "id": 230,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Freeform",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 100.0,
+          "w": 100.0,
+          "x": 640.0,
+          "y": 240.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 231,
+        "kind": {
+          "label": "Diagram",
+          "preview": 301,
+          "type": "opaque"
+        },
+        "locked": false,
+        "name": "Diagram",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 120.0,
+          "w": 160.0,
+          "x": 760.0,
+          "y": 240.0
+        }
+      }
+    ],
+    "show_master_shapes": true
+  }
+}

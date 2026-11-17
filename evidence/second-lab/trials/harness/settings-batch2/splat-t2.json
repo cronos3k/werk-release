@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "blockReadsOutsideWorkingDirectories": true,
+    "deny": [  "Read(<second-lab>/gauntlet-sealed/20261006-1751/seal-check/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/seal-check/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/seal-check/**)", "Read(<second-lab>/gauntlet-sealed/20261006-1751/xv-t1/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/xv-t1/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/xv-t1/**)", "Read(<second-lab>/gauntlet-sealed/20261006-1751/xv-t2/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/xv-t2/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/xv-t2/**)", "Read(<second-lab>/gauntlet-sealed/20261006-1751/xv-t3/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/xv-t3/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/xv-t3/**)", "Read(<second-lab>/gauntlet-sealed/20261006-1751/splat-t1/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/splat-t1/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/splat-t1/**)", "Read(<second-lab>/gauntlet-sealed/20261006-1751/env-t2/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/env-t2/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/env-t2/**)", "Read(<second-lab>/gauntlet-sealed/20261006-1751/env-t3/**)", "Glob(<second-lab>/gauntlet-sealed/20261006-1751/env-t3/**)", "Grep(<second-lab>/gauntlet-sealed/20261006-1751/env-t3/**)",
+      "Read(//c/**)", "Glob(//c/**)", "Grep(//c/**)", "Edit(//c/**)", "Write(//c/**)",
+      "Read(/<second-lab>/werk/**)", "Glob(/<second-lab>/werk/**)", "Grep(/<second-lab>/werk/**)",
+      "Read(//d/werk-gregor-fix/**)", "Glob(//d/werk-gregor-fix/**)", "Grep(//d/werk-gregor-fix/**)",
+      "Read(<second-lab>/gauntlet-sealed/config/**)", "Glob(<second-lab>/gauntlet-sealed/config/**)", "Grep(<second-lab>/gauntlet-sealed/config/**)",
+      "Read(<second-lab>/gauntlet-sealed/settings-*/**)", "Glob(<second-lab>/gauntlet-sealed/settings-*/**)",
+      "Read(<second-lab>/gauntlet-sealed/_interrupted/**)", "Glob(<second-lab>/gauntlet-sealed/_interrupted/**)", "Grep(<second-lab>/gauntlet-sealed/_interrupted/**)",
+      "WebFetch", "WebSearch"
+    ]
+  }
+}

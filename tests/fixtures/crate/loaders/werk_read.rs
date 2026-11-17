@@ -85,11 +85,14 @@
 //        file or an unknown node type must never abort the load.
 //     1  the container opened and there is an error: the conventions block
 //        declares something this reader does not support (SPEC §10 step 3:
-//        refuse, do not guess), --strict was given and at least one node
-//        ended up dead, or --selftest failed.
+//        refuse, do not guess), --strict was given and the load found an
+//        error (a dead node, a hash mismatch — also the one a version
+//        fallback recovered from — or a present-and-invalid signature), or
+//        --selftest failed.
 //     2  CONTAINER-SCOPED REFUSAL, nothing was loaded: not a zip, a zip64
-//        container, no or unparseable MANIFEST.json. Also a command line this
-//        program cannot act on — no package was loaded then either.
+//        container, two zip entries with one name, no or unparseable
+//        MANIFEST.json, no `nodes` array. Also a command line this program
+//        cannot act on — no package was loaded then either.
 // ---------------------------------------------------------------------------
 
 #![forbid(unsafe_code)]
@@ -999,17 +1002,19 @@ impl ZipArchive {
             ));
         }
 
+        // MINI-SPECS.md §5.4, reader rules: exactly `total records` (EOCD
+        // offset 10) records are read, starting at the central directory
+        // offset; the directory's byte size (offset 12) is not used to walk
+        // it. A record that is not there is a malformed directory.
         let mut entries: BTreeMap<String, ZipEntry> = BTreeMap::new();
         let mut order: Vec<String> = Vec::new();
         let mut p = cd_offset as usize;
-        let cd_end = (cd_offset + cd_size) as usize;
-        if cd_end > n {
-            return Err("central directory runs past the end of the file".to_string());
-        }
-        let mut seen = 0usize;
-        while p + 46 <= cd_end {
-            let sig = le_u32(&data, p)
-                .ok_or_else(|| "bad-container: truncated central directory".to_string())?;
+        let _ = cd_size;
+        for _ in 0..total_records {
+            let sig = match le_u32(&data, p) {
+                Some(s) if p + 46 <= n => s,
+                _ => return Err("bad-container: truncated central directory".to_string()),
+            };
             if sig != 0x0201_4b50 {
                 return Err(format!(
                     "bad-container: bad central directory signature 0x{:08x} at {}",
@@ -1027,11 +1032,13 @@ impl ZipArchive {
             let lho = le_u32(&data, p + 42).unwrap() as u64;
             let name_bytes = data
                 .get(p + 46..p + 46 + nlen)
-                .ok_or_else(|| "truncated central directory name".to_string())?;
-            let name = String::from_utf8(name_bytes.to_vec())
-                .map_err(|_| "central directory entry name is not UTF-8".to_string())?;
+                .ok_or_else(|| "bad-container: truncated central directory name".to_string())?;
+            // MINI-SPECS.md §5.4: the name is decoded as UTF-8 with invalid
+            // sequences replaced. A damaged name is then simply a name no
+            // manifest path matches (that file is missing, its node dies);
+            // it is not a malformed directory.
+            let name = String::from_utf8_lossy(name_bytes).into_owned();
             p += 46 + nlen + mlen + klen;
-            seen += 1;
             if comp_size == 0xFFFF_FFFF || uncomp_size == 0xFFFF_FFFF || lho == 0xFFFF_FFFF {
                 // MINI-SPECS.md §5.5 step 5: the per-entry sentinel.
                 return Err(format!(
@@ -1054,31 +1061,29 @@ impl ZipArchive {
                 continue;
             }
             if flags & 0x0008 != 0 {
-                notes.push(format!(
-                    "zip: entry {} sets general purpose flag bit 3 (data descriptor), \
-                     which a werk writer MUST NOT do (MINI-SPECS §5.4); \
-                     using the central directory sizes",
+                return Err(format!(
+                    "bad-container: entry {:?} sets general purpose flag bit 3 (data \
+                     descriptor), which a werk writer MUST NOT set (MINI-SPECS §5.4)",
                     name
                 ));
             }
             if flags & 0x0001 != 0 {
                 notes.push(format!("zip: entry {} is encrypted; unreadable", name));
             }
-            if entries.contains_key(&name) {
-                notes.push(format!("zip: duplicate entry name {}; keeping the first", name));
-                continue;
+            if entries.contains_key(&name) || order.contains(&name) {
+                // Which bytes ARE that file cannot be decided, and readers that
+                // pick different records disagree about one package.
+                return Err(format!(
+                    "bad-container: the zip holds two entries named {:?}; which bytes are \
+                     that file cannot be decided, so the container is refused",
+                    name
+                ));
             }
             order.push(name.clone());
             entries.insert(
                 name,
                 ZipEntry { method, flags, crc32, comp_size, uncomp_size, local_header_offset: lho },
             );
-        }
-        if seen != total_records {
-            notes.push(format!(
-                "zip: EOCD declares {} central directory records, {} were parsed",
-                total_records, seen
-            ));
         }
         Ok(ZipArchive { data, entries, order, notes })
     }
@@ -1110,13 +1115,9 @@ impl ZipArchive {
         if sig != 0x0403_4b50 {
             return Err(PkgErr::Bad(format!("bad local header signature 0x{:08x}", sig)));
         }
-        let lmethod = le_u16(&self.data, lho + 8).unwrap();
-        if lmethod != e.method {
-            return Err(PkgErr::Bad(format!(
-                "local header method {} disagrees with central directory method {}",
-                lmethod, e.method
-            )));
-        }
+        // MINI-SPECS.md §5.2 / §5.4: the central directory is the authority
+        // on method, sizes and CRC; of the local header only its signature
+        // and its name/extra lengths are read.
         let nlen = le_u16(&self.data, lho + 26).unwrap() as usize;
         let mlen = le_u16(&self.data, lho + 28).unwrap() as usize;
         let start = lho + 30 + nlen + mlen;
@@ -1148,12 +1149,8 @@ impl ZipArchive {
             }
             return Ok(out);
         }
-        if e.comp_size != e.uncomp_size {
-            return Err(PkgErr::Bad(format!(
-                "store-mode entry declares compressed {} != uncompressed {}",
-                e.comp_size, e.uncomp_size
-            )));
-        }
+        // Method 0: the data is `compressed size` bytes verbatim (MINI-SPECS
+        // §5.3); the manifest's size and sha256 are what check it.
         Ok(self.data[start..start + len].to_vec())
     }
 }
@@ -1965,6 +1962,9 @@ struct NodeEnt {
     active: i64,
     versions: Vec<VersionEnt>,
     edges: Vec<EdgeEnt>,
+    /// The node's own structure is unusable (SPEC §12.1: node scope, not a
+    /// recovery trigger): it is dead with this reason, the rest loads.
+    malformed: Option<String>,
 }
 
 /// Which node types are "not a surprise" to this reader. A bootstrap loader
@@ -2199,9 +2199,32 @@ fn parse_nodes(manifest: &Json) -> Result<Vec<NodeEnt>, String> {
     let arr = manifest
         .get("nodes")
         .and_then(|v| v.as_arr())
-        .ok_or_else(|| "MANIFEST.json has no \"nodes\" array".to_string())?;
+        .ok_or_else(|| {
+            "manifest-structurally-invalid: MANIFEST.json has no \"nodes\" array".to_string()
+        })?;
     let mut out = Vec::new();
     for (i, n) in arr.iter().enumerate() {
+        match parse_node(i, n) {
+            Ok(ne) => out.push(ne),
+            Err(e) => out.push(NodeEnt {
+                node_id: n
+                    .get("node_id")
+                    .and_then(|v| v.as_str())
+                    .map(|s| s.to_string())
+                    .unwrap_or_else(|| format!("<node {}>", i)),
+                ntype: "<malformed>".to_string(),
+                active: 0,
+                versions: Vec::new(),
+                edges: Vec::new(),
+                malformed: Some(e),
+            }),
+        }
+    }
+    Ok(out)
+}
+
+fn parse_node(i: usize, n: &Json) -> Result<NodeEnt, String> {
+    {
         let node_id = n
             .get("node_id")
             .and_then(|v| v.as_str())
@@ -2288,18 +2311,19 @@ fn parse_nodes(manifest: &Json) -> Result<Vec<NodeEnt>, String> {
         let mut edges = Vec::new();
         if let Some(es) = n.get("edges").and_then(|v| v.as_arr()) {
             for e in es {
-                let to = match e.get("to").and_then(|x| x.as_str()) {
-                    Some(t) => t.to_string(),
-                    None => continue,
-                };
+                // As the reference core: an edge without a string `to` points
+                // at "" — a node that is never there.
+                let to = e.get("to").and_then(|x| x.as_str()).unwrap_or("").to_string();
                 let kind = e.get("kind").and_then(|x| x.as_str()).unwrap_or("enhances").to_string();
                 let role = e.get("role").and_then(|x| x.as_str()).map(|s| s.to_string());
                 edges.push(EdgeEnt { to, kind, role });
             }
         }
-        out.push(NodeEnt { node_id, ntype, active, versions, edges });
+        if versions.is_empty() {
+            return Err(format!("node {}: versions[] is empty", node_id));
+        }
+        Ok(NodeEnt { node_id, ntype, active, versions, edges, malformed: None })
     }
-    Ok(out)
 }
 
 // ===========================================================================
@@ -2363,6 +2387,13 @@ struct Load {
     report: Vec<String>,
     manifest_sha256: String,
     manifest: Json,
+    /// One of SPEC §10 step 4's words: absent, present-and-invalid,
+    /// unverified (this loader never says signed-and-valid).
+    signature: &'static str,
+    /// The load found an `error`-severity condition (SPEC §10.1 status 1):
+    /// a dead node, a hash mismatch a fallback recovered from, an invalid
+    /// signature. --strict turns it into exit status 1.
+    has_error: bool,
 }
 
 fn verify_version(pkg: &Package, ver: &VersionEnt) -> Attempt {
@@ -2492,16 +2523,67 @@ fn load(pkg: &Package) -> Result<Load, String> {
     // does not declare verify-signature, so it reports and loads on. The word is
     // exactly `unverified`; a near-synonym would defeat the doctrine as surely
     // as collapsing two states would.
-    match pkg.read("SIGNATURE.json") {
-        Ok(_) => report.push(
-            "signature: unverified — SIGNATURE.json is present, but this loader carries \
-             no ed25519 and has NOT checked the mathematics. `unverified` is not \
-             `signed-and-valid`, and it is not `absent` (SPEC §6, §10 step 4)"
-                .to_string(),
-        ),
-        Err(PkgErr::NotFound) => report
-            .push("signature: absent — this package is anonymous, and visibly so (SPEC §6)".to_string()),
-        Err(e) => report.push(format!("signature: SIGNATURE.json {}", e)),
+    // What it CAN check without Ed25519 it does: that the file is a JSON
+    // object and that its manifest_sha256 is the manifest's. Damage to a
+    // present signature is present-and-invalid, never absent.
+    let mut has_error = false;
+    let signature: &'static str = match pkg.read("SIGNATURE.json") {
+        Err(PkgErr::NotFound) => {
+            report.push(
+                "signature: absent — this package is anonymous, and visibly so (SPEC §6)"
+                    .to_string(),
+            );
+            "absent"
+        }
+        Err(e) => {
+            report.push(format!(
+                "signature: present-and-invalid — SIGNATURE.json is present but {}",
+                e
+            ));
+            "present-and-invalid"
+        }
+        Ok(bytes) => match json_parse(&bytes) {
+            Err(e) => {
+                report.push(format!(
+                    "signature: present-and-invalid — SIGNATURE.json is not valid JSON: {}",
+                    e
+                ));
+                "present-and-invalid"
+            }
+            Ok(sig @ Json::Obj(_)) => {
+                match sig.get("manifest_sha256").and_then(|v| v.as_str()) {
+                    Some(h) if h == manifest_sha256 => {
+                        report.push(
+                            "signature: unverified — SIGNATURE.json is present and its \
+                             manifest_sha256 matches, but this loader carries no ed25519 and \
+                             has NOT checked the mathematics. `unverified` is not \
+                             `signed-and-valid`, and it is not `absent` (SPEC §6, §10 step 4)"
+                                .to_string(),
+                        );
+                        "unverified"
+                    }
+                    other => {
+                        report.push(format!(
+                            "signature: present-and-invalid — manifest_sha256 is {:?} but \
+                             MANIFEST.json hashes to {}: the manifest changed under an \
+                             existing signature",
+                            other, manifest_sha256
+                        ));
+                        "present-and-invalid"
+                    }
+                }
+            }
+            Ok(_) => {
+                report.push(
+                    "signature: present-and-invalid — SIGNATURE.json is not a JSON object"
+                        .to_string(),
+                );
+                "present-and-invalid"
+            }
+        },
+    };
+    if signature == "present-and-invalid" {
+        has_error = true;
     }
 
     let nodes_src = parse_nodes(&manifest)?;
@@ -2510,6 +2592,21 @@ fn load(pkg: &Package) -> Result<Load, String> {
     let mut envelopes_validated = 0usize;
     let mut loaded: Vec<LoadedNode> = Vec::new();
     for n in &nodes_src {
+        if let Some(why) = &n.malformed {
+            report.push(format!("node {}: DEAD — malformed node: {}", n.node_id, why));
+            loaded.push(LoadedNode {
+                node_id: n.node_id.clone(),
+                ntype: n.ntype.clone(),
+                active: n.active,
+                resolved: None,
+                health: Health::Dead,
+                unknown_type: false,
+                dead_reason: format!("malformed node: {}", why),
+                attempts: Vec::new(),
+                edges: Vec::new(),
+            });
+            continue;
+        }
         let unknown_type = !type_is_known(&n.ntype);
         if unknown_type {
             report.push(format!(
@@ -2597,6 +2694,9 @@ fn load(pkg: &Package) -> Result<Load, String> {
                 ));
                 for a in attempts.iter().filter(|a| a.v == n.active) {
                     for f in a.files.iter().filter(|f| !f.ok) {
+                        // The node lives; the mismatch is still an error
+                        // entry (SPEC §10.1 exit status 1).
+                        has_error = true;
                         report.push(format!("  node {} v{}: {} — {}", n.node_id, a.v, f.path, f.detail));
                     }
                 }
@@ -2707,7 +2807,10 @@ fn load(pkg: &Package) -> Result<Load, String> {
 
     report.push(format!("envelopes: {} frame(s) validated", envelopes_validated));
 
-    Ok(Load { nodes: loaded, report, manifest_sha256, manifest })
+    if loaded.iter().any(|n| n.health == Health::Dead) {
+        has_error = true;
+    }
+    Ok(Load { nodes: loaded, report, manifest_sha256, manifest, signature, has_error })
 }
 
 // ===========================================================================
@@ -2777,7 +2880,21 @@ fn cmd_verify(load: &Load) {
             println!("FAIL {}  {}", n.node_id, n.dead_reason);
         }
     }
+    // Every dead node by name, whatever killed it: a node can be dead with no
+    // failing file (a malformed record, a requires edge into a dead node),
+    // and a death reported without the node's name is not actionable.
+    for n in &load.nodes {
+        if n.health == Health::Dead {
+            let why = if n.dead_reason.is_empty() {
+                "no version of this node verified"
+            } else {
+                n.dead_reason.as_str()
+            };
+            println!("node {}: DEAD — {}", n.node_id, why);
+        }
+    }
     let dead = load.nodes.iter().filter(|n| n.health == Health::Dead).count();
+    println!("signature : {}", load.signature);
     println!(
         "\nsummary: {} file checks passed, {} failed; {} of {} nodes dead",
         pass,
@@ -3043,7 +3160,8 @@ usage:
   werk_read --selftest                                    SHA-256 test vectors (MINI-SPECS §11)
 
 options:
-  --strict    exit 1 if any node ended up dead (for test harnesses)
+  --strict    exit 1 if the load found an error: a dead node, a hash mismatch
+              (also one a version fallback recovered from), an invalid signature
 
 exit codes (SPEC section 10.1): 0 loaded (dead nodes included); 1 loaded with
 an error (unsupported conventions, or --strict with a dead node); 2 nothing
@@ -3236,7 +3354,11 @@ fn run(args: &[String]) -> i32 {
                 eprintln!("[error] unsupported-convention: {}", e);
                 return 1;
             }
-            eprintln!("[error] manifest-unparseable: cannot load package: {}", e);
+            if e.starts_with("manifest-structurally-invalid:") {
+                eprintln!("[error] {}", e);
+            } else {
+                eprintln!("[error] manifest-unparseable: cannot load package: {}", e);
+            }
             eprintln!("container-scoped refusal: nothing was loaded; exit status 2");
             return 2;
         }
@@ -3267,8 +3389,9 @@ fn run(args: &[String]) -> i32 {
     if rc != 0 {
         return rc;
     }
-    if strict && load.nodes.iter().any(|n| n.health == Health::Dead) {
-        eprintln!("--strict: at least one node is dead");
+    if strict && load.has_error {
+        eprintln!("--strict: the load found an error (a dead node, a hash mismatch, or an \
+                   invalid signature)");
         return 1;
     }
     0

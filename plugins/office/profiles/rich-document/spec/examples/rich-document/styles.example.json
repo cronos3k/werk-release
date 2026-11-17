@@ -1,0 +1,76 @@
+{
+  "defaultChr": {
+    "font": "Source Serif 4",
+    "lang": "en-GB",
+    "size": 11.0
+  },
+  "defaultPara": {
+    "spaceAfter": 8.0
+  },
+  "defaultParaPresent": true,
+  "schema_version": 1,
+  "styles": [
+    {
+      "basedOn": null,
+      "builtin": false,
+      "chr": {},
+      "hidden": false,
+      "id": "Normal",
+      "kind": "paragraph",
+      "linked": null,
+      "name": "Normal",
+      "next": null,
+      "para": {},
+      "priority": null,
+      "quick": true,
+      "table": null
+    },
+    {
+      "basedOn": "Normal",
+      "builtin": false,
+      "chr": {
+        "bold": true,
+        "size": 16.0
+      },
+      "hidden": false,
+      "id": "Heading1",
+      "kind": "paragraph",
+      "linked": null,
+      "name": "Heading 1",
+      "next": "Normal",
+      "para": {
+        "keepNext": true,
+        "outlineLevel": 0,
+        "spaceAfter": 4.0,
+        "spaceBefore": 12.0
+      },
+      "priority": null,
+      "quick": true,
+      "table": null
+    },
+    {
+      "basedOn": "Normal",
+      "builtin": false,
+      "chr": {
+        "color": {
+          "Rgb": [
+            96,
+            96,
+            96
+          ]
+        },
+        "size": 9.0
+      },
+      "hidden": false,
+      "id": "Header",
+      "kind": "paragraph",
+      "linked": null,
+      "name": "Header",
+      "next": null,
+      "para": {},
+      "priority": null,
+      "quick": false,
+      "table": null
+    }
+  ]
+}

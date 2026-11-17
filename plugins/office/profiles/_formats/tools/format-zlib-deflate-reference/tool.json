@@ -1,0 +1,37 @@
+{
+  "config": {
+    "definition": "spec/formats/zlib-deflate.md",
+    "format": "zlib-deflate",
+    "test_vectors": [
+      "stored",
+      "fixed",
+      "dynamic",
+      "gzip-two-members",
+      "empty"
+    ]
+  },
+  "entrypoint": "tools/format-zlib-deflate-reference/inflate.py",
+  "files": [
+    {
+      "path": "tools/format-zlib-deflate-reference/inflate.py",
+      "role": "source",
+      "sha256": "ac730786449a7c9b7f5ff5ddfea4d57759878d5fa0525f06a5ee7f5aa4b8ad3e",
+      "size": 9307
+    }
+  ],
+  "form": "source",
+  "invocation": {
+    "dependencies": [],
+    "example": "python tools/format-zlib-deflate-reference/inflate.py <input file> > <output>   # writes the decompressed bytes to stdout",
+    "toolchain": "python>=3.8"
+  },
+  "language": "python",
+  "license": {
+    "spdx_id": "MIT OR Apache-2.0"
+  },
+  "name": "zlib-deflate reference decoder",
+  "role": "viewer",
+  "schema_version": 1,
+  "tool_id": "format-zlib-deflate-reference",
+  "version": "1"
+}

@@ -1,0 +1,579 @@
+{
+ "bundle_version": 1,
+ "lib_version": "0.1.0",
+ "source_rev": "bc2352940fb120c09a6da063cc8723357b5d89fc",
+ "files": [
+  {
+   "path": "loaders/werk_read.c",
+   "sha256": "7c899d1c1393c140a1098202a6f04de8a3116cd65bfbf5cfe204395d20039f53",
+   "size": 143928,
+   "crc32": 3506355369
+  },
+  {
+   "path": "loaders/werk_read.py",
+   "sha256": "d8c633e4af1fa35f57c45c5d0ab0ecf197263d1bb6c51f12f1b03dc036de63f7",
+   "size": 63944,
+   "crc32": 1229736791
+  },
+  {
+   "path": "loaders/werk_read.rs",
+   "sha256": "9669ff638f78bac4f0827fd98601dfb888dde227f3bd0612615c3e1330dfb3f5",
+   "size": 130746,
+   "crc32": 1660445882
+  },
+  {
+   "path": "spec/MINI-SPECS.md",
+   "sha256": "665e0cf8c2a169acdcdb9b1dc569ee6bd5efbbba14dd3120390f8d23ca6e804d",
+   "size": 57339,
+   "crc32": 1410298979
+  },
+  {
+   "path": "spec/PROFILE-IMAGE.md",
+   "sha256": "50cbd42b13a3a2550516cd3387a23ada463aca33fd4713bb5658e5bebf67400a",
+   "size": 15889,
+   "crc32": 3246327740
+  },
+  {
+   "path": "spec/README.md",
+   "sha256": "ed99a755099edf42ffbac1bfe7b3876094600c27b6e5742e5d76c1c86c058633",
+   "size": 13612,
+   "crc32": 3048476326
+  },
+  {
+   "path": "spec/SPEC.md",
+   "sha256": "72fe46f869fb9a71cf8d51118dba9e5b04c54e2e9aba6fdf50693152cd6639be",
+   "size": 168483,
+   "crc32": 2292093507
+  },
+  {
+   "path": "spec/WRITING-3D-ENTITY.md",
+   "sha256": "5344d6b299d17552ca07e674401dbe0164066e14f147faaa4d0bdeab34896d18",
+   "size": 15860,
+   "crc32": 2792929545
+  },
+  {
+   "path": "spec/WRITING-IMAGE.md",
+   "sha256": "c272c94497ece07cdf139aa880b2c0c448912d9c4b289e032b3b5715c1d91d29",
+   "size": 11775,
+   "crc32": 4088573316
+  },
+  {
+   "path": "spec/X-C2PA-EXPORT.md",
+   "sha256": "2b3421f5dd51cc885762754d0ce865c6ee5b9cc11428d8a7945f59a2b7485306",
+   "size": 7461,
+   "crc32": 110186835
+  },
+  {
+   "path": "spec/conventions-map.image.json",
+   "sha256": "ae4116c7c5c61b6342e0ecdc875ed42015179254e7012007cfe1e3c3b0b273cc",
+   "size": 2416,
+   "crc32": 2216781399
+  },
+  {
+   "path": "spec/conventions-map.json",
+   "sha256": "2a48732b1d323957dfaee2818008fee6fac96e61e439a1c37af3b222e40cebfb",
+   "size": 9699,
+   "crc32": 1681985605
+  },
+  {
+   "path": "spec/examples/MANIFEST.example.json",
+   "sha256": "7601951bcb139307309a76006a74c589fce3450ea3a9c64ec8a2ca2da6ded14d",
+   "size": 20223,
+   "crc32": 957033828
+  },
+  {
+   "path": "spec/examples/SIGNATURE.example.json",
+   "sha256": "1d8aaecc1a87d7801266823b3f414255e6395f4bb65ef5e3b44e90f3edd80af8",
+   "size": 1084,
+   "crc32": 687641079
+  },
+  {
+   "path": "spec/examples/embedding.example.hex.txt",
+   "sha256": "355ba2b4b765c2f88f112d25fdcd000df6c3fb8bd3b8894b904b25a9e9130d2d",
+   "size": 4444,
+   "crc32": 1425754764
+  },
+  {
+   "path": "spec/examples/embedding.example.wkem",
+   "sha256": "eb98a370bde965b6bdd0c21d73dfefb663f445db5a6cd3d2be44272123ebf067",
+   "size": 512,
+   "crc32": 1129355402
+  },
+  {
+   "path": "spec/examples/gsplat.example.hex.txt",
+   "sha256": "e5cc7d5b0310543cb06b2853d3e6ca5b19f68df9474ecf916b1a256f906788a3",
+   "size": 9796,
+   "crc32": 47264751
+  },
+  {
+   "path": "spec/examples/gsplat.example.wkgs",
+   "sha256": "9a3af3dfde695e34cbeb8972a8d3f2453454226ba6ab9c69a6c5a0a199fe19ee",
+   "size": 1120,
+   "crc32": 812887750
+  },
+  {
+   "path": "spec/examples/make-examples.py",
+   "sha256": "c9d7b4c7817a88a29d64dcac1cf9a1d2998fc78e41e9924ac426ebe2ffc5846b",
+   "size": 58874,
+   "crc32": 3558825407
+  },
+  {
+   "path": "spec/examples/restposes.example.hex.txt",
+   "sha256": "80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051",
+   "size": 4308,
+   "crc32": 3407359429
+  },
+  {
+   "path": "spec/examples/restposes.example.wkrp",
+   "sha256": "6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95",
+   "size": 560,
+   "crc32": 2330705473
+  },
+  {
+   "path": "spec/examples/signature.example.txt",
+   "sha256": "db469f426c37e58493a02b418498f90225686ef5793918d49f998cfeed34c742",
+   "size": 4544,
+   "crc32": 2627963808
+  },
+  {
+   "path": "spec/examples/write_minimal_3d_entity.py",
+   "sha256": "84a69c42f110b9fa4d567fa576e9d97057fee7115260938cf753740940fd5548",
+   "size": 20189,
+   "crc32": 2297016683
+  },
+  {
+   "path": "spec/examples/write_minimal_image.py",
+   "sha256": "c0db0c1f0134c59385f8e36fa525155b06cf82913e5377cd05a3a57208697206",
+   "size": 19049,
+   "crc32": 1226495582
+  },
+  {
+   "path": "spec/extensions/x.cub.v1.baked.layout.txt",
+   "sha256": "44038d2a84eac4f5626192d12fbb6b758716221dd1d1d3672d7a2337d6f5861f",
+   "size": 9447,
+   "crc32": 3127237153
+  },
+  {
+   "path": "spec/extensions/x.cub.v1.md",
+   "sha256": "a800b92163ef72e99a1bb150e309706ad0b486f7568314efa5b20ae5f7a72f9f",
+   "size": 8959,
+   "crc32": 430544299
+  },
+  {
+   "path": "spec/facets.json",
+   "sha256": "f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1",
+   "size": 11978,
+   "crc32": 1478599208
+  },
+  {
+   "path": "spec/formats/splat-32.md",
+   "sha256": "ae3bdd5580aa317f41474e970165d9fc691799468a8b06928ded00b02af55e9e",
+   "size": 10991,
+   "crc32": 3557797093
+  },
+  {
+   "path": "spec/layouts/ENVELOPE.layout.txt",
+   "sha256": "474e0a63d03dec62dcf5d7e6097c88ddf93cbac9fccc0ced06666c4a55edcb56",
+   "size": 28288,
+   "crc32": 4013688374
+  },
+  {
+   "path": "spec/layouts/animclip.layout.txt",
+   "sha256": "ee4a9db15b32a3540fc4dabbc07cf9f91e3f24b3bdad6d0f02711da9e674b9e6",
+   "size": 16800,
+   "crc32": 3249843013
+  },
+  {
+   "path": "spec/layouts/embedding.layout.txt",
+   "sha256": "303b608295ef192afcc86b2f636c26736c6a8ce642835d46245bdc7e72320a87",
+   "size": 14361,
+   "crc32": 2031617014
+  },
+  {
+   "path": "spec/layouts/flowfield.layout.txt",
+   "sha256": "f8d2e9cc571b22fa0748dcb8cb47aa3235d8cfcea92467801a18ddf2b104903a",
+   "size": 6263,
+   "crc32": 2561619427
+  },
+  {
+   "path": "spec/layouts/gsplat.layout.txt",
+   "sha256": "1f42951c887259e9c69c1437792b5674e0d0c7d90595e41e207c0aac138a6195",
+   "size": 23918,
+   "crc32": 805873142
+  },
+  {
+   "path": "spec/layouts/imposter.layout.txt",
+   "sha256": "29649f2aa83078fbb13731f0481eb8e26c96f9ea54a821a6dfbef805ed31236f",
+   "size": 10446,
+   "crc32": 449732587
+  },
+  {
+   "path": "spec/layouts/points.layout.txt",
+   "sha256": "6b36a38432a4468655c0c176c02788b39c23db8ea33e2b3af69011a4d59c4899",
+   "size": 16663,
+   "crc32": 404527824
+  },
+  {
+   "path": "spec/layouts/restposes.layout.txt",
+   "sha256": "cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5",
+   "size": 5958,
+   "crc32": 82990924
+  },
+  {
+   "path": "spec/layouts/skeleton.layout.txt",
+   "sha256": "f9656db427660fd781cb7d3732013ff6958f3b816cc9ba93403e37b6e1295dc1",
+   "size": 5964,
+   "crc32": 554685279
+  },
+  {
+   "path": "spec/schemas/conventions-map.schema.json",
+   "sha256": "97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f",
+   "size": 4614,
+   "crc32": 3530450880
+  },
+  {
+   "path": "spec/schemas/core.anim.clip.schema.json",
+   "sha256": "2e3d87f8447bd3ab21da0c0b34ad0ab24e95bcd4cfb28a4ba2edfdddadbafc36",
+   "size": 9585,
+   "crc32": 1091236374
+  },
+  {
+   "path": "spec/schemas/core.audio.effect.schema.json",
+   "sha256": "29d840c0a3fe5a4cdc129f7c50f424c4438ecd8ad0be894fcf471ec820914990",
+   "size": 9158,
+   "crc32": 1895462120
+  },
+  {
+   "path": "spec/schemas/core.audio.package.schema.json",
+   "sha256": "31cc445ed02ba349c6506cd49d20385faa0a48c46c4290a1344fb1dfb92d0f68",
+   "size": 7319,
+   "crc32": 1350014027
+  },
+  {
+   "path": "spec/schemas/core.destruct.schema.json",
+   "sha256": "87142e399b83e6f5abffe8655302d45f27b32781766f0821826accb41e97ff32",
+   "size": 6319,
+   "crc32": 3382876692
+  },
+  {
+   "path": "spec/schemas/core.disclosure.schema.json",
+   "sha256": "ac1df873ac607e1bc4778f1a97bbec5fb13b7177e715b93e5ef60eb57164c785",
+   "size": 11515,
+   "crc32": 3708320442
+  },
+  {
+   "path": "spec/schemas/core.imposter.schema.json",
+   "sha256": "5b5c3875a91274e38e41e99a55d3041438c0471a584699290c7a6b76ce9f6306",
+   "size": 6708,
+   "crc32": 1250260500
+  },
+  {
+   "path": "spec/schemas/core.material.schema.json",
+   "sha256": "487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6",
+   "size": 4823,
+   "crc32": 3849603253
+  },
+  {
+   "path": "spec/schemas/core.phys.body.schema.json",
+   "sha256": "d0d462fc17e21805da5c075fd83eeccda4946367c5f4381651544b89555de4ac",
+   "size": 6157,
+   "crc32": 1527598744
+  },
+  {
+   "path": "spec/schemas/core.phys.bounds.schema.json",
+   "sha256": "acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e",
+   "size": 3164,
+   "crc32": 2200893755
+  },
+  {
+   "path": "spec/schemas/core.phys.colliders.schema.json",
+   "sha256": "70dd20d638bef9146588222bec3000ab9e0d2430d1dd96fbfda6a5ffacd62794",
+   "size": 4116,
+   "crc32": 1868506921
+  },
+  {
+   "path": "spec/schemas/core.props.schema.json",
+   "sha256": "95a8124f54346735946431d7de34cb665eec8ca7450a794831d6aee99affa2e3",
+   "size": 11666,
+   "crc32": 3990998648
+  },
+  {
+   "path": "spec/schemas/core.provenance.schema.json",
+   "sha256": "d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935",
+   "size": 6140,
+   "crc32": 4087397906
+  },
+  {
+   "path": "spec/schemas/core.recipe.schema.json",
+   "sha256": "19b723bf06c66ccf15948100350c4857e0694a5850e1e111e35a894c416e0f30",
+   "size": 26485,
+   "crc32": 3781493663
+  },
+  {
+   "path": "spec/schemas/core.retarget.bind.schema.json",
+   "sha256": "e8cacdd8a72e7e33100507cbe187ffe91f0ec98516bb52ea08ee6addf298f480",
+   "size": 13337,
+   "crc32": 1618260060
+  },
+  {
+   "path": "spec/schemas/core.revisions.schema.json",
+   "sha256": "b429a2c8c9fa029480657fcccb7c9550e4fcfd5b8b6338842d83c045d4250582",
+   "size": 3798,
+   "crc32": 2904533264
+  },
+  {
+   "path": "spec/schemas/core.scene.schema.json",
+   "sha256": "ef76371247ef4c23b8be7a65f9a2cbcd7cbb67f11424926111945a6ae816a93b",
+   "size": 4786,
+   "crc32": 1924617159
+  },
+  {
+   "path": "spec/schemas/core.semantics.schema.json",
+   "sha256": "3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f",
+   "size": 6917,
+   "crc32": 4037786880
+  },
+  {
+   "path": "spec/schemas/core.skeleton.schema.json",
+   "sha256": "7e0f7aec2a7616e7ab4d94c96ac82cf3496af2d3758b9bbf13d866663782c7f8",
+   "size": 11464,
+   "crc32": 2325292645
+  },
+  {
+   "path": "spec/schemas/core.tool.config.schema.json",
+   "sha256": "f386341239a744cf81140a79d7a780d1d2d6faebf613bceab55a7d909f750b1f",
+   "size": 7321,
+   "crc32": 1008248124
+  },
+  {
+   "path": "spec/schemas/core.tool.schema.json",
+   "sha256": "beb9c08f08a597c9aa8b796bdffa678d8305d9bf53aff54003b40a4a2a2b9b2e",
+   "size": 10894,
+   "crc32": 3050390766
+  },
+  {
+   "path": "spec/schemas/facets.schema.json",
+   "sha256": "6a5304c901b8f3c2ff30734c0784fa074a111a4312b634b74351cbe234299f87",
+   "size": 3593,
+   "crc32": 460295646
+  },
+  {
+   "path": "spec/schemas/manifest.base.schema.json",
+   "sha256": "cdda1c7617df872c4257f3f7146b7f823bb5bbbb16f0ee9468d21ca40d8fb0f5",
+   "size": 9786,
+   "crc32": 3087955754
+  },
+  {
+   "path": "spec/schemas/manifest.image.schema.json",
+   "sha256": "88ab4e37c0c9ac29f0c6d70f1d6a5a921015603ef2de566b26531bf402f54f14",
+   "size": 34293,
+   "crc32": 3822216962
+  },
+  {
+   "path": "spec/schemas/manifest.schema.json",
+   "sha256": "b9dc00c3061db82d0135a5a30336039f20fca4bda854d9d7d511c2d32d90a90b",
+   "size": 49009,
+   "crc32": 683644916
+  },
+  {
+   "path": "spec/schemas/signature.schema.json",
+   "sha256": "2b6ec5dfceba68382bbddacdd1eecccd62bdeaf9bc9d706d03dde5d0d6be8c29",
+   "size": 11009,
+   "crc32": 370081615
+  },
+  {
+   "path": "spec/schemas/x.c2pa.export.schema.json",
+   "sha256": "bc1a5c7486f4c90e5331316e122d26f82680601e53bce7142d9b59576ab4600d",
+   "size": 4935,
+   "crc32": 100858510
+  },
+  {
+   "path": "spec/skeleton/canonical-humanoid-v1.json",
+   "sha256": "c9543cd8b3f89d8c8e704b866f96fa2cc77fd4ba3eef3b7b56699dd5be21d1c6",
+   "size": 21250,
+   "crc32": 621701699
+  },
+  {
+   "path": "spec/skeleton/core.hands.v1.json",
+   "sha256": "23dd1a6cb1e78439966328f3aa5090ef8e8fd24888851e4b78e972d5e4d1182f",
+   "size": 24702,
+   "crc32": 1080337332
+  },
+  {
+   "path": "spec/skeleton/derive-canonical-humanoid.py",
+   "sha256": "20f5c3504c87f9c56ae82120fcdb5f006bd565194576e4b818452934069d6c35",
+   "size": 19852,
+   "crc32": 507930144
+  }
+ ],
+ "loaders": [
+  {
+   "node_id": "loader-python",
+   "path": "loaders/werk_read.py",
+   "meta": {
+    "language": "python",
+    "form": "source",
+    "entrypoint": "loaders/werk_read.py",
+    "toolchain": "python>=3.8",
+    "dependencies": [],
+    "capabilities": [
+     "read-manifest",
+     "verify-hashes",
+     "read-envelope",
+     "materialize",
+     "summarize-points",
+     "summarize-gsplat"
+    ]
+   }
+  },
+  {
+   "node_id": "loader-rust",
+   "path": "loaders/werk_read.rs",
+   "meta": {
+    "language": "rust",
+    "form": "source",
+    "entrypoint": "loaders/werk_read.rs",
+    "toolchain": "rustc>=1.70 --edition 2021",
+    "dependencies": [],
+    "capabilities": [
+     "read-manifest",
+     "verify-hashes",
+     "read-envelope",
+     "materialize"
+    ],
+    "build_command": "rustc -O --edition 2021 loaders/werk_read.rs -o werk_read"
+   }
+  },
+  {
+   "node_id": "loader-c",
+   "path": "loaders/werk_read.c",
+   "meta": {
+    "language": "c",
+    "form": "source",
+    "entrypoint": "loaders/werk_read.c",
+    "toolchain": "c99",
+    "dependencies": [],
+    "capabilities": [
+     "read-manifest",
+     "verify-hashes",
+     "read-envelope",
+     "materialize"
+    ],
+    "build_command": "cc -std=c99 -O2 loaders/werk_read.c -o werk_read"
+   }
+  }
+ ],
+ "texts": {
+  "license_unestablished": "LICENCE TERMS NOT ESTABLISHED\n\nThis package was written by a werk library writer on behalf of whoever ran\nit. That person, or the tool that called the library, decides the terms\nunder which the content of this package is offered; none were given to the\nwriter, and this file says so instead of inventing some. The werk format\nrecords licence facts and enforces none (spec/SPEC.md section 2, `license`).\n\nThe specification under spec/ and the readers under loaders/ are not the\ncontent of this package. They are the format, copied unchanged, and they\nkeep the terms they carry.\n",
+  "readme": "This is a werk package. Everything needed to read it is inside it.\n\nStart with spec/README.md. loaders/ holds single-file, dependency-free\nreaders in Python, Rust and C; any one of them lists the nodes and verifies\nevery hash:\n\n    python loaders/werk_read.py <this file> --verify\n\nMANIFEST.json lists every file, its sha256 and the node it belongs to.\n",
+  "spec_note": "The format specification, its schemas and its binary layout grammars, travelling inside the file they describe (law 2).",
+  "loader_note": "A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).",
+  "license_note": "The licence statement, embedded in full, never a link (law 7).",
+  "readme_note": "One page for a human who opened the archive by hand."
+ },
+ "head_order": [
+  "MANIFEST.json",
+  "SIGNATURE.json",
+  "LICENSE",
+  "README.txt",
+  "loaders/",
+  "spec/"
+ ],
+ "profiles": {
+  "3d-entity/1": {
+   "conventions": {
+    "endianness": "le",
+    "units_per_meter": 1.0,
+    "length_unit": "metre",
+    "angle_unit": "radian",
+    "time_unit": "second",
+    "mass_unit": "kilogram",
+    "up_axis": "y",
+    "forward_axis": "-z",
+    "right_axis": "+x",
+    "handedness": "right",
+    "winding": "ccw",
+    "quat_order": "wxyz",
+    "oct_encoding_pole": "y",
+    "sh_l1_order": [
+     "dc",
+     "y",
+     "z",
+     "x"
+    ],
+    "color_space_default": "srgb",
+    "uv_origin": "top-left",
+    "alignment_bytes": 16,
+    "text_encoding": "utf-8",
+    "id_case": "kebab-case",
+    "hash_algorithm": "sha256",
+    "signature_algorithm": "ed25519"
+   },
+   "manifest_schema": "spec/schemas/manifest.schema.json",
+   "conventions_map": "spec/conventions-map.json",
+   "has_parts": true,
+   "preview_prefixes": [
+    "semantics/",
+    "imposters/"
+   ]
+  },
+  "image/1": {
+   "conventions": {
+    "endianness": "le",
+    "color_space_default": "srgb",
+    "pixel_origin": "top-left",
+    "alpha_mode": "straight",
+    "alignment_bytes": 16,
+    "text_encoding": "utf-8",
+    "id_case": "kebab-case",
+    "hash_algorithm": "sha256",
+    "signature_algorithm": "ed25519"
+   },
+   "manifest_schema": "spec/schemas/manifest.image.schema.json",
+   "conventions_map": "spec/conventions-map.image.json",
+   "has_parts": false,
+   "preview_prefixes": [
+    "semantics/",
+    "disclosure/"
+   ]
+  }
+ },
+ "base_conventions": {
+  "endianness": "le",
+  "alignment_bytes": 16,
+  "text_encoding": "utf-8",
+  "id_case": "kebab-case",
+  "hash_algorithm": "sha256",
+  "signature_algorithm": "ed25519"
+ },
+ "schemas_by_type": {
+  "core.anim.clip": "spec/schemas/core.anim.clip.schema.json",
+  "core.audio.effect": "spec/schemas/core.audio.effect.schema.json",
+  "core.audio.package": "spec/schemas/core.audio.package.schema.json",
+  "core.destruct": "spec/schemas/core.destruct.schema.json",
+  "core.disclosure": "spec/schemas/core.disclosure.schema.json",
+  "core.imposter": "spec/schemas/core.imposter.schema.json",
+  "core.material": "spec/schemas/core.material.schema.json",
+  "core.phys.body": "spec/schemas/core.phys.body.schema.json",
+  "core.phys.bounds": "spec/schemas/core.phys.bounds.schema.json",
+  "core.phys.colliders": "spec/schemas/core.phys.colliders.schema.json",
+  "core.props": "spec/schemas/core.props.schema.json",
+  "core.provenance": "spec/schemas/core.provenance.schema.json",
+  "core.recipe": "spec/schemas/core.recipe.schema.json",
+  "core.retarget.bind": "spec/schemas/core.retarget.bind.schema.json",
+  "core.revisions": "spec/schemas/core.revisions.schema.json",
+  "core.scene": "spec/schemas/core.scene.schema.json",
+  "core.semantics": "spec/schemas/core.semantics.schema.json",
+  "core.skeleton": "spec/schemas/core.skeleton.schema.json",
+  "core.tool.config": "spec/schemas/core.tool.config.schema.json",
+  "core.tool": "spec/schemas/core.tool.schema.json"
+ },
+ "layouts_by_type": {
+  "core.field.flow": "spec/layouts/flowfield.layout.txt",
+  "core.pose.rest": "spec/layouts/restposes.layout.txt",
+  "core.anim.clip": "spec/layouts/animclip.layout.txt",
+  "core.embedding": "spec/layouts/embedding.layout.txt",
+  "core.geom.points": "spec/layouts/points.layout.txt",
+  "core.geom.gsplat": "spec/layouts/gsplat.layout.txt"
+ }
+}

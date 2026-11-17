@@ -1,14 +1,28 @@
-# Exact build-time dependencies for the CC0 fixture builders.
-#
-# The image preview PNG is Pillow-version-sensitive: a resample/encode byte
-# difference across Pillow releases changes image-cc0-v1.werk's bytes (e.g.
-# Pillow 11.3.0 and 12.3.0 produce different previews). The version below is
-# the one that reproduces the shipped fixture byte-for-byte, so it is pinned
-# for reproducible builds. build_image_cc0.py warns if a different version is
-# in use rather than drifting silently.
+# Exact build-time dependencies of the fixture builders.
 #
 #   pip install -r fixtures/requirements-build.txt
 #
-# The crate and gsplat builders showed no such version sensitivity.
+# Each pin is here because a fixture's BYTES depend on it, measured
+# (evidence/EVIDENCE.md of the release, findings N3 and N4):
+#
+# * Pillow: decodes the source images and computes the Lanczos-3 resamples of
+#   the image fixtures. The resampled pixels differ between Pillow releases
+#   (11.3.0 and 12.3.0 give different previews). Pillow does NOT encode any
+#   fixture PNG: pipeline/det_png.py does, in pure Python, so the PNG bytes do
+#   not depend on the zlib a Pillow wheel links (zlib-ng in the Windows wheel,
+#   stock zlib in the Linux one, which used to make the image fixtures differ
+#   between the two).
+# * numpy: the gsplat-v1 conversion's arithmetic. build_gsplat_fixture.py on
+#   one machine and one CPython gave three different fixtures with numpy
+#   2.2.6, 2.3.5 and 2.5.2; 2.5.2 is the version the shipped fixture was built
+#   with. (An earlier version of this file said the crate and gsplat builders
+#   showed no version sensitivity; that was not measured and is false.)
+# * scipy: the convex hulls and LOD decimation of the crate builders; the
+#   version every release fixture was built and measured with.
+#
+# The interpreter, the OS and the platform are deliberately not pinned and not
+# recorded in any fixture: with these three pins the builders were measured to
+# write the same bytes on Windows and Linux (RELEASE-FIXES.md).
 Pillow==12.3.0
-numpy>=1.24
+numpy==2.5.2
+scipy==1.16.3

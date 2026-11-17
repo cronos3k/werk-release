@@ -1,0 +1,274 @@
+werk style embedding — layout grammar v1  (magic "WKEM")
+========================================================
+
+Applies to: `core.embedding` — a fixed-length descriptor vector for a piece of
+content, plus the dominant-colour palette that was computed alongside it.
+Base doctrine: this node family belongs to EVERY werk profile, not to one of
+them. The 3D-entity profile carries a style embedding inside
+`core.semantics` as JSON; that stays legal. This layout is for the case where
+the vector is the payload rather than a field of one.
+
+Read `spec/layouts/ENVELOPE.layout.txt` FIRST. It defines the 4-byte magic,
+the u32 version, the u32 header length, the MessagePack header subset, the
+16-byte payload alignment and the section consistency rule. Everything below
+is the WKEM-specific part and nothing below overrides that file except where
+it says so explicitly (it does not).
+
+**THE WORKED EXAMPLE IS `spec/examples/embedding.example.hex.txt`.** A real
+512-byte WKEM -- an 8-component vector and a 3-swatch palette, i.e. one
+section of each branch of the envelope's consistency rule -- annotated byte by
+byte from the magic through both sections to the decoded values, with its
+binary beside it as `spec/examples/embedding.example.wkem`. Check your decoder
+against it before pointing it at a real package (spec finding S-OW-3).
+
+--------------------------------------------------------------------------
+0. Why a binary at all
+--------------------------------------------------------------------------
+
+A 72-component float vector could be a JSON array, and in the 3D profile it
+is one. Reasons this payload is a binary instead:
+
+  * Bit fidelity. A vector is compared by distance, and a text round-trip
+    that changes the last mantissa bit changes the distance. Law 11 wants
+    boring encodings; a flat f32 array IS the boring encoding for numbers.
+  * Byte identity on rewrite. The Stage 2 gate is round-trip byte identity;
+    float text formatting is the classic way to fail it.
+  * It gives the format's envelope apparatus something to carry in a profile
+    that has no meshes, which is how `ENVELOPE.layout.txt` gets exercised
+    rather than merely written (recorded in gauntlet/RESULTS.md as the
+    fixture gap that run 1 could not close).
+
+And the honest counter-argument, recorded so nobody has to rediscover it:
+for 72 floats the binary saves nothing in size worth having. The reasons
+above are about exactness and about testing the envelope, not about bytes.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKEM"  = 57 4B 45 4D
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  payload sections (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.embedding"
+    "endianness"      = "le"
+    "payload_origin"  uint
+    "payload_size"    uint
+    "sections"        array of section maps
+
+  Mandatory WKEM keys:
+
+  key             type    meaning
+  --------------  ------  ------------------------------------------------
+  "model"         str     WHAT PRODUCED THIS VECTOR. Mandatory, and the
+                          single most important key in the file: a vector
+                          whose model is unknown is noise, because distance
+                          between two vectors from different models means
+                          nothing at all. For a named neural model use its
+                          id verbatim. For an algorithm defined in a spec,
+                          use the algorithm's id — this file defines
+                          "werk.descriptor.labhog/1" in section 4.
+  "dim"            uint   number of components in the "vector" section.
+                          MUST equal shape[0] of that section.
+  "normalized"     bool   true when the vector's L2 norm is 1.0 within
+                          1e-6. A reader MUST NOT assume normalisation; it
+                          reads this key.
+  "metric"         str    the distance a consumer should use: "cosine",
+                          "l2" or "dot". Declared rather than assumed,
+                          because the right answer differs per model and
+                          guessing it silently produces plausible rubbish.
+  "swatch_count"   uint   number of palette swatches. MUST equal shape[0]
+                          of the "palette" section. MAY be 0, in which case
+                          the palette section is present with size 0.
+
+  Optional WKEM keys:
+
+  key             type    meaning
+  --------------  ------  ------------------------------------------------
+  "source_path"   str     package-relative path of the content the
+                          descriptor was computed from. Informational; the
+                          authority is the node's `input_files` in the
+                          manifest.
+  "colour_space"  str     colour space of the palette swatches. When the
+                          "palette" section is non-empty this key SHOULD be
+                          present; "linear-srgb" is what section 4 emits.
+  "tolerance"     float   the per-component absolute agreement a
+                          recomputation is expected to reach (section 5).
+
+  Plus any optional common key from ENVELOPE.layout.txt section 3
+  ("note", "input_hash", "producer", "epistemic", "confidence").
+  A reader MUST ignore header keys it does not know (law 12).
+
+--------------------------------------------------------------------------
+3. Payload sections
+--------------------------------------------------------------------------
+
+  Exactly two sections, in this order.
+
+  name        dtype   shape             stride  arithmetic that MUST hold
+  ----------  ------  ----------------  ------  ------------------------------
+  "vector"    f32     [dim]             4       size == 4 * dim
+  "palette"   f32     [swatch_count,4]  16      size == 16 * swatch_count
+
+  These are deliberately one of each branch of the envelope's section
+  consistency rule, so a reader that implements only one branch fails here
+  instead of somewhere subtler:
+
+    vector    esz = 4 = stride   -> FIRST branch  -> size = stride * prod(shape)
+    palette   esz = 4 != 16      -> SECOND branch -> 16 >= 4*4, and
+                                                     size = stride * prod(shape[:-1])
+
+  "vector"  — `dim` IEEE-754 binary32 values, little-endian, contiguous.
+              Component order is the descriptor's own, defined by "model".
+              No NaN and no infinity (ENVELOPE.layout.txt section 6).
+
+  "palette" — `swatch_count` records of 4 f32: (r, g, b, weight).
+              r,g,b are in the colour space named by "colour_space", each in
+              [0,1]. weight is the fraction of the content the swatch stands
+              for, in [0,1]. Records are sorted by weight DESCENDING, so
+              "the dominant colour" is record 0 and no consumer needs a
+              policy of its own (the same argument restposes.layout.txt
+              makes for pose entry 0). Ties are broken by ascending
+              descriptor bin index, which is deterministic. Unused trailing
+              records, when the content had fewer distinct swatches than
+              `swatch_count`, are all-zero and have weight 0.0.
+
+--------------------------------------------------------------------------
+4. The descriptor "werk.descriptor.labhog/1", defined completely
+--------------------------------------------------------------------------
+
+  This exists so that a `core.embedding` can be MEASURED rather than
+  inferred: everything below is arithmetic, so a reader with the source
+  image can recompute the vector and check it, which is law 5's
+  validate-or-recompute applied to a field that normally cannot be checked
+  at all. It is not a neural embedding and does not pretend to be one — it
+  is a colour-and-structure descriptor, useful for near-duplicate detection
+  and for palette-driven browsing, and useless for semantics.
+
+  Input: an 8-bit-per-channel RGB raster, width W >= 1, height H >= 1. An
+  alpha channel, if present, is IGNORED (this profile's images are opaque;
+  a profile that needs alpha must define its own compositing rule and a new
+  descriptor id, not reinterpret this one).
+
+  Step 1 — box resample to 32 x 32.
+    For output cell (cy, cx), 0 <= cy,cx < 32:
+        x0 = floor(cx * W / 32)      x1 = floor((cx+1) * W / 32)
+        y0 = floor(cy * H / 32)      y1 = floor((cy+1) * H / 32)
+        if x1 <= x0: x1 = min(x0 + 1, W)
+        if y1 <= y0: y1 = min(y0 + 1, H)
+    The cell value is the arithmetic mean, per channel, of the 8-bit values
+    of every source pixel in [y0,y1) x [x0,x1), computed in binary64.
+
+  Step 2 — sRGB to linear, per channel, on c in [0,255]:
+        s = c / 255
+        lin = s / 12.92                       if s <= 0.04045
+        lin = ((s + 0.055) / 1.055) ** 2.4    otherwise
+
+  Step 3 — linear sRGB to CIE XYZ (D65 primaries):
+        X = 0.4124564*R + 0.3575761*G + 0.1804375*B
+        Y = 0.2126729*R + 0.7151522*G + 0.0721750*B
+        Z = 0.0193339*R + 0.1191920*G + 0.9503041*B
+
+  Step 4 — XYZ to CIELAB, white point Xn=0.95047, Yn=1.00000, Zn=1.08883:
+        f(t) = t ** (1/3)                     if t > 216/24389
+        f(t) = (841/108) * t + 4/29           otherwise
+        L = 116 * f(Y/Yn) - 16
+        a = 500 * (f(X/Xn) - f(Y/Yn))
+        b = 200 * (f(Y/Yn) - f(Z/Zn))
+
+  Step 5 — colour histogram, 4 x 4 x 4 = 64 bins.
+        Lb = clamp(floor(L / 25),         0, 3)
+        ab = clamp(floor((a + 100) / 50), 0, 3)
+        bb = clamp(floor((b + 100) / 50), 0, 3)
+        index = 16*Lb + 4*ab + bb
+    Each of the 1024 cells contributes 1 to its bin. Divide every bin by
+    1024, so the 64 values sum to 1.
+
+  Step 6 — gradient orientation histogram, 8 bins, over the 32 x 32 L plane.
+    Sobel, with EDGE REPLICATION at the borders (a sample outside the grid
+    takes the value of the nearest in-grid cell):
+        gx kernel = [[-1,0,1],[-2,0,2],[-1,0,1]]
+        gy kernel = [[-1,-2,-1],[0,0,0],[1,2,1]]
+    per cell:
+        m = sqrt(gx*gx + gy*gy)
+        t = atan2(gy, gx)          ; then fold to [0, pi):
+        if t < 0:   t = t + pi
+        if t >= pi: t = t - pi
+        bin = clamp(floor(t * 8 / pi), 0, 7)
+    Accumulate m into that bin. Divide every bin by the total accumulated
+    magnitude; when that total is 0, all eight bins are 0.
+
+  Step 7 — the vector is the 64 colour bins followed by the 8 orientation
+    bins, in that order: dim = 72.
+
+  Step 8 — L2-normalise the 72 values (divide by the square root of the sum
+    of squares). When the norm is 0 the vector stays all zero. Then round
+    each value to binary32, round-half-to-even. "normalized" is true.
+    "metric" is "cosine".
+
+  Step 9 — the palette. Take the 8 histogram bins with the largest counts,
+    ties broken by ASCENDING bin index. For each, the swatch is the mean
+    LINEAR RGB (step 2's values scaled to [0,1]) of the cells that fell in
+    that bin, and the weight is that bin's count / 1024. Sort by weight
+    descending, ties by ascending bin index. Fewer than 8 non-empty bins
+    leaves the remaining records all zero. "colour_space" is "linear-srgb",
+    "swatch_count" is 8.
+
+  All intermediate arithmetic is binary64. Only the stored values are f32.
+
+--------------------------------------------------------------------------
+5. Agreement, and what is actually guaranteed
+--------------------------------------------------------------------------
+
+  Section 4 uses pow(), sqrt() and atan2(), whose last-bit results are NOT
+  identical across libm implementations. So the honest guarantee is stated
+  as a number rather than implied as bit-exactness:
+
+    a conformant recomputation agrees with the stored vector to within
+    1e-6 ABSOLUTE per component, and that number is what the "tolerance"
+    header key declares.
+
+  The stored bytes remain what the manifest's sha256 covers, so the FILE is
+  byte-exact and reproducible from the same machine and library; the
+  DESCRIPTOR is reproducible across machines to the declared tolerance.
+  Those are two different claims and this section keeps them apart. A node
+  claiming `epistemic: "measured"` for a WKEM payload is claiming the
+  second, not the first.
+
+--------------------------------------------------------------------------
+6. Decisions recorded here
+--------------------------------------------------------------------------
+
+  D-EM-1  "model" is mandatory even though every other header key could be
+          defaulted. The 3D profile's core.semantics already made this
+          ruling for its JSON embedding ("a vector whose model is unknown
+          is noise") and there is no reason for the binary form to be more
+          permissive than the JSON form of the same fact.
+
+  D-EM-2  The palette rides in the same envelope as the vector rather than
+          getting a node of its own. Law 9: it is computed by the same pass
+          over the same pixels, and it serves the browser listing while the
+          vector serves search. Two payloads, one derivation, one
+          input_hash, and a consumer that wants only the palette reads one
+          declared section and skips the other without parsing it.
+
+  D-EM-3  "swatch_count" may be 0 and the section is then present with
+          size 0 rather than omitted. ENVELOPE.layout.txt section 5 makes a
+          zero-size section legal precisely so that the section LIST stays
+          the same shape across files, and a reader indexing sections by
+          position never has to handle a missing one.
+
+  D-EM-4  The descriptor is defined in this spec instead of naming a
+          third-party model. A named neural embedding would be a better
+          descriptor and a worse example: its weights are not in the
+          package, so the node could never be `measured`, only asserted.
+          Both are legal — "model" takes any id — but the fixture uses the
+          one a reader can check.

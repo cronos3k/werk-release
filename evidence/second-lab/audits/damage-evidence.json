@@ -2166,8 +2166,10 @@
       "scratch": "<scratch>/reruns-20261012/37-author_roundXV_openai/payload",
       "damaged_file": "audio/sfx/crate-impact-hard-surface.wav",
       "byte_offset": 8822,
-      "names_damaged_file": false,
-      "damage_indications": [],
+      "names_damaged_file": true,
+      "damage_indications": [
+        "- manifest-file-sha256: nodes[8].versions[0].files[1] audio/sfx/crate-impact-hard-surface.wav: declared '1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e', computed 'eddf82b024b4b703af833677a42c1771ba2b6de74514143569bb36d492782bbd'"
+      ],
       "integrity_success_claims": [],
       "false_integrity_success": false,
       "extracted_intact_payloads": [
@@ -2277,7 +2279,10 @@
       "intact_extraction_rule": "Byte match to declared unaffected payloads. Early exit may prevent extraction.",
       "source_files_unchanged": true,
       "damage_name_rule": "The filename must occur with an error or mismatch signal. A listing alone does not identify damage.",
-      "damage_name_evidence": []
+      "damage_name_evidence": [
+        "- manifest-file-sha256: nodes[8].versions[0].files[1] audio/sfx/crate-impact-hard-surface.wav: declared '1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e', computed 'eddf82b024b4b703af833677a42c1771ba2b6de74514143569bb36d492782bbd'"
+      ],
+      "damage_name_note": "Corrected 2026-11-11: the program reports the damage as \"declared ..., computed ...\", which the earlier keyword rule missed. Verdict unchanged (PASS)."
     },
     "spec": {
       "status": "completed",
@@ -2286,8 +2291,11 @@
       "scratch": "<scratch>/reruns-20261012/37-author_roundXV_openai/spec",
       "damaged_file": "spec/MINI-SPECS.md",
       "byte_offset": 20073,
-      "names_damaged_file": false,
-      "damage_indications": [],
+      "names_damaged_file": true,
+      "damage_indications": [
+        "- manifest-file-sha256: nodes[30].versions[0].files[0] spec/MINI-SPECS.md: declared '8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba', computed '9568af7248be21083fa328ae2a13fd6ffb3455072f15b76cdc86128bbfd39b30'",
+        "- global-spec-sha256: spec/ aggregate: declared '3984a5550b8a4be95501c37544d36b90ac2f3834bdddf8007597a41405450ebd', computed 'bba7d2f0b613f6cc409da6a483da9a163fdfbbb53841c827bd65662212ce0aa3'"
+      ],
       "integrity_success_claims": [],
       "false_integrity_success": false,
       "extracted_intact_payloads": [
@@ -2400,7 +2408,10 @@
       "intact_extraction_rule": "Byte match to declared unaffected payloads. Early exit may prevent extraction.",
       "source_files_unchanged": true,
       "damage_name_rule": "The filename must occur with an error or mismatch signal. A listing alone does not identify damage.",
-      "damage_name_evidence": []
+      "damage_name_evidence": [
+        "- manifest-file-sha256: nodes[30].versions[0].files[0] spec/MINI-SPECS.md: declared '8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba', computed '9568af7248be21083fa328ae2a13fd6ffb3455072f15b76cdc86128bbfd39b30'"
+      ],
+      "damage_name_note": "Corrected 2026-11-11: the program reports the damage as \"declared ..., computed ...\", which the earlier keyword rule missed. Verdict unchanged (PASS)."
     }
   },
   {

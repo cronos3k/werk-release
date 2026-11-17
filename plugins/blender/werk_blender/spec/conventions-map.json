@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "profile": "3d-entity/1",
+  "note": "The machine-readable form of spec/SPEC.md section 10.1. Same content, different reader: a human applies the table, a loader applies this. Ruled 2026-08-08 (S-17). A reader that does not support a declared convention looks it up here, refuses exactly the node types in `governs` with report code unsupported-convention, and loads, lists, hash-verifies and extracts everything else. The graph listing, the hashes and the work notes are readable knowledge that no convention gates. Stage 12 added core.geom.points and core.geom.gsplat to the envelope-binary rows and two OPTIONAL conventions, sh_coeff_order and sh_degree; an entry carrying \"optional\": true is a convention a manifest may omit, and a reader that meets its absence uses the profile default stated in SPEC.md rather than reporting a missing convention. The 2026-10-13 entries (PROPOSED) add core.scene, the versioned record of part placement and display (SPEC.md section 3.20), to the length, axis and quaternion rows: its transforms are the same TRS, in the same units and the same quaternion order, as parts[] in the manifest.",
+  "conventions": {
+    "endianness": {
+      "scope": "node",
+      "governs": [
+        "core.field.flow",
+        "core.pose.rest",
+        "core.anim.clip",
+        "core.skeleton",
+        "core.embedding",
+        "core.geom.points",
+        "core.geom.gsplat",
+        "x.*"
+      ],
+      "note": "Every envelope binary. core.skeleton only through its optional binary mirror; the JSON skeleton has no endianness."
+    },
+    "alignment_bytes": {
+      "scope": "node",
+      "governs": [
+        "core.field.flow",
+        "core.pose.rest",
+        "core.anim.clip",
+        "core.skeleton",
+        "core.embedding",
+        "core.geom.points",
+        "core.geom.gsplat",
+        "x.*"
+      ],
+      "note": "The same set as endianness: payload sections in envelope binaries start on this boundary."
+    },
+    "units_per_meter": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.props",
+        "core.scene"
+      ],
+      "note": "core.anim.clip through its root translation and any bone-translation section; core.retarget.bind through the solved stature scale; core.imposter through the depth range; core.props through any length-valued property."
+    },
+    "length_unit": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.props",
+        "core.scene"
+      ]
+    },
+    "angle_unit": {
+      "scope": "node",
+      "governs": [
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.props"
+      ],
+      "note": "core.skeleton through joint limits; core.retarget.bind through residuals and tolerances; core.props through any angle-valued property."
+    },
+    "time_unit": {
+      "scope": "node",
+      "governs": [
+        "core.anim.clip",
+        "core.audio.package",
+        "core.audio.effect",
+        "core.audio.ambience",
+        "core.props"
+      ]
+    },
+    "mass_unit": {
+      "scope": "node",
+      "governs": [
+        "core.phys.body",
+        "core.destruct",
+        "core.props"
+      ]
+    },
+    "up_axis": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.scene"
+      ],
+      "note": "Every node carrying a direction or a position in model space. For core.retarget.bind the solved basis rotation is source-to-THESE axes, so refusing them makes the bind meaningless rather than merely unusable."
+    },
+    "forward_axis": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.scene"
+      ]
+    },
+    "right_axis": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.scene"
+      ]
+    },
+    "handedness": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.phys.bounds",
+        "core.phys.colliders",
+        "core.phys.body",
+        "core.field.flow",
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.imposter",
+        "core.destruct",
+        "core.scene"
+      ]
+    },
+    "winding": {
+      "scope": "node",
+      "governs": [
+        "core.geom.source",
+        "core.geom.game",
+        "core.geom.lod",
+        "core.destruct"
+      ]
+    },
+    "quat_order": {
+      "scope": "node",
+      "governs": [
+        "core.pose.rest",
+        "core.skeleton",
+        "core.anim.clip",
+        "core.retarget.bind",
+        "core.geom.gsplat",
+        "core.scene"
+      ],
+      "also_governs": [
+        "parts[].transform.rotation"
+      ],
+      "note": "The one convention whose reach extends outside nodes[]: part placement in the manifest itself is quaternions too, and no node-type list can say so. core.geom.gsplat carries one quaternion per Gaussian in its `rotations` stream and its envelope header restates the order, because the PLY it was ingested from does NOT declare one (spec/layouts/gsplat.layout.txt section 6)."
+    },
+    "oct_encoding_pole": {
+      "scope": "node",
+      "governs": [
+        "core.imposter",
+        "x.*"
+      ],
+      "note": "core.imposter through its octahedral normal channel; any x.* using octahedral encoding."
+    },
+    "sh_l1_order": {
+      "scope": "extension",
+      "governs": [
+        "x.*"
+      ],
+      "note": "No core node uses it today. It is declared because x.cub.* and any other extension carrying L1 spherical harmonics needs it pinned, and a convention agreed on only once an extension arrives is a convention nobody agreed on."
+    },
+    "color_space_default": {
+      "scope": "node",
+      "governs": [
+        "core.tex",
+        "core.imposter",
+        "core.semantics",
+        "core.geom.points"
+      ],
+      "note": "core.semantics through the palette. Only where the node does not declare its own color_space, which every conformant core.tex does and which a core.geom.points field with semantic 'color' is likewise required to do."
+    },
+    "uv_origin": {
+      "scope": "node",
+      "governs": [
+        "core.geom.*",
+        "core.tex",
+        "core.imposter",
+        "core.material"
+      ],
+      "note": "core.geom.* through TEXCOORD_*; core.material through texture slots."
+    },
+    "text_encoding": {
+      "scope": "container",
+      "governs": [
+        "*"
+      ],
+      "note": "Every text and JSON payload in the package, INCLUDING MANIFEST.json — which is why the scope is container: a reader that cannot do UTF-8 cannot read the manifest at all."
+    },
+    "id_case": {
+      "scope": "container",
+      "governs": [
+        "*"
+      ],
+      "note": "Every id in the manifest and in every payload."
+    },
+    "hash_algorithm": {
+      "scope": "container",
+      "governs": [
+        "*"
+      ],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256."
+    },
+    "signature_algorithm": {
+      "scope": "signature",
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state of SPEC.md section 10 step 4 — a fourth fixed token meaning 'I did not check' — and it is not damage."
+    },
+    "sh_coeff_order": {
+      "scope": "node",
+      "governs": [
+        "core.geom.gsplat"
+      ],
+      "optional": true,
+      "note": "Added Stage 12. Memory order of a per-primitive spherical-harmonic coefficient array. OPTIONAL in the manifest: absence means 'coefficient-major', which spec/layouts/gsplat.layout.txt section 4 requires anyway, so every package written before this key existed is unaffected. It is NOT sh_l1_order — that names the BASIS order an x.* extension uses for per-vertex L1 irradiance, this names a memory order, and collapsing them would give one convention two meanings (D-GS-3)."
+    },
+    "sh_degree": {
+      "scope": "node",
+      "governs": [
+        "core.geom.gsplat"
+      ],
+      "optional": true,
+      "advisory": true,
+      "note": "Added Stage 12, and ADVISORY even where it governs: a package-level MAXIMUM so a store can size a buffer before parsing, never the authority on a payload. Each WKGS envelope declares its own sh_degree and that governs that payload. A payload declaring more than the manifest is a producer error a reader REPORTS (sh-degree-exceeds-declared) rather than resolving. Refusing this convention is therefore never grounds to refuse a node."
+    }
+  }
+}

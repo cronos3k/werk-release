@@ -305,15 +305,21 @@ def build(source_path, scratch_dir, out_path):
         "holder": "Gregor Hubert Max Koch and Ken Gamble",
         "note": POLYFORM_NOTE,
     }
+    # No `platform` and no `runtime_version` (finding N3): they described the
+    # machine that built the fixture, not anything the output depends on, and
+    # recording them made gsplat-v1.werk's bytes differ on every other OS and
+    # CPython. numpy's version IS recorded: its arithmetic is what the output
+    # depends on (N4; pinned in fixtures/requirements-build.txt).
     env = {
-        "platform": sys.platform,
-        "runtime_version": "CPython %d.%d.%d" % sys.version_info[:3],
         "library_versions": {"numpy": np.__version__},
         "device": "cpu",
         "note": "The arithmetic is numpy float64 throughout with a float32 "
                 "store; exp, log and the logistic function are the only "
                 "libm calls, and they are the reason this run is reproducible "
-                "to the bit on this machine and to ~1 ulp across machines.",
+                "to the bit on this machine and to ~1 ulp across machines. "
+                "The build host's OS and Python version are deliberately not "
+                "recorded: the output does not depend on them, and a record "
+                "of them would make the package's bytes depend on the host.",
     }
 
     # Each tool node carries a COMPLETE copy of what it needs, including its own

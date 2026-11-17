@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.imposter.schema.json",
+  "title": "core.imposter — octahedral imposter atlas descriptor",
+  "description": "The JSON half of an imposter node; the other half is four PNG atlases per tier. There is deliberately no custom binary here — see spec/layouts/imposter.layout.txt, which also carries the NORMATIVE octahedral encode/decode maths and the G-buffer channel packing. Law 9: the preview tier is simultaneously the store's thumbnail sheet and the runtime's farthest LOD.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tiers", "bake"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "tiers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tier", "mapping", "tile_count", "tile_pixels", "atlas_pixels", "projection", "camera_distance_m", "depth_min_m", "depth_range_m", "channels"],
+        "properties": {
+          "tier": {"enum": ["preview", "runtime"], "description": "'preview' is the small sheet written early in the container; 'runtime' is the in-engine tier."},
+          "mapping": {
+            "enum": ["octahedral-full", "octahedral-hemi"],
+            "description": "Which of the two mappings in spec/layouts/imposter.layout.txt section 2 applies. Full covers the sphere; hemi covers only n.y >= 0 and suits ground props."
+          },
+          "tile_count": {"type": "integer", "minimum": 2, "maximum": 32, "description": "N: the atlas is N x N tiles."},
+          "tile_pixels": {"type": "integer", "minimum": 16, "maximum": 2048, "description": "T: edge length of one tile."},
+          "atlas_pixels": {
+            "type": "array", "minItems": 2, "maxItems": 2,
+            "items": {"type": "integer", "minimum": 1},
+            "description": "[width, height] of each PNG. MUST equal [N*T, N*T]; declared anyway so a reader compares rather than assumes, and can reject a mismatched PNG."
+          },
+          "projection": {
+            "enum": ["orthographic", "perspective"],
+            "description": "Orthographic is the default and the only one that composites correctly across tile blends. Perspective is recorded honestly when a source provided it."
+          },
+          "ortho_half_height_m": {"type": "number", "exclusiveMinimum": 0, "description": "Required when projection is 'orthographic': half the vertical extent of the view volume, metres. Together with the tile being square this fixes the scale exactly."},
+          "fov_y_rad": {"type": "number", "exclusiveMinimum": 0, "description": "Required when projection is 'perspective'."},
+          "camera_distance_m": {"type": "number", "exclusiveMinimum": 0, "description": "Distance from the bake pivot to each tile camera, metres."},
+          "pivot_m": {
+            "type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"},
+            "description": "Model-space point every tile camera aimed at. Normally the core.phys.bounds sphere centre; declared rather than assumed."
+          },
+          "depth_min_m": {"type": "number", "description": "Metres corresponding to a depth texel value of 0."},
+          "depth_range_m": {"type": "number", "exclusiveMinimum": 0, "description": "Metres spanned by the full 0..65535 depth range. metres = value/65535 * depth_range_m + depth_min_m. 65535 means 'no surface'."},
+          "channels": {
+            "description": "The four G-buffer atlases. Each names a core.tex node (identity, law 4) and mirrors its path.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["albedo"],
+            "properties": {
+              "albedo": {"$ref": "#/$defs/atlasRef"},
+              "normal": {"$ref": "#/$defs/atlasRef"},
+              "depth": {"$ref": "#/$defs/atlasRef"},
+              "mrao": {"$ref": "#/$defs/atlasRef"}
+            }
+          },
+          "alpha_is_coverage": {"type": "boolean", "default": true, "description": "When true, the albedo alpha channel is surface coverage and a consumer MUST discard texels with alpha 0."}
+        }
+      }
+    },
+    "bake": {
+      "description": "How the atlases were produced. Enough to reproduce them, which is what makes the node's input_hash meaningful.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_node", "renderer", "lighting"],
+      "properties": {
+        "source_node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "node_id of the geometry that was baked."},
+        "renderer": {"type": "string", "description": "e.g. 'werk-bake/0.1 rasterizer'"},
+        "lighting": {
+          "enum": ["unlit-albedo", "flat-ambient", "baked-environment"],
+          "description": "'unlit-albedo' means the albedo atlas holds raw base colour with no lighting, which is the only choice that lets a runtime relight the imposter. Anything else bakes in a light rig and MUST say so."
+        },
+        "environment": {"type": "string", "description": "Name of the environment used when lighting is 'baked-environment'."},
+        "samples_per_texel": {"type": "integer", "minimum": 1},
+        "seed": {"type": "integer", "description": "RNG seed, so the bake is reproducible bit-for-bit."}
+      }
+    },
+    "quality": {
+      "description": "Measured, not asserted (house rule).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "silhouette_iou": {"type": "number", "minimum": 0, "maximum": 1, "description": "Mean intersection-over-union of the imposter silhouette against the source mesh, over all tiles."},
+        "mean_abs_color_error": {"type": "number", "minimum": 0, "description": "Mean absolute per-channel error in linear space, over covered texels."},
+        "recommended_switch_distance_m": {"type": "number", "exclusiveMinimum": 0, "description": "Distance beyond which this tier is visually indistinguishable from the mesh at 1080p vertical resolution with a 60 degree vertical field of view."}
+      }
+    },
+    "note": {"type": "string"}
+  },
+  "$defs": {
+    "atlasRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node", "path", "color_space", "bit_depth", "channels"],
+      "properties": {
+        "node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "path": {"type": "string"},
+        "color_space": {"enum": ["srgb", "linear"]},
+        "bit_depth": {"enum": [8, 16]},
+        "channels": {"type": "integer", "minimum": 1, "maximum": 4}
+      }
+    }
+  }
+}

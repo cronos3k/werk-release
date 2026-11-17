@@ -198,6 +198,10 @@ Notes on the table.
   `gcc` exits 1 with no diagnostics when the gate calls it; the same C source
   compiles under MSVC in the next clause, and compiles cleanly (one
   `-Wformat-truncation` warning) with MSYS2's `bin` first on `PATH` (last row).
+  That is the whole cause (release finding N2): Git for Windows' `/mingw64/bin`
+  precedes MSYS2's on PATH and `cc1.exe` loads the wrong DLLs; the toolchain is
+  not broken. Branch `release-fixes` runs every compiler with its own `bin`
+  first, and the SKIP is gone (`RELEASE-FIXES.md`).
 * The count increases are the clauses PR #6 added (Gate A 10 → 14 includes PR
   #11's clause 6b with its four rows; Gate 9: L1/L2/L3; Gate 12: the separate
   whole-file clause; CC0 crate and splat: builder determinism).

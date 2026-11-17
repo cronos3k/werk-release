@@ -1,0 +1,1 @@
+deflated fixture crate-cc0-lean-v1-deflated.werk (release-fixes) in Illustrator 2020 24.0.2, ExtendScript 4.5.6, werk.jsx after the inflate fix: exit=0 signature=signed-and-valid census=13/0/0 in 32295 ms (python -m werk: exit 0, signed-and-valid, 13 alive)

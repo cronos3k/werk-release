@@ -1,0 +1,35 @@
+{
+  "config": {
+    "definition": "spec/formats/opc.md",
+    "format": "opc",
+    "test_vectors": [
+      "system-io-packaging",
+      "rules",
+      "minimal"
+    ]
+  },
+  "entrypoint": "tools/format-opc-reference/opc_dump.py",
+  "files": [
+    {
+      "path": "tools/format-opc-reference/opc_dump.py",
+      "role": "source",
+      "sha256": "3665bc015583eefdf9c1ebff953ae4ac25d400546efc034dae6378ff5a560453",
+      "size": 21675
+    }
+  ],
+  "form": "source",
+  "invocation": {
+    "dependencies": [],
+    "example": "python tools/format-opc-reference/opc_dump.py <package>   # writes the listing of section 8 to stdout",
+    "toolchain": "python>=3.8"
+  },
+  "language": "python",
+  "license": {
+    "spdx_id": "MIT OR Apache-2.0"
+  },
+  "name": "opc reference decoder",
+  "role": "viewer",
+  "schema_version": 1,
+  "tool_id": "format-opc-reference",
+  "version": "1"
+}

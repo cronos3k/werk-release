@@ -422,7 +422,7 @@ test of everything else.
 2. **C was dropped for an environment reason, not a design one.** This host's
    mingw gcc cannot compile `int main(void){return 0;}` — cc1 exits 1 with no
    diagnostics — so a C agent would have measured a broken toolchain rather
-   than the format. Run 1 did test C, on the same spec, successfully.
+   than the format. *(Correction, release finding N2: the toolchain was not broken. Git for Windows' `/mingw64/bin` preceded MSYS2's on PATH, so `cc1.exe` could not load its DLLs (exit 127, nothing printed); with the compiler's own `bin` first on PATH it builds the loader. The gates now run every compiler that way.)* Run 1 did test C, on the same spec, successfully.
 3. **The first Rust agent died without delivering a report**, 21 minutes in,
    after building a complete 3 520-line reader across eight modules
    (`zipfile.rs`, `jsonlite.rs`, `msgpack.rs`, `crypto.rs`, `inflate.rs`,

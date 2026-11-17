@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.material.schema.json",
+  "title": "core.material — PBR material parameters",
+  "description": "One file per material_id. The shading model is metallic-roughness, the same one glTF 2.0 uses, because it is the boring ubiquitous choice (law 11). Every factor is a number in a declared range; nothing is an application preset.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["material_id", "name", "model", "base_color_factor", "metallic_factor", "roughness_factor", "alpha_mode", "double_sided"],
+  "properties": {
+    "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "name": {"type": "string", "minLength": 1},
+    "model": {"const": "metallic-roughness"},
+
+    "base_color_factor": {
+      "description": "[r,g,b,a] in LINEAR space, 0..1. Multiplied with the base-color texture, which is itself sRGB-encoded and must be linearised first. The factor is linear and the texture is sRGB: that asymmetry is glTF's and is restated here so nobody has to remember it.",
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {"type": "number", "minimum": 0, "maximum": 1}
+    },
+    "metallic_factor": {"type": "number", "minimum": 0, "maximum": 1},
+    "roughness_factor": {"type": "number", "minimum": 0, "maximum": 1, "description": "Perceptual roughness. Squared to get the GGX alpha."},
+    "emissive_factor": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": {"type": "number", "minimum": 0, "maximum": 1},
+      "default": [0, 0, 0], "description": "[r,g,b] linear."
+    },
+    "emissive_strength": {"type": "number", "minimum": 0, "default": 1.0, "description": "Multiplier on emissive_factor, allowing values above 1 for HDR emitters."},
+    "normal_scale": {"type": "number", "minimum": 0, "default": 1.0},
+    "occlusion_strength": {"type": "number", "minimum": 0, "maximum": 1, "default": 1.0},
+    "ior": {"type": "number", "minimum": 1.0, "maximum": 3.0, "default": 1.5, "description": "Index of refraction of the dielectric base layer."},
+    "alpha_mode": {
+      "enum": ["opaque", "mask", "blend"],
+      "description": "Lowercase here, unlike glTF's uppercase, because conventions.id_case is kebab-case and one casing rule beats two."
+    },
+    "alpha_cutoff": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.5, "description": "Used only when alpha_mode is 'mask'."},
+    "double_sided": {"type": "boolean"},
+
+    "textures": {
+      "description": "Texture slots. Each slot names a core.tex NODE (identity, law 4) and mirrors its path for convenience. A reader MUST resolve through the manifest and MUST report a mismatch between 'node' and 'path' rather than silently preferring one.",
+      "type": "object",
+      "additionalProperties": false,
+      "propertyNames": {"enum": ["base_color", "metallic_roughness", "normal", "occlusion", "emissive", "height"]},
+      "patternProperties": {
+        "^(base_color|metallic_roughness|normal|occlusion|emissive|height)$": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["node", "path", "uv_set"],
+          "properties": {
+            "node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+            "path": {"type": "string"},
+            "uv_set": {"type": "integer", "minimum": 0, "maximum": 3, "description": "Which UV channel of the geometry to sample."},
+            "uv_transform": {
+              "description": "Applied as uv' = rotate(scale * uv, rotation) + offset, in that order. Stated because the three common orderings give three different results.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["offset", "rotation", "scale"],
+              "properties": {
+                "offset": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+                "rotation": {"type": "number", "description": "radians, counter-clockwise in UV space"},
+                "scale": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}
+              }
+            },
+            "channel": {
+              "description": "For packed textures, which channel carries this slot. Only meaningful for metallic_roughness (glTF packs occlusion=R, roughness=G, metallic=B) and occlusion.",
+              "enum": ["r", "g", "b", "a", "rgb", "rgba"]
+            }
+          }
+        }
+      }
+    },
+
+    "epistemic": {"enum": ["authored", "measured", "inferred"], "description": "Restated inside the payload so the node is an island (law 3). MUST agree with the manifest version's stamp."},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "note": {"type": "string"}
+  }
+}

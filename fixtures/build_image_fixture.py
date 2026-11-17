@@ -65,6 +65,7 @@ ROOT = os.path.dirname(HERE)
 # tree it carries. tools/spec_sha256.py is the reference implementation and
 # carries the algorithm in its docstring; importing it rather than re-deriving
 # it here is the point of having one.
+sys.path.insert(0, ROOT)                                 # pipeline.det_png
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 from spec_sha256 import spec_sha256_of_files          # noqa: E402
 from payload_file import annotate_payload_files       # noqa: E402
@@ -562,6 +563,7 @@ def collect(src_root):
     # -- spec/ and loaders/ -----------------------------------------------
     spec_files = []
     for dirpath, _dirs, names in os.walk(os.path.join(ROOT, "spec")):
+        _dirs.sort()  # else the filesystem's order (ext4: hash order)
         for nm in sorted(names):
             if nm.endswith(".pyc"):
                 continue
@@ -605,10 +607,10 @@ def collect(src_root):
     def derive(width, path):
         h = derived_height(info["width"], info["height"], width)
         im = src_img.convert("RGB").resize((width, h), Image.LANCZOS)
-        import io
-        buf = io.BytesIO()
-        im.save(buf, format="PNG")
-        return h, buf.getvalue()
+        # Pillow supplies the pixels; the PNG stream is pipeline/det_png.py's,
+        # the same bytes on every OS (finding N3).
+        from pipeline import det_png
+        return h, det_png.encode_pil(im)
 
     prev_h, prev_png = derive(PREVIEW_W, "image/preview-1024.png")
     thumb_h, thumb_png = derive(THUMB_W, "image/thumb-256.png")

@@ -1,0 +1,82 @@
+x.wordcraft.ooxml.part - one part of a WordprocessingML (.docx) package, preserved verbatim
+============================================================================================
+
+EXTENSION node of the WordCraft application (profile rich-document/1). Safe to skip: see
+spec/PROFILE-RICH-DOCUMENT.md section 3.10. Nothing in a core.* node refers to a node of this
+type, and a reader that skips every node of this type reads the whole document.
+
+What it is
+----------
+When WordCraft opens a .docx file, some parts of that package are not interpreted: the XML of a
+chart, the data and layout of a diagram, the binary of an embedded (OLE) object, a macro project,
+custom XML data. WordCraft keeps each such part byte for byte so that saving a .docx again
+reproduces the package.
+
+A part whose bytes are in a format this package defines is NOT a node of this type: a compound
+file, a VBA project storage, a ZIP archive or an OPC package is a `core.package.binary` node, and
+UTF-8 text (XML included) is a `core.package.text` node (spec/PROFILE-RICH-DOCUMENT.md section
+3.14). A node of THIS type holds a part that is none of those: bytes for which this package
+carries no definition - an embedded object stored as a bare binary stream, printer settings, an
+obfuscated font, a file with a compound file's signature and a header that is not one.
+
+The bytes are OPAQUE to this profile. They are never parsed, executed, re-encoded or altered by a
+Save; their sha256 in MANIFEST.json covers them. A part may itself contain addresses outside the
+package; they are inside opaque bytes this profile does not read, and no reader of this profile
+follows them.
+
+Files of the node (resolve them through the node's files[] in MANIFEST.json)
+-----------------------------------------------------------------------------
+x/wordcraft/parts/<node_id>/part.bin          role `payload` (the node's payload_file):
+    the part's bytes, byte for byte. media_type `application/octet-stream`.
+x/wordcraft/parts/<node_id>/descriptor.json   role `descriptor`: UTF-8 JSON, one object:
+    {"schema_version": 1,                  integer, the constant 1
+     "name": "word/embeddings/oleObject2.bin",   string: the part's name (see below)
+     "role": "package-part",               string: `package-part` or `bookkeeping`
+     "size": 12,                           integer: length of part.bin in bytes
+     "sha256": "<64 hex digits>"}          string: SHA-256 of part.bin
+
+node_id: `x-part-` + a kebab-case rendering of at most 40 characters of `name` + `-` + the first
+6 hex digits of the SHA-256 of `name`. It is a stable handle; the authority for the part's name
+is the descriptor.
+
+`name` and `role`
+-----------------
+role `package-part`: `name` is the part's name inside the original package, without a leading
+slash: `word/embeddings/oleObject2.bin`, `word/printerSettings/printerSettings1.bin`. It is a
+NAME that says where the bytes go when a .docx is written. It is not a path in this capsule and
+names no file on any disk.
+
+role `bookkeeping`: `name` starts with `wordcraft:`. WordCraft's three bookkeeping tables are
+UTF-8 text and therefore travel as `core.package.text` nodes; section 3.14 of the profile
+document defines them. A node of this type has that role only if such a table's bytes were not
+valid UTF-8, which WordCraft never writes.
+
+The structure node's `packageParts` array lists every preserved part, core or extension, by
+`name`, `role` and `node`; it is the authority. The descriptor repeats name and role so that the
+node is meaningful alone.
+
+How it relates to the other nodes
+---------------------------------
+* The document node (`core.text.document`) has one `enhances` edge with role `package-part` to
+  every node of this type: a dead or skipped part costs that part and nothing else.
+* The `x.wordcraft.ooxml.embedded` node holds the markup of the objects that USE preserved
+  parts: a relationship `target` there with `external: false` is the `name` of a preserved part
+  (a `core.package.*` node or a node of this type).
+* What the document SHOWS never depends on a node of this type: a chart or a diagram is carried
+  in the core blocks as drawing items (lines, shapes, text), an embedded object as a picture.
+  These nodes add only the ability to write the original package back.
+
+A reader that does not write .docx files ignores every node of this type. A writer that has no
+such parts writes none.
+
+Worked example
+--------------
+part.bin of the node whose descriptor is spec/examples/rich-document/part-descriptor.example.json:
+12 bytes - the 8-byte signature of a compound file followed by 4 bytes that are no compound-file
+header, so the part is in no defined format - sha256
+7d7b22bf323e71487fa8f1fe2260825066a03b1799a9f7cf39971a06579edbc9
+(hex):
+
+    d0 cf 11 e0 a1 b1 1a e1 00 01 02 03
+
+The descriptor's `size` and `sha256` are those of part.bin; a reader checks both.

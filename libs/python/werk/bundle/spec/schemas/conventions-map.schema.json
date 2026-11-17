@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/conventions-map.schema.json",
+  "title": "conventions-map.json — which node types each convention governs",
+  "description": "S-17, RULING, implemented 2026-08-08. spec/SPEC.md section 10.1 says a reader that does not support a declared convention must refuse the nodes that convention governs and load everything else — and until this file existed, no reader could apply that rule mechanically, because nothing said WHICH node types quat_order governs. The table in SPEC.md section 10.1 said it in prose; this file says the same thing as data, so a reader looks it up instead of transcribing it into a constant. That is not hypothetical: three bootstrap loaders once baked twenty-one convention values in as reader constants and then reported fourteen 'missing convention' errors about a perfectly well-formed package from a second profile. The manifest declares this file's path in its optional `conventions_map` key; absence means the profile's table as printed in the vendored SPEC.md. Where a package carries both and they disagree, the JSON in that package wins for that package and the disagreement is a report entry — that is the copy a reader can check.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "profile", "conventions"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "profile": {
+      "type": "string",
+      "description": "The profile this map belongs to, e.g. '3d-entity/1' or 'image/1'. A map is a property of the PROFILE, not of a reader (S-25)."
+    },
+    "note": {"type": "string"},
+    "conventions": {
+      "type": "object",
+      "description": "One entry per key in the manifest's `conventions` block. A convention present in the manifest and absent here is a gap in the map, and a reader reports it rather than assuming the convention governs nothing.",
+      "minProperties": 1,
+      "propertyNames": {"pattern": "^[a-z0-9]+(_[a-z0-9]+)*$"},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scope", "governs"],
+        "properties": {
+          "scope": {
+            "description": "The smallest refusal scope that contains a failure to support this convention (SPEC.md section 10.1). 'node' refuse the listed node types, load everything else. 'container' the manifest itself cannot be read without it, so nothing loads. 'extension' no core node uses it today; it is pinned for x.* payloads. 'signature' refusing it is the 'unverified' signature state, not damage.",
+            "enum": ["node", "container", "extension", "signature"]
+          },
+          "governs": {
+            "description": "Node types this convention governs. A trailing '.*' is a family wildcard: 'core.geom.*' matches core.geom.source, core.geom.game and core.geom.lod. 'x.*' matches any extension type. Empty is legal only for scope 'container' and 'extension', where the field would be a lie.",
+            "type": "array",
+            "items": {"type": "string", "pattern": "^((core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.\\*)?|x\\.\\*|\\*)$"}
+          },
+          "also_governs": {
+            "description": "Places outside nodes[] that this convention reaches — the one real case is quat_order governing parts[].transform.rotation in the manifest itself, which no node-type list can express.",
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Added Stage 12. true when the manifest MAY omit this convention entirely. A reader meeting its absence uses the profile default stated in SPEC.md and does NOT report a missing convention — which is the whole point: a convention added years after a package was written must not retroactively make that package non-conformant. Absent means false, i.e. mandatory, which is what every convention here was before this key existed."
+          },
+          "advisory": {
+            "type": "boolean",
+            "description": "Added Stage 12. true when the convention is a package-level HINT that some payload restates authoritatively — sh_degree is the case: each WKGS envelope declares its own and that governs. Refusing an advisory convention is therefore never grounds to refuse a node; a disagreement between the manifest and a payload is a report entry (SPEC.md section 3.16). Absent means false."
+          },
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

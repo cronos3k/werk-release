@@ -1,0 +1,199 @@
+{
+  "autofilter": null,
+  "cell_pictures": [],
+  "cells": "sheet-1-cells",
+  "charts": [
+    "sheet-1-chart-1"
+  ],
+  "cols": {
+    "0": {
+      "collapsed": false,
+      "custom": true,
+      "hidden": false,
+      "outline": 0,
+      "size": 96.0,
+      "style": null
+    }
+  },
+  "comments": {
+    "B2": {
+      "author": "Ann",
+      "replies": [],
+      "resolved": false,
+      "text": "Price per 100 g.",
+      "threaded": false,
+      "visible": false
+    }
+  },
+  "computed": "sheet-1-computed",
+  "cond_formats": [
+    {
+      "priority": 1,
+      "ranges": [
+        {
+          "end": {
+            "col": 1,
+            "row": 2
+          },
+          "start": {
+            "col": 1,
+            "row": 1
+          }
+        }
+      ],
+      "rule": {
+        "CellIs": {
+          "a": "4",
+          "b": null,
+          "op": "Greater",
+          "style": {
+            "align": {
+              "h": "General",
+              "indent": 0,
+              "rotation": 0,
+              "shrink": false,
+              "v": "Bottom",
+              "wrap": false
+            },
+            "borders": {
+              "bottom": {
+                "color": "Auto",
+                "style": "None"
+              },
+              "diag_down": {
+                "color": "Auto",
+                "style": "None"
+              },
+              "diag_up": {
+                "color": "Auto",
+                "style": "None"
+              },
+              "left": {
+                "color": "Auto",
+                "style": "None"
+              },
+              "right": {
+                "color": "Auto",
+                "style": "None"
+              },
+              "top": {
+                "color": "Auto",
+                "style": "None"
+              }
+            },
+            "fill": {
+              "bg": "Auto",
+              "fg": "Auto",
+              "pattern": "None"
+            },
+            "font": {
+              "bold": true,
+              "color": "Auto",
+              "italic": false,
+              "name": "Calibri",
+              "size": 11.0,
+              "strike": false,
+              "underline": "None",
+              "vert": "Baseline"
+            },
+            "num_fmt": "General",
+            "protection": {
+              "hidden": false,
+              "locked": true
+            }
+          }
+        }
+      },
+      "stop_if_true": false
+    }
+  ],
+  "default_col_width": 64.0,
+  "default_row_height": 20.0,
+  "edit_ranges": [],
+  "freeze": [
+    1,
+    0
+  ],
+  "hyperlinks": {
+    "A2": {
+      "target": "https://example.org/tea",
+      "tooltip": "About tea"
+    }
+  },
+  "images": [],
+  "merges": [
+    {
+      "end": {
+        "col": 1,
+        "row": 6
+      },
+      "start": {
+        "col": 0,
+        "row": 6
+      }
+    }
+  ],
+  "name": "Prices",
+  "pivots": [
+    "sheet-1-pivot-2"
+  ],
+  "print": {
+    "center_h": false,
+    "center_v": false,
+    "col_breaks": [],
+    "different_first": false,
+    "different_odd_even": false,
+    "even_footer": "",
+    "even_header": "",
+    "first_footer": "",
+    "first_header": "",
+    "fit_to": null,
+    "footer": "",
+    "gridlines": false,
+    "header": "",
+    "headings": false,
+    "hf_align_with_margins": true,
+    "hf_scale_with_doc": true,
+    "margins": [
+      0.7,
+      0.7,
+      0.75,
+      0.75,
+      0.3,
+      0.3
+    ],
+    "orientation": "Portrait",
+    "paper": "Letter",
+    "print_area": null,
+    "row_breaks": [],
+    "scale": 100,
+    "title_cols": null,
+    "title_rows": null
+  },
+  "protection": null,
+  "right_to_left": false,
+  "rows": {},
+  "schema_version": 1,
+  "shapes": [],
+  "show_formulas": false,
+  "show_gridlines": true,
+  "show_headings": true,
+  "show_zeros": true,
+  "slicers": [],
+  "sparklines": [],
+  "tab_color": null,
+  "tables": [],
+  "uid": 1,
+  "validations": [],
+  "view": "normal",
+  "view_active": {
+    "col": 0,
+    "row": 0
+  },
+  "view_top_left": {
+    "col": 0,
+    "row": 0
+  },
+  "visibility": "Visible",
+  "zoom": 100
+}

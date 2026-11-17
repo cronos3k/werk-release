@@ -19,7 +19,7 @@ for the texture and material paths. Nothing here pretends to be a scan.
 How it is built, and why through Blender
 ----------------------------------------
 The mesh is `fixtures/crate-v1.werk`'s own game geometry, imported by the
-gate-proven Blender add-on (`adapters/blender`), given UVs, dressed with three
+gate-proven Blender add-on (`plugins/blender`), given UVs, dressed with three
 generated maps and exported by the same add-on's exporter. That route was
 chosen over hand-writing a package because the add-on's textured export is
 already gate-measured, so this fixture is produced by code that is under test
@@ -58,6 +58,8 @@ import zlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, ROOT)
+from pipeline import det_png  # noqa: E402
 
 TEX_SIZE = 256
 PLANKS = 6
@@ -85,7 +87,9 @@ def source_label(src):
 
 
 # ---------------------------------------------------------------------------
-# a minimal deterministic PNG writer (stdlib zlib only)
+# a minimal deterministic PNG writer: filter 0, and the zlib stream of
+# pipeline/det_png.py (a fixed pure-Python deflate) rather than zlib.compress,
+# whose bytes depend on the zlib this Python links (finding N3)
 # ---------------------------------------------------------------------------
 
 def write_png(path, width, height, rows_rgba):
@@ -107,7 +111,7 @@ def write_png(path, width, height, rows_rgba):
     ihdr = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
     body = (b"\x89PNG\r\n\x1a\n"
             + chunk(b"IHDR", ihdr)
-            + chunk(b"IDAT", zlib.compress(bytes(raw), 9))
+            + chunk(b"IDAT", det_png.deflate_zlib(bytes(raw)))
             + chunk(b"IEND", b""))
     with open(path, "wb") as fh:
         fh.write(body)
@@ -262,6 +266,10 @@ def main():
     report_path = os.path.join(tmp, "build_report.json")
 
     def run_blender(target):
+        # A stale file at `target` must never pass for this run's output
+        # (Blender can exit 0 after a failed --python script).
+        if os.path.exists(target):
+            os.remove(target)
         cmd = [blender, "--background", "--factory-startup",
                "--python", os.path.join(HERE, "build_crate_tex_in_blender.py"),
                "--",
@@ -270,7 +278,7 @@ def main():
                "--albedo", maps["albedo"][0],
                "--normal", maps["normal"][0],
                "--mr", maps["mr"][0],
-               "--addon", os.path.join(ROOT, "adapters", "blender"),
+               "--addon", os.path.join(ROOT, "plugins", "blender"),
                "--report", report_path,
                "--created", CREATED,
                "--source-label", source_label(args.src)]

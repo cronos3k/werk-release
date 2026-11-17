@@ -1,0 +1,1179 @@
+{
+  "schema_version": 1,
+  "skeleton_id": "canonical-humanoid-v1",
+  "name": "werk canonical humanoid v1",
+  "status": "approved",
+  "canon_version": "1.0",
+  "approval": {
+    "decided_on": "2026-08-08",
+    "ruling": "docs/RULINGS-2026-08-08.md rulings 7, 8, 9, 10",
+    "note": "Ruling 7 approved the body proportions as drafted. Ruling 8 applied the measured thigh/shin swap. Ruling 9 made the base root bone at the origin normative, with the pelvis parented to it. Ruling 10 approved +Y-along-bone."
+  },
+  "note": "APPROVED 2026-08-08, canon version 1.0, by the rulings recorded in docs/RULINGS-2026-08-08.md. Two numbers changed on the way in: the thigh is now 0.43 m and the shin 0.42 m (ruling 8, on measurements from two human-derived rigs), which moves the knee from y = 0.50 to y = 0.49 and moves nothing else. The root is a BASE BONE at the origin and the pelvis is parented to it (ruling 9), so a travelling clip carries locomotion on the root and the pelvis stays a body bone. These numbers are now painful to change: every retarget map, every calibration solve and every clip authored against this rig inherits them.",
+  "epistemic": "authored",
+  "reference_height_m": 1.75,
+  "pose_name": "t-pose-palms-down",
+  "conventions": {
+    "up_axis": "y",
+    "forward_axis": "-z",
+    "right_axis": "+x",
+    "handedness": "right",
+    "quat_order": "wxyz",
+    "units_per_meter": 1.0,
+    "bone_axis_along": "+y",
+    "bone_axis_back": "+z",
+    "composition": "M_bone = M_parent * T(rest_translation) * R(rest_rotation)"
+  },
+  "floor_plane": {
+    "point": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "normal": [
+      0.0,
+      1.0,
+      0.0
+    ]
+  },
+  "extensions": [
+    "core-hands-v1"
+  ],
+  "bones": [
+    {
+      "bone_id": "root",
+      "parent": null,
+      "role": "locomotion-root",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "length_m": 0.1,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        0.1,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "hips",
+      "parent": "root",
+      "role": "pelvis",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.98,
+        0.0
+      ],
+      "length_m": 0.065,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        0.98,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        1.045,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "spine1",
+      "parent": "hips",
+      "role": "spine",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.065,
+        0.0
+      ],
+      "length_m": 0.085,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        1.045,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        1.13,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "spine2",
+      "parent": "spine1",
+      "role": "spine",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.085,
+        0.0
+      ],
+      "length_m": 0.09,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        1.13,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        1.22,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "spine3",
+      "parent": "spine2",
+      "role": "spine",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.09,
+        0.0
+      ],
+      "length_m": 0.21,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        1.22,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        1.43,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "neck",
+      "parent": "spine3",
+      "role": "neck",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.21,
+        0.0
+      ],
+      "length_m": 0.1,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        1.43,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        1.53,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "head",
+      "parent": "neck",
+      "role": "head",
+      "side": "center",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.1,
+        0.0
+      ],
+      "length_m": 0.22,
+      "model_rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.0,
+        1.53,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.0,
+        1.75,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "l-clavicle",
+      "parent": "spine3",
+      "role": "clavicle",
+      "side": "left",
+      "mirror_of": "r-clavicle",
+      "rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "rest_translation": [
+        -0.03,
+        0.19,
+        0.0
+      ],
+      "length_m": 0.14,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.03,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.17,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-upperarm",
+      "parent": "l-clavicle",
+      "role": "upperarm",
+      "side": "left",
+      "mirror_of": "r-upperarm",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.14,
+        0.0
+      ],
+      "length_m": 0.29,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.17,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.46,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-forearm",
+      "parent": "l-upperarm",
+      "role": "forearm",
+      "side": "left",
+      "mirror_of": "r-forearm",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.29,
+        0.0
+      ],
+      "length_m": 0.25,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.46,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.71,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-hand",
+      "parent": "l-forearm",
+      "role": "hand",
+      "side": "left",
+      "mirror_of": "r-hand",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "length_m": 0.187,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.71,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.897,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "l-thigh",
+      "parent": "hips",
+      "role": "thigh",
+      "side": "left",
+      "mirror_of": "r-thigh",
+      "rest_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "rest_translation": [
+        -0.09,
+        -0.06,
+        0.0
+      ],
+      "length_m": 0.43,
+      "model_rest_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_rest_head_m": [
+        -0.09,
+        0.92,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.09,
+        0.49,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-shin",
+      "parent": "l-thigh",
+      "role": "shin",
+      "side": "left",
+      "mirror_of": "r-shin",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.43,
+        0.0
+      ],
+      "length_m": 0.42,
+      "model_rest_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_rest_head_m": [
+        -0.09,
+        0.49,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.09,
+        0.07,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-foot",
+      "parent": "l-shin",
+      "role": "foot",
+      "side": "left",
+      "mirror_of": "r-foot",
+      "rest_rotation": [
+        0.0,
+        0.0,
+        0.814589026,
+        -0.580038549
+      ],
+      "rest_translation": [
+        0.0,
+        0.42,
+        0.0
+      ],
+      "length_m": 0.137568165,
+      "model_rest_rotation": [
+        0.580038549,
+        -0.814589026,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        -0.09,
+        0.07,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.09,
+        0.025,
+        -0.13
+      ],
+      "axis_along": [
+        0.0,
+        -0.327110564,
+        -0.944986073
+      ],
+      "axis_back": [
+        0.0,
+        0.944986073,
+        -0.327110564
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-toe",
+      "parent": "l-foot",
+      "role": "toe",
+      "side": "left",
+      "mirror_of": "r-toe",
+      "rest_rotation": [
+        0.99318805,
+        0.116522519,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.137568165,
+        0.0
+      ],
+      "length_m": 0.070349129,
+      "model_rest_rotation": [
+        0.671005321,
+        -0.741452534,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        -0.09,
+        0.025,
+        -0.13
+      ],
+      "model_rest_tail_m": [
+        -0.09,
+        0.018,
+        -0.2
+      ],
+      "axis_along": [
+        0.0,
+        -0.099503719,
+        -0.99503719
+      ],
+      "axis_back": [
+        0.0,
+        0.99503719,
+        -0.099503719
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-clavicle",
+      "parent": "spine3",
+      "role": "clavicle",
+      "side": "right",
+      "mirror_of": "l-clavicle",
+      "rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "rest_translation": [
+        0.03,
+        0.19,
+        0.0
+      ],
+      "length_m": 0.14,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.03,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.17,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-upperarm",
+      "parent": "r-clavicle",
+      "role": "upperarm",
+      "side": "right",
+      "mirror_of": "l-upperarm",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.14,
+        0.0
+      ],
+      "length_m": 0.29,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.17,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.46,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-forearm",
+      "parent": "r-upperarm",
+      "role": "forearm",
+      "side": "right",
+      "mirror_of": "l-forearm",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.29,
+        0.0
+      ],
+      "length_m": 0.25,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.46,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.71,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-hand",
+      "parent": "r-forearm",
+      "role": "hand",
+      "side": "right",
+      "mirror_of": "l-hand",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "length_m": 0.187,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.71,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.897,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-thigh",
+      "parent": "hips",
+      "role": "thigh",
+      "side": "right",
+      "mirror_of": "l-thigh",
+      "rest_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "rest_translation": [
+        0.09,
+        -0.06,
+        0.0
+      ],
+      "length_m": 0.43,
+      "model_rest_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_rest_head_m": [
+        0.09,
+        0.92,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.09,
+        0.49,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-shin",
+      "parent": "r-thigh",
+      "role": "shin",
+      "side": "right",
+      "mirror_of": "l-shin",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.43,
+        0.0
+      ],
+      "length_m": 0.42,
+      "model_rest_rotation": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "model_rest_head_m": [
+        0.09,
+        0.49,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.09,
+        0.07,
+        0.0
+      ],
+      "axis_along": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-foot",
+      "parent": "r-shin",
+      "role": "foot",
+      "side": "right",
+      "mirror_of": "l-foot",
+      "rest_rotation": [
+        0.0,
+        0.0,
+        0.814589026,
+        -0.580038549
+      ],
+      "rest_translation": [
+        0.0,
+        0.42,
+        0.0
+      ],
+      "length_m": 0.137568165,
+      "model_rest_rotation": [
+        0.580038549,
+        -0.814589026,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.09,
+        0.07,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.09,
+        0.025,
+        -0.13
+      ],
+      "axis_along": [
+        0.0,
+        -0.327110564,
+        -0.944986073
+      ],
+      "axis_back": [
+        0.0,
+        0.944986073,
+        -0.327110564
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-toe",
+      "parent": "r-foot",
+      "role": "toe",
+      "side": "right",
+      "mirror_of": "l-toe",
+      "rest_rotation": [
+        0.99318805,
+        0.116522519,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.137568165,
+        0.0
+      ],
+      "length_m": 0.070349129,
+      "model_rest_rotation": [
+        0.671005321,
+        -0.741452534,
+        0.0,
+        0.0
+      ],
+      "model_rest_head_m": [
+        0.09,
+        0.025,
+        -0.13
+      ],
+      "model_rest_tail_m": [
+        0.09,
+        0.018,
+        -0.2
+      ],
+      "axis_along": [
+        0.0,
+        -0.099503719,
+        -0.99503719
+      ],
+      "axis_back": [
+        0.0,
+        0.99503719,
+        -0.099503719
+      ],
+      "leaf": true
+    }
+  ],
+  "retarget": {
+    "mixamo": {
+      "description": "Mixamo's standard humanoid naming, with the usual 'mixamorig:' prefix stripped by the importer before lookup.",
+      "map": {
+        "Hips": "hips",
+        "Spine": "spine1",
+        "Spine1": "spine2",
+        "Spine2": "spine3",
+        "Neck": "neck",
+        "Head": "head",
+        "LeftShoulder": "l-clavicle",
+        "LeftArm": "l-upperarm",
+        "LeftForeArm": "l-forearm",
+        "LeftHand": "l-hand",
+        "RightShoulder": "r-clavicle",
+        "RightArm": "r-upperarm",
+        "RightForeArm": "r-forearm",
+        "RightHand": "r-hand",
+        "LeftUpLeg": "l-thigh",
+        "LeftLeg": "l-shin",
+        "LeftFoot": "l-foot",
+        "LeftToeBase": "l-toe",
+        "RightUpLeg": "r-thigh",
+        "RightLeg": "r-shin",
+        "RightFoot": "r-foot",
+        "RightToeBase": "r-toe"
+      }
+    },
+    "ue-mannequin": {
+      "description": "Unreal Engine mannequin (UE4/UE5 skeleton naming).",
+      "map": {
+        "root": "root",
+        "pelvis": "hips",
+        "spine_01": "spine1",
+        "spine_02": "spine2",
+        "spine_03": "spine3",
+        "neck_01": "neck",
+        "head": "head",
+        "clavicle_l": "l-clavicle",
+        "upperarm_l": "l-upperarm",
+        "lowerarm_l": "l-forearm",
+        "hand_l": "l-hand",
+        "clavicle_r": "r-clavicle",
+        "upperarm_r": "r-upperarm",
+        "lowerarm_r": "r-forearm",
+        "hand_r": "r-hand",
+        "thigh_l": "l-thigh",
+        "calf_l": "l-shin",
+        "foot_l": "l-foot",
+        "ball_l": "l-toe",
+        "thigh_r": "r-thigh",
+        "calf_r": "r-shin",
+        "foot_r": "r-foot",
+        "ball_r": "r-toe"
+      }
+    },
+    "vrm-humanoid": {
+      "description": "VRM 1.0 humanoid bone roles.",
+      "map": {
+        "hips": "hips",
+        "spine": "spine1",
+        "chest": "spine2",
+        "upperChest": "spine3",
+        "neck": "neck",
+        "head": "head",
+        "leftShoulder": "l-clavicle",
+        "leftUpperArm": "l-upperarm",
+        "leftLowerArm": "l-forearm",
+        "leftHand": "l-hand",
+        "rightShoulder": "r-clavicle",
+        "rightUpperArm": "r-upperarm",
+        "rightLowerArm": "r-forearm",
+        "rightHand": "r-hand",
+        "leftUpperLeg": "l-thigh",
+        "leftLowerLeg": "l-shin",
+        "leftFoot": "l-foot",
+        "leftToes": "l-toe",
+        "rightUpperLeg": "r-thigh",
+        "rightLowerLeg": "r-shin",
+        "rightFoot": "r-foot",
+        "rightToes": "r-toe"
+      }
+    }
+  }
+}

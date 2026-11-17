@@ -1,0 +1,39 @@
+{
+  "anchor": {
+    "cell": {
+      "col": 5,
+      "row": 1
+    },
+    "dx": 0.0,
+    "dy": 0.0,
+    "height": 216.0,
+    "mode": "MoveAndSize",
+    "width": 360.0
+  },
+  "by_rows": false,
+  "data_labels": false,
+  "gridlines": true,
+  "id": 1,
+  "kind": "ColumnClustered",
+  "legend": "Bottom",
+  "pivot": null,
+  "schema_version": 1,
+  "series": [
+    {
+      "bubble_sizes": null,
+      "categories": "Prices!$A$2:$A$3",
+      "color": null,
+      "kind": null,
+      "name": "Prices!$B$1",
+      "secondary": false,
+      "smooth": false,
+      "trendlines": [],
+      "values": "Prices!$B$2:$B$3"
+    }
+  ],
+  "source": "A1:B3",
+  "style": 1,
+  "title": "Prices",
+  "x_title": null,
+  "y_title": null
+}

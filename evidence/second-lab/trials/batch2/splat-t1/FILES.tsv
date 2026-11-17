@@ -1,0 +1,96 @@
+path	bytes	sha256_original	status	sha256_committed
+REPORT.md	21921	e82bc4572040048ce4e18a46d86e85eb8b876380cfb9104c03f408374b0970b6	copied, local paths replaced	8b8745ee075ae2bdf70eaea69712d165c669b669aa8967adb7e2f1682a294dad
+TIMING.txt	30	d2d70937b99013e8debd3372aae0b0f4295d2df616bf064fd280bb314eb35c76	copied	
+claude-result.json	6479	bedf441ff24b900b6283b71abb7a65b6c923b952834487f83e1ac3d2dd6a46eb	copied, local paths replaced	f733ab395784a2403bc208639c12b1ec84a42068224c56c48016769b606c781e
+claude-stderr.log	0	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	copied	
+gsplat-v1.werk	30235611	ede0aee6cc5659af741059b747dc3f3459db220234e7ffb95c4437c02337090a	not copied: identical to fixture gsplat-v1.werk	
+out/points.csv	20457853	d7ab00a30039553982ac0f6b00987f88d5a61c515cd7461bca2eaf724af76583	not copied: larger than 1 MB, regenerate with the program	
+scripts/__pycache__/werk_inspect.cpython-314.pyc	51189	c1fbc6b76c2e0eeb8760a31995cd1f7d4cfe736ad4132f4469f9964fc95ffa8b	skipped: Python bytecode	
+scripts/extract.py	374	8f93f59b1946097abf3d6977e6c8e4be4766280fe8651755cf73d417ac1329a4	copied	
+scripts/ls_zip.py	215	a863df5b76f55053bd930bb070f34119e51486702a9209cb3deadd4c1a228fca	copied	
+scripts/offsets.py	446	de646bf817970e62329acbf3072eec383c0bfcb48c5f9b78ff231caaededc3a7	copied	
+scripts/peek.py	394	e7dcb55b85c8090ceb1f53cea0ac9f7ecd06d4be996645a302b764abaefaa29a	copied	
+scripts/werk_inspect.py	30553	d52846e8e7ccf05326b87baf2ec4de2cafc2b5ad9103683c64ef86d1423a6a8f	copied	
+x/LICENSE	2859	b176cebfeea5fafc6f000340f00ea4ed2b4cbab64dd311b622ba06d9ecb37a4c	not copied: identical to package entry gsplat-v1.werk:LICENSE	
+x/MANIFEST.json	36088	806cacc18cfd207345bd417a9131cd8f51b9614386237de42c661988c6a57cf2	not copied: identical to package entry gsplat-v1.werk:MANIFEST.json	
+x/README.txt	2682	a76d114dd8089b12885154a55824ae0dafc08c29a9a4b31087bd8a44ace75d96	not copied: identical to package entry gsplat-v1.werk:README.txt	
+x/SIGNATURE.json	1047	220199679319b089e8ccd14961e2cef6b5172781d9848876d9fc3493e096befc	not copied: identical to package entry gsplat-v1.werk:SIGNATURE.json	
+x/loaders/werk_read.c	111051	dcafb38877b1be2b13cbba1daedc1209ff15eb07fa9a6332e37e78ec119e4292	not copied: identical to package entry crate-v1.werk:loaders/werk_read.c	
+x/loaders/werk_read.py	42226	8274359b795405b481d535572e3ec8930c29da20140f23e356c6fef84f162b84	not copied: identical to package entry crate-v1.werk:loaders/werk_read.py	
+x/loaders/werk_read.rs	98761	f2ef9ba2badd94a1312cd9a42649386e017197bdc3cb0d5106f1ae745d173e62	not copied: identical to package entry crate-v1.werk:loaders/werk_read.rs	
+x/points/plush-dc.wkpc	4223440	fd1bac809338c70b683ca2ffbef98088915a781dfefa0087379d612e6262724a	not copied: identical to package entry gsplat-v1.werk:points/plush-dc.wkpc	
+x/provenance/provenance.json	1047	c6e9a78b155e6427237a545a30987287d34acf341880dc7651fd2a4a7bb23d31	not copied: identical to package entry gsplat-v1.werk:provenance/provenance.json	
+x/recipe/inputs/plush.splat	9007936	80e0ae670ee980f166d9b00045d33710dd77e65ff004f1886ab442220e2c48fa	not copied: identical to package entry gsplat-v1.werk:recipe/inputs/plush.splat	
+x/recipe/recipe.json	6171	1db5626694e28f1d66aad059082704bbb214405f4493efc28e49e838ca04f2d8	not copied: identical to package entry gsplat-v1.werk:recipe/recipe.json	
+x/semantics/semantics.json	2381	392a9ba5cf914f0506fda1ff594cbbabb5f6238834b137b30a59548c35017129	not copied: identical to package entry gsplat-v1.werk:semantics/semantics.json	
+x/spec/MINI-SPECS.md	40147	8cc4fa498bc5a4e1914b2640c09b8582366a6cd4e22b018a0fa3570d554f41ba	not copied: identical to package entry crate-v1.werk:spec/MINI-SPECS.md	
+x/spec/PROFILE-IMAGE.md	13274	2bf8fcaa4650790e944b531afbea238aba97ae5a8825e162330a0e9f1a3a8c0f	not copied: identical to package entry crate-v1.werk:spec/PROFILE-IMAGE.md	
+x/spec/README.md	10855	3a79eb5ecfe82caf8db9ad20aef1166a8032f4676ebc1c7ade4d22351518ba56	not copied: identical to package entry crate-v1.werk:spec/README.md	
+x/spec/SPEC.md	104388	eba06e19de47b62ba5bf007b6598768a5f2700f118461720dc02b5a8de76a001	not copied: identical to package entry crate-v1.werk:spec/SPEC.md	
+x/spec/X-C2PA-EXPORT.md	7461	2b3421f5dd51cc885762754d0ce865c6ee5b9cc11428d8a7945f59a2b7485306	not copied: identical to package entry crate-v1.werk:spec/X-C2PA-EXPORT.md	
+x/spec/conventions-map.image.json	2416	ae4116c7c5c61b6342e0ecdc875ed42015179254e7012007cfe1e3c3b0b273cc	not copied: identical to package entry crate-v1.werk:spec/conventions-map.image.json	
+x/spec/conventions-map.json	9269	1d0aa2edcb95dda2ddf366248d9572dedc2cc81ff6954920b131812ef43b7b37	not copied: identical to package entry crate-v1.werk:spec/conventions-map.json	
+x/spec/examples/MANIFEST.example.json	20080	c421d2e85a9455f0be794ca8ee673f727a7ef67485d631e374f95c4a6d6ce61a	not copied: identical to package entry crate-v1.werk:spec/examples/MANIFEST.example.json	
+x/spec/examples/SIGNATURE.example.json	1084	dda875aac536e946e9d32955d41b4fbffac75d8627100b17423a0204cf4f3783	not copied: identical to package entry crate-v1.werk:spec/examples/SIGNATURE.example.json	
+x/spec/examples/embedding.example.hex.txt	4444	355ba2b4b765c2f88f112d25fdcd000df6c3fb8bd3b8894b904b25a9e9130d2d	not copied: identical to package entry crate-v1.werk:spec/examples/embedding.example.hex.txt	
+x/spec/examples/embedding.example.wkem	512	eb98a370bde965b6bdd0c21d73dfefb663f445db5a6cd3d2be44272123ebf067	not copied: identical to package entry crate-v1.werk:spec/examples/embedding.example.wkem	
+x/spec/examples/gsplat.example.hex.txt	9796	e5cc7d5b0310543cb06b2853d3e6ca5b19f68df9474ecf916b1a256f906788a3	not copied: identical to package entry crate-v1.werk:spec/examples/gsplat.example.hex.txt	
+x/spec/examples/gsplat.example.wkgs	1120	9a3af3dfde695e34cbeb8972a8d3f2453454226ba6ab9c69a6c5a0a199fe19ee	not copied: identical to package entry crate-v1.werk:spec/examples/gsplat.example.wkgs	
+x/spec/examples/make-examples.py	57655	9b7503dd774b7a9d68f8d42e8428353a5d98db826d408a15c37778f116b7ad40	not copied: identical to package entry crate-v1.werk:spec/examples/make-examples.py	
+x/spec/examples/restposes.example.hex.txt	4308	80bfad056ad4e2da65517da2486d2706216642dec603dd26cb3074125824d051	not copied: identical to package entry crate-v1.werk:spec/examples/restposes.example.hex.txt	
+x/spec/examples/restposes.example.wkrp	560	6c2c44d5492a4e4f1dbcf5b4c30beb5ada4825ffba7ab7e5010040494ee15f95	not copied: identical to package entry crate-v1.werk:spec/examples/restposes.example.wkrp	
+x/spec/examples/signature.example.txt	4544	93c516649849a8b4889d161c200e44269694ed0ef5d826c3a5ae200a87c430e5	not copied: identical to package entry crate-v1.werk:spec/examples/signature.example.txt	
+x/spec/extensions/x.cub.v1.baked.layout.txt	9359	ba64dfd8bf845e128216e132fa05bad979f65fd66c2c3fa0eccdab7ce95aea71	not copied: identical to package entry crate-v1.werk:spec/extensions/x.cub.v1.baked.layout.txt	
+x/spec/extensions/x.cub.v1.md	8783	0b36de4fa7783301d49dd20483fd43ed7a12e4f06b22c54282981391912b5f42	not copied: identical to package entry crate-v1.werk:spec/extensions/x.cub.v1.md	
+x/spec/facets.json	11978	f73949dd1cab2d827148eef12c4fa56017b4b06fdd4566f89a561ee5ef7dbba1	not copied: identical to package entry crate-v1.werk:spec/facets.json	
+x/spec/layouts/ENVELOPE.layout.txt	26372	b3e5a6fe1f242e0264d530be6ece1ed0895d3216805da321be17dac7e39975ce	not copied: identical to package entry crate-v1.werk:spec/layouts/ENVELOPE.layout.txt	
+x/spec/layouts/animclip.layout.txt	16800	ee4a9db15b32a3540fc4dabbc07cf9f91e3f24b3bdad6d0f02711da9e674b9e6	not copied: identical to package entry crate-v1.werk:spec/layouts/animclip.layout.txt	
+x/spec/layouts/embedding.layout.txt	14361	303b608295ef192afcc86b2f636c26736c6a8ce642835d46245bdc7e72320a87	not copied: identical to package entry crate-v1.werk:spec/layouts/embedding.layout.txt	
+x/spec/layouts/flowfield.layout.txt	6263	f8d2e9cc571b22fa0748dcb8cb47aa3235d8cfcea92467801a18ddf2b104903a	not copied: identical to package entry crate-v1.werk:spec/layouts/flowfield.layout.txt	
+x/spec/layouts/gsplat.layout.txt	23918	1f42951c887259e9c69c1437792b5674e0d0c7d90595e41e207c0aac138a6195	not copied: identical to package entry crate-v1.werk:spec/layouts/gsplat.layout.txt	
+x/spec/layouts/imposter.layout.txt	10446	29649f2aa83078fbb13731f0481eb8e26c96f9ea54a821a6dfbef805ed31236f	not copied: identical to package entry crate-v1.werk:spec/layouts/imposter.layout.txt	
+x/spec/layouts/points.layout.txt	16663	6b36a38432a4468655c0c176c02788b39c23db8ea33e2b3af69011a4d59c4899	not copied: identical to package entry crate-v1.werk:spec/layouts/points.layout.txt	
+x/spec/layouts/restposes.layout.txt	5958	cc2d00b870a12ccedf76ac1fbd61dc5b19712e8c067c2d0f85f50033620efaf5	not copied: identical to package entry crate-v1.werk:spec/layouts/restposes.layout.txt	
+x/spec/layouts/skeleton.layout.txt	5964	f9656db427660fd781cb7d3732013ff6958f3b816cc9ba93403e37b6e1295dc1	not copied: identical to package entry crate-v1.werk:spec/layouts/skeleton.layout.txt	
+x/spec/schemas/conventions-map.schema.json	4614	97e8cae5199506e0ade43b14e51f0bc3569c8be4dc0e18b8ba56f9cada1afe7f	not copied: identical to package entry crate-v1.werk:spec/schemas/conventions-map.schema.json	
+x/spec/schemas/core.anim.clip.schema.json	9585	2e3d87f8447bd3ab21da0c0b34ad0ab24e95bcd4cfb28a4ba2edfdddadbafc36	not copied: identical to package entry crate-v1.werk:spec/schemas/core.anim.clip.schema.json	
+x/spec/schemas/core.audio.effect.schema.json	8628	04ec3b581af20448c0a0e4ea093101e46e8079b0e07c87c9aafdf32415e9efd5	not copied: identical to package entry crate-v1.werk:spec/schemas/core.audio.effect.schema.json	
+x/spec/schemas/core.audio.package.schema.json	7320	d45aa59c656693f9bf93c09245b9d80e6101d06e765f63215f4faa6116670545	not copied: identical to package entry crate-v1.werk:spec/schemas/core.audio.package.schema.json	
+x/spec/schemas/core.destruct.schema.json	6319	87142e399b83e6f5abffe8655302d45f27b32781766f0821826accb41e97ff32	not copied: identical to package entry crate-v1.werk:spec/schemas/core.destruct.schema.json	
+x/spec/schemas/core.disclosure.schema.json	11515	ac1df873ac607e1bc4778f1a97bbec5fb13b7177e715b93e5ef60eb57164c785	not copied: identical to package entry crate-v1.werk:spec/schemas/core.disclosure.schema.json	
+x/spec/schemas/core.imposter.schema.json	6708	5b5c3875a91274e38e41e99a55d3041438c0471a584699290c7a6b76ce9f6306	not copied: identical to package entry crate-v1.werk:spec/schemas/core.imposter.schema.json	
+x/spec/schemas/core.material.schema.json	4823	487505e761fc02d5cd8cde8494a7ede233b4d6edc3ee57d8e9c8c6e68590baa6	not copied: identical to package entry crate-v1.werk:spec/schemas/core.material.schema.json	
+x/spec/schemas/core.phys.body.schema.json	6157	d0d462fc17e21805da5c075fd83eeccda4946367c5f4381651544b89555de4ac	not copied: identical to package entry crate-v1.werk:spec/schemas/core.phys.body.schema.json	
+x/spec/schemas/core.phys.bounds.schema.json	3164	acf0c228fd2b4b4cc46771b85af5bd62c49d14e88468c7b268d07f4e8f0e3a2e	not copied: identical to package entry crate-v1.werk:spec/schemas/core.phys.bounds.schema.json	
+x/spec/schemas/core.phys.colliders.schema.json	4116	70dd20d638bef9146588222bec3000ab9e0d2430d1dd96fbfda6a5ffacd62794	not copied: identical to package entry crate-v1.werk:spec/schemas/core.phys.colliders.schema.json	
+x/spec/schemas/core.props.schema.json	11666	95a8124f54346735946431d7de34cb665eec8ca7450a794831d6aee99affa2e3	not copied: identical to package entry crate-v1.werk:spec/schemas/core.props.schema.json	
+x/spec/schemas/core.provenance.schema.json	6140	d99d7cec51ac6b114896c58f6428ecd573ead0f9288dcac084e8d38183811935	not copied: identical to package entry crate-v1.werk:spec/schemas/core.provenance.schema.json	
+x/spec/schemas/core.recipe.schema.json	26485	19b723bf06c66ccf15948100350c4857e0694a5850e1e111e35a894c416e0f30	not copied: identical to package entry crate-v1.werk:spec/schemas/core.recipe.schema.json	
+x/spec/schemas/core.retarget.bind.schema.json	13337	e8cacdd8a72e7e33100507cbe187ffe91f0ec98516bb52ea08ee6addf298f480	not copied: identical to package entry crate-v1.werk:spec/schemas/core.retarget.bind.schema.json	
+x/spec/schemas/core.semantics.schema.json	6917	3e6fb595e77cae734631e4f67759f470e6fc11acee4a54e8ca6a3deaaef9c68f	not copied: identical to package entry crate-v1.werk:spec/schemas/core.semantics.schema.json	
+x/spec/schemas/core.skeleton.schema.json	11464	7e0f7aec2a7616e7ab4d94c96ac82cf3496af2d3758b9bbf13d866663782c7f8	not copied: identical to package entry crate-v1.werk:spec/schemas/core.skeleton.schema.json	
+x/spec/schemas/core.tool.config.schema.json	7321	f386341239a744cf81140a79d7a780d1d2d6faebf613bceab55a7d909f750b1f	not copied: identical to package entry crate-v1.werk:spec/schemas/core.tool.config.schema.json	
+x/spec/schemas/core.tool.schema.json	10894	beb9c08f08a597c9aa8b796bdffa678d8305d9bf53aff54003b40a4a2a2b9b2e	not copied: identical to package entry crate-v1.werk:spec/schemas/core.tool.schema.json	
+x/spec/schemas/facets.schema.json	3593	6a5304c901b8f3c2ff30734c0784fa074a111a4312b634b74351cbe234299f87	not copied: identical to package entry crate-v1.werk:spec/schemas/facets.schema.json	
+x/spec/schemas/manifest.image.schema.json	28278	96d27c6bd7dabc4ecf3d984aff0b0e90b9db3da6ba4cda22144d5d1d64f7ce71	not copied: identical to package entry crate-v1.werk:spec/schemas/manifest.image.schema.json	
+x/spec/schemas/manifest.schema.json	46174	d649cb09a8cfe1b16d27c3d8b910b0cccc074ef9b08dbfed788a51e09f8bf451	not copied: identical to package entry crate-v1.werk:spec/schemas/manifest.schema.json	
+x/spec/schemas/signature.schema.json	11209	cde6abccc1a071ec0e33ffeabf1f7b7131805a2339fd055566cd3b76c5e92b13	not copied: identical to package entry crate-v1.werk:spec/schemas/signature.schema.json	
+x/spec/schemas/x.c2pa.export.schema.json	4935	bc1a5c7486f4c90e5331316e122d26f82680601e53bce7142d9b59576ab4600d	not copied: identical to package entry crate-v1.werk:spec/schemas/x.c2pa.export.schema.json	
+x/spec/skeleton/canonical-humanoid-v1.json	22429	7b5415347d0456f164b08abf5b4114f5db00215d6ed71d6f841412825a8fd481	not copied: identical to package entry crate-v1.werk:spec/skeleton/canonical-humanoid-v1.json	
+x/spec/skeleton/core.hands.v1.json	26112	5e1b90841b8a6b701c3d9f07a9a8f09caec97c544975979f01e972464d40e15a	not copied: identical to package entry crate-v1.werk:spec/skeleton/core.hands.v1.json	
+x/spec/skeleton/derive-canonical-humanoid.py	19852	20f5c3504c87f9c56ae82120fcdb5f006bd565194576e4b818452934069d6c35	not copied: identical to package entry crate-v1.werk:spec/skeleton/derive-canonical-humanoid.py	
+x/splats/plush.wkgs	15764784	b4510cb2b8a738962b994a9bc010fed510db0b68f896c93a70b782943dc2869e	not copied: identical to package entry gsplat-v1.werk:splats/plush.wkgs	
+x/tools/splat-to-ply-run.config.json	2007	494667a8edac64c1bda317b74331d5fb9bfe947c4efc803348a6ef1f10fe69e7	not copied: identical to package entry gsplat-v1.werk:tools/splat-to-ply-run.config.json	
+x/tools/splat-to-ply/ply.py	21847	7e25f50db6bb9c9d95ad379dc68f8ca7b730544b656c6fb863bd1d2a2f6bb576	not copied: identical to package entry gsplat-v1.werk:tools/splat-to-ply/ply.py	
+x/tools/splat-to-ply/splat_to_ply.py	8353	a7a20c5d9bc22adec0de690b3dea460cf72b57c2f0280e9c0f5722dc8cdbd54b	not copied: identical to package entry gsplat-v1.werk:tools/splat-to-ply/splat_to_ply.py	
+x/tools/splat-to-ply/tool.json	1818	3419d72f0553cded501b65d88b1dd881d044d1f6ed99a8d79302965f14f9af7e	not copied: identical to package entry gsplat-v1.werk:tools/splat-to-ply/tool.json	
+x/tools/werk-gsplat-run.config.json	1824	0f33ff8ef367386f2d011db4549ccd4284b6ddce8510ff9090748a07d458c3e4	not copied: identical to package entry gsplat-v1.werk:tools/werk-gsplat-run.config.json	
+x/tools/werk-gsplat/common.py	16849	3204636d25431948eae005707ff8e3f35c0a590565666c062a4e98e7c295b8f3	not copied: identical to package entry gsplat-v1.werk:tools/werk-gsplat/common.py	
+x/tools/werk-gsplat/p_gsplat.py	12942	38ca49921ec06421a7e4ba4a7d599d1abdaa587a437672f2f1b7e80589cb7935	not copied: identical to package entry gsplat-v1.werk:tools/werk-gsplat/p_gsplat.py	
+x/tools/werk-gsplat/ply.py	21847	7e25f50db6bb9c9d95ad379dc68f8ca7b730544b656c6fb863bd1d2a2f6bb576	not copied: identical to package entry gsplat-v1.werk:tools/splat-to-ply/ply.py	
+x/tools/werk-gsplat/tool.json	1936	410cbe6bb7b7edeeae7185a0735eb81d728d752ff02e0229142abf4dc88b8fc0	not copied: identical to package entry gsplat-v1.werk:tools/werk-gsplat/tool.json	
+x/tools/werk-pointcloud-run.config.json	1547	56d13e222cccc8dc79557dcbecbc3d7100862d227acead63893b92eedb487978	not copied: identical to package entry gsplat-v1.werk:tools/werk-pointcloud-run.config.json	
+x/tools/werk-pointcloud/common.py	16849	3204636d25431948eae005707ff8e3f35c0a590565666c062a4e98e7c295b8f3	not copied: identical to package entry gsplat-v1.werk:tools/werk-gsplat/common.py	
+x/tools/werk-pointcloud/p_pointcloud.py	13791	d01f2f0620767149e0651ae1919b7ce23786672dc5761b9b310e5d929cfefc74	not copied: identical to package entry gsplat-v1.werk:tools/werk-pointcloud/p_pointcloud.py	
+x/tools/werk-pointcloud/ply.py	21847	7e25f50db6bb9c9d95ad379dc68f8ca7b730544b656c6fb863bd1d2a2f6bb576	not copied: identical to package entry gsplat-v1.werk:tools/splat-to-ply/ply.py	
+x/tools/werk-pointcloud/tool.json	1692	a011db6268a434d310fa95c1097bb227bd2ac422573c1ad78875df9b0e2d35bb	not copied: identical to package entry gsplat-v1.werk:tools/werk-pointcloud/tool.json	

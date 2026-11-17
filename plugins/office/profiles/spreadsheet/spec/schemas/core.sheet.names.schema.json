@@ -1,0 +1,67 @@
+{
+  "$id": "https://werk.format/spec/schemas/core.sheet.names.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The defined names of a spreadsheet/1 document (node type core.sheet.names, node_id `names`).",
+  "properties": {
+    "names": {
+      "description": "The defined names, in the application's order.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One defined name: a name that stands for a range, a constant or a formula.",
+        "properties": {
+          "comment": {
+            "description": "A comment. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "formula": {
+            "description": "What the name stands for, as formula text in the profile's formula grammar WITHOUT a leading `=`: `Sheet1!$A$1:$A$10`, `0.07`, `LAMBDA(x,x*2)`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "hidden": {
+            "description": "Not listed in the user interface.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "The name, e.g. `TaxRate`. Compared case-insensitively. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "scope_index": {
+            "description": "Only for a damaged scope: a zero-based sheet position that names no sheet of the workbook. Never present together with scope_sheet.",
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "scope_sheet": {
+            "description": "node_id of the core.sheet.sheet node the name is local to. Absent (together with scope_index) for a workbook-wide name.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "formula",
+          "comment",
+          "hidden"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "names"
+  ],
+  "title": "core.sheet.names - defined names",
+  "type": "object"
+}

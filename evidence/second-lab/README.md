@@ -29,6 +29,7 @@ Each line of [ledger/attempts.jsonl](ledger/attempts.jsonl) is one JSON object.
 |---|---|
 | [ledger/](ledger/) | The attempt ledger, its schema, the fixture inventory, the count mappings and the checker |
 | [audits/](audits/) | Short notes and data for each audit step (see below) |
+| [trials/](trials/) | Programs, reports and outputs of the 11 retained second-lab trials, with a checker that re-runs them |
 | [locks/](locks/) | Environment pins: installed packages, interpreters, the Cargo lock and per-builder sources |
 | [clause-coverage.md](clause-coverage.md) | One row per gate clause, with its input basis and evidence |
 | [reproducibility.md](reproducibility.md) | Which environment each exact-byte claim needs |
@@ -39,6 +40,7 @@ Each line of [ledger/attempts.jsonl](ledger/attempts.jsonl) is one JSON object.
 | [audits/attempt-inventory.md](audits/attempt-inventory.md) | Ledger size, hash checks and count checks |
 | [audits/hash-and-count-check.json](audits/hash-and-count-check.json) | Checker output from the original host |
 | [audits/regrade.md](audits/regrade.md) | The re-grade of all 68 retained attempts |
+| [audits/rubric.md](audits/rubric.md) | The scoring rubric behind every changed verdict, with a checker that re-derives the round-1 verdicts |
 | [audits/damage-probes.md](audits/damage-probes.md) | One-byte damage probes on each retained program |
 | [audits/damage-evidence.json](audits/damage-evidence.json) | Per-attempt damage probe data |
 | [audits/gate-coverage.md](audits/gate-coverage.md) | Summary of the clause coverage table |

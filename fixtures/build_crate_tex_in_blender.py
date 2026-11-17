@@ -4,7 +4,7 @@
     blender --background --factory-startup --python build_crate_tex_in_blender.py -- \
         --src crate-v1.werk --out crate-tex-v1.werk \
         --albedo a.png --normal n.png --mr mr.png \
-        --addon <repo>/adapters/blender --report report.json
+        --addon <repo>/plugins/blender --report report.json
 
 `--factory-startup` for the same reason the Stage 11 gate uses it: no user
 add-on or preference may contribute to a fixture's bytes.

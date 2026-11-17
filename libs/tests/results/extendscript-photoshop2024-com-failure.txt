@@ -1,0 +1,26 @@
+﻿powershell : New-Object : Retrieving the COM class factory for component with CLSID 
+{DD6CF2ED-4840-40A1-A393-B1F74F54D59A} 
+At line:1 char:302
++ ... tch {} } }; powershell -NoProfile -ExecutionPolicy Bypass -File <libs> ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (New-Object : Re...-B1F74F54D59A} :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+failed due to the following error: 80080005 Server execution failed (Exception from HRESULT: 0x80080005 
+(CO_E_SERVER_EXEC_FAILURE)).
+At <libs>\js\tests\run_extendscript.ps1:10 char:8
++ $app = New-Object -ComObject $ProgId
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (:) [New-Object], COMException
+    + FullyQualifiedErrorId : NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand
+ 
+You cannot call a method on a null-valued expression.
+At <libs>\js\tests\run_extendscript.ps1:13 char:1
++ $result = $app.DoJavaScript($code)
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (:) [], RuntimeException
+    + FullyQualifiedErrorId : InvokeMethodOnNull
+ 
+host=Photoshop.Application.180 total_ms=10 
+the host was already running before this script; left it open
+Start-Process 'C:\Program Files\Adobe\Adobe Photoshop 2024\Photoshop.exe' -> process exited after <45 s with exit code 1 (2026-11-07)

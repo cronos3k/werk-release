@@ -118,6 +118,7 @@ def spec_sha256_of_dir(root, prefix="spec/"):
     base = root if os.path.basename(root) == "spec" else os.path.join(root, "spec")
     out = {}
     for dirpath, _dirs, names in os.walk(base):
+        _dirs.sort()  # else the filesystem's order (ext4: hash order)
         for nm in sorted(names):
             if nm.endswith(".pyc"):
                 continue

@@ -1,0 +1,21 @@
+x.gridcraft.source.media — a picture's original bytes in a format this profile does not define
+==============================================================================================
+
+One file, `x/gridcraft/media/<hash>.bin`: the bytes of a picture exactly as the application
+received them (for example a picture in a format of some other application, taken from an
+imported spreadsheet file). They are carried VERBATIM, never re-encoded, so that exporting the
+workbook to its source format again loses nothing.
+
+What the bytes are:
+
+  * Their media type is the `mime` field of the picture record that names this node — in the
+    sheet node's `images` or `cell_pictures` list (spec/schemas/core.sheet.sheet.schema.json) —
+    and, where it is a well-formed type, the `media_type` of this node's file in MANIFEST.json.
+  * `<hash>` is a prefix of the sha256 of the bytes; the node id is `media-<hash>`.
+  * This profile carries NO definition of that format. That is why this node is in the
+    extension namespace: a picture in a format whose definition travels in the package (PNG,
+    JPEG, GIF, BMP, TIFF, EMF, WMF) is a core node instead (spec/PROFILE-SPREADSHEET.md section 3.6).
+
+What a reader does: one that knows the format named by `mime` may decode the bytes; any other
+reader skips this node. The picture's position, size and alternative text are in the sheet
+node and survive either way. Nothing in these bytes is executed or fetched.

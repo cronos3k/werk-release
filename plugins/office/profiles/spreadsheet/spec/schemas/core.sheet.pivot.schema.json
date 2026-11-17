@@ -1,0 +1,380 @@
+{
+  "$defs": {
+    "cell_ref": {
+      "additionalProperties": false,
+      "description": "One cell of the grid, by ZERO-BASED row and column: the cell written `A1` is {\"row\": 0, \"col\": 0}, `C7` is {\"row\": 6, \"col\": 2}.",
+      "properties": {
+        "col": {
+          "description": "Zero-based column index, 0..16383 (the grid has 16,384 columns; column 0 is `A`, 25 is `Z`, 26 is `AA`).",
+          "maximum": 16383,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "row": {
+          "description": "Zero-based row index, 0..1048575 (the grid has 1,048,576 rows).",
+          "maximum": 1048575,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "row",
+        "col"
+      ],
+      "type": "object"
+    },
+    "color": {
+      "description": "A colour: automatic, an explicit RGB value, or a slot of the workbook theme with a tint.",
+      "oneOf": [
+        {
+          "const": "Auto",
+          "description": "Automatic: black for text and lines, no fill for fills."
+        },
+        {
+          "additionalProperties": false,
+          "description": "An explicit sRGB colour.",
+          "properties": {
+            "Rgb": {
+              "description": "0xRRGGBB packed in one integer: red*65536 + green*256 + blue, each component 0..255, sRGB.",
+              "maximum": 16777215,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Rgb"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A theme colour with a tint.",
+          "properties": {
+            "Theme": {
+              "description": "[slot, tint]. slot: index 0..255 into `theme.colors` of the styles node (0 = light 1 / background, 1 = dark 1 / text, 2 = light 2, 3 = dark 2, 4..9 = accent 1..6, 10 = hyperlink, 11 = followed hyperlink; a slot beyond 11 resolves to black). tint: -1000..1000 thousandths; 0 = the theme colour itself. To resolve: convert the theme colour to HSL; if tint < 0 then L' = L * (1 + tint/1000), else L' = L * (1 - tint/1000) + tint/1000; convert back to RGB.",
+              "items": {
+                "maximum": 32767,
+                "minimum": -32768,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "Theme"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "range_ref": {
+      "additionalProperties": false,
+      "description": "A rectangle of cells, both corners INCLUDED. `start` is the top-left corner and `end` the bottom-right one (start.row <= end.row and start.col <= end.col; a reader that finds them swapped swaps them back). A whole row spans columns 0..16383; a whole column spans rows 0..1048575.",
+      "properties": {
+        "end": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Bottom-right cell."
+        },
+        "start": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Top-left cell."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.sheet.pivot.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One PivotTable (node type core.sheet.pivot): its DEFINITION. The report it produces is ordinary cell values on its sheet, written by the last refresh and stored with the sheet's cells; a reader that does not implement pivots still reads those values.",
+  "properties": {
+    "anchor": {
+      "$ref": "#/$defs/cell_ref",
+      "description": "Top-left cell of the report body on the pivot's sheet."
+    },
+    "calculated_fields": {
+      "description": "Calculated fields, usable in the Values area by name.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One calculated field. It is evaluated on the SUMS of the fields it names, per report cell.",
+        "properties": {
+          "formula": {
+            "description": "Its formula, starting with `=`, e.g. `=Sales*0.1`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "name": {
+            "description": "Its name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "columns": {
+      "description": "Fields in the Columns area, outermost first.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A field placed in the Rows or Columns area.",
+        "properties": {
+          "collapsed_items": {
+            "description": "Labels of the items whose detail is hidden.",
+            "items": {
+              "description": "One item label. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "date_group": {
+            "description": "Grouping of a date field (the values are date serial numbers).",
+            "enum": [
+              "None",
+              "Years",
+              "Quarters",
+              "Months",
+              "Days"
+            ],
+            "type": "string"
+          },
+          "sort": {
+            "description": "Order of the items; None = order of first appearance in the source.",
+            "enum": [
+              "Asc",
+              "Desc",
+              "None"
+            ],
+            "type": "string"
+          },
+          "source_col": {
+            "description": "Header name of the source column. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "filters": {
+      "description": "Report filters (and, for a field that is also in Rows or Columns, its hidden items).",
+      "items": {
+        "additionalProperties": false,
+        "description": "One filter.",
+        "properties": {
+          "selected": {
+            "anyOf": [
+              {
+                "description": "Shown items.",
+                "items": {
+                  "description": "One item label. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The item labels shown; `null` = all."
+          },
+          "source_col": {
+            "description": "Header name of the source column. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "grand_totals_cols": {
+      "description": "A Grand Total row (a total for each column).",
+      "type": "boolean"
+    },
+    "grand_totals_rows": {
+      "description": "A Grand Total column (a total for each row).",
+      "type": "boolean"
+    },
+    "id": {
+      "description": "Object id, unique among the objects of the workbook.",
+      "maximum": 4294967295,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "last_range": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/range_ref"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The cells the last refresh wrote; `null` = never refreshed."
+    },
+    "layout": {
+      "description": "Compact: all row fields in one column, indented. Outline: one column per row field. Tabular: one column per row field, totals below.",
+      "enum": [
+        "Compact",
+        "Outline",
+        "Tabular"
+      ],
+      "type": "string"
+    },
+    "name": {
+      "description": "PivotTable name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "rows": {
+      "description": "Fields in the Rows area, outermost first.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A field placed in the Rows or Columns area.",
+        "properties": {
+          "collapsed_items": {
+            "description": "Labels of the items whose detail is hidden.",
+            "items": {
+              "description": "One item label. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "date_group": {
+            "description": "Grouping of a date field (the values are date serial numbers).",
+            "enum": [
+              "None",
+              "Years",
+              "Quarters",
+              "Months",
+              "Days"
+            ],
+            "type": "string"
+          },
+          "sort": {
+            "description": "Order of the items; None = order of first appearance in the source.",
+            "enum": [
+              "Asc",
+              "Desc",
+              "None"
+            ],
+            "type": "string"
+          },
+          "source_col": {
+            "description": "Header name of the source column. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "show_headers": {
+      "description": "Field headers are shown.",
+      "type": "boolean"
+    },
+    "source": {
+      "description": "The source data: range text (`Sheet1!$A$1:$E$200`), a table name or a defined name. Its first row holds the column headers. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "style": {
+      "description": "PivotTable style name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "subtotals": {
+      "description": "Subtotals are shown for groups.",
+      "type": "boolean"
+    },
+    "subtotals_top": {
+      "description": "Subtotals are at the top of each group (Compact and Outline); otherwise below.",
+      "type": "boolean"
+    },
+    "values": {
+      "description": "Fields in the Values area.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One value field.",
+        "properties": {
+          "func": {
+            "description": "How the records of a report cell are summarised.",
+            "enum": [
+              "Sum",
+              "Count",
+              "Average",
+              "Max",
+              "Min",
+              "Product",
+              "CountNumbers",
+              "StdDev",
+              "StdDevP",
+              "Var",
+              "VarP"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "description": "Caption, e.g. `Sum of Sales`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "number_format": {
+            "description": "Number format code of the values; `null` = General. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "show_as": {
+            "description": "A transformation of the summarised value.",
+            "enum": [
+              "Normal",
+              "PercentOfGrandTotal",
+              "PercentOfColumnTotal",
+              "PercentOfRowTotal",
+              "RunningTotal",
+              "Rank"
+            ],
+            "type": "string"
+          },
+          "source_col": {
+            "description": "Header name of the source column, or the name of a calculated field. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "core.sheet.pivot - one PivotTable definition",
+  "type": "object"
+}

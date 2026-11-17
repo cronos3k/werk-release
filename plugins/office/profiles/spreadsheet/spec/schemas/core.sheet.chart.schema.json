@@ -1,0 +1,508 @@
+{
+  "$defs": {
+    "anchor": {
+      "additionalProperties": false,
+      "description": "Where a floating object sits: the top-left corner is `dx`,`dy` from the top-left corner of `cell`; the size is `width` x `height`. All four in points (1/72 inch), x to the right, y downwards.",
+      "properties": {
+        "cell": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "The cell the object is pinned to."
+        },
+        "dx": {
+          "description": "Horizontal offset from the cell's left edge, points.",
+          "type": "number"
+        },
+        "dy": {
+          "description": "Vertical offset from the cell's top edge, points.",
+          "type": "number"
+        },
+        "height": {
+          "description": "Height, points.",
+          "type": "number"
+        },
+        "mode": {
+          "description": "What happens when rows or columns under the object move or resize. MoveAndSize: it moves and stretches with them. MoveOnly: it moves, keeps its size. Absolute: it stays where it is on the sheet.",
+          "enum": [
+            "MoveAndSize",
+            "MoveOnly",
+            "Absolute"
+          ],
+          "type": "string"
+        },
+        "width": {
+          "description": "Width, points.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "cell",
+        "dx",
+        "dy",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "cell_ref": {
+      "additionalProperties": false,
+      "description": "One cell of the grid, by ZERO-BASED row and column: the cell written `A1` is {\"row\": 0, \"col\": 0}, `C7` is {\"row\": 6, \"col\": 2}.",
+      "properties": {
+        "col": {
+          "description": "Zero-based column index, 0..16383 (the grid has 16,384 columns; column 0 is `A`, 25 is `Z`, 26 is `AA`).",
+          "maximum": 16383,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "row": {
+          "description": "Zero-based row index, 0..1048575 (the grid has 1,048,576 rows).",
+          "maximum": 1048575,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "row",
+        "col"
+      ],
+      "type": "object"
+    },
+    "color": {
+      "description": "A colour: automatic, an explicit RGB value, or a slot of the workbook theme with a tint.",
+      "oneOf": [
+        {
+          "const": "Auto",
+          "description": "Automatic: black for text and lines, no fill for fills."
+        },
+        {
+          "additionalProperties": false,
+          "description": "An explicit sRGB colour.",
+          "properties": {
+            "Rgb": {
+              "description": "0xRRGGBB packed in one integer: red*65536 + green*256 + blue, each component 0..255, sRGB.",
+              "maximum": 16777215,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Rgb"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A theme colour with a tint.",
+          "properties": {
+            "Theme": {
+              "description": "[slot, tint]. slot: index 0..255 into `theme.colors` of the styles node (0 = light 1 / background, 1 = dark 1 / text, 2 = light 2, 3 = dark 2, 4..9 = accent 1..6, 10 = hyperlink, 11 = followed hyperlink; a slot beyond 11 resolves to black). tint: -1000..1000 thousandths; 0 = the theme colour itself. To resolve: convert the theme colour to HSL; if tint < 0 then L' = L * (1 + tint/1000), else L' = L * (1 - tint/1000) + tint/1000; convert back to RGB.",
+              "items": {
+                "maximum": 32767,
+                "minimum": -32768,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "Theme"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "range_ref": {
+      "additionalProperties": false,
+      "description": "A rectangle of cells, both corners INCLUDED. `start` is the top-left corner and `end` the bottom-right one (start.row <= end.row and start.col <= end.col; a reader that finds them swapped swaps them back). A whole row spans columns 0..16383; a whole column spans rows 0..1048575.",
+      "properties": {
+        "end": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Bottom-right cell."
+        },
+        "start": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Top-left cell."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.sheet.chart.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One chart (node type core.sheet.chart). The chart is described, not drawn: it names the cell ranges it plots, and a reader draws it from the cells.",
+  "properties": {
+    "anchor": {
+      "$ref": "#/$defs/anchor",
+      "description": "Where the chart floats on its sheet."
+    },
+    "by_rows": {
+      "description": "The series are the ROWS of `source` (false: its columns).",
+      "type": "boolean"
+    },
+    "data_labels": {
+      "description": "Values are written beside the data points.",
+      "type": "boolean"
+    },
+    "gridlines": {
+      "description": "Major gridlines of the value axis are drawn.",
+      "type": "boolean"
+    },
+    "id": {
+      "description": "Object id, unique among the objects of the workbook.",
+      "maximum": 4294967295,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "kind": {
+      "description": "The chart type. Column = vertical bars, Bar = horizontal bars; Stacked100 = stacked to 100%. Combo: each series says how it is drawn.",
+      "enum": [
+        "ColumnClustered",
+        "ColumnStacked",
+        "ColumnStacked100",
+        "BarClustered",
+        "BarStacked",
+        "BarStacked100",
+        "Line",
+        "LineMarkers",
+        "LineStacked",
+        "Pie",
+        "Doughnut",
+        "Area",
+        "AreaStacked",
+        "Scatter",
+        "ScatterLines",
+        "Bubble",
+        "Radar",
+        "Histogram",
+        "Waterfall",
+        "Funnel",
+        "Treemap",
+        "Sunburst",
+        "BoxWhisker",
+        "Stock",
+        "Combo"
+      ],
+      "type": "string"
+    },
+    "legend": {
+      "description": "Legend position; None = no legend.",
+      "enum": [
+        "None",
+        "Bottom",
+        "Top",
+        "Left",
+        "Right"
+      ],
+      "type": "string"
+    },
+    "pivot": {
+      "description": "For a PivotChart: its PivotTable as `SheetName!PivotTableName`; the series are rebuilt from that report. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "series": {
+      "description": "The data series, in plot order.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One series.",
+        "properties": {
+          "bubble_sizes": {
+            "description": "Bubble charts: the bubble sizes as reference text. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "categories": {
+            "description": "The category labels (x values for scatter and bubble charts) as reference text, e.g. `Sheet1!$A$2:$A$9`. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/color"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Series colour; `null` = automatic (from the chart style)."
+          },
+          "kind": {
+            "description": "Combo charts: how this series is drawn; `null` = like the chart.",
+            "enum": [
+              "ColumnClustered",
+              "ColumnStacked",
+              "ColumnStacked100",
+              "BarClustered",
+              "BarStacked",
+              "BarStacked100",
+              "Line",
+              "LineMarkers",
+              "LineStacked",
+              "Pie",
+              "Doughnut",
+              "Area",
+              "AreaStacked",
+              "Scatter",
+              "ScatterLines",
+              "Bubble",
+              "Radar",
+              "Histogram",
+              "Waterfall",
+              "Funnel",
+              "Treemap",
+              "Sunburst",
+              "BoxWhisker",
+              "Stock",
+              "Combo",
+              null
+            ]
+          },
+          "name": {
+            "description": "Series name: a cell reference as text (`Sheet1!$B$1`) or a literal. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "secondary": {
+            "description": "Combo charts: drawn against the secondary value axis.",
+            "type": "boolean"
+          },
+          "smooth": {
+            "description": "Line segments are drawn as a smoothed curve.",
+            "type": "boolean"
+          },
+          "trendlines": {
+            "description": "Trendlines fitted to the series.",
+            "items": {
+              "additionalProperties": false,
+              "description": "One trendline.",
+              "properties": {
+                "backward": {
+                  "description": "Forecast before the first point, in x units.",
+                  "type": "number"
+                },
+                "color": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/$defs/color"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Line colour; `null` = the series colour."
+                },
+                "dash": {
+                  "description": "Line dash (the DrawingML preset dashes); `null` = default.",
+                  "enum": [
+                    "Solid",
+                    "Dot",
+                    "Dash",
+                    "LgDash",
+                    "DashDot",
+                    "LgDashDot",
+                    "LgDashDotDot",
+                    "SysDash",
+                    "SysDot",
+                    "SysDashDot",
+                    "SysDashDotDot",
+                    null
+                  ]
+                },
+                "display_equation": {
+                  "description": "The equation is shown on the chart.",
+                  "type": "boolean"
+                },
+                "display_r_squared": {
+                  "description": "R squared is shown on the chart.",
+                  "type": "boolean"
+                },
+                "forward": {
+                  "description": "Forecast beyond the last point, in x units.",
+                  "type": "number"
+                },
+                "intercept": {
+                  "description": "Fixed y value at x = 0; `null` = fitted.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "kind": {
+                  "description": "The regression.",
+                  "oneOf": [
+                    {
+                      "description": "Linear y = m*x + b; Exponential y = c*e^(b*x); Logarithmic y = c*ln(x) + b; Power y = c*x^b.",
+                      "enum": [
+                        "Linear",
+                        "Exponential",
+                        "Logarithmic",
+                        "Power"
+                      ]
+                    },
+                    {
+                      "additionalProperties": false,
+                      "description": "Polynomial.",
+                      "properties": {
+                        "Polynomial": {
+                          "description": "Order of the polynomial, 2..6.",
+                          "maximum": 255,
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "Polynomial"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "additionalProperties": false,
+                      "description": "Moving average.",
+                      "properties": {
+                        "MovingAverage": {
+                          "description": "Number of consecutive points averaged, 2..255.",
+                          "maximum": 4294967295,
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "MovingAverage"
+                      ],
+                      "type": "object"
+                    }
+                  ]
+                },
+                "name": {
+                  "description": "Legend name; `null` = automatic. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "width": {
+                  "description": "Line width in points; `null` = default.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "kind",
+                "name",
+                "forward",
+                "backward",
+                "intercept",
+                "display_equation",
+                "display_r_squared",
+                "color",
+                "width",
+                "dash"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "values": {
+            "description": "The plotted values as reference text, e.g. `Sheet1!$B$2:$B$9`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "categories",
+          "values",
+          "bubble_sizes",
+          "color",
+          "secondary",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "source": {
+      "description": "The range the chart was created from, as reference text. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "style": {
+      "description": "Number of the chart style (colour scheme) in the application's gallery.",
+      "maximum": 4294967295,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "title": {
+      "description": "Chart title. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "x_title": {
+      "description": "Title of the category (x) axis. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "y_title": {
+      "description": "Title of the value (y) axis. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "kind",
+    "anchor",
+    "title",
+    "series",
+    "legend",
+    "data_labels",
+    "gridlines",
+    "style",
+    "x_title",
+    "y_title",
+    "source",
+    "by_rows"
+  ],
+  "title": "core.sheet.chart - one chart",
+  "type": "object"
+}

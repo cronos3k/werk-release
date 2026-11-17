@@ -1,0 +1,108 @@
+{
+  "$id": "https://werk.format/spec/schemas/core.sheet.external-values.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Cached values of cells of OTHER workbooks that this document's formulas refer to (node type core.sheet.external-values, node_id `external-values`). A formula such as `[1]Sheet1!$A$1` reads cell A1 of sheet Sheet1 of external workbook number 1. That workbook is NOT part of this file and can never be fetched from it (law 1): what travels is the values the application last saw, here. This node is DERIVED from the preserved source part and is stamped `measured`.",
+  "properties": {
+    "books": {
+      "description": "The external workbooks, in the order formulas number them.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One external workbook.",
+        "properties": {
+          "number": {
+            "description": "The number formulas use for this workbook: 1 for `[1]`, 2 for `[2]`, ...",
+            "maximum": 4294967295,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "origin": {
+            "description": "Where the other workbook was when the values were cached, as recorded by the application that cached them. A NOTE about provenance only: nothing in this document depends on it, and a reader MUST NOT try to open it.",
+            "format": "werk-provenance-note",
+            "type": "string"
+          },
+          "sheets": {
+            "description": "The sheets of the external workbook for which values are cached.",
+            "items": {
+              "additionalProperties": false,
+              "description": "One external sheet.",
+              "properties": {
+                "cells": {
+                  "description": "The cached cells, in the order of the source part.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "One cached cell.",
+                    "properties": {
+                      "kind": {
+                        "description": "The type of `value`: number (a JSON number), text (a string), boolean (true/false), error (a string such as `#N/A`), empty (null).",
+                        "enum": [
+                          "number",
+                          "text",
+                          "boolean",
+                          "error",
+                          "empty"
+                        ],
+                        "type": "string"
+                      },
+                      "ref": {
+                        "description": "The cell's address in A1 notation (ONE-BASED row number).",
+                        "pattern": "^[A-Z]{1,3}[1-9][0-9]{0,6}$",
+                        "type": "string"
+                      },
+                      "value": {
+                        "description": "The cached value. Content, never a reference.",
+                        "format": "werk-content-text",
+                        "type": [
+                          "number",
+                          "string",
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "ref",
+                      "kind",
+                      "value"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "description": "The sheet's name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name",
+                "cells"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "number",
+          "origin",
+          "sheets"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "books"
+  ],
+  "title": "core.sheet.external-values - cached values of external workbooks",
+  "type": "object"
+}

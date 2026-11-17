@@ -1,0 +1,295 @@
+{
+  "$id": "https://werk.format/spec/schemas/x.gridcraft.ooxml.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Index of content GridCraft read from an OOXML (.xlsx/.xlsm) file, does not model, and carries VERBATIM so that exporting to OOXML again loses nothing (node type x.gridcraft.ooxml). The parts are opaque to this profile: custom XML, external-link records, connections, query tables, printer settings, form controls, OLE objects and their preview images, and similar. Each part's bytes are a separate file of this node. A reader that does not write OOXML skips this node and loses nothing of the spreadsheet. NOTHING here is executed or fetched.",
+  "properties": {
+    "elements": {
+      "description": "Raw XML elements of the owning part that refer to kept parts by relationship id.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One kept element.",
+        "properties": {
+          "slot": {
+            "description": "Where in the owning part it belongs, e.g. `externalReferences`, `oleObjects`, `controls`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "xml": {
+            "description": "The element as XML text, with the namespace declarations it needs. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slot",
+          "xml"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "owner": {
+      "description": "What the content belongs to: the workbook (which also holds package-level content) or one sheet.",
+      "enum": [
+        "workbook",
+        "sheet"
+      ],
+      "type": "string"
+    },
+    "package_rels": {
+      "description": "Relationships of the source package root to kept parts (workbook owner only).",
+      "items": {
+        "additionalProperties": false,
+        "description": "An OPC relationship (ECMA-376 Part 2) from the owner, or from a kept part, to a kept part or to something outside the source file.",
+        "properties": {
+          "external": {
+            "description": "true: the target is outside the source file.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "The relationship id in the source file, e.g. `rId7`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "rel_type": {
+            "description": "The relationship type URI. An identifier, never fetched. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "target": {
+            "description": "For an internal relationship: the `name` of the kept part it points to. For an external one (`external` true): the raw target recorded in the source file - a URL or a path on the computer that wrote it. A NOTE: this document does not depend on it and a reader MUST NOT open it. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "rel_type",
+          "target",
+          "external"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "parts": {
+      "description": "Every kept part.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One kept OPC part.",
+        "properties": {
+          "content_type": {
+            "description": "The part's content type in the source package. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "file_name": {
+            "description": "The file of THIS node that holds the part's bytes verbatim: the file of this node whose path ends in `/` + this name (for example `part-0001.bin`), in the same directory as this index.",
+            "pattern": "^(part-[0-9]{4,}|vml)\\.bin$",
+            "type": "string"
+          },
+          "name": {
+            "description": "The part's name in the source OOXML package, without a leading `/`, e.g. `xl/ctrlProps/ctrlProp1.xml`. A name inside the SOURCE package, not a path in this package. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "rels": {
+            "description": "The part's own relationships, ids unchanged (the part's bytes refer to them).",
+            "items": {
+              "additionalProperties": false,
+              "description": "An OPC relationship (ECMA-376 Part 2) from the owner, or from a kept part, to a kept part or to something outside the source file.",
+              "properties": {
+                "external": {
+                  "description": "true: the target is outside the source file.",
+                  "type": "boolean"
+                },
+                "id": {
+                  "description": "The relationship id in the source file, e.g. `rId7`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "rel_type": {
+                  "description": "The relationship type URI. An identifier, never fetched. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "target": {
+                  "description": "For an internal relationship: the `name` of the kept part it points to. For an external one (`external` true): the raw target recorded in the source file - a URL or a path on the computer that wrote it. A NOTE: this document does not depend on it and a reader MUST NOT open it. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "rel_type",
+                "target",
+                "external"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "sha256": {
+            "description": "Lowercase hex sha256 of the part's bytes.",
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "size": {
+            "description": "Size of the part in bytes.",
+            "maximum": 9007199254740991,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "content_type",
+          "file_name",
+          "size",
+          "sha256",
+          "rels"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "rels": {
+      "description": "Relationships of the owning workbook or sheet part to kept parts.",
+      "items": {
+        "additionalProperties": false,
+        "description": "An OPC relationship (ECMA-376 Part 2) from the owner, or from a kept part, to a kept part or to something outside the source file.",
+        "properties": {
+          "external": {
+            "description": "true: the target is outside the source file.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "The relationship id in the source file, e.g. `rId7`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "rel_type": {
+            "description": "The relationship type URI. An identifier, never fetched. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "target": {
+            "description": "For an internal relationship: the `name` of the kept part it points to. For an external one (`external` true): the raw target recorded in the source file - a URL or a path on the computer that wrote it. A NOTE: this document does not depend on it and a reader MUST NOT open it. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "rel_type",
+          "target",
+          "external"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "vml": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "One kept OPC part.",
+          "properties": {
+            "content_type": {
+              "description": "The part's content type in the source package. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "file_name": {
+              "description": "The file of THIS node that holds the part's bytes verbatim: the file of this node whose path ends in `/` + this name (for example `part-0001.bin`), in the same directory as this index.",
+              "pattern": "^(part-[0-9]{4,}|vml)\\.bin$",
+              "type": "string"
+            },
+            "name": {
+              "description": "The part's name in the source OOXML package, without a leading `/`, e.g. `xl/ctrlProps/ctrlProp1.xml`. A name inside the SOURCE package, not a path in this package. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "rels": {
+              "description": "The part's own relationships, ids unchanged (the part's bytes refer to them).",
+              "items": {
+                "additionalProperties": false,
+                "description": "An OPC relationship (ECMA-376 Part 2) from the owner, or from a kept part, to a kept part or to something outside the source file.",
+                "properties": {
+                  "external": {
+                    "description": "true: the target is outside the source file.",
+                    "type": "boolean"
+                  },
+                  "id": {
+                    "description": "The relationship id in the source file, e.g. `rId7`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  },
+                  "rel_type": {
+                    "description": "The relationship type URI. An identifier, never fetched. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  },
+                  "target": {
+                    "description": "For an internal relationship: the `name` of the kept part it points to. For an external one (`external` true): the raw target recorded in the source file - a URL or a path on the computer that wrote it. A NOTE: this document does not depend on it and a reader MUST NOT open it. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "id",
+                  "rel_type",
+                  "target",
+                  "external"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "sha256": {
+              "description": "Lowercase hex sha256 of the part's bytes.",
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "size": {
+              "description": "Size of the part in bytes.",
+              "maximum": 9007199254740991,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "name",
+            "content_type",
+            "file_name",
+            "size",
+            "sha256",
+            "rels"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The sheet's legacy VML drawing part, kept when kept elements need its shapes; `null` = none. Its bytes are the file `vml.bin` of this node."
+    }
+  },
+  "required": [
+    "schema_version",
+    "owner",
+    "package_rels",
+    "rels",
+    "parts",
+    "elements",
+    "vml"
+  ],
+  "title": "x.gridcraft.ooxml - OOXML content preserved verbatim",
+  "type": "object"
+}

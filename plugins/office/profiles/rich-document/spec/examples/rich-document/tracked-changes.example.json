@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "author": "An Author",
+      "date": "2026-03-02T09:00:00Z",
+      "id": 0,
+      "kind": "insert"
+    }
+  ],
+  "schema_version": 1
+}

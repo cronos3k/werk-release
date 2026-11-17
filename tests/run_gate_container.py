@@ -70,6 +70,31 @@ def rewrite(src, dst, method_for):
             zout.writestr(zi, zin.read(info.filename))
 
 
+def sentinel_local_headers(path):
+    """Make every LOCAL header of `path` carry zip64 sentinel sizes (version
+    45, compressed and uncompressed size 0xFFFFFFFF) over the zip64 extra
+    record the writer already put there, and leave the central directory
+    alone. CPython 3.11+ writes exactly this for `force_zip64=True` on a small
+    entry; CPython 3.10 and earlier write the same 0x0001 extra record but
+    keep version 20 and the real sizes (measured: 3.10.0 vs 3.12.8), so the
+    file this clause tests depended on the interpreter running the gate
+    (finding N11). The bytes are now the same whichever Python built them."""
+    blob = bytearray(open(path, "rb").read())
+    e = blob.rfind(b"PK\x05\x06")
+    count, _size, cd = struct.unpack_from("<HII", blob, e + 10)
+    p = cd
+    for _ in range(count):
+        nlen, xlen, klen = struct.unpack_from("<HHH", blob, p + 28)
+        lho = struct.unpack_from("<I", blob, p + 42)[0]
+        lnl, lxl = struct.unpack_from("<HH", blob, lho + 26)
+        extra = bytes(blob[lho + 30 + lnl:lho + 30 + lnl + lxl])
+        if extra[:2] == b"\x01\x00":                 # the zip64 extra record
+            struct.pack_into("<H", blob, lho + 4, 45)
+            struct.pack_into("<II", blob, lho + 18, 0xFFFFFFFF, 0xFFFFFFFF)
+        p += 46 + nlen + xlen + klen
+    open(path, "wb").write(bytes(blob))
+
+
 def break_stream(src, dst, name):
     """Make one entry's deflate stream undecodable: its first block header
     becomes BTYPE 11, which RFC 1951 reserves. Sizes and CRC stay as declared,
@@ -164,6 +189,7 @@ def main(argv=None):
                 zi = zipfile.ZipInfo(info.filename, (2026, 8, 8, 9, 0, 0))
                 with zout.open(zi, "w", force_zip64=True) as fh:
                     fh.write(zin.read(info.filename))
+    sentinel_local_headers(local)
     blob = open(local, "rb").read()
     gate.check("local-header zip64 extra: the file is what it claims",
                blob.count(b"PK\x03\x04\x2d\x00") >= 78 and b"PK\x06\x06" not in blob[-200:],

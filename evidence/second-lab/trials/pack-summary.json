@@ -1,0 +1,41 @@
+{
+ "batch2/xv-t1": 26,
+ "batch2/xv-t2": 95,
+ "batch2/xv-t3": 196,
+ "batch2/splat-t1": 95,
+ "batch2/splat-t2": 94,
+ "batch2/env-t2": 7,
+ "batch2/env-t3": 45,
+ "batch1/r1-t1": {
+  "files": 6,
+  "program": "tools/werk_reader.py",
+  "ledger_sha256": "a11136928acbce3d3cb58396d011c6aac8e4ed9e36cdceb05c48e9fefa70671c",
+  "rebuilt_sha256": "a11136928acbce3d3cb58396d011c6aac8e4ed9e36cdceb05c48e9fefa70671c",
+  "match": true,
+  "match_kind": "LF"
+ },
+ "batch1/r1-t2": {
+  "files": 8,
+  "program": "werk_open.py",
+  "ledger_sha256": "893c8b3a50e0b73fb15a9788ec309440f40f29d68c02c21e01583515a1c1b170",
+  "rebuilt_sha256": "893c8b3a50e0b73fb15a9788ec309440f40f29d68c02c21e01583515a1c1b170",
+  "match": true,
+  "match_kind": "LF"
+ },
+ "batch1/r1-t3": {
+  "files": 7,
+  "program": "werk_reader.py",
+  "ledger_sha256": "aaf8eb9940e6297ba9a2e6af3410fa8c077fd966c6396d5c95de1bb014154371",
+  "rebuilt_sha256": "aaf8eb9940e6297ba9a2e6af3410fa8c077fd966c6396d5c95de1bb014154371",
+  "match": true,
+  "match_kind": "LF"
+ },
+ "batch1/env-t1": {
+  "files": 3,
+  "program": "tools/werk_inspect.py",
+  "ledger_sha256": "38889a246c7c4c82ed47fad146885b1626d0e1c7fca03ea2a91f12441a7fad47",
+  "rebuilt_sha256": "38889a246c7c4c82ed47fad146885b1626d0e1c7fca03ea2a91f12441a7fad47",
+  "match": true,
+  "match_kind": "LF"
+ }
+}

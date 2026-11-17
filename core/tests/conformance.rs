@@ -477,6 +477,116 @@ fn signature_tampering_with_one_signature_byte_is_caught() {
     }
 }
 
+/// SPEC section 6 (finding N6, W3 tamper and damage campaigns): a
+/// SIGNATURE.json that is in the container but cannot be read is a PRESENT
+/// signature that is damaged. It used to be reported as `absent`, exit 0.
+#[test]
+fn a_damaged_signature_file_is_present_and_invalid_never_absent() {
+    for (label, bad) in [
+        ("not-json", b"{ this is not json".to_vec()),
+        ("not-utf8", vec![b'{', 0xFF, 0xFE, b'}']),
+        ("not-an-object", b"[1, 2, 3]".to_vec()),
+        ("empty", Vec::new()),
+    ] {
+        let dest = tmp(&format!("sig-damaged-{label}.werk"));
+        let bad2 = bad.clone();
+        rebuild(&dest, move |name, data| {
+            if name == "SIGNATURE.json" { Some(bad2.clone()) } else { Some(data) }
+        });
+        let p = Package::open(&dest).unwrap();
+        assert!(
+            matches!(p.signature_state, SignatureState::Invalid(_)),
+            "{label}: got {:?}",
+            p.signature_state
+        );
+        assert_eq!(p.signature_state.word(), "present-and-invalid");
+        assert!(p.report.has(Code::SignatureInvalid), "{label}:
+{}", p.report);
+        assert!(!p.report.has(Code::SignatureAbsent), "{label}:
+{}", p.report);
+        assert!(p.report.errors() >= 1, "{label}: must exit 1:
+{}", p.report);
+    }
+}
+
+/// SPEC section 10.1, the `signature_algorithm` row: an algorithm this reader
+/// does not implement is `unverified` — not damage, and never
+/// `signed-and-valid` (finding N6: `"algorithm": "x-unknown"` was reported
+/// signed-and-valid on every signed fixture).
+#[test]
+fn an_unknown_signature_algorithm_is_unverified_never_valid() {
+    let dest = tmp("sig-unknown-algorithm.werk");
+    rebuild(&dest, |name, data| {
+        if name == "SIGNATURE.json" {
+            let s = String::from_utf8(data).unwrap();
+            assert!(s.contains("\"ed25519\""));
+            Some(s.replacen("\"ed25519\"", "\"x-unknown\"", 1).into_bytes())
+        } else {
+            Some(data)
+        }
+    });
+    let p = Package::open(&dest).unwrap();
+    assert!(
+        matches!(p.signature_state, SignatureState::Unverified(_)),
+        "got {:?}",
+        p.signature_state
+    );
+    assert_eq!(p.signature_state.word(), "unverified");
+    assert_eq!(p.signature_state.code(), 3);
+    assert!(p.report.has(Code::SignatureUnverified), "{}", p.report);
+    assert!(!p.report.has(Code::SignatureValid), "{}", p.report);
+    assert_eq!(p.report.errors(), 0, "not checking is not damage:
+{}", p.report);
+}
+
+/// Two central-directory records with one name: the container is refused
+/// (bad-container), because which bytes are that file cannot be decided.
+#[test]
+fn a_zip_with_two_entries_of_one_name_is_refused() {
+    let z = ZipArchive::parse(std::fs::read(fixture_zip()).unwrap()).unwrap();
+    let mut entries = Vec::new();
+    for name in z.names() {
+        let data = z.read(&name).unwrap();
+        entries.push((name, data));
+    }
+    let dup = entries.iter().find(|(n, _)| n == "README.txt").cloned()
+        .unwrap_or_else(|| entries.last().unwrap().clone());
+    entries.push((dup.0.clone(), b"other bytes".to_vec()));
+    let dest = tmp("duplicate-entry.werk");
+    std::fs::write(&dest, write_zip(&entries)).unwrap();
+    match Package::open(&dest) {
+        Err(e) => assert_eq!(e.tag(), "bad-container", "{e}"),
+        Ok(_) => panic!("a zip naming one entry twice must be refused"),
+    }
+}
+
+/// SPEC section 12.1: a node whose own structure is unusable (here: its
+/// `active` key damaged) is dead, under its id, and stays in the census.
+#[test]
+fn a_node_with_a_damaged_active_key_is_dead_not_dropped() {
+    let clean = Package::open(fixture_zip()).unwrap();
+    let n = clean.nodes.len();
+    let victim = clean.nodes[n - 1].view.node_id.clone();
+    let dest = tmp("damaged-active.werk");
+    let v2 = victim.clone();
+    rebuild(&dest, move |name, data| {
+        if name != "MANIFEST.json" {
+            return Some(data);
+        }
+        let mut m: serde_json::Value = serde_json::from_slice(&data).unwrap();
+        let nodes = m["nodes"].as_array_mut().unwrap();
+        let node = nodes.iter_mut().find(|x| x["node_id"] == v2.as_str()).unwrap();
+        let a = node.as_object_mut().unwrap().remove("active").unwrap();
+        node["activd"] = a;
+        Some(serde_json::to_vec_pretty(&m).unwrap())
+    });
+    let p = Package::open(&dest).unwrap();
+    assert_eq!(p.nodes.len(), n, "the malformed node must stay in the census");
+    let st = &p.nodes.iter().find(|x| x.view.node_id == victim).unwrap().status;
+    assert!(st.is_dead(), "{victim}: {st:?}");
+    assert!(p.report.has(Code::NodeDead), "{}", p.report);
+}
+
 #[test]
 fn signing_strips_and_resigns() {
     let mut p = Package::open(fixture_zip()).unwrap();

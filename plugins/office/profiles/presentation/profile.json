@@ -1,0 +1,113 @@
+{
+  "profile": "presentation/1",
+  "manifest_schema": "spec/schemas/manifest.presentation.schema.json",
+  "profile_spec": "spec/PROFILE-PRESENTATION.md",
+  "conventions_map": "spec/conventions-map.presentation.json",
+  "conventions": {
+    "alignment_bytes": 16,
+    "alpha_mode": "straight",
+    "angle_direction": "clockwise",
+    "angle_file_unit_per_degree": 60000,
+    "angle_unit": "degree",
+    "color_component_max": 255,
+    "color_space": "srgb",
+    "endianness": "le",
+    "excerpt_sample_format": "pcm-s16le",
+    "excerpt_seconds": 5,
+    "hash_algorithm": "sha256",
+    "id_case": "kebab-case",
+    "length_unit": "point",
+    "number_format": "shortest-round-trip-decimal",
+    "outline_line_ending": "lf",
+    "paint_order": "bottom-first",
+    "paragraph_index_base": 0,
+    "pixel_origin": "top-left",
+    "pointer_syntax": "rfc6901",
+    "points_per_inch": 72,
+    "ratio_file_unit_per_whole": 100000,
+    "show_range_base": 1,
+    "signature_algorithm": "ed25519",
+    "style_index_base": 1,
+    "text_encoding": "utf-8",
+    "time_unit": "millisecond",
+    "x_axis": "right",
+    "y_axis": "down"
+  },
+  "schemas": {
+    "core.revisions": "spec/schemas/core.revisions.schema.json",
+    "core.slide.document": "spec/schemas/core.slide.document.schema.json",
+    "core.slide.geometry": "spec/schemas/core.slide.geometry.schema.json",
+    "core.slide.layout": "spec/schemas/core.slide.layout.schema.json",
+    "core.slide.master": "spec/schemas/core.slide.master.schema.json",
+    "core.slide.slide": "spec/schemas/core.slide.slide.schema.json"
+  },
+  "layouts": {},
+  "entry_order": [
+    "MANIFEST.json",
+    "SIGNATURE.json",
+    "LICENSE",
+    "README.txt",
+    "HOW-TO-READ.md",
+    "loaders/",
+    "spec/",
+    "revisions/",
+    "deck/document.json",
+    "preview/",
+    "deck/"
+  ],
+  "preview_tier": [
+    "MANIFEST.json",
+    "SIGNATURE.json",
+    "LICENSE",
+    "README.txt",
+    "HOW-TO-READ.md",
+    "loaders/",
+    "spec/",
+    "revisions/",
+    "deck/document.json",
+    "preview/"
+  ],
+  "loader_meta": {
+    "loader-python": {
+      "capabilities": [
+        "read-manifest",
+        "verify-hashes",
+        "read-envelope",
+        "materialize"
+      ],
+      "dependencies": [],
+      "entrypoint": "loaders/werk_read.py",
+      "form": "source",
+      "language": "python",
+      "toolchain": "python>=3.8"
+    },
+    "loader-rust": {
+      "build_command": "rustc -O --edition 2021 loaders/werk_read.rs -o werk_read",
+      "capabilities": [
+        "read-manifest",
+        "verify-hashes",
+        "read-envelope",
+        "materialize"
+      ],
+      "dependencies": [],
+      "entrypoint": "loaders/werk_read.rs",
+      "form": "source",
+      "language": "rust",
+      "toolchain": "rustc>=1.70 --edition 2021"
+    },
+    "loader-c": {
+      "build_command": "cc -std=c99 -O2 loaders/werk_read.c -o werk_read",
+      "capabilities": [
+        "read-manifest",
+        "verify-hashes",
+        "read-envelope",
+        "materialize"
+      ],
+      "dependencies": [],
+      "entrypoint": "loaders/werk_read.c",
+      "form": "source",
+      "language": "c",
+      "toolchain": "c99"
+    }
+  }
+}

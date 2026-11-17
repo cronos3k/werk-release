@@ -1,0 +1,80 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.tracked-changes.schema.json",
+ "title": "core.text.tracked-changes — the table of tracked changes",
+ "description": "The tracked changes of the document (the application's change-tracking feature): one entry per (kind, author, date). Text and formatting refer to an entry by its `id` (`ins`, `del`, a formatting change's `rev`). THESE ARE DOCUMENT CONTENT. They are not the saved versions of the file: those are the werk revisions (spec/CRAFT-BASE.md section 3), which every Save appends and which no payload refers to. spec/PROFILE-RICH-DOCUMENT.md sections 3 and 4.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "changes"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "changes": {
+   "description": "The tracked changes. `id`s are 0, 1, 2 … in array order.",
+   "type": "array",
+   "items": {
+    "description": "One tracked change: who made it, when, and of what kind. (A tracked change is document CONTENT made with the application's change-tracking feature. It is not a saved version of the file; those are the werk revisions of `spec/CRAFT-BASE.md` section 3.)",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ],
+    "properties": {
+     "id": {
+      "description": "The entry's number: its index in this array (the first entry is 0). Stated explicitly so that a reference never has to be counted.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+     },
+     "kind": {
+      "description": "The kind of change.",
+      "default": "insert",
+      "$ref": "#/$defs/RevisionKind"
+     },
+     "author": {
+      "description": "Name of the person who made the change.",
+      "default": "",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "date": {
+      "description": "When the change was made, ISO 8601 (`2026-03-01T10:15:00Z`); may be empty.",
+      "default": "",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "move_name": {
+      "description": "For one end of a tracked MOVE: the name that links the source (an entry of kind `delete`) with the destination (an entry of kind `insert`). Null or absent: a plain insertion, deletion or formatting change.",
+      "default": null,
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "werk-content-text"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "RevisionKind": {
+   "description": "The kind of a tracked change. Values: `insert`: text or objects were inserted; `delete`: text or objects were deleted (they are still stored, marked as deleted); `format`: formatting was changed.",
+   "type": "string",
+   "enum": [
+    "insert",
+    "delete",
+    "format"
+   ]
+  }
+ }
+}

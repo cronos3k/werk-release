@@ -103,6 +103,7 @@ file is the reason.
 def embed_spec_and_loaders(ctx):
     spec_files = []
     for dirpath, _dirs, names in os.walk(os.path.join(ROOT, "spec")):
+        _dirs.sort()  # else the filesystem's order (ext4: hash order)
         for nm in sorted(names):
             if nm.endswith(".pyc"):
                 continue

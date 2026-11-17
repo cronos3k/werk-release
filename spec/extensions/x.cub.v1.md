@@ -33,7 +33,7 @@ Everything below follows from that one sentence.
 
 | type | payload | magic | layout grammar |
 |---|---|---|---|
-| `x.cub.v1.geom.baked` | one binary envelope | `WKX0` | `spec/layouts/x.cub.v1.baked.layout.txt` |
+| `x.cub.v1.geom.baked` | one binary envelope | `WKX0` | `spec/extensions/x.cub.v1.baked.layout.txt` |
 
 One node type today. The namespace is versioned in the type string itself
 (`x.cub.v1.*`), not only in the envelope's `version` field, so a future
@@ -43,8 +43,10 @@ applied to the extension's own evolution.
 
 ### The magic is `WKX0`, and that is not a free choice
 
-`ENVELOPE.layout.txt` §2 reserves `WKX0`..`WKX9` for extension binaries and
-lists no mechanism for registering a bespoke four-letter magic. A distinctive
+`ENVELOPE.layout.txt` §2 gives `WKX0`..`WKX9` to every binary the base
+specification does not define — a profile's own `core.*` binaries and `x.*`
+binaries alike — and lists no mechanism for registering a bespoke four-letter
+magic. A distinctive
 magic would have read better in a hex dump; the rule wins, and the header's
 mandatory `kind` key is what actually identifies the payload:
 
@@ -53,7 +55,8 @@ kind == "x.cub.v1.geom.baked"
 ```
 
 A reader MUST dispatch on `kind` and MUST NOT dispatch on the magic alone,
-because `WKX0` says only "some extension's binary".
+because `WKX0` says only "some binary the base specification does not
+define".
 
 ## 3. What the payload carries
 
@@ -133,8 +136,8 @@ as damage and mark the node dead.
 
 A conformant package with this node:
 
-1. carries `spec/layouts/x.cub.v1.baked.layout.txt` as a file of that node's
-   version (SPEC §8: an `x.*` binary MUST ship its own `*.layout.txt`);
+1. carries `spec/extensions/x.cub.v1.baked.layout.txt` (the path this
+   specification tree holds it at) as a file of that node's version (SPEC §8: an `x.*` binary MUST ship its own `*.layout.txt`);
 2. maps the node type to that path in the manifest's `layouts` block, so no
    reader derives the path from a filename convention;
 3. also carries a live `core.geom.game` node — a package whose only geometry is

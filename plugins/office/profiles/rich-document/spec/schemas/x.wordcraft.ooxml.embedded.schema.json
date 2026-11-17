@@ -1,0 +1,120 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/x.wordcraft.ooxml.embedded.schema.json",
+ "title": "x.wordcraft.ooxml.embedded — preserved WordprocessingML object markup",
+ "description": "EXTENSION node of the WordCraft application, safe to skip. Charts, diagrams, ink and embedded objects that were read from a WordprocessingML (.docx) file keep their original markup here, so that saving a .docx again reproduces them exactly. The core nodes hold everything needed to SHOW these objects (drawing items, or a picture); this node adds only the exact original. spec/layouts/x.wordcraft.ooxml.part.layout.txt describes the parts the markup refers to.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "objects"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "fragments": {
+   "description": "Small pieces of markup of another format that core payloads refer to by key (their `ooxmlSource`): content the profile does not interpret, kept verbatim so that writing the document back to that format loses nothing. A key is unique in this map; WordCraft uses the first 16 hexadecimal digits of the SHA-256 of `role`, `format` and each string of `xml`, every one followed by one line feed (UTF-8). Absent: none.",
+   "type": "object",
+   "propertyNames": {
+    "pattern": "^[0-9a-f]{16}$"
+   },
+   "additionalProperties": {
+    "description": "One piece of preserved markup.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "role",
+     "format",
+     "xml"
+    ],
+    "properties": {
+     "role": {
+      "description": "What refers to it. `inline`: an `opaque` inline object; `xml` is one string, the element(s) the object stands for (in WordprocessingML: one `w:r` run or another child of a paragraph). `equation`: an equation's `math`; one string, its `m:oMath` element. `control`: a content control; the strings are, in order, its `w:rPr` element (empty string: none), its `w:sdtEndPr` element (empty string: none), then zero or more further child elements of its `w:sdtPr`, in their original order. `property`: a custom document property of kind `raw`; one string, the XML content of its `property` element.",
+      "type": "string",
+      "enum": [
+       "inline",
+       "equation",
+       "control",
+       "property"
+      ]
+     },
+     "format": {
+      "description": "The format the markup is in: `docx` for WordprocessingML (ISO/IEC 29500-1).",
+      "type": "string"
+     },
+     "xml": {
+      "description": "The markup, verbatim; never interpreted by this profile. What each string is depends on `role`.",
+      "type": "array",
+      "items": {
+       "description": "One piece of markup (XML text), or an empty string where `role` allows one.",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    }
+   }
+  },
+  "objects": {
+   "description": "The preserved objects, by key. A key is the first 16 hexadecimal digits of the SHA-256 of the object's `xml` followed by one line feed and, for each reference in order, `id`, tab, `kind`, tab, `target`, tab, `E` or `I` (external or internal), line feed; all UTF-8.",
+   "type": "object",
+   "propertyNames": {
+    "pattern": "^[0-9a-f]{16}$"
+   },
+   "additionalProperties": {
+    "description": "One object read from a WordprocessingML file, kept so that writing such a file again reproduces it exactly.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "xml",
+     "refs"
+    ],
+    "properties": {
+     "xml": {
+      "description": "The object's own markup as one standalone XML element with its namespace declarations: the `a:graphic` of a chart, diagram or ink drawing, an `mc:AlternateContent`, or the `w:object` of an embedded (OLE) object. ISO/IEC 29500-1. Verbatim; never interpreted by this profile.",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "refs": {
+      "description": "The relationships the markup uses, in order.",
+      "type": "array",
+      "items": {
+       "description": "One relationship.",
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "id",
+        "kind",
+        "target",
+        "external"
+       ],
+       "properties": {
+        "id": {
+         "description": "The relationship id the markup uses (`rId5`).",
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        "kind": {
+         "description": "The relationship type, a URI used as a name (never fetched).",
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        "target": {
+         "description": "For an internal relationship: the package part name, which is the `name` in the descriptor of an `x.wordcraft.ooxml.part` node of this capsule. For an external relationship: a NOTE of the outside address the original file pointed at (a linked workbook, a linked picture); it is provenance and is never followed.",
+         "type": "string",
+         "format": "werk-provenance-note"
+        },
+        "external": {
+         "description": "true: the target is outside the original package (not carried); false: it is a part carried in this capsule.",
+         "type": "boolean"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

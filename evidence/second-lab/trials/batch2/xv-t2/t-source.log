@@ -1,0 +1,414 @@
+== werk_reader: t-source.werk
+
+-- self-tests (MINI-SPECS 11/12 vectors)
+  sha256/sha512 vectors: ok;  Ed25519 RFC 8032 vector 1: ok
+
+-- 1. container
+  180 entries, compression methods [0], size 13684477 bytes
+
+-- 2. MANIFEST.json
+  sha256 9e44a9484b66d893f48a13cd3b0bb252d17238e6203702b36a16ba151881728d
+  werk 1.0  profile 3d-entity/1
+  entity: Wooden crate (4f2a1c86-7b3d-4e59-9a02-6d1e8c4b0f37)
+  summary: A slatted wooden shipping crate with a complete sound world: twenty generated effects and ambiences, every take and every gate score kept. Conformance fixture #1, built from a real splat-foley run - the geometry, the views, the segment crops and every WAV are that run's actual output. Signed with a publicly derived DEV key that proves the chain works and nothing about authorship.
+  (structural check only - JSON Schema validation NOT performed; this is a bootstrap-class reader)
+
+-- 3. conventions
+  21/21 conventions supported
+
+-- 4. signature chain (SPEC 6)
+    chain[0] signer=urn:werk:dev-key:build-golden msg_sha256=fe679ff8ceae0bea0e90ebcdb1293123f033d6c5840b7c2e8a6c82eeb6845bac ok
+    note: Signed with a DEV key derived from a published sentence. It is not secret, it is not a trust anchor, and it proves only that the chain verifies.
+  signature state: signed-and-valid
+
+-- 5/6. node graph and file hashes
+  [error] hash-mismatch: geom-source - geometry/source.glb: declared e95288c4ca1b5e0742f496a6e03b02c397fc8c431191101886d8ac2b74ff251f actual 95d5ea81e64871bb657e04e866ea9d8d1a9c1befb86c7bebc9be710b57fef7c1
+  36 nodes, 178 declared files, 177 hash+size OK
+  nothing floats: every entry except MANIFEST.json/SIGNATURE.json belongs to exactly one node
+  license LICENSE (CC-BY-4.0): OK
+  spec_sha256 over 56 spec files: OK (3984a5550b8a4be95501c37544d36b90ac2f3834bdddf8007597a41405450ebd)
+  [warn ] input-hash-stale: geom-game - v1 declared a2abdc62912ecc7bd690517a3e4853a48e36131c6947195e052a99c099859311 computed 69f72d41acaa7b30780526fae8ddf3b75dd929b1501a508bb300fa00076e13cf
+  [warn ] input-hash-stale: evidence-views - v1 declared a2abdc62912ecc7bd690517a3e4853a48e36131c6947195e052a99c099859311 computed 69f72d41acaa7b30780526fae8ddf3b75dd929b1501a508bb300fa00076e13cf
+  input_hash: 23/25 versions current
+  preview_prefix_bytes (hint): declared 1144847, recomputed end of preview tier 1144847
+
+-- 7/8. node graph with meanings
+
+  geom-source  <core.geom.source>  [DEAD]  v1/1  authored  part=crate
+     means : archival source mesh (GLB); the anchor derived nodes hash against
+     note  : The mesh exactly as the splat-foley run produced it: positions, u8 vertex colours, no normals. Kept verbatim because it is the anchor every derivation is checked against, and a rewritten source is not a source.
+     made by: splat-foley 0.4
+       - geometry/source.glb  10192 B
+
+  geom-game  <core.geom.game>  [live]  v1/1  measured  part=crate
+     means : runtime mesh (GLB) with required POSITION+NORMAL
+     note  : Runtime mesh: area-weighted vertex normals computed and vertex colours converted from sRGB u8 to linear f32, because SPEC 3.10 requires NORMAL and requires COLOR_0 to be linear.
+     made by: fixtures/build_golden.py 1
+     edge  : --enhances/derived-from--> geom-source
+       - geometry/game.glb  16736 B
+
+  material-wood  <core.material>  [live]  v1/1  authored  part=crate
+     means : PBR material parameters (JSON)
+     note  : Authored PBR parameters for the crate's only material.
+     made by: fixtures/build_golden.py 1
+     edge  : --enhances/shades--> geom-game
+       - materials/wood.json  525 B
+
+  bounds  <core.phys.bounds>  [live]  v1/1  measured  part=crate
+     means : bounding volumes in model space (JSON)
+     note  : Measured bounds for culling, placement and LOD selection maths.
+     made by: fixtures/build_golden.py 1
+     edge  : --requires/bounds-of--> geom-game
+       - physics/bounds.json  654 B
+  [info ] node-extension-skipped: evidence-views - x.splat-foley.views
+
+  evidence-views  <x.splat-foley.views>  [live]  v1/1  measured
+     means : extension node (x.*): skipped for interpretation, hashes still checked
+     note  : Six orbit views rendered from the source mesh. They are the pixels the vision model actually saw, kept so the inferred description can be audited rather than trusted.
+     made by: splat-foley 0.4
+     edge  : --enhances/rendered-from--> geom-source
+     payload: none single - a 6-file collection
+       - x/splat-foley/views/view_00.png  38511 B  role=view
+       - x/splat-foley/views/view_01.png  17858 B  role=view
+       - x/splat-foley/views/view_02.png  43078 B  role=view
+       - x/splat-foley/views/view_03.png  37718 B  role=view
+       - x/splat-foley/views/view_04.png  18703 B  role=view
+       - x/splat-foley/views/view_05.png  42934 B  role=view
+  [info ] node-extension-skipped: evidence-segments - x.splat-foley.segments
+
+  evidence-segments  <x.splat-foley.segments>  [live]  v1/1  inferred conf=0.9
+     means : extension node (x.*): skipped for interpretation, hashes still checked
+     note  : SAM segment crops: the sub-object regions the description and the sound plan were derived from.
+     made by: splat-foley 0.4 (model segment-anything)
+     edge  : --requires/cropped-from--> evidence-views
+     payload: none single - a 10-file collection
+       - x/splat-foley/segments/seg_00.png  37183 B  role=crop
+       - x/splat-foley/segments/seg_01.png  2198 B  role=crop
+       - x/splat-foley/segments/seg_02.png  40526 B  role=crop
+       - x/splat-foley/segments/seg_03.png  2390 B  role=crop
+       - x/splat-foley/segments/seg_04.png  2493 B  role=crop
+       - x/splat-foley/segments/seg_05.png  1912 B  role=crop
+       ... and 4 more files
+
+  audio-package  <core.audio.package>  [live]  v1/1  inferred conf=0.75  part=crate
+     means : the sound-world index: descriptions, plan, takes, gate scores (JSON)
+     note  : The sound world index: what was described, what was planned, which takes exist and which gate scores they earned - including the ones that were rolled back.
+     made by: splat-foley 0.4 (model qwen2.5-vl-7b-instruct)
+     edge  : --enhances/described-from--> evidence-views
+     edge  : --enhances/sounds-for--> geom-game
+       - audio/package.json  44158 B
+
+  audio-crate-dragged-rough-concrete  <core.audio.effect>  [live]  v1/1  inferred conf=0.5789  part=crate
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': dragged across rough concrete. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-dragged-rough-concrete.wav  (rule 1: payload_file)
+       - audio/sfx/crate-dragged-rough-concrete.json  2028 B  role=descriptor
+       - audio/sfx/crate-dragged-rough-concrete.wav  192044 B  role=best
+       - audio/sfx/crate-dragged-rough-concrete.var2.wav  192044 B  role=variation
+       - audio/sfx/crate-dragged-rough-concrete.var3.wav  192044 B  role=variation
+
+  audio-crate-impact-hard-surface  <core.audio.effect>  [live]  v1/1  inferred conf=0.4016  part=crate
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': hit by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-impact-hard-surface.wav  (rule 1: payload_file)
+       - audio/sfx/crate-impact-hard-surface.json  1783 B  role=descriptor
+       - audio/sfx/crate-impact-hard-surface.wav  17644 B  role=best
+       - audio/sfx/crate-impact-hard-surface.raw.wav  96044 B  role=raw
+       - audio/sfx/crate-impact-hard-surface.var2.wav  96044 B  role=variation
+       - audio/sfx/crate-impact-hard-surface.var3.wav  96044 B  role=variation
+
+  audio-crate-kicked-hard  <core.audio.effect>  [live]  v1/1  inferred conf=0.3324  part=crate
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-kicked-hard.wav  (rule 1: payload_file)
+       - audio/sfx/crate-kicked-hard.json  1764 B  role=descriptor
+       - audio/sfx/crate-kicked-hard.wav  64044 B  role=best
+       - audio/sfx/crate-kicked-hard.var2.wav  64044 B  role=variation
+       - audio/sfx/crate-kicked-hard.var3.wav  64044 B  role=variation
+
+  audio-crate-scraped-edge  <core.audio.effect>  [live]  v1/1  inferred conf=0.5877  part=crate
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': scraped along edge. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-scraped-edge.wav  (rule 1: payload_file)
+       - audio/sfx/crate-scraped-edge.json  1701 B  role=descriptor
+       - audio/sfx/crate-scraped-edge.wav  160044 B  role=best
+       - audio/sfx/crate-scraped-edge.var2.wav  160044 B  role=variation
+       - audio/sfx/crate-scraped-edge.var3.wav  160044 B  role=variation
+
+  audio-crate-tipped-over  <core.audio.effect>  [live]  v1/1  inferred conf=0.5144  part=crate
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': tipped over onto side. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-tipped-over.wav  (rule 1: payload_file)
+       - audio/sfx/crate-tipped-over.json  1784 B  role=descriptor
+       - audio/sfx/crate-tipped-over.wav  106286 B  role=best
+       - audio/sfx/crate-tipped-over.raw.wav  128044 B  role=raw
+       - audio/sfx/crate-tipped-over.var2.wav  128044 B  role=variation
+       - audio/sfx/crate-tipped-over.var3.wav  128044 B  role=variation
+
+  audio-crate-set-down-hard  <core.audio.effect>  [live]  v1/1  inferred conf=0.3065  part=crate
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': set down firmly. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-set-down-hard.wav  (rule 1: payload_file)
+       - audio/sfx/crate-set-down-hard.json  1653 B  role=descriptor
+       - audio/sfx/crate-set-down-hard.wav  21164 B  role=best
+       - audio/sfx/crate-set-down-hard.raw.wav  64044 B  role=raw
+       - audio/sfx/crate-set-down-hard.var2.wav  64044 B  role=variation
+       - audio/sfx/crate-set-down-hard.var3.wav  64044 B  role=variation
+
+  audio-plank-dragged-wood-floor  <core.audio.effect>  [live]  v1/1  inferred conf=0.4592
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden plank': dragged across wooden floor. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/plank-dragged-wood-floor.wav  (rule 1: payload_file)
+       - audio/sfx/plank-dragged-wood-floor.json  1637 B  role=descriptor
+       - audio/sfx/plank-dragged-wood-floor.wav  160044 B  role=best
+       - audio/sfx/plank-dragged-wood-floor.var2.wav  160044 B  role=variation
+       - audio/sfx/plank-dragged-wood-floor.var3.wav  160044 B  role=variation
+
+  audio-plank-impact-hard-surface  <core.audio.effect>  [live]  v1/1  inferred conf=0.4574
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden plank': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/plank-impact-hard-surface.wav  (rule 1: payload_file)
+       - audio/sfx/plank-impact-hard-surface.json  2246 B  role=descriptor
+       - audio/sfx/plank-impact-hard-surface.wav  13802 B  role=best
+       - audio/sfx/plank-impact-hard-surface.raw.wav  96044 B  role=raw
+       - audio/sfx/plank-impact-hard-surface.var2.wav  96044 B  role=variation
+       - audio/sfx/plank-impact-hard-surface.var3.wav  96044 B  role=variation
+
+  audio-plank-kicked-hard  <core.audio.effect>  [live]  v1/1  inferred conf=0.3245
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden plank': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/plank-kicked-hard.wav  (rule 1: payload_file)
+       - audio/sfx/plank-kicked-hard.json  2093 B  role=descriptor
+       - audio/sfx/plank-kicked-hard.wav  128044 B  role=best
+       - audio/sfx/plank-kicked-hard.var2.wav  128044 B  role=variation
+       - audio/sfx/plank-kicked-hard.var3.wav  128044 B  role=variation
+
+  audio-plank-scraped-edge  <core.audio.effect>  [live]  v1/1  inferred conf=0.3785
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden plank': scraped along edge. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/plank-scraped-edge.wav  (rule 1: payload_file)
+       - audio/sfx/plank-scraped-edge.json  2010 B  role=descriptor
+       - audio/sfx/plank-scraped-edge.wav  51244 B  role=best
+       - audio/sfx/plank-scraped-edge.raw.wav  160044 B  role=raw
+       - audio/sfx/plank-scraped-edge.var2.wav  160044 B  role=variation
+       - audio/sfx/plank-scraped-edge.var3.wav  160044 B  role=variation
+
+  audio-corner-joined-beams  <core.audio.effect>  [live]  v1/1  inferred conf=0.4798
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate corner': pressed under load. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/corner-joined-beams.wav  (rule 1: payload_file)
+       - audio/sfx/corner-joined-beams.json  1621 B  role=descriptor
+       - audio/sfx/corner-joined-beams.wav  89964 B  role=best
+       - audio/sfx/corner-joined-beams.raw.wav  192044 B  role=raw
+       - audio/sfx/corner-joined-beams.var2.wav  192044 B  role=variation
+       - audio/sfx/corner-joined-beams.var3.wav  192044 B  role=variation
+
+  audio-beam-impact-hard-surface  <core.audio.effect>  [live]  v1/1  inferred conf=0.423
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden beam': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/beam-impact-hard-surface.wav  (rule 1: payload_file)
+       - audio/sfx/beam-impact-hard-surface.json  1740 B  role=descriptor
+       - audio/sfx/beam-impact-hard-surface.wav  38124 B  role=best
+       - audio/sfx/beam-impact-hard-surface.raw.wav  96044 B  role=raw
+       - audio/sfx/beam-impact-hard-surface.var2.wav  96044 B  role=variation
+       - audio/sfx/beam-impact-hard-surface.var3.wav  96044 B  role=variation
+
+  audio-beam-kicked-hard  <core.audio.effect>  [live]  v1/1  inferred conf=0.5301
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden beam': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/beam-kicked-hard.wav  (rule 1: payload_file)
+       - audio/sfx/beam-kicked-hard.json  1878 B  role=descriptor
+       - audio/sfx/beam-kicked-hard.wav  79084 B  role=best
+       - audio/sfx/beam-kicked-hard.raw.wav  128044 B  role=raw
+       - audio/sfx/beam-kicked-hard.var2.wav  128044 B  role=variation
+       - audio/sfx/beam-kicked-hard.var3.wav  128044 B  role=variation
+
+  audio-dowel-impact-hard-surface  <core.audio.effect>  [live]  v1/1  inferred conf=0.4871
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden dowel': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/dowel-impact-hard-surface.wav  (rule 1: payload_file)
+       - audio/sfx/dowel-impact-hard-surface.json  1850 B  role=descriptor
+       - audio/sfx/dowel-impact-hard-surface.wav  15404 B  role=best
+       - audio/sfx/dowel-impact-hard-surface.raw.wav  96044 B  role=raw
+       - audio/sfx/dowel-impact-hard-surface.var2.wav  96044 B  role=variation
+       - audio/sfx/dowel-impact-hard-surface.var3.wav  96044 B  role=variation
+
+  audio-dowel-kicked-hard  <core.audio.effect>  [live]  v1/1  inferred conf=0.6378
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden dowel': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/dowel-kicked-hard.wav  (rule 1: payload_file)
+       - audio/sfx/dowel-kicked-hard.json  1786 B  role=descriptor
+       - audio/sfx/dowel-kicked-hard.wav  57644 B  role=best
+       - audio/sfx/dowel-kicked-hard.raw.wav  128044 B  role=raw
+       - audio/sfx/dowel-kicked-hard.var2.wav  128044 B  role=variation
+       - audio/sfx/dowel-kicked-hard.var3.wav  128044 B  role=variation
+
+  audio-front-face-impact-hard-surface  <core.audio.effect>  [live]  v1/1  inferred conf=0.4019
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate front': struck by heavy object. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/front-face-impact-hard-surface.wav  (rule 1: payload_file)
+       - audio/sfx/front-face-impact-hard-surface.json  1922 B  role=descriptor
+       - audio/sfx/front-face-impact-hard-surface.wav  13164 B  role=best
+       - audio/sfx/front-face-impact-hard-surface.raw.wav  96044 B  role=raw
+       - audio/sfx/front-face-impact-hard-surface.var2.wav  96044 B  role=variation
+       - audio/sfx/front-face-impact-hard-surface.var3.wav  96044 B  role=variation
+
+  audio-front-face-kicked-hard  <core.audio.effect>  [live]  v1/1  inferred conf=0.3567
+     means : one sound effect: best take + variations + raw + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate front': kicked forcefully. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/front-face-kicked-hard.wav  (rule 1: payload_file)
+       - audio/sfx/front-face-kicked-hard.json  1855 B  role=descriptor
+       - audio/sfx/front-face-kicked-hard.wav  128044 B  role=best
+       - audio/sfx/front-face-kicked-hard.var2.wav  128044 B  role=variation
+       - audio/sfx/front-face-kicked-hard.var3.wav  128044 B  role=variation
+
+  audio-crate-wind-forest  <core.audio.ambience>  [live]  v1/1  inferred conf=0.2558  part=crate
+     means : one ambience loop: takes + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': wind blowing through gaps. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-wind-forest.wav  (rule 1: payload_file)
+       - audio/sfx/crate-wind-forest.json  1436 B  role=descriptor
+       - audio/sfx/crate-wind-forest.wav  473004 B  role=best
+       - audio/sfx/crate-wind-forest.raw.wav  480044 B  role=raw
+       - audio/sfx/crate-wind-forest.var2.wav  480044 B  role=variation
+       - audio/sfx/crate-wind-forest.var3.wav  480044 B  role=variation
+
+  audio-crate-wind-desert  <core.audio.ambience>  [live]  v1/1  inferred conf=0.3182  part=crate
+     means : one ambience loop: takes + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': wind blowing across open surface. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-wind-desert.wav  (rule 1: payload_file)
+       - audio/sfx/crate-wind-desert.json  1703 B  role=descriptor
+       - audio/sfx/crate-wind-desert.wav  473004 B  role=best
+       - audio/sfx/crate-wind-desert.raw.wav  480044 B  role=raw
+       - audio/sfx/crate-wind-desert.var2.wav  480044 B  role=variation
+       - audio/sfx/crate-wind-desert.var3.wav  480044 B  role=variation
+
+  audio-crate-wind-forest-dense  <core.audio.ambience>  [live]  v1/1  inferred conf=0.2832  part=crate
+     means : one ambience loop: takes + descriptor (WAV+JSON)
+     note  : Sound for 'wooden crate': wind blowing through dense forest. Best take plus every variation and the pre-refinement raw, so an A/B is possible from the file alone.
+     made by: splat-foley 0.4 (model stable-audio-open-1.0)
+     edge  : --enhances/sounds-for--> audio-package
+     payload: audio/sfx/crate-wind-forest-dense.wav  (rule 1: payload_file)
+       - audio/sfx/crate-wind-forest-dense.json  1529 B  role=descriptor
+       - audio/sfx/crate-wind-forest-dense.wav  480044 B  role=best
+       - audio/sfx/crate-wind-forest-dense.var2.wav  480044 B  role=variation
+       - audio/sfx/crate-wind-forest-dense.var3.wav  480044 B  role=variation
+
+  semantics  <core.semantics>  [live]  v1/1  authored
+     means : facet tags, palette, search text (JSON)
+     note  : Hand-authored facet tags, palette and search text. This node alone renders a browser listing (law 9).
+     made by: fixtures/build_golden.py 1
+     edge  : --enhances/describes--> geom-game
+       - semantics/semantics.json  2589 B
+
+  props  <core.props>  [live]  v1/1  authored
+     means : simulation properties, each value with unit and epistemic stamp (JSON)
+     note  : Authored simulation properties for the crate's wood, with every value carrying its own unit and stamp.
+     made by: fixtures/build_golden.py 1
+     edge  : --enhances/properties-of--> material-wood
+       - properties/properties.json  3470 B
+
+  provenance  <core.provenance>  [live]  v1/1  authored
+     means : producers, inputs, models, gates (JSON)
+     note  : Who made what, from what, with which models, and which gates it had to pass.
+     made by: fixtures/build_golden.py 1
+       - provenance/provenance.json  4264 B
+
+  spec  <core.spec>  [live]  v1/1  authored
+     means : the format specification travelling inside the file (law 2)
+     note  : The format specification, its schemas and its binary layout grammars, travelling inside the file it describes (law 2).
+     made by: werk 0.1
+     payload: none single - a 56-file collection
+       - spec/MINI-SPECS.md  40147 B
+       - spec/PROFILE-IMAGE.md  13274 B
+       - spec/README.md  10855 B
+       - spec/SPEC.md  104388 B
+       - spec/X-C2PA-EXPORT.md  7461 B
+       - spec/conventions-map.image.json  2416 B
+       ... and 50 more files
+
+  loader-python  <core.loader>  [live]  v1/1  authored
+     means : a bundled single-file reader program (inert data here - never run)
+     note  : A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+     made by: werk 0.1
+       - loaders/werk_read.py  42226 B
+
+  loader-rust  <core.loader>  [live]  v1/1  authored
+     means : a bundled single-file reader program (inert data here - never run)
+     note  : A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+     made by: werk 0.1
+       - loaders/werk_read.rs  98761 B
+
+  loader-c  <core.loader>  [live]  v1/1  authored
+     means : a bundled single-file reader program (inert data here - never run)
+     note  : A single-file, dependency-free reader for this package, carried as payload so the file brings its own reader (law 1).
+     made by: werk 0.1
+       - loaders/werk_read.c  111051 B
+
+  license  <core.license>  [live]  v1/1  authored
+     means : full licence text, embedded
+     note  : The full licence text, embedded, never a link (law 7).
+     made by: werk 0.1
+       - LICENSE  2132 B
+
+  readme  <core.readme>  [live]  v1/1  authored
+     means : human-readable one-pager
+     note  : One page for a human who opened this file and wants to know what it is.
+     made by: werk 0.1
+       - README.txt  1264 B
+
+-- extraction of primary.mesh and primary.sound (SPEC 2 / 2.1)
+  mesh: primary.mesh=geom-game -> geometry/game.glb (rule 2: single file)
+     wrote out-t-source\game.glb (16736 B)
+     declared sha256 eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce
+     on-disk  sha256 eee8b3cbc87703fc945555efec8fdcb0fb133f6c94cf75c8643b57189c4ef2ce  -> MATCH
+     parsed: {"bin_bytes": 15776, "primitives": [{"mode": 4, "attributes": {"POSITION": "VEC3/5126 x272", "NORMAL": "VEC3/5126 x272", "COLOR_0": "VEC4/5126 x272"}, "indices": "5125 x1224", "triangles": 408, "pos_min": [-0.5, -0.5, -0.5], "pos_max": [0.5400000214576721, 0.5400000214576721, 0.5]}]}
+  sound: primary.sound=audio-crate-impact-hard-surface -> audio/sfx/crate-impact-hard-surface.wav (rule 1: payload_file)
+     wrote out-t-source\crate-impact-hard-surface.wav (17644 B)
+     declared sha256 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e
+     on-disk  sha256 1e634f03aebdb0ee82a4c24a0174d381a0552e6dfb03e996b34de8905359aa5e  -> MATCH
+     parsed: {"format": "PCM", "channels": 1, "sample_rate": 16000, "block_align": 2, "bits": 16, "frames": 8800, "seconds": 0.55}
+
+== summary
+  signature: signed-and-valid
+  dead nodes: ['geom-source']
+  report entries: 1 error, 2 warn, 2 info
+  extracted mesh: out-t-source\game.glb  MATCH
+  extracted sound: out-t-source\crate-impact-hard-surface.wav  MATCH

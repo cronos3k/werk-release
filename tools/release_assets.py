@@ -36,6 +36,32 @@ ASSETS = [
      "listed in evidence/second-lab/roundNC/OUT-OF-GIT.txt"),
 ]
 
+#: Files the evidence refers to that this release does NOT host. Pinned by
+#: hash so a reader can check a copy obtained elsewhere; never fetched by
+#: tools/fetch_fixtures.py (their rows deliberately use a different column
+#: layout). (name, bytes or None, sha256, where it comes from, what needs it)
+EXTERNAL = [
+    ("second-lab-reruns-2026-10-12", None,
+     "ec069bba92ac9196f35465d16f2f1f91a6fdbd36abfb40cc5f70bd5462e99889",
+     "author-lab asset: a GitHub release asset published by the second lab "
+     "(Yuvraj Puyam), tag `second-lab-reruns-2026-10-12`, about 9.0 MB as "
+     "stated by its publisher. Not downloaded or verified for this release",
+     "`evidence/second-lab/audits/rubric_check.py RERUNS_DIR` (the 31 "
+     "round-1 verdicts); without it those verdicts cannot be re-derived "
+     "from this repository"),
+    ("crate-v1.werk (historical)", 13684477,
+     "0a7a7341d5d508c75925a8c3be0b6c8ccdcced607d9bdd0b26f04e264f029106",
+     "the earlier public snapshot's fixture downloads; built from an "
+     "earlier spec revision, superseded by `fixtures/crate-v1.werk` above",
+     "`evidence/second-lab/trials/check_trials.py --fixtures DIR` (the "
+     "trials ran on these bytes)"),
+    ("gsplat-v1.werk (historical)", 30235611,
+     "ede0aee6cc5659af741059b747dc3f3459db220234e7ffb95c4437c02337090a",
+     "the earlier public snapshot's fixture downloads; built from an "
+     "earlier spec revision, superseded by `fixtures/gsplat-v1.werk` above",
+     "`evidence/second-lab/trials/check_trials.py --fixtures DIR`"),
+]
+
 
 def sha256_of(p):
     h = hashlib.sha256()
@@ -63,6 +89,20 @@ def render(rows):
         L.append("| `%s` | %s | `%s` | `{RELEASE_BASE_URL}/%s` | %s |"
                  % (rel, "{:,}".format(size).replace(",", " "), sha, rel, why))
     L += ["", "%d files, %s bytes in total." % (len(rows), "{:,}".format(total).replace(",", " ")), ""]
+    L += ["## External and historical files (not hosted with this release)",
+          "",
+          "The evidence refers to these files, but this release does not host",
+          "them and `tools/fetch_fixtures.py` does not fetch them. They are",
+          "pinned so a copy obtained elsewhere can be checked",
+          "(`sha256sum`, or `certutil -hashfile <file> SHA256`).",
+          "",
+          "| name | bytes | sha256 | source | needed by |",
+          "|---|---:|---|---|---|"]
+    for name, size, sha, src, need in EXTERNAL:
+        L.append("| %s | %s | %s | %s | %s |"
+                 % (name, "not measured here" if size is None
+                    else "{:,}".format(size).replace(",", " "), sha, src, need))
+    L += [""]
     return "\n".join(L)
 
 

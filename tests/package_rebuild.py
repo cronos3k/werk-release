@@ -96,7 +96,7 @@ def make_overlay(repo_root, entries, dest):
         if nm.endswith(".py") and os.path.isfile(os.path.join(fx, nm)):
             shutil.copyfile(os.path.join(fx, nm),
                             os.path.join(dest, "fixtures", nm))
-    for d in ("tools", "store"):
+    for d in ("tools", "store", "pipeline"):   # pipeline: det_png (N3)
         shutil.copytree(os.path.join(repo_root, d), os.path.join(dest, d),
                         ignore=shutil.ignore_patterns("__pycache__", "*.werk",
                                                       "target", ".gate*"))
@@ -130,9 +130,6 @@ IMAGE_SUBSTITUTIONS = [
     "cannot be regenerated",
     "nanobanana_client.py stubbed from its evidence excerpts, to satisfy the "
     "builder's three content asserts",
-    "preview PNGs re-deflated with the interpreter's stock zlib (level 6, "
-    "memLevel 9, Z_FILTERED, 65536-byte IDAT chunks): the fixture was written "
-    "by a stock-zlib Pillow, current Pillow wheels link zlib-ng",
 ]
 
 

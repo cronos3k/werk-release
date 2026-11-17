@@ -130,7 +130,7 @@ both now closed and the gate re-run to **16 PASS / 0 FAIL**:
 **One SKIP, unchanged and honest:** `bootstrap: werk_read.c (gcc.EXE)` — the
 msys2 gcc on this box exits 1 with no diagnostics. The same source compiles and
 passes under MSVC in the very next clause, so it is a broken toolchain on this
-host, not a source failure.
+host, not a source failure. *(Correction, release finding N2: the toolchain was not broken. Git for Windows' `/mingw64/bin` preceded MSYS2's on PATH, so `cc1.exe` could not load its DLLs (exit 127, nothing printed); with the compiler's own `bin` first on PATH it builds the loader. The gates now run every compiler that way.)*
 
 **A measurement trap worth recording:** the first run of three gates FAILED on
 `schema-invalid: /spec_sha256: property not permitted`, which looks exactly like

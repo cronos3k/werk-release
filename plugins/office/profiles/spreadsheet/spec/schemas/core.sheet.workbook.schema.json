@@ -1,0 +1,265 @@
+{
+  "$defs": {
+    "password_hash": {
+      "description": "The HASH of a protection password, never the password. Protection of this kind is a convenience against accidents, not security: the content is not encrypted.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "Legacy hash.",
+          "properties": {
+            "Legacy": {
+              "description": "The 16-bit spreadsheet legacy password hash (ECMA-376 Part 4, 14.7.1).",
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Legacy"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Iterated hash.",
+          "properties": {
+            "Iterated": {
+              "additionalProperties": false,
+              "description": "A salted, iterated hash (ECMA-376 Part 1, 18.2.29): H0 = hash(salt bytes followed by the password as UTF-16LE); then spin_count times Hn = hash(Hn-1 followed by the 4-byte little-endian iteration counter n-1).",
+              "properties": {
+                "algorithm": {
+                  "description": "Hash algorithm name as stored: `SHA-512`, `SHA-384` or `SHA-256`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "hash": {
+                  "description": "The final hash, standard base64 with padding. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "salt": {
+                  "description": "The salt, standard base64 with padding. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "spin_count": {
+                  "description": "Number of iterations, 0..4294967295 (the usual value is 100000).",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "algorithm",
+                "hash",
+                "salt",
+                "spin_count"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Iterated"
+          ],
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.sheet.workbook.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The structure node of a spreadsheet/1 document (node type core.sheet.workbook, node_id `workbook`): the ORDER of the sheets and the workbook-wide settings. It holds no sheet content - each sheet is a node of its own, named here by node_id.",
+  "properties": {
+    "active_sheet": {
+      "description": "node_id of the sheet that is shown when the workbook opens. Absent when `active_sheet_index` names no sheet.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "active_sheet_index": {
+      "description": "Zero-based position in `sheets` of the sheet shown when the workbook opens. `active_sheet`, when present, names the same sheet by identity and wins if the two disagree.",
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "calc": {
+      "additionalProperties": false,
+      "description": "Calculation settings.",
+      "properties": {
+        "iterative": {
+          "description": "Circular references are evaluated repeatedly instead of being an error.",
+          "type": "boolean"
+        },
+        "max_change": {
+          "description": "Iteration stops when no value changes by more than this.",
+          "type": "number"
+        },
+        "max_iterations": {
+          "description": "Maximum number of iterations, 1..32767.",
+          "maximum": 4294967295,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "mode": {
+          "description": "When formulas are recalculated. Automatic: after every change. AutomaticExceptTables: likewise, except data tables. Manual: only on request - the cached results in the computed nodes may then be older than the cells.",
+          "enum": [
+            "Automatic",
+            "AutomaticExceptTables",
+            "Manual"
+          ],
+          "type": "string"
+        },
+        "precision_as_displayed": {
+          "description": "Numbers are rounded to their displayed precision when stored.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "mode",
+        "iterative",
+        "max_iterations",
+        "max_change",
+        "precision_as_displayed"
+      ],
+      "type": "object"
+    },
+    "csv_delimiter": {
+      "description": "The field separator, as a byte value (59 = `;`, 9 = tab), of the CSV file this workbook was read from; a CSV export writes the same one. Absent when the workbook did not come from CSV.",
+      "maximum": 255,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "custom_lists": {
+      "description": "Custom fill series (e.g. a list of branch names) beyond the built-in ones.",
+      "items": {
+        "description": "One list, in order.",
+        "items": {
+          "description": "One entry. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "type": "array"
+    },
+    "date_system": {
+      "description": "How a NUMBER in a cell maps to a calendar date when its number format is a date format. The number is a count of days (the fraction is the time of day: 0.5 = 12:00). `D1900`: day 1 is 1900-01-01, and day 60 is the NON-EXISTENT 1900-02-29 (a historical bug kept for compatibility), so day 61 is 1900-03-01 and, for every day number n >= 61, date = 1899-12-30 + n days. `D1904`: day 0 is 1904-01-01, date = 1904-01-01 + n days, no fictitious day. The manifest's `conventions` state the same numbers.",
+      "enum": [
+        "D1900",
+        "D1904"
+      ],
+      "type": "string"
+    },
+    "external_values": {
+      "description": "node_id of the core.sheet.external-values node: the cached values of cells of OTHER workbooks that formulas refer to. Absent when there are none.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "names": {
+      "description": "node_id of the core.sheet.names node: the defined names.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "ooxml": {
+      "description": "node_id of the x.gridcraft.ooxml node carrying workbook-level content of an imported OOXML file that GridCraft keeps without modelling it. Absent when there is none.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "props": {
+      "additionalProperties": false,
+      "description": "Document properties.",
+      "properties": {
+        "author": {
+          "description": "Author. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "company": {
+          "description": "Company. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "description": {
+          "description": "Comments. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "keywords": {
+          "description": "Keywords. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Subject. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "subject",
+        "author",
+        "company",
+        "keywords",
+        "description"
+      ],
+      "type": "object"
+    },
+    "protected_structure": {
+      "description": "The workbook structure is protected: sheets cannot be added, removed, renamed, moved or unhidden.",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "sheets": {
+      "description": "The sheets in tab order, first tab first. Each entry is the node_id of a core.sheet.sheet node.",
+      "items": {
+        "description": "node_id of a core.sheet.sheet node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "structure_password": {
+      "$ref": "#/$defs/password_hash",
+      "description": "Hash of the password of the structure protection. Absent when there is none."
+    },
+    "styles": {
+      "description": "node_id of the core.sheet.styles node: the cell formats the cells' style ids index, the named styles and the theme.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "vba": {
+      "description": "node_id of the node carrying a VBA macro project verbatim: a core.sheet.vba-project node (the project is a compound file, format `ovba`), or an x.gridcraft.vba node (bytes in no defined format). Absent when the workbook has no macros. The project is embedded CODE and is never executed automatically.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "sheets",
+    "active_sheet_index",
+    "date_system",
+    "calc",
+    "props",
+    "protected_structure",
+    "custom_lists"
+  ],
+  "title": "core.sheet.workbook - the structure node of a spreadsheet/1 document",
+  "type": "object"
+}

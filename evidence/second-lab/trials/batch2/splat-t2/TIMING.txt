@@ -1,0 +1,1 @@
+splat-t2 rc=0 elapsed=626.2 s

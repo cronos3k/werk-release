@@ -61,6 +61,20 @@ FIXTURES = [
     ("crate-synthetic", "tests/fixtures/crate.werk", "cargo run --bin werkc -- build-fixture tests/fixtures",
      "The minimal synthetic fixture: every custom-binary path exercised, small "
      "enough to check by hand, signed with the RFC 8032 test key."),
+    ("mini-v1", "gauntlet/roundOW/mini-v1.werk",
+     "gauntlet/roundOW/build_mini_fixture.py",
+     "The small-context fixture, rebuilt under the ruling on #11: the same 36 "
+     "entries as the package the trials ran on, minus its three edges to absent "
+     "nodes (SPEC section 5), so it verifies clean. It carries a trimmed spec/ "
+     "tree (the documents its own node types need), so its spec_sha256 is the "
+     "hash of that subset. The trials' bytes are kept at "
+     "gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk."),
+    ("mini-v1-historical", "gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk",
+     "an earlier build_mini_fixture.py (kept, not rebuilt)",
+     "The exact mini-v1.werk that the open-weights, DeepSeek and second-lab "
+     "trials ran on, built from an earlier spec revision. It carries three edges "
+     "to absent nodes, so a conformant reader reports one dead node. Kept so "
+     "pinned trials stay checkable."),
     # The public-domain arm (fixtures/CC0-FIXTURES.md). Recorded HERE since
     # 2026-10-13: until then these eight were pinned by nothing but a
     # hand-typed table in that document, which is the S8 mistake this file
@@ -194,7 +208,11 @@ def render_md(doc):
     L.append("Every fixture in this table carries the same `spec_sha256`, which is")
     L.append("the point of the field (S-29): they were all built from one revision")
     L.append("of `spec/`, and a package built from another one says so in a single")
-    L.append("comparison rather than by a schema diff nobody runs.")
+    L.append("comparison rather than by a schema diff nobody runs. Three rows differ")
+    L.append("on purpose: `crate-synthetic` and `mini-v1` carry a trimmed `spec/`")
+    L.append("tree (byte-identical documents, fewer of them), so the field hashes")
+    L.append("that subset; `mini-v1-historical` is the earlier build the trials ran")
+    L.append("on and carries the earlier spec revision.")
     L.append("")
     return "\n".join(L)
 
