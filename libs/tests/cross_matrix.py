@@ -209,6 +209,9 @@ def cases(I, big_mb):
         # `../evil.txt` (and a zip entry by that name) kills its node; the
         # package loads, nothing is written outside the target folder.
         ("unsafe-path", "zip", [["pack-image", "{out}"] + img, ["@unsafe-path", "README.txt"]]),
+        # SPEC 5 "Edge targets": a `requires` edge to a node absent from
+        # nodes[] kills its source (requires-missing-node); the rest loads.
+        ("requires-missing", "zip", [["pack-image", "{out}"] + img, ["@requires-missing", "readme"]]),
     ]
 
 
@@ -283,6 +286,20 @@ def damage(path, step):
                     data = json.dumps(man, indent=1).encode("utf-8")
                 elif name == step[1]:
                     name = bad
+                z.writestr(zipfile.ZipInfo(name, (2026, 11, 17, 12, 0, 0)), data)
+        return
+    elif kind == "@requires-missing":
+        import zipfile
+        with zipfile.ZipFile(path) as z:
+            items = [(i.filename, z.read(i.filename)) for i in z.infolist()]
+        man = json.loads(dict(items)["MANIFEST.json"].decode("utf-8"))
+        node = [n for n in man["nodes"] if n["node_id"] == step[1]]
+        assert len(node) == 1, "requires-missing: no node %s" % step[1]
+        node[0].setdefault("edges", []).append({"to": "no-such-node", "kind": "requires"})
+        with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_STORED) as z:
+            for name, data in items:
+                if name == "MANIFEST.json":
+                    data = json.dumps(man, indent=1).encode("utf-8")
                 z.writestr(zipfile.ZipInfo(name, (2026, 11, 17, 12, 0, 0)), data)
         return
     elif kind == "@truncate":

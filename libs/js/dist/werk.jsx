@@ -1881,6 +1881,13 @@ Package.prototype.propagateEdges = function () {
       for (j = 0; j < n.edges.length; j++) {
         e = n.edges[j];
         t = isObj(e) && typeof e.to === "string" && hasOwn(this.byId, "/" + e.to) ? this.byId["/" + e.to] : null;
+        if (!t && isObj(e) && typeof e.to === "string" && e.kind === "requires") {
+          // SPEC 5 "Edge targets": a requires edge to a node absent from nodes[] kills the source, skipped or not.
+          n.status = "dead"; n.reason = "requires `" + e.to + "`, which is not a node";
+          this.add("error", "requires-missing-node", n.nodeId, n.nodeId + ": a `requires` edge to `" + e.to + "`, which is not a node in this manifest");
+          changed = true;
+          break;
+        }
         if (t && t.status === "dead" && e.kind === "requires") {
           n.status = "dead"; n.reason = "requires dead node `" + e.to + "`";
           this.add("error", "requires-dead-node", n.nodeId, n.nodeId + ": a `requires` edge into dead node `" + e.to + "`");
@@ -1896,6 +1903,7 @@ Package.prototype.propagateEdges = function () {
       e = n.edges[j];
       if (!isObj(e) || typeof e.to !== "string") { continue; }
       t = hasOwn(this.byId, "/" + e.to) ? this.byId["/" + e.to] : null;
+      if (!t && e.kind === "requires") { continue; }
       if (!t) { this.add("warn", "edge-dangling", n.nodeId, n.nodeId + ": edge points at `" + e.to + "`, which is not a node"); }
       else if (t.status === "dead" && e.kind === "enhances") { this.add("warn", "enhances-dead-node", n.nodeId, n.nodeId + ": `enhances` dead node `" + e.to + "` (one feature lost)"); }
     }

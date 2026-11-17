@@ -1225,6 +1225,15 @@ class Package(object):
                     continue
                 for e in n.edges:
                     t = self._by_id.get(e.get("to")) if isinstance(e, dict) and isinstance(e.get("to"), string_types) else None
+                    if t is None and isinstance(e, dict) and isinstance(e.get("to"), string_types)                             and e.get("kind") == "requires":
+                        # SPEC 5 "Edge targets": a `requires` edge to a node
+                        # absent from nodes[] kills the source, skipped or not.
+                        n.status, n.reason = "dead", "requires `%s`, which is not a node" % e["to"]
+                        self._add("error", "requires-missing-node", n.node_id,
+                                  "%s: a `requires` edge to `%s`, which is not a node in "
+                                  "this manifest" % (n.node_id, e["to"]))
+                        changed = True
+                        break
                     if t is not None and t.status == "dead" and e.get("kind") == "requires":
                         n.status, n.reason = "dead", "requires dead node `%s`" % e["to"]
                         self._add("error", "requires-dead-node", n.node_id,
@@ -1236,6 +1245,8 @@ class Package(object):
                 if not isinstance(e, dict) or not isinstance(e.get("to"), string_types):
                     continue
                 t = self._by_id.get(e.get("to"))
+                if t is None and e.get("kind") == "requires":
+                    continue   # reported above as requires-missing-node
                 if t is None:
                     self._add("warn", "edge-dangling", n.node_id,
                               "%s: edge points at `%s`, which is not a node" % (n.node_id, e.get("to")))
