@@ -220,6 +220,13 @@ def cases(I, big_mb):
             ["append", "{in}", "{out}", "--node", "tex-albedo", "--file", "textures/albedo.png=" + I + "/preview.png",
              "--note", "Re-exported the albedo at 16 px — v2.", "--created", T1],
             ["@unsafe-path", "textures/albedo.png"]]),
+        # ... also when that version declares the path as its `payload_file`
+        # (SPEC 2.1): werk-core used to kill the node on that schema finding.
+        ("unsafe-path-payload-file", "zip", [
+            ["pack-mesh", "{out}"] + full_mesh,
+            ["append", "{in}", "{out}", "--node", "tex-albedo", "--file", "textures/albedo.png=" + I + "/preview.png",
+             "--note", "Re-exported the albedo at 16 px — v2.", "--created", T1],
+            ["@unsafe-path", "textures/albedo.png", "payload-file"]]),
         ("unsafe-path-old-version", "zip", [
             ["pack-mesh", "{out}"] + full_mesh,
             ["append", "{in}", "{out}", "--node", "tex-albedo", "--file", "textures/albedo.png=" + I + "/preview.png",
@@ -293,6 +300,8 @@ def damage(path, step):
                     if f["path"] == step[1]:
                         f["path"] = bad
                         hit += 1
+                        if len(step) > 2 and step[2] == "payload-file":
+                            v["payload_file"] = bad   # the version also NAMES it as its payload
                 if v.get("payload_file") == step[1]:
                     v["payload_file"] = bad
         assert hit == 1, "unsafe-path: %s declared %d times" % (step[1], hit)

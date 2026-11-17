@@ -727,7 +727,7 @@ impl Package {
         let unknown = if lenient { v.unknown_keywords() } else { Vec::new() };
         for e in v.validate(&self.manifest.raw) {
             if let Some(k) = kills.as_deref_mut() {
-                // An unsafe files[] `path` inside one version is
+                // An unsafe files[] `path` (or `payload_file`) inside one version is
                 // that VERSION's damage, not the node's: resolve_node refuses
                 // the version and falls back (SPEC 10 step 5), as every other
                 // reader does. The finding is still reported below.
@@ -2127,10 +2127,18 @@ fn failures_to_entries(_id: &str, _f: &[String]) -> Vec<crate::report::ReportEnt
     Vec::new()
 }
 
-/// `/nodes/<i>/versions/<j>/files/<k>/path`: one file record of one version.
+/// `/nodes/<i>/versions/<j>/files/<k>/path` (one file record of one version)
+/// or `/nodes/<i>/versions/<j>/payload_file` (which names one of them). An
+/// unsafe value in either is that version's damage: the files[] path makes
+/// the version unusable in resolve_node; a payload_file is never opened by
+/// path, so it is reported (schema-invalid) and kills nothing, as in every
+/// other reader.
 fn version_path_of(pointer: &str) -> bool {
     let segs: Vec<&str> = pointer.split('/').collect();
-    matches!(segs.as_slice(), ["", "nodes", _, "versions", _, "files", _, "path"])
+    matches!(
+        segs.as_slice(),
+        ["", "nodes", _, "versions", _, "files", _, "path"] | ["", "nodes", _, "versions", _, "payload_file"]
+    )
 }
 
 /// MINI-SPECS 5.4, the rule every werk reader applies before it opens a
