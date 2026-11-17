@@ -1,6 +1,6 @@
 # werk libs cross-matrix
 
-machine `<lab-workstation>` | Windows-10-10.0.19045-SP0 | python 3.12.8 | node v24.10.0 | started 2026-11-17T09:11:35Z
+machine `<lab-workstation>` | Windows-10-10.0.19045-SP0 | python 3.12.8 | node v24.10.0 | started 2026-11-17T10:00:15Z
 
 Writers: py, py1, js, es3, rust. Readers: py, js, es3, werkc, ref-py, ref-c, ref-rs.
 
@@ -28,6 +28,7 @@ Writers: py, py1, js, es3, rust. Readers: py, js, es3, werkc, ref-py, ref-c, ref
 | truncated | zip | **yes** (YYYYY) | `82998a4f8af573a1` | refused (2) | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
 | unsafe-path | zip | **yes** (YYYYY) | `246a33cbca1839b0` | 1 / absent / readme | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
 | unsafe-path-multiversion | zip | **yes** (YYYYY) | `edb256128cb6025a` | 1 / absent / none | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| unsafe-path-payload-file | zip | **yes** (YYYYY) | `8dc893891a35fcef` | 1 / absent / none | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
 | unsafe-path-old-version | zip | **yes** (YYYYY) | `198ed25dad56705a` | 1 / absent / none | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
 | requires-missing | zip | **yes** (YYYYY) | `fc8b740609078b5b` | 1 / absent / readme | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
 
