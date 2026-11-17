@@ -6,8 +6,8 @@ Measured from the working tree of the commit below with
 
 | | |
 |---|---|
-| pinned commit | `c5276a1` (branch `main`) |
-| tree | `b60c700f2c6c0d213ce6395b9dcb78bf6c8bf0f6` |
+| pinned commit | `a00312d` (branch `main`) |
+| tree | `29ed7dabee31f6e0331fa212231ce6957ff143ef` |
 | `spec_sha256` of the release `spec/` | `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3` |
 | bootstrap loader `loaders/werk_read.py` | `f639dd417689e60bac2852bcc5e79bda5776c513407d419b3033ed31837c2794` (64 265 B) |
 
@@ -89,12 +89,14 @@ Bundle `source_rev`: `509ebf83be6dd998a255cceca234ceca0b8ac025`.
 | `tests/fixture_pin.py` | 18 of 18 match |
 | `tests/run_gate_artcraft.py`, `_container`, `_magic`, `_reference`, `_writing` | 90, 25, 22, 19, 26 PASS; 0 FAIL |
 | `cargo test --release` in `core/` | 90 passed, 0 failed |
-| `libs/tests/cross_matrix.py --fixtures fixtures` | 22 cases (new: `unsafe-path-multiversion`, `unsafe-path-old-version`) + 15 fixtures, 0 failures |
+| `libs/tests/cross_matrix.py --fixtures fixtures` | 23 cases (new: `unsafe-path-multiversion`, `unsafe-path-payload-file`, `unsafe-path-old-version`) + 15 fixtures, 0 failures |
 | `libs/tests/damage_agree.py` | 1 532 variants: libs 1 532, werkc 1 524, ref-py 1 532, ref-c 1 531, ref-rs 1 531 agree; 0 crashes (unchanged; the known gaps of `libs/README.md`) |
-| `libs/tests/test_vectors.py`, `test_api.py` (3.12, 3.8), `js/tests/api_smoke.js`, `es3_check.js`, float spelling (`cargo test --bin werkc`) | 20, 27, 27, 15 PASS, 0 FAIL; ES3 0 problems; 2 passed |
+| `libs/tests/test_vectors.py`, `test_api.py` (3.12, 3.8), `js/tests/api_smoke.js`, `es3_check.js`, float spelling (`cargo test --bin werkc`) | 20, 27, 27, 15 PASS, 0 FAIL; ES3 0 problems; 2 passed (run at `93b2f88`: same libraries, loaders and fixtures) |
+| plug-in re-gates on the re-vendored library (`git archive c5276a1`, same plug-ins, libraries and fixtures) | Unreal 5.8.2 147 PASS / 0 FAIL / 4 NOT-RUN; Office 2016 60 / 0; Blender `gate_release.py` 98 / 0; GIMP 3.2.4 34 / 0 / 3 NOTE |
 
-The gates ran on the working tree at `93b2f88` (this commit's code, fixtures
-and libraries; `c5276a1` adds only the refreshed test-result files and the
-README count). The three-machine runs of this release, and the plug-in
-re-gates on the re-vendored library, are recorded in the release evidence and
-in each plug-in's `GATE-RESULTS.md`.
+The repository gates ran on the working tree at `ea58f7a` (this commit's
+code, fixtures and libraries; `a00312d` adds only the refreshed test-result
+files and the README count). Not re-run on the re-vendored library:
+Photoshop, Illustrator, After Effects (Adobe re-gates wait for the final
+freeze). The three-machine runs of this release are recorded in the release
+evidence.
