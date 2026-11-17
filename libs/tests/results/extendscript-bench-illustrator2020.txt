@@ -1,0 +1,12 @@
+host Illustrator 24.0.2
+before sha256 256k 262144 bytes 1434 ms 0.174 MB/s e3703111bd557a40
+before crc32 256k 262144 bytes 435 ms 0.575 MB/s 3061476651
+before inflate 64k 65536 bytes 8993 ms 0.007 MB/s ok
+before inflate-no-limit THROWS: deflate stream inflates past the declared size
+after sha256 1m 1048576 bytes 4156 ms 0.241 MB/s 760a909ea7b8a0df
+after crc32 1m 1048576 bytes 1147 ms 0.872 MB/s 522280049
+after inflate-ring 1m 1048576 bytes 66083 ms 0.015 MB/s ok
+after inflate-window 1m 1048576 bytes 2420 ms 0.413 MB/s ok
+after inflate-no-limit 1m 1048576 bytes 2418 ms 0.414 MB/s ok
+None
+events ["started illustrator (80 s)", {"task": "werk-bench", "seconds": 87.4, "ret": "before sha256 256k 262144 bytes 1434 ms 0.174 MB/s e3703111bd557a40\nbefore crc32 256k 262144 bytes 435 ms 0.575 MB/s 3061476651\nbefore inflate 64k 65536 bytes 8993 ms 0.007 MB/s ok\nbefore inflate-no-limit THROWS: deflate stream inflates past the declared size\nafter sha256 1m 1048576 bytes 4156 ms 0.241 MB/s 760a909ea7b8a0df\nafter crc32 1m 1048576 bytes 1147 ms 0.872 MB/s 522280049\nafter inflate-ring 1m 1048576 bytes 66083 ms 0.015 MB/s ok\nafter inflate-window 1m 1048576 bytes 2420 ms 0.413 MB/s ok\nafter inflate-no-limit 1m 1048576 bytes 2418 ms 0.414 MB/s ok", "err": null, "docs_before": 0, "docs_after": 0}, "Quit() called", "killed own instance [127576] after Quit"]

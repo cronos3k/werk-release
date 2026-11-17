@@ -296,15 +296,15 @@ fifth implementation can join:
 
 ## Tests and their results
 
-| test | command | result (this machine, 2026-11-07) |
+| test | command | result (Windows 10 workstation; re-run 2026-11-17 on this repository, unless noted) |
 |---|---|---|
 | spec test vectors in every library | `python tests/test_vectors.py` | 20 PASS, 0 FAIL (SHA-256, MINI-SPECS §3 canonical vector, RFC 8032 key + signature, `spec/examples` signature, WRITING-IMAGE PNG + `input_hash`, 20 011 doubles spelled like Python in `werk.js` and `werk.jsx`) |
 | Rust float spelling | `WERK_FLOATS=_scratch/floats.txt cargo test --release --bin werkc` | 2 passed (20 011 doubles, 0 differ) |
 | Python API | `python tests/test_api.py` (3.12 and 3.8) | 27 PASS, 0 FAIL each (incl. a raster-layers/1 package carried with `add_spec_file`, `conventions_map=`, `add_readme_file`, duplicate-entry refusal) |
-| JavaScript API, both builds | `node js/tests/api_smoke.js _scratch/inputs` | 15 PASS, 0 FAIL |
+| JavaScript API, both builds | `node js/tests/api_smoke.js _scratch/inputs` (needs `_scratch/inputs` from `tests/make_inputs.py`, a signed `_scratch/img2.werk` packed from its `source.png` + `thumb.png` with `key.hex`, and `_scratch/dup.werk` from `test_api.py`) | 15 PASS, 0 FAIL |
 | ES3 syntax | `node --expose-internals js/tests/es3_check.js` | `werk.jsx` parses as ECMAScript 3 (acorn), no ES5+ API outside the Node-only IO block |
-| inside real ExtendScript | `js/tests/extendscript_host_wrapper.jsx` in Illustrator 2020 | see `tests/results/extendscript-illustrator2020.txt` |
-| writers × readers | `python tests/cross_matrix.py --fixtures <fixtures dir>` | see `tests/results/CROSS-MATRIX.md` |
+| inside real ExtendScript | `js/tests/extendscript_host_wrapper.jsx` in Illustrator 2020 | see `tests/results/extendscript-illustrator2020.txt` (2026-11-07, an earlier build of `werk.jsx`; not re-run on this build) |
+| writers × readers | `python tests/cross_matrix.py --fixtures <fixtures dir>` | 20 cases + the release fixtures, 0 failures: `tests/results/CROSS-MATRIX.md` |
 | one-bit damage, readers agree | `python tests/damage_agree.py` | see `tests/results/damage_agree.json` (1532 variants: py = js = es3 on 1532; werkc agrees on 1524, the 8 are listed under known gaps) |
 
 `tests/cross_matrix.py` is pure standard library and path-agnostic: on Linux
