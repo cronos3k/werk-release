@@ -266,6 +266,10 @@ def main():
     report_path = os.path.join(tmp, "build_report.json")
 
     def run_blender(target):
+        # A stale file at `target` must never pass for this run's output
+        # (Blender can exit 0 after a failed --python script).
+        if os.path.exists(target):
+            os.remove(target)
         cmd = [blender, "--background", "--factory-startup",
                "--python", os.path.join(HERE, "build_crate_tex_in_blender.py"),
                "--",
@@ -274,7 +278,7 @@ def main():
                "--albedo", maps["albedo"][0],
                "--normal", maps["normal"][0],
                "--mr", maps["mr"][0],
-               "--addon", os.path.join(ROOT, "adapters", "blender"),
+               "--addon", os.path.join(ROOT, "plugins", "blender"),
                "--report", report_path,
                "--created", CREATED,
                "--source-label", source_label(args.src)]

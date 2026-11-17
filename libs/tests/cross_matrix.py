@@ -26,7 +26,7 @@ CHECKS
   extract : every reader extracts, for every live node, the bytes the manifest
             declares (sha256 compared file by file).
 
-Pure standard library; runs on Windows and Linux (W3 runs it on SRVG/SRV80).
+Pure standard library; runs on Windows and Linux.
 Exit status 0 when every check passed, 1 otherwise.
 """
 

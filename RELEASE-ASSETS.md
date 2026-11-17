@@ -10,19 +10,19 @@ carries the placeholder `{RELEASE_BASE_URL}` until the release is published.
 
 | path | bytes | sha256 | url | why out of git |
 |---|---:|---|---|---|
-| `fixtures/crate-v1.werk` | 13 965 429 | `e13b8ba90f08eca8ed6d0a57f21f38c41d78229f10e335746e5b86f39b4fa6d2` | `{RELEASE_BASE_URL}/fixtures/crate-v1.werk` | golden fixture, > 5 MB |
-| `fixtures/crate-v1-damaged.werk` | 13 966 581 | `f3c82ba8802fc1160ccae25465522696af32c4c91133b917b8f36df3acca2edc` | `{RELEASE_BASE_URL}/fixtures/crate-v1-damaged.werk` | golden fixture (damaged twin), > 5 MB |
-| `fixtures/ista-varun-v1.werk` | 10 881 124 | `9bacd8022198041730a35d93fd66098ce685c54681f07bf2df88e4851e825aa1` | `{RELEASE_BASE_URL}/fixtures/ista-varun-v1.werk` | image/1 fixture, > 5 MB |
-| `fixtures/gsplat-v1.werk` | 30 519 513 | `fbe7b32c3f2f9b1c311d718a5ed1d66b962331f26b4be689e2e4665454e3a86f` | `{RELEASE_BASE_URL}/fixtures/gsplat-v1.werk` | captured Gaussian-splat fixture, > 5 MB |
-| `fixtures/image-cc0-v1.werk` | 5 803 605 | `a45c875ef2620ae4b2f26900869538fa952f57719d8847fbab7e40fda48f2353` | `{RELEASE_BASE_URL}/fixtures/image-cc0-v1.werk` | CC0 image fixture, > 5 MB (rebuildable: fixtures/build_image_cc0.py) |
-| `fixtures/image-cc0-v1-damaged.werk` | 5 804 654 | `027339f56d3e08fcdba13907ff79c9603010755458fc995ec1a5c73cf3945eb2` | `{RELEASE_BASE_URL}/fixtures/image-cc0-v1-damaged.werk` | CC0 image fixture (damaged twin), > 5 MB |
+| `fixtures/crate-v1.werk` | 13 967 352 | `661b0ae30cd128513091990eb8a11e9783cbce962f6049658f126dbee04f277e` | `{RELEASE_BASE_URL}/fixtures/crate-v1.werk` | golden fixture, > 5 MB |
+| `fixtures/crate-v1-damaged.werk` | 13 968 504 | `45a60598297c2e8ac0380c64408a53c3928affaf997f12dae29c261ac1242a1a` | `{RELEASE_BASE_URL}/fixtures/crate-v1-damaged.werk` | golden fixture (damaged twin), > 5 MB |
+| `fixtures/ista-varun-v1.werk` | 10 883 047 | `8dd4d655ead6ea9c644960e56d5666b08d7c31bc50565d107076a7a14f7c4afd` | `{RELEASE_BASE_URL}/fixtures/ista-varun-v1.werk` | image/1 fixture, > 5 MB |
+| `fixtures/gsplat-v1.werk` | 30 521 436 | `9214bb4bdb1fbcd6136676d1b75334b77b0620f5e879fa843c70bf160beb5c81` | `{RELEASE_BASE_URL}/fixtures/gsplat-v1.werk` | captured Gaussian-splat fixture, > 5 MB |
+| `fixtures/image-cc0-v1.werk` | 5 805 528 | `b8222720e46aa183d241e70c65b87e98acc25fbbfad5d435f3125f2294db1895` | `{RELEASE_BASE_URL}/fixtures/image-cc0-v1.werk` | CC0 image fixture, > 5 MB (rebuildable: fixtures/build_image_cc0.py) |
+| `fixtures/image-cc0-v1-damaged.werk` | 5 806 577 | `17fce14223e2578e720f3a38938798d4b470eace12bad433ed8fa3229590caef` | `{RELEASE_BASE_URL}/fixtures/image-cc0-v1-damaged.werk` | CC0 image fixture (damaged twin), > 5 MB |
 | `gauntlet/roundSR/selfrun-v1.werk` | 62 525 273 | `1f8e1270b89371a5acc80aa854db3572631f7dac9a053fd045da0af112d51f17` | `{RELEASE_BASE_URL}/gauntlet/roundSR/selfrun-v1.werk` | self-run gauntlet fixture, > 5 MB (frozen evidence) |
 | `gauntlet/roundHC/pages/scanned/page-01.jpg` | 2 234 907 | `a0631045c383e9f897446394bfeee2898bec48ee1e35bec5171f14145c726b54` | `{RELEASE_BASE_URL}/gauntlet/roundHC/pages/scanned/page-01.jpg` | hardcopy round: degraded page scan |
 | `gauntlet/roundHC/pages/scanned/page-02.jpg` | 2 214 471 | `fef9d5ed0b2894a1f39c6688d0f37bf9a3c67cc97292b58323f635dc45bf4c14` | `{RELEASE_BASE_URL}/gauntlet/roundHC/pages/scanned/page-02.jpg` | hardcopy round: degraded page scan |
 | `gauntlet/roundHC/pages/scanned/page-03.jpg` | 2 434 135 | `e25dad576258f466615a0b64bd5844de55c42f8acfa79cff40806cd082727560` | `{RELEASE_BASE_URL}/gauntlet/roundHC/pages/scanned/page-03.jpg` | hardcopy round: degraded page scan |
 | `evidence/second-lab/roundNC-binaries.tar.gz` | 2 328 731 | `71847a908a7ef68859e57e34381f132b183778e19927bda9b4e962a9c49cd036` | `{RELEASE_BASE_URL}/evidence/second-lab/roundNC-binaries.tar.gz` | second-lab negative-control round (PR #8): reproducible run outputs and logs, listed in evidence/second-lab/roundNC/OUT-OF-GIT.txt |
 
-11 files, 152 678 423 bytes in total.
+11 files, 152 689 961 bytes in total.
 
 ## External and historical files (not hosted with this release)
 
