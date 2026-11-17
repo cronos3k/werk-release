@@ -1,7 +1,7 @@
 {
  "bundle_version": 1,
  "lib_version": "0.1.0",
- "source_rev": "26e3e143b2e7dd2787df411967486157097a0a67",
+ "source_rev": "bc2352940fb120c09a6da063cc8723357b5d89fc",
  "files": [
   {
    "path": "loaders/werk_read.c",
@@ -11,9 +11,9 @@
   },
   {
    "path": "loaders/werk_read.py",
-   "sha256": "71b793b03c43556bc09521c84f234979c225d80f68962884b21f4ca8744315c5",
-   "size": 62021,
-   "crc32": 1850086736
+   "sha256": "d8c633e4af1fa35f57c45c5d0ab0ecf197263d1bb6c51f12f1b03dc036de63f7",
+   "size": 63944,
+   "crc32": 1229736791
   },
   {
    "path": "loaders/werk_read.rs",

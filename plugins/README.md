@@ -20,6 +20,16 @@ All gates ran on Windows 10 against the release library (`libs/`:
 of `release-fixes` @ `26e3e14`. Every plug-in vendors a byte-identical copy of
 the library; the gates check that.
 
+**Re-vendored after the gates (2026-11-17).** The bootstrap loader
+`loaders/werk_read.py` changed after these runs (an unsafe `files[]` path now
+kills its node instead of refusing the package at `--extract`; `--help`).
+The libraries embed that loader, so every plug-in now vendors the rebuilt
+library (`werk_single.py` `272e0bbe…`, `werk.jsx` `78011d6e…`, `werk.js`
+`dd679b65…`, bundle at `bc23529`). Only the embedded loader bytes and the
+bundle's record of them differ from what was gated; the plug-in code did
+not change. Which gates were re-run on the re-vendored library is recorded
+in `RELEASE-PINS.md`.
+
 **What is not in the repository.** The gates' raw logs (`_logs/`) and their
 outputs (`_gate_out/`) are not committed; the `GATE-RESULTS.md` files quote
 their numbers and name the log files. Workspace paths in those files read
