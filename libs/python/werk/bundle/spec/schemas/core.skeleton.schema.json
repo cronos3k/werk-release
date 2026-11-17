@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.skeleton.schema.json",
+  "title": "core.skeleton — bone hierarchy with a numeric canonical rest pose",
+  "description": "A skeleton, its rest pose as NUMBERS (law 8: canonical poses are numbers, not words), and the retarget maps that let a foreign rig bind to it. The canonical humanoid instance of this schema is spec/skeleton/canonical-humanoid-v1.json. An optional binary mirror for very large rigs is described by spec/layouts/skeleton.layout.txt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "skeleton_id", "conventions", "bones"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "skeleton_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "name": {"type": "string"},
+    "status": {
+      "enum": ["draft", "approved", "deprecated"],
+      "description": "LIFECYCLE STATE, not a version. A skeleton is painful to change after v1, so a skeleton that has not been approved says so out loud. The version an approved skeleton carries lives in canon_version, deliberately in a separate field: a value that is both a state and a number is a field two readers disagree about."
+    },
+    "canon_version": {
+      "description": "The approved version of this canon, e.g. \"1.0\". Present when status is \"approved\"; meaningless while it is \"draft\". Distinct from schema_version, which versions the SHAPE of this file, and from a node version, which is an incremental integer: this is the version of the NUMBERS, and it is the string a rig or a clip cites when it says which canon it was authored against.",
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+
+    "approval": {
+      "description": "Who approved these numbers and under what decision, so the approval is a record rather than a state change nobody can trace. Law 6 applied to a canon: the reasoning travels with the artifact.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decided_on", "ruling"],
+      "properties": {
+        "decided_on": {"type": "string"},
+        "ruling": {"type": "string", "minLength": 3, "description": "The decision record this approval rests on, named so a reader can go and read it."},
+        "decided_by": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+
+    "extends": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "skeleton_id of a base skeleton this one adds bones to. An extension file (e.g. core.hands.v1) declares only its own bones and attaches them by naming an existing bone as parent. A consumer that does not load the extension keeps a working base skeleton (law 3)."
+    },
+    "extensions": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+      "description": "skeleton_ids of known extensions to this skeleton. Advisory: the extension file is the authority on its own bones."
+    },
+    "conventions": {
+      "description": "Restated inside the payload so the skeleton is an island (law 3). Every value MUST match the manifest's conventions block; a reader that finds a mismatch MUST refuse the node rather than reconcile it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["up_axis", "forward_axis", "right_axis", "handedness", "quat_order", "units_per_meter", "bone_axis_along", "bone_axis_back", "composition"],
+      "properties": {
+        "up_axis": {"const": "y"},
+        "forward_axis": {"const": "-z"},
+        "right_axis": {"const": "+x"},
+        "handedness": {"const": "right"},
+        "quat_order": {"const": "wxyz"},
+        "units_per_meter": {"const": 1.0},
+        "bone_axis_along": {
+          "const": "+y",
+          "description": "The bone-local axis that points from the bone's head toward its tail. Blender's convention, chosen because it is the most widely documented one."
+        },
+        "bone_axis_back": {
+          "const": "+z",
+          "description": "The bone-local axis that points along the bone's declared dorsal reference direction. Together with bone_axis_along this fixes the roll, which is the degree of freedom that silently ruins retargeting when left undeclared."
+        },
+        "composition": {
+          "const": "M_bone = M_parent * T(rest_translation) * R(rest_rotation)",
+          "description": "Column-vector convention: a point p in bone space becomes M_bone * p in model space. Translation is applied before rotation within a bone, i.e. rest_translation is expressed in the PARENT's frame."
+        }
+      }
+    },
+    "reference_height_m": {
+      "type": "number", "exclusiveMinimum": 0,
+      "description": "The stature this rest pose was authored for. A retargeter scales root translation by target_height / reference_height_m."
+    },
+    "pose_name": {"type": "string", "description": "e.g. 't-pose-palms-down'. The numbers are the definition; this is the label for humans."},
+    "floor_plane": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["point", "normal"],
+      "properties": {
+        "point": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+        "normal": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}}
+      },
+      "description": "Where the ground is in this skeleton's model space, so a consumer knows whether the origin is between the feet or at the hips."
+    },
+    "bones": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["bone_id", "parent", "rest_rotation", "rest_translation", "length_m", "model_rest_rotation", "model_rest_head_m", "axis_along", "axis_back"],
+        "properties": {
+          "bone_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Unique within the skeleton including its extensions."},
+          "parent": {"type": ["string", "null"], "description": "bone_id of the parent, or null for a root. Bones MUST be listed with every parent before its children."},
+          "rest_rotation": {
+            "type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"},
+            "description": "Unit quaternion [w,x,y,z], LOCAL: the bone's rest orientation relative to its parent's frame. This is the value an animation track replaces."
+          },
+          "rest_translation": {
+            "type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"},
+            "description": "Metres, expressed in the PARENT bone's frame. For a root bone, in model space."
+          },
+          "length_m": {"type": "number", "exclusiveMinimum": 0, "description": "Head-to-tail length. The tail is at bone-local (0, length_m, 0)."},
+          "model_rest_rotation": {
+            "type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"},
+            "description": "Unit quaternion [w,x,y,z] of the same rest pose in MODEL space. Redundant with the local values by construction, and present on purpose: it is what makes the local numbers checkable by hand, and law 8's corollary prefers a declared value over a derived one. A reader MUST verify that composing the local chain reproduces this within 1e-5 per component, and MUST report a skeleton where it does not."
+          },
+          "model_rest_head_m": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "Model-space position of the bone's head (its origin), metres."},
+          "model_rest_tail_m": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "Model-space position of the bone's tail, metres. Equals model_rest_head_m + length_m * axis_along."},
+          "axis_along": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "Model-space unit vector the bone's local +Y maps to in the rest pose."},
+          "axis_back": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "Model-space unit vector the bone's local +Z maps to in the rest pose. Orthogonal to axis_along."},
+          "role": {
+            "enum": ["locomotion-root", "pelvis", "spine", "neck", "head", "clavicle", "upperarm", "forearm", "hand", "thigh", "shin", "foot", "toe", "finger", "thumb", "other"],
+            "description": "Semantic role, so a retargeter can match by meaning rather than by name spelling."
+          },
+          "side": {"enum": ["left", "right", "center"]},
+          "mirror_of": {"type": "string", "description": "bone_id of this bone's left/right twin, when it has one."},
+          "leaf": {"type": "boolean"},
+          "limits": {
+            "description": "Optional joint limits, as a swing-twist decomposition about the bone's own axes. Radians.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "twist_min_rad": {"type": "number"},
+              "twist_max_rad": {"type": "number"},
+              "swing_x_rad": {"type": "number", "minimum": 0},
+              "swing_z_rad": {"type": "number", "minimum": 0}
+            }
+          }
+        }
+      }
+    },
+    "retarget": {
+      "description": "Name maps from foreign rigs onto this skeleton's bone_ids. A map is DATA, not code, and a reader that has never heard of the foreign rig can still apply it.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["map"],
+        "properties": {
+          "description": {"type": "string"},
+          "map": {
+            "type": "object",
+            "additionalProperties": {"type": "string"},
+            "description": "foreign bone name -> this skeleton's bone_id. A foreign bone with no entry is ignored; one of our bones with no source is left at rest."
+          },
+          "scale_hint": {"type": "number", "exclusiveMinimum": 0}
+        }
+      }
+    },
+    "calibration_pose": {
+      "description": "One pose, in this skeleton's own bone_ids, that a foreign rig is put into so a solver can compute the per-bone orientation offsets. Conformance test 3 uses it. Absent means the rest pose itself is the calibration pose.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "rotations"],
+      "properties": {
+        "name": {"type": "string"},
+        "rotations": {
+          "type": "object",
+          "additionalProperties": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}},
+          "description": "bone_id -> local quaternion [w,x,y,z]. Bones not listed are at their rest rotation."
+        },
+        "tolerance_rad": {"type": "number", "minimum": 0}
+      }
+    },
+    "binary_mirror": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Hash of the WKSK file that mirrors this JSON. The mirror also carries this JSON's hash in its own header, so staleness is detectable from either side."}
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"]},
+    "note": {"type": "string"}
+  }
+}

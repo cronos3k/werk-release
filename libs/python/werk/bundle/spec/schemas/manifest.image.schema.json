@@ -1,0 +1,524 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/manifest.image.schema.json",
+  "title": "werk MANIFEST.json — profile image/1",
+  "description": "The single source of structure for a werk IMAGE package. Validates MANIFEST.json at the root of a package whose `profile` is \"image/1\". Narrative spec: spec/PROFILE-IMAGE.md. Like manifest.schema.json it is deliberately standalone — no $ref to any other file, so a validator needs no resolver. WHICH SCHEMA VALIDATES A MANIFEST is answered by the manifest itself: the optional root key `manifest_schema` names the path inside this package, and a reader that finds it uses it rather than deriving a path from the profile string (law 8's corollary: declared beats derived). When it is absent the fallback is spec/schemas/manifest.schema.json, which is what every profile-1 package written before this key existed means.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "werk",
+    "profile",
+    "entity",
+    "conventions",
+    "container",
+    "license",
+    "schemas",
+    "spec_sha256",
+    "nodes"
+  ],
+  "properties": {
+    "werk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["major", "minor"],
+      "properties": {
+        "major": {"type": "integer", "const": 1},
+        "minor": {"type": "integer", "minimum": 0}
+      }
+    },
+    "profile": {"type": "string", "const": "image/1"},
+    "manifest_schema": {
+      "description": "Path inside this package of the JSON Schema that validates THIS manifest. Present so a reader never has to map a profile string to a filename by convention. For this profile it is spec/schemas/manifest.image.schema.json.",
+      "type": "string",
+      "pattern": "^spec/schemas/[A-Za-z0-9._-]+\\.schema\\.json$"
+    },
+    "profile_spec": {
+      "description": "OPTIONAL (ruling 2 of 2026-10-13, PROPOSED). Path inside this package of the NARRATIVE specification of the profile - the document a reader starts with and the one that carries the normative 'Writing a minimal valid package' section. ABSENT means spec/PROFILE-IMAGE.md, which is what every image/1 package written before the key existed means. See spec/SPEC.md section 2.2.",
+      "type": "string",
+      "pattern": "^spec/[A-Za-z0-9._/-]+\\.md$"
+    },
+
+    "entity": {
+      "description": "Identity for recognition, never for external reference (laws 1 and 4). An image is an entity like any other: two hermetic copies of one image share a uuid, a re-generation does not.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uuid", "name"],
+      "properties": {
+        "uuid": {"type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"},
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "summary": {"type": "string", "maxLength": 4000},
+        "created": {"type": "string", "format": "date-time"}
+      }
+    },
+
+    "conventions": {
+      "description": "Law 8, machine-checked, all mandatory. This profile declares nine rather than the 3D profile's twenty-one, because an image has no handedness, no up axis and no quaternions — and declaring conventions a payload does not have would be exactly the advisory noise law 8 exists to remove. A reader MUST verify it supports each value BEFORE consuming payloads, and MUST refuse rather than guess; PROFILE-IMAGE.md section 6 tabulates which node types each convention governs, so the blast radius of a refusal is a lookup.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endianness", "color_space_default", "pixel_origin", "alpha_mode",
+        "alignment_bytes", "text_encoding", "id_case", "hash_algorithm",
+        "signature_algorithm"
+      ],
+      "properties": {
+        "endianness": {"const": "le", "description": "All custom binary payloads are little-endian. MessagePack header integers inside those payloads are big-endian by MessagePack's own definition; see spec/layouts/ENVELOPE.layout.txt section 4."},
+        "color_space_default": {"const": "srgb", "description": "Applies only where an image node does not declare its own color_space. Every core.image.* node MUST declare one anyway."},
+        "pixel_origin": {"const": "top-left", "description": "Row 0 is the top row, matching PNG raster order. Declared because a format that leaves it implicit gets flipped derivatives eventually."},
+        "alpha_mode": {"const": "straight", "description": "Alpha, where present, is straight (non-premultiplied). Premultiplied data in a package declaring this is silently wrong on every composite, which is why it is a machine-checkable value rather than a note."},
+        "alignment_bytes": {"const": 16, "description": "Payload sections in envelope binaries start on this boundary."},
+        "text_encoding": {"const": "utf-8"},
+        "id_case": {"const": "kebab-case", "description": "Every id in this format matches ^[a-z0-9]+(-[a-z0-9]+)*$."},
+        "hash_algorithm": {"const": "sha256"},
+        "signature_algorithm": {"const": "ed25519"}
+      }
+    },
+
+    "container": {
+      "description": "How this package is materialised. Directory and zip layouts are identical; both are the format. Semantics are exactly profile 1's, including the advisory-and-frozen reading of `form`.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["form", "zip_compression", "entry_order"],
+      "properties": {
+        "form": {
+          "description": "ADVISORY, and frozen at authoring time: the form the package was written in when it was last signed, NOT a claim about the form you are holding. A reader finding it disagreeing treats that as an informational note, never as damage and never as a reason to rewrite anything.",
+          "enum": ["directory", "zip"]
+        },
+        "zip_compression": {
+          "description": "STORE is the default and what conformance fixtures use. Note the argument is even stronger here than in profile 1: a PNG is already deflated, so deflating the container again costs CPU to gain nothing.",
+          "enum": ["store", "deflate"],
+          "default": "store"
+        },
+        "entry_order": {
+          "description": "Law 9, preview-first byte layout: the physical order zip entries were written in. MATCHING RULE, normative: an element ending in '/' is a DIRECTORY PREFIX and matches every entry beneath it; anything else is an EXACT path. Matching is two-pass — exact paths first, then prefixes — so an exact entry listed between two prefixes lands where it is listed. A reader MUST NOT depend on this order for correctness; it exists so a store can exploit it.",
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        },
+        "total_size_bytes": {
+          "description": "OPTIONAL. The sum of the `size` fields of every DISTINCT path declared in nodes[].versions[].files[]: payload bytes only, excluding MANIFEST.json, SIGNATURE.json and all container framing, so it is the same number in the directory form and in the zip. A path listed by several versions of ONE node counts ONCE — the S-18 reading of what a file belongs to, applied arithmetically. It exists so a store can size a fetch before parsing the graph, and it is advisory: a reader that needs the number computes it. S-26, RULING: the field previously had no definition anywhere in the spec, and a gauntlet reader established what it meant by trying candidates against the file, which is exactly the \"if you had to ask a person, that is a spec bug\" case this format is supposed to remove.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "preview_prefix_bytes": {
+          "description": "Byte offset of the END of the last container entry belonging to the PREVIEW TIER, measured from the start of the zip — i.e. the number of leading bytes a store may fetch and have a complete browsable, searchable, auditable record. For this profile the DEFAULT preview tier is MANIFEST.json, SIGNATURE.json, LICENSE, README.txt, loaders/, spec/, semantics/, disclosure/, the recipe node's record and prompt files but NOT its embedded input media (which are routinely larger than the image they conditioned), and the node named by primary.thumbnail. `preview_tier` lists the actual set and is the authority; this sentence is only what a package means when it omits that key. S-15, RULING, implemented: THE NUMBER IS A HINT, declared-not-guaranteed. A writer SHOULD emit the recomputed value rather than an estimate, and a READER MUST NOT TREAT IT AS EXACT - check what a range request actually returned, and never report a disagreement as damage or refuse a package over one. It is a hint for an arithmetic reason that was measured (S10-2): the field measures the container that contains it, so writing it changes the length of MANIFEST.json and therefore the measurement. See spec/SPEC.md section 1, which governs both profiles here.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "preview_tier": {
+          "description": "The entries the number above was computed over, listed rather than implied, so a reader can recompute it without knowing this profile's default set. Same matching rule as entry_order: trailing '/' means prefix.",
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        }
+      }
+    },
+
+    "primary": {
+      "description": "Which node a consumer should reach for when it wants ONE of something. In an image package that question is nearly the whole interface, so unlike profile 1 this block is expected rather than optional — but it is still optional, and the fallback is documented in PROFILE-IMAGE.md section 3 so a reader is never stuck. A reader that falls back MUST report that it did.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "node_id of THE image — the one a viewer opens. Normally the core.image.source node."
+        },
+        "thumbnail": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "node_id of the small derived image a listing shows. It SHOULD sit inside container.preview_prefix_bytes, so showing it costs a ranged read and not a download."
+        }
+      }
+    },
+
+    "license": {
+      "description": "Law 7: the license travels as full embedded text, never as a link. S12-9, RULING: the format provides the structured place for licence facts and nothing more — filling it truthfully is the responsibility of the author and their tool or export implementation, and the format neither vets nor enforces content licensing. No conformance clause turns on what the text SAYS; the manifest hash and signature chain only guarantee it cannot be swapped or stripped silently. The doctrine's home is spec/SPEC.md section 2, beside the disclosure no-enforcement doctrine of section 3.12, of which it is the licence-side twin.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256"],
+      "properties": {
+        "spdx_id": {"type": "string", "description": "Advisory shorthand only. The embedded text is the license."},
+        "file": {"type": "string", "const": "LICENSE"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+
+    "schemas": {
+      "description": "AN EMPTY MAP IS CONFORMANT (S10-1, RULING, implemented): a package with no schema-bearing node type present says so with {} rather than being rejected for being small. Map from node type id to the path of the JSON Schema that validates that node's structured payload, inside this package. Every type in nodes[] whose payload is JSON MUST have an entry.",
+      "type": "object",
+      "propertyNames": {"pattern": "^(core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"},
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^spec/schemas/[A-Za-z0-9._-]+\\.schema\\.json$"
+      }
+    },
+
+    "layouts": {
+      "description": "Map from node type id to the path of the layout grammar for that node's custom binary payload. Every type in nodes[] whose payload is a custom binary MUST have an entry.",
+      "type": "object",
+      "propertyNames": {"pattern": "^(core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"},
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^spec/layouts/[A-Za-z0-9._-]+\\.layout\\.txt$"
+      }
+    },
+
+    "formats": {
+      "description": "OPTIONAL (ruling 1 of 2026-10-13, PROPOSED). Map from FORMAT ID to the path, inside this package, of that format's definition document - a self-contained, normative, byte-level description with hash-checkable test vectors, from which a decoder can be built. Parallel to schemas and layouts. This is how an image that is NOT a PNG is still a self-described payload: a core.image.source carrying a camera raw file names its format in meta.payload_format and this map says where the definition is. Absent or {} when no node names a format. The documents are files of a core.spec node and so are covered by spec_sha256. See spec/SPEC.md section 3.18.",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^spec/formats/[A-Za-z0-9._-]+\\.md$"
+      }
+    },
+
+    "spec_sha256": {
+      "description": "MANDATORY (S-29, RULING, implemented). One sha256 over the spec/ tree THIS PACKAGE CARRIES, so a reader can tell in one comparison whether the schemas travelling inside the file are the ones it already knows. Identical in meaning and algorithm to profile 1: see spec/SPEC.md section 2 for the complete construction. Vendoring spec/ is structural for every writer in every language, and until this field existed nothing said which revision the vendored bytes were.",
+      "$ref": "#/$defs/sha256"
+    },
+
+    "conventions_map": {
+      "description": "OPTIONAL (S-17, RULING, implemented). Path inside this package of the machine-readable convention to node-type map. Absence means this profile table as printed in the vendored spec/PROFILE-IMAGE.md section 6. See spec/SPEC.md section 10.2.",
+      "type": "string",
+      "pattern": "^spec/[A-Za-z0-9._/-]+\\.json$"
+    },
+
+    "nodes": {
+      "description": "The graph. Every node is an island (law 3). Cross-references are by identity through this array only.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/node"}
+    },
+
+    "signature_file": {
+      "description": "Present when a signature chain accompanies this package. SIGNATURE.json is NOT listed in any node's files[] and is NOT hashed by this manifest, because it signs this manifest.",
+      "type": "string",
+      "const": "SIGNATURE.json"
+    },
+
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "version"],
+      "properties": {
+        "tool": {"type": "string"},
+        "version": {"type": "string"},
+        "model": {"type": "string"}
+      }
+    }
+  },
+
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+
+    "path": {
+      "description": "Package-relative POSIX path. No leading slash, no drive letter, no '..' segment, no backslash. Case-sensitive.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9][A-Za-z0-9._@/-]*$"
+    },
+
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "type", "versions", "active", "edges"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "type": {
+          "description": "Namespaced node type. core.* is the profile's constitution; x.* is open frontier and a reader that does not know an x.* type skips it and loses nothing (law 12). core.recipe, core.disclosure, core.embedding, core.tool and core.tool.config are BASE DOCTRINE families shared with every other profile — they are defined in SPEC.md sections 3.11-3.13 and 3.17 and are not image-specific.",
+          "anyOf": [
+            {
+              "enum": [
+                "core.spec",
+                "core.loader",
+                "core.license",
+                "core.readme",
+                "core.image.source",
+                "core.image.derived",
+                "core.recipe",
+                "core.disclosure",
+                "core.embedding",
+                "core.tool",
+                "core.tool.config",
+                "core.semantics",
+                "core.provenance",
+                "core.revisions"
+              ]
+            },
+            {"type": "string", "pattern": "^x\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"}
+          ]
+        },
+        "versions": {
+          "description": "Append-only (law 6). A node may hold multiple coexisting versions; in an image package this is how a re-encode or a re-crop lives beside the thing it replaced instead of overwriting it.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/version"}
+        },
+        "active": {
+          "description": "The v number of the author's RECOMMENDED version — a recommendation, not a command.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["to", "kind"],
+            "properties": {
+              "to": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+              "kind": {"enum": ["requires", "enhances"]},
+              "role": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "e.g. 'derived-from', 'recipe-for', 'discloses', 'describes'."}
+            }
+          }
+        },
+        "meta": {
+          "description": "Type-specific metadata a reader needs BEFORE opening the payload. Payload-internal detail belongs in the payload.",
+          "type": "object"
+        }
+      },
+
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "core.image.source"}}, "required": ["type"]},
+          "then": {
+            "required": ["meta"],
+            "properties": {"meta": {"$ref": "#/$defs/imageMeta"}}
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "core.image.derived"}}, "required": ["type"]},
+          "then": {
+            "required": ["meta"],
+            "properties": {"meta": {"$ref": "#/$defs/derivedImageMeta"}}
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "core.loader"}}, "required": ["type"]},
+          "then": {
+            "required": ["meta"],
+            "properties": {"meta": {"$ref": "#/$defs/loaderMeta"}}
+          }
+        }
+      ]
+    },
+
+    "imageMeta": {
+      "description": "What a reader must know before decoding: enough to allocate, to colour-manage and to decide whether it wants the bytes at all.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "channels", "bit_depth", "color_space", "encoding"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "channels": {"type": "integer", "minimum": 1, "maximum": 4},
+        "bit_depth": {"enum": [8, 16]},
+        "color_space": {
+          "description": "'srgb' means the stored values are sRGB-encoded and a consumer MUST linearise before any lighting or blending maths. 'linear' means they are already linear. Getting this wrong is invisible in review and obvious on screen.",
+          "enum": ["srgb", "linear"]
+        },
+        "encoding": {
+          "description": "The container the pixels are in. PNG is this profile's boring standard (spec/MINI-SPECS.md section 8) and is what a conformant package uses unless it has a reason. A reader that supports only PNG is conformant and must say so rather than return wrong bytes.",
+          "enum": ["png", "jpeg", "webp", "tiff", "other"]
+        },
+        "payload_format": {
+          "description": "OPTIONAL (ruling 1 of 2026-10-13, PROPOSED). The FORMAT ID of this node's payload: a key of the manifest's `formats` map, whose value is the path of the definition document a decoder can be built from (spec/SPEC.md section 3.18). `encoding` above keeps its small closed vocabulary and stays the quick answer for the four boring cases; `payload_format` is the binding that makes `encoding: other` - a DNG, a HEIF, a camera raw - a described payload instead of an opaque one. Where both are present they agree: `png`/`jpeg`/`webp`/`tiff` name formats of the same id.",
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "file_formats": {
+          "description": "OPTIONAL, same ruling. File ROLE to format id, for files of this node that are not its payload and are in a foreign encoding. Every file of the node's version carrying that role is in that format.",
+          "type": "object",
+          "propertyNames": {"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "additionalProperties": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "contained_formats": {
+          "description": "OPTIONAL, same ruling. Format ids of the streams INSIDE a payload whose own format is a container (a TIFF holding JPEG-compressed strips). Each is a key of the manifest's `formats` map.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "modified_by": {
+          "description": "OPTIONAL (ruling 5 of 2026-10-13, rule 3, PROPOSED; base doctrine, spec/SPEC.md section 3.20). The node_ids of other nodes whose state changes how this image is SHOWN by its authoring application - a stack of non-destructive adjustments held in an extension node. A reader that skips or loses one of them reports `modified-by-skipped-node`: what it read is the unmodified image, not what the author saw. This meta block is closed, so the key is admitted here by name.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "has_alpha": {"type": "boolean"},
+        "aspect_note": {"type": "string", "maxLength": 500, "description": "For the common case where the requested aspect and the delivered aspect differ — hosted image models rarely return exactly what was asked for, and recording it stops a later reader treating the difference as damage."}
+      }
+    },
+
+    "derivedImageMeta": {
+      "description": "Everything imageMeta requires, plus how this one was made from another. A derived image whose resampling filter is unrecorded cannot be reproduced or judged.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "channels", "bit_depth", "color_space", "encoding", "derived_role", "resample"],
+      "properties": {
+        "width": {"type": "integer", "minimum": 1},
+        "height": {"type": "integer", "minimum": 1},
+        "channels": {"type": "integer", "minimum": 1, "maximum": 4},
+        "bit_depth": {"enum": [8, 16]},
+        "color_space": {"enum": ["srgb", "linear"]},
+        "encoding": {"enum": ["png", "jpeg", "webp", "tiff", "other"]},
+        "payload_format": {
+          "description": "OPTIONAL (ruling 1 of 2026-10-13, PROPOSED). The FORMAT ID of this node's payload: a key of the manifest's `formats` map, whose value is the path of the definition document a decoder can be built from (spec/SPEC.md section 3.18). `encoding` above keeps its small closed vocabulary and stays the quick answer for the four boring cases; `payload_format` is the binding that makes `encoding: other` - a DNG, a HEIF, a camera raw - a described payload instead of an opaque one. Where both are present they agree: `png`/`jpeg`/`webp`/`tiff` name formats of the same id.",
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "file_formats": {
+          "description": "OPTIONAL, same ruling. File ROLE to format id, for files of this node that are not its payload and are in a foreign encoding. Every file of the node's version carrying that role is in that format.",
+          "type": "object",
+          "propertyNames": {"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "additionalProperties": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "contained_formats": {
+          "description": "OPTIONAL, same ruling. Format ids of the streams INSIDE a payload whose own format is a container (a TIFF holding JPEG-compressed strips). Each is a key of the manifest's `formats` map.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "modified_by": {
+          "description": "OPTIONAL (ruling 5 of 2026-10-13, rule 3, PROPOSED; base doctrine, spec/SPEC.md section 3.20). The node_ids of other nodes whose state changes how this image is SHOWN by its authoring application - a stack of non-destructive adjustments held in an extension node. A reader that skips or loses one of them reports `modified-by-skipped-node`: what it read is the unmodified image, not what the author saw. This meta block is closed, so the key is admitted here by name.",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"}
+        },
+        "has_alpha": {"type": "boolean"},
+        "derived_role": {
+          "description": "What this derivative is FOR. 'thumbnail' is the listing tier; 'preview' is a mid-size web render; 'print' is a full-size re-encode; 'crop' changes framing rather than size; 'transcode' changes only the container.",
+          "enum": ["thumbnail", "preview", "print", "crop", "transcode", "other"]
+        },
+        "resample": {
+          "description": "The filter used, named concretely: 'lanczos3', 'box', 'bilinear', 'nearest', or 'none' when the pixels were not resampled. Not a hint — it is the difference between a reproducible derivative and a lookalike.",
+          "type": "string",
+          "minLength": 3
+        },
+        "quality": {"type": "integer", "minimum": 0, "maximum": 100, "description": "Encoder quality for lossy encodings. Absent for PNG."}
+      }
+    },
+
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v", "files", "note", "producer", "epistemic", "created"],
+      "properties": {
+        "v": {"type": "integer", "minimum": 1},
+        "files": {
+          "description": "Every byte this version owns. Every byte in the container except MANIFEST.json and SIGNATURE.json is reachable from exactly one NODE's files[] — see PROFILE-IMAGE.md section 2 and SPEC.md section 2 for why the unit is the node and not the node version. Two different nodes claiming one path is an error.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256", "size"],
+            "properties": {
+              "path": {"$ref": "#/$defs/path"},
+              "sha256": {"$ref": "#/$defs/sha256"},
+              "size": {"type": "integer", "minimum": 0},
+              "media_type": {"type": "string"},
+              "offset_hint": {"type": "integer", "minimum": 0, "description": "Byte offset of this file's DATA within the zip form, when known. A hint for ranged reads; a reader MUST verify by parsing the zip's own headers and MUST NOT trust this number."},
+              "role": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Which slot this file fills within a multi-file node. Open kebab-case vocabulary with three RESERVED values a reader may rely on: 'payload' (this file IS the node's payload, at most one per version), 'descriptor' (a sidecar ABOUT the payload, NEVER selected as the payload) and 'best' (the recommended one of several interchangeable takes). SPEC.md section 2.1."}
+            }
+          }
+        },
+        "payload_file": {
+          "$ref": "#/$defs/path",
+          "description": "PROPOSED (S-XV-4 / S-OW-2), optional and purely additive. The package-relative path of the file that IS this node's payload; MUST equal the `path` of exactly one entry in THIS version's files[]. primary.{image,...} names a NODE and a node may hold several files, so following it is only half the journey -- SPEC.md section 2.1 is the other half. A consumer MUST NOT take files[0]."
+        },
+        "note": {"type": "string", "minLength": 8, "maxLength": 2000, "description": "MANDATORY (law 6). One sentence saying why this version exists. 'update' is not a note."},
+        "producer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tool", "version"],
+          "properties": {
+            "tool": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1},
+            "model": {"type": "string", "description": "Model id when a model produced this. Where a core.recipe node exists it is the authority on the full model chain; this field is the one-line answer for a listing (law 9)."},
+            "host": {"type": "string"}
+          }
+        },
+        "input_hash": {
+          "description": "sha256 over this version's declared inputs (law 5): the concatenation, in the order given by input_files, of each input file's own sha256 as 32 RAW BYTES, followed by the UTF-8 bytes of the canonical JSON of input_params. AN ABSENT input_params IS THE EMPTY OBJECT and its canonical JSON is the two bytes '{}'. See spec/MINI-SPECS.md section 11.",
+          "$ref": "#/$defs/sha256"
+        },
+        "input_files": {"type": "array", "items": {"$ref": "#/$defs/path"}},
+        "input_params": {"type": "object"},
+        "epistemic": {
+          "description": "Law 5. 'authored' a human or a deliberate authoring act made it. 'measured' it came out of a computation and is reproducible from its inputs. 'inferred' a model guessed it. NOTE FOR THIS PROFILE: a generated image is 'inferred' — a model produced it and it is not reproducible from its inputs, which is precisely what core.recipe's reproducibility grade then quantifies. A deterministic downscale of that image is 'measured'. Getting these two the wrong way round is the most common mistake in an image package.",
+          "enum": ["authored", "measured", "inferred"]
+        },
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "created": {"type": "string", "format": "date-time"},
+        "spec_sha256": {
+          "description": "OPTIONAL (S-29, RULING, implemented). The revision of the spec this version payload conforms to - the same construction as the global field, over exactly the spec files this payload conforms to. See spec/SPEC.md section 2.",
+          "$ref": "#/$defs/sha256"
+        },
+        "supersedes": {"type": "integer", "minimum": 1},
+        "compacted": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["at", "by", "reason"],
+          "properties": {
+            "at": {"type": "string", "format": "date-time"},
+            "by": {"type": "string"},
+            "reason": {"type": "string", "minLength": 8}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "description": "Law 5, machine-checked: anything not authored was derived from something, so it must say what from.",
+          "if": {"properties": {"epistemic": {"enum": ["measured", "inferred"]}}, "required": ["epistemic"]},
+          "then": {"required": ["input_hash", "input_files"]}
+        }
+      ]
+    },
+
+    "loaderMeta": {
+      "description": "core.loader — the reference readers that travel INSIDE the package. Identical in meaning to profile 1's; see SPEC.md section 7 for the normative text, including what counts as a dependency and the rule that a prebuilt binary is never executed automatically.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "form", "entrypoint", "dependencies", "capabilities"],
+      "properties": {
+        "language": {"enum": ["python", "rust", "c", "cpp", "javascript", "other"]},
+        "form": {"enum": ["source", "prebuilt"]},
+        "entrypoint": {"$ref": "#/$defs/path"},
+        "dependencies": {
+          "description": "MUST be an empty array. A loader with a dependency is a promise about other files, which law 1 bans at the constitutional level. See SPEC.md section 7 for what counts as a dependency.",
+          "type": "array",
+          "maxItems": 0,
+          "items": {"type": "string"}
+        },
+        "toolchain": {"type": "string"},
+        "build_command": {"type": "string"},
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"enum": ["read-manifest", "verify-hashes", "read-envelope", "read-geometry", "read-textures", "read-audio", "read-skeleton", "read-animation", "materialize", "verify-signature", "summarize-points", "summarize-gsplat"]}
+        },
+        "prebuilt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["platform", "arch", "abi", "sha256", "built_from"],
+          "properties": {
+            "platform": {"enum": ["windows", "linux", "macos", "wasm", "other"]},
+            "arch": {"enum": ["x86-64", "aarch64", "wasm32", "other"]},
+            "abi": {"type": "string"},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "built_from": {"$ref": "#/$defs/path"},
+            "reproducible_build_command": {"type": "string"}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"form": {"const": "prebuilt"}}, "required": ["form"]},
+          "then": {"required": ["prebuilt"]}
+        }
+      ]
+    }
+  }
+}

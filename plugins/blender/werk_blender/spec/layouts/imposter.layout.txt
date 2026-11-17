@@ -1,0 +1,221 @@
+core.imposter — layout note v1  (NO CUSTOM BINARY)
+==================================================
+
+DECISION (D-IM-1): the imposter node has NO custom binary payload. Its
+pixels live in ordinary PNG files and its descriptor is ordinary JSON
+(spec/schemas/core.imposter.schema.json). This file exists because the
+profile's node table promised a layout grammar here, and because a promise
+of "no binary" is only useful if it comes with the thing a binary index
+would otherwise have carried: the exact, normative mapping between a view
+direction and a tile in the atlas. That mapping is below and it is
+NORMATIVE.
+
+Why no binary index
+-------------------
+An imposter atlas is a regular NxN grid of equally sized tiles. Every tile's
+pixel rectangle is a pure function of (tile_count, tile_pixels) — there is
+nothing per-tile to store that is not derivable from two integers, so a
+binary index would be a table of numbers that a reader could reconstruct,
+which is exactly the kind of derived data law 5 tells us to be suspicious of
+and law 11 tells us not to invent. The alternative — an irregular atlas with
+per-tile rectangles — was rejected: it saves at most a few percent of texels
+and costs every consumer a lookup table.
+
+This is consistent with law 8's corollary rather than a violation of it. The
+corollary bans deriving offsets from a STRUCT DEFINITION, i.e. from
+knowledge that lives outside the file. Here the two integers are declared in
+the descriptor JSON and the arithmetic is declared in this file; nothing is
+implicit.
+
+Preview-first (law 9): because the atlases are plain PNG and appear early in
+the container, a store or browser gets a usable thumbnail sheet from the
+first few hundred kilobytes without any werk-specific code at all.
+
+--------------------------------------------------------------------------
+1. Atlas tiling (normative)
+--------------------------------------------------------------------------
+
+Let
+    N  = descriptor "tile_count"    tiles per axis; the atlas is N x N tiles
+    T  = descriptor "tile_pixels"   edge length of one tile in pixels
+The PNG is exactly (N*T) x (N*T) pixels. A reader MUST verify this against
+the PNG's IHDR width/height and mark the node dead if it disagrees.
+
+Tile (i, j), with i in [0,N) along the atlas U axis and j in [0,N) along the
+atlas V axis, occupies the pixel rectangle
+
+    x0 = i * T          x1 = x0 + T        (exclusive)
+    y0 = j * T          y1 = y0 + T        (exclusive)
+
+in PNG raster coordinates, i.e. y0 = 0 is the TOP row of the image. Tile
+index in row-major order is
+
+    tile_index = j * N + i
+
+Tiles are NOT padded and NOT bordered. Bilinear sampling across a tile
+boundary therefore bleeds; a consumer MUST clamp its sampling to the tile
+rectangle, inset by half a texel:
+
+    u_px = x0 + 0.5 + u * (T - 1)        for u in [0,1]
+    v_px = y0 + 0.5 + v * (T - 1)
+
+--------------------------------------------------------------------------
+2. Octahedral view mapping (normative)
+--------------------------------------------------------------------------
+
+The manifest declares conventions.oct_encoding_pole = "y". That means the
+octahedron is folded about the model-space Y (up) axis: the (x, z) plane is
+the mapping plane and Y is the axis whose sign selects the fold.
+
+Two mappings are defined. The descriptor's "mapping" field selects one.
+
+2.1 "octahedral-full" — the whole sphere of directions
+
+  ENCODE  direction n (unit, model space) -> uv in [0,1]^2
+
+      L  = |n.x| + |n.y| + |n.z|
+      p  = (n.x / L, n.y / L, n.z / L)
+      if p.y >= 0:
+          e = (p.x, p.z)
+      else:
+          e = ( (1 - |p.z|) * sgn(p.x),
+                (1 - |p.x|) * sgn(p.z) )
+      uv = (e.x * 0.5 + 0.5, e.y * 0.5 + 0.5)
+
+  DECODE  uv in [0,1]^2 -> direction n (unit, model space)
+
+      e  = (uv.x * 2 - 1, uv.y * 2 - 1)
+      py = 1 - |e.x| - |e.y|
+      if py < 0:
+          px = (1 - |e.y|) * sgn(e.x)
+          pz = (1 - |e.x|) * sgn(e.y)
+      else:
+          px = e.x
+          pz = e.y
+      n  = normalize( (px, py, pz) )
+
+  sgn(t) is defined as +1.0 when t >= 0 and -1.0 when t < 0. sgn(0) = +1.0.
+  This is stated because the two common implementations differ at zero and
+  the difference shows up as a one-texel seam on the axis planes.
+
+2.2 "octahedral-hemi" — the upper hemisphere only (n.y >= 0)
+
+  Used for tiers that never see the object from below (ground props).
+
+  ENCODE
+      L  = |n.x| + |n.y| + |n.z|
+      p  = (n.x / L, n.y / L, n.z / L)
+      e  = (p.x + p.z, p.x - p.z)
+      uv = (e.x * 0.5 + 0.5, e.y * 0.5 + 0.5)
+
+  DECODE
+      e  = (uv.x * 2 - 1, uv.y * 2 - 1)
+      px = (e.x + e.y) * 0.5
+      pz = (e.x - e.y) * 0.5
+      py = 1 - |px| - |pz|
+      n  = normalize( (px, py, pz) )
+
+2.3 Tile centres
+
+  The direction baked into tile (i, j) is the DECODE of that tile's centre:
+
+      u = (i + 0.5) / N
+      v = (j + 0.5) / N
+      n = decode(u, v)
+
+  and the camera that produced the tile looked along -n (it was positioned
+  at centre + n * camera_distance_m and aimed at the entity's bounds
+  centre). A consumer selecting a tile for a view direction d (from entity
+  to eye, unit, model space) computes ENCODE(d), multiplies by N, and floors
+  to get (i, j); for smooth transitions it bilinearly blends the four
+  neighbouring tiles using the fractional part, and MUST handle the
+  wrap/fold at the atlas border by clamping, not wrapping (the octahedral
+  border is a fold, not a torus, and wrapping produces a mirrored ghost).
+
+2.4 Round-trip requirement
+
+  For every tile centre, ENCODE(DECODE(u,v)) MUST return to within 1e-5 of
+  (u,v). A conformance test does exactly this for all N*N tiles of both
+  mappings.
+
+--------------------------------------------------------------------------
+3. G-buffer channel packing (normative)
+--------------------------------------------------------------------------
+
+Each tier is FOUR PNG files with identical dimensions and tiling:
+
+  role       PNG type                colour space   channel meaning
+  ---------  ----------------------  -------------  -----------------------
+  "albedo"   8-bit RGBA              srgb           RGB = base colour,
+                                                    A = coverage/opacity.
+                                                    A = 0 means "no surface
+                                                    here"; a consumer MUST
+                                                    discard those texels.
+  "normal"   8-bit RGBA              linear         RG = octahedral-encoded
+                                                    world-space normal using
+                                                    the octahedral-full
+                                                    mapping of section 2.1
+                                                    with n mapped to uv then
+                                                    uv*255 rounded;
+                                                    B = 0, A = 255.
+                                                    Reserved B is declared,
+                                                    not spare.
+  "depth"    16-bit grayscale        linear         distance from the tile's
+                                                    camera plane, normalised
+                                                    by "depth_range_m":
+                                                    metres = value/65535 *
+                                                    depth_range_m +
+                                                    depth_min_m.
+                                                    65535 means "far / no
+                                                    surface".
+  "mrao"     8-bit RGB               linear         R = metallic 0..1,
+                                                    G = roughness 0..1,
+                                                    B = ambient occlusion
+                                                    0..1. Value/255.
+
+  All four are required for a tier to be usable. A tier missing "normal" or
+  "mrao" still renders as an unlit billboard, so a reader MUST degrade to
+  albedo-only rather than dropping the node (law 3).
+
+--------------------------------------------------------------------------
+4. Tiers
+--------------------------------------------------------------------------
+
+The profile bakes TWO tiers, both described in the same descriptor:
+
+  "preview"  N = 4,  T = 256   -> 1024 x 1024 atlas, 16 views.
+             Its purpose is the store/browser thumbnail sheet and the
+             farthest LOD. It is the tier written early in the container.
+  "runtime"  N = 8,  T = 256   -> 2048 x 2048 atlas, 64 views.
+             Its purpose is in-engine imposter rendering.
+
+These are the profile's defaults; the descriptor declares the actual numbers
+and a reader MUST use the declared ones.
+
+CONFIRMED 2026-08-08 (ruling 11): 8x8 — N = 8, 64 views — IS THE CANONICAL
+FULL TIER. The coarse preview tier stays exactly as it is above, N = 4, 16
+views, because the two do not conflict: they are two tiers of one descriptor
+with different jobs, and nothing in this file ever offered a competing full
+tier. Where any ambiguity about "the" tier count matters anywhere in this
+format or its tooling, 8x8 wins. The ruling changes no number here; it
+removes the possibility of a later reader deciding the question differently,
+which is the same reason every other constant in this format is written down
+instead of being obvious.
+
+--------------------------------------------------------------------------
+5. Decisions recorded here
+--------------------------------------------------------------------------
+
+  D-IM-1  No custom binary; JSON descriptor plus PNG atlases (rationale in
+          the opening section).
+  D-IM-2  sgn(0) = +1.0, stated normatively, because the seam it causes
+          otherwise is a real bug that is invisible in review.
+  D-IM-3  Tiles carry no border padding; consumers inset by half a texel.
+          Padding would make tile_pixels ambiguous (is it with or without
+          the border?) and ambiguity is the thing this format exists to
+          remove.
+  D-IM-4  Depth is 16-bit and normalised by explicitly declared min/range
+          rather than stored in metres as float. PNG has no float type, and
+          inventing one would mean a custom binary — which section 1 argues
+          against. The declared range keeps it lossless enough (a 2 m object
+          resolves to 0.03 mm).

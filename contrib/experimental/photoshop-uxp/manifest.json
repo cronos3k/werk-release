@@ -1,0 +1,16 @@
+{
+  "manifestVersion": 5,
+  "id": "format.werk.photoshop",
+  "name": "werk",
+  "version": "1.0.0",
+  "main": "index.js",
+  "host": [{ "app": "PS", "minVersion": "23.3.0" }],
+  "entrypoints": [
+    { "type": "command", "id": "openWerk", "label": { "default": "Open werk package..." } },
+    { "type": "command", "id": "exportWerkImage", "label": { "default": "Export as werk image/1..." } }
+  ],
+  "requiredPermissions": {
+    "localFileSystem": "fullAccess"
+  },
+  "icons": []
+}

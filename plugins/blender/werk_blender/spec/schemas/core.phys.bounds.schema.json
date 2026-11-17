@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.phys.bounds.schema.json",
+  "title": "core.phys.bounds — axis-aligned box and true minimal sphere",
+  "description": "The whole-entity bounds and, optionally, per-part bounds. The sphere is the TRUE minimal enclosing sphere (Welzl), not the sphere circumscribing the AABB — the two differ by up to 73% in volume and a culling system that assumes the wrong one is either wrong or wasteful. Which one it is, is therefore declared.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "space", "entity"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "space": {"const": "model", "description": "Entity bounds are in model space (before any instance transform). Per-part bounds are in that part's local space; each entry says so again."},
+    "entity": {"$ref": "#/$defs/boundsRecord"},
+    "parts": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "#/$defs/boundsRecord"},
+          {
+            "type": "object",
+            "required": ["part_id", "space"],
+            "properties": {
+              "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+              "space": {"enum": ["part-local", "model"]}
+            }
+          }
+        ]
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"]},
+    "note": {"type": "string"}
+  },
+  "$defs": {
+    "boundsRecord": {
+      "type": "object",
+      "required": ["aabb_min", "aabb_max", "sphere_center", "sphere_radius", "sphere_method"],
+      "properties": {
+        "part_id": {"type": "string"},
+        "space": {"type": "string"},
+        "aabb_min": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres, component-wise minimum"},
+        "aabb_max": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres, component-wise maximum; each component >= the corresponding aabb_min"},
+        "sphere_center": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres"},
+        "sphere_radius": {"type": "number", "exclusiveMinimum": 0, "description": "metres"},
+        "sphere_method": {
+          "enum": ["welzl-exact", "ritter-approximate", "aabb-circumscribed"],
+          "description": "How the sphere was computed. 'welzl-exact' is the true minimal sphere and what an enrichment pipeline MUST produce. The other two are recorded honestly when that is what a source provided."
+        },
+        "surface_area_m2": {"type": "number", "minimum": 0},
+        "volume_m3": {"type": "number", "minimum": 0, "description": "Enclosed volume of the closed surface. 0 when the mesh is not closed; use 'watertight' to tell those cases apart."},
+        "watertight": {"type": "boolean", "description": "Whether the source surface is closed and manifold. A volume from a non-watertight mesh is a fiction and this flag is how a consumer knows."},
+        "longest_axis_m": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

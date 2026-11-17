@@ -1,0 +1,6403 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.blocks.schema.json",
+ "title": "core.text.blocks — a run of blocks (paragraphs and tables) of one story",
+ "description": "A run of consecutive blocks of rich text: a part of the document's main text, or one whole secondary story (a header, a footer, the text of a footnote, endnote, comment or text box, a note separator). Profile rich-document/1, spec/PROFILE-RICH-DOCUMENT.md section 3. Conventions that apply to every number and string below are in section 5 of that document; the ones a reader cannot do without: lengths are points (1/72 inch) unless a field says otherwise; a run `len` counts UTF-8 bytes; colours are [red, green, blue], 0..255, sRGB; a property that is absent has the value given as `default`.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "story",
+  "blocks"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "story": {
+   "description": "Which story of the document these blocks belong to. It makes the node meaningful alone: a reader that has lost the document node still knows what each blocks node is.",
+   "oneOf": [
+    {
+     "description": "A part of the document's main text. The body is the concatenation of the `blocks` of the nodes listed in the document node's `body`, in that order.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind"
+     ],
+     "properties": {
+      "kind": {
+       "description": "The constant `body`.",
+       "type": "string",
+       "const": "body"
+      }
+     }
+    },
+    {
+     "description": "A whole secondary story: a header, a footer, the text of one footnote, endnote or comment, or the text of a text box.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "id"
+     ],
+     "properties": {
+      "kind": {
+       "description": "What the story is. `header`: a page header; `footer`: a page footer; `footnote`: the text of one footnote; `endnote`: the text of one endnote; `comment`: the text of one comment; `textBox`: the text inside a text box shape.",
+       "type": "string",
+       "enum": [
+        "header",
+        "footer",
+        "footnote",
+        "endnote",
+        "comment",
+        "textBox"
+       ]
+      },
+      "id": {
+       "description": "The story's number: the value other payloads use to refer to this story (a note reference's `id`, a shape's `story`, a section's `headers` and `footers`, a comment's `part`, a text box's `next`). Unique among the stories of the document, at least 1.",
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      "textBody": {
+       "description": "For a `textBox` story: how the box shows its text. Absent: all defaults (horizontal text, at the top, not linked, default inner margins, no auto-fit). Unused for other kinds.",
+       "$ref": "#/$defs/TextBody"
+      }
+     }
+    },
+    {
+     "description": "One of the document's own note separators: the blocks drawn between the page's text and its footnotes (or endnotes), replacing the default short rule. The rule itself is an inline `separatorLine` object.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "notes",
+      "role"
+     ],
+     "properties": {
+      "kind": {
+       "description": "The constant `noteSeparator`.",
+       "type": "string",
+       "const": "noteSeparator"
+      },
+      "notes": {
+       "description": "Which notes it separates: `footnote` or `endnote`.",
+       "type": "string",
+       "enum": [
+        "footnote",
+        "endnote"
+       ]
+      },
+      "role": {
+       "description": "`separator`: drawn above the notes on a page; `continuationSeparator`: drawn above the rest of a note continued from the page before; `continuationNotice`: drawn below the part of a note that continues on the next page.",
+       "type": "string",
+       "enum": [
+        "separator",
+        "continuationSeparator",
+        "continuationNotice"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  "blocks": {
+   "description": "Where the blocks are. They are NOT in this payload: they are in the node's second file, the one whose `role` in MANIFEST.json is `blocks`, stored as one zlib stream (RFC 1950). Inflate it and parse the result as JSON: an array of blocks, described by `#/$defs/BlockList` of this schema. The payload itself (this header) is small and uncompressed so that a reader can tell what every blocks node is without inflating anything.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "count",
+    "role",
+    "format",
+    "stored_size",
+    "stored_sha256",
+    "inflated_size",
+    "inflated_sha256"
+   ],
+   "properties": {
+    "count": {
+     "description": "How many blocks the array in the blocks file holds (top level: a table counts once).",
+     "type": "integer",
+     "minimum": 0
+    },
+    "role": {
+     "description": "The `role` of the blocks file among this node version's `files[]` in MANIFEST.json: the constant `blocks`. Resolve the file through the manifest, never by a path.",
+     "type": "string",
+     "const": "blocks"
+    },
+    "format": {
+     "description": "The format id of the blocks file: the constant `zlib-deflate`, a key of the `formats` map in MANIFEST.json, which gives the path of the format's definition inside this package. The node's `meta.file_formats.blocks` says the same.",
+     "type": "string",
+     "const": "zlib-deflate"
+    },
+    "stored_size": {
+     "description": "Size in bytes of the blocks file as stored (the zlib stream).",
+     "type": "integer",
+     "minimum": 0
+    },
+    "stored_sha256": {
+     "description": "SHA-256 of the blocks file as stored, 64 lowercase hex digits. Equals the file's `sha256` in MANIFEST.json.",
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "inflated_size": {
+     "description": "Size in bytes of the inflated content (UTF-8 JSON). A reader may refuse to inflate beyond it.",
+     "type": "integer",
+     "minimum": 0
+    },
+    "inflated_sha256": {
+     "description": "SHA-256 of the inflated content, 64 lowercase hex digits: a reader checks its inflater against it.",
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    }
+   }
+  }
+ },
+ "$defs": {
+  "Align": {
+   "description": "Horizontal alignment of text between the left and right indents. Values: `left`: flush left, ragged right (in a right-to-left paragraph: at the leading edge, which is the right); `center`: centred; `right`: flush right, ragged left; `justify`: both edges flush; the last line is left-aligned; `distribute`: both edges flush on every line, the last line included, by spacing characters.",
+   "type": "string",
+   "enum": [
+    "left",
+    "center",
+    "right",
+    "justify",
+    "distribute"
+   ]
+  },
+  "AltText": {
+   "description": "A drawing's alternative text.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "text": {
+     "description": "The description, for a shape, text box or group (pictures and charts carry theirs in their own `alt`). Absent: empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "title": {
+     "description": "A short title. Absent: empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "decorative": {
+     "description": "true: the drawing is decorative; it adds nothing to the content and assistive technology skips it.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "Anchor": {
+   "description": "The reference area a floating object's position is measured from. Values: `column`: The text column the anchor is in (its left edge horizontally; vertically the same as `paragraph`); `margin`: The page's text area: its left edge at the left margin, its top at the top margin; `page`: The physical page: its top-left corner; `paragraph`: The paragraph the object is anchored in (its top, vertically; horizontally the same as `column`); `leftMargin`: The page's left margin area: from the page's left edge to the text area; `rightMargin`: The page's right margin area: from the text area to the page's right edge; `topMargin`: The page's top margin area: from the page's top edge to the text area; `bottomMargin`: The page's bottom margin area: from the text area to the page's bottom edge; `insideMargin`: The inside margin area: the left margin area on odd pages, the right one on even pages; `outsideMargin`: The outside margin area: the right margin area on odd pages, the left one on even pages; `character`: The position of the anchor character, the object's U+FFFC (horizontal reference only); `line`: The top of the text line that holds the anchor character (vertical reference only).",
+   "type": "string",
+   "enum": [
+    "column",
+    "margin",
+    "page",
+    "paragraph",
+    "leftMargin",
+    "rightMargin",
+    "topMargin",
+    "bottomMargin",
+    "insideMargin",
+    "outsideMargin",
+    "character",
+    "line"
+   ]
+  },
+  "Block": {
+   "description": "One block of a story: a paragraph or a table. `kind` selects which.",
+   "oneOf": [
+    {
+     "description": "A paragraph. A paragraph: its text, the formatting runs that cover the text, its paragraph formatting, and the objects anchored in it.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "text",
+      "runs"
+     ],
+     "properties": {
+      "kind": {
+       "description": "Selects this alternative: the constant `para`.",
+       "type": "string",
+       "const": "para"
+      },
+      "text": {
+       "description": "The paragraph's characters, UTF-8, WITHOUT a terminating line break. Seven characters have a fixed meaning: U+FFFC marks an inline object (the k-th U+FFFC of `text` is `objects[k]`); U+000A is a manual line break inside the paragraph; U+000C a page break; U+000E a column break; U+0009 a tab; U+00AD an optional (soft) hyphen; U+2011 a non-breaking hyphen; U+00A0 a non-breaking space. Everything else is literal text.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "runs": {
+       "description": "Character formatting, as consecutive runs that together cover `text` exactly: the sum of all `len` equals the length of `text` in UTF-8 BYTES, every run boundary falls between two characters, and no run has `len` 0. An empty paragraph has no runs.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/Run"
+       }
+      },
+      "props": {
+       "description": "Direct paragraph formatting. A property that is null or absent is inherited (paragraph style, then document defaults). Absent: no direct formatting.",
+       "default": {},
+       "$ref": "#/$defs/ParaProps"
+      },
+      "mark": {
+       "description": "Character formatting of the paragraph mark (the invisible end of the paragraph): what text typed into the paragraph when it is empty takes, and the formatting of a list label. Absent: none.",
+       "default": {},
+       "$ref": "#/$defs/CharProps"
+      },
+      "objects": {
+       "description": "The inline objects of the paragraph, in the order of their U+FFFC characters in `text`: `objects[k]` belongs to the k-th U+FFFC. The count equals the number of U+FFFC in `text`. Absent: no objects.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/InlineObject"
+       }
+      },
+      "section": {
+       "description": "Present when this paragraph is the LAST paragraph of a section that is not the document's last: the page setup of the section that ends here. The next section starts with the next block. The last section's page setup is the document node's `finalSection`. Null or absent: no section ends here.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/SectionProps"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "description": "A table. A table: a grid of column widths and rows of cells. Cells hold blocks (paragraphs and nested tables).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "kind",
+      "grid",
+      "rows"
+     ],
+     "properties": {
+      "kind": {
+       "description": "Selects this alternative: the constant `table`.",
+       "type": "string",
+       "const": "table"
+      },
+      "props": {
+       "description": "Table-wide properties. Absent: all defaults.",
+       "default": {
+        "align": null,
+        "borders": null,
+        "caption": null,
+        "cellMargins": null,
+        "fixed": false,
+        "indent": null,
+        "look": {
+         "bandedColumns": false,
+         "bandedRows": true,
+         "firstColumn": true,
+         "headerRow": true,
+         "lastColumn": false,
+         "totalRow": false
+        },
+        "shading": null,
+        "style": null,
+        "width": null,
+        "widthPct": null
+       },
+       "$ref": "#/$defs/TableProps"
+      },
+      "grid": {
+       "description": "The widths of the table's grid columns, left to right, points (1/72 inch). A cell covers `span` consecutive grid columns.",
+       "type": "array",
+       "items": {
+        "type": "number"
+       }
+      },
+      "rows": {
+       "description": "The rows, top to bottom.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/Row"
+       }
+      },
+      "controls": {
+       "description": "Content controls whose content starts or ends with this table. Absent: none.",
+       "default": {
+        "close": 0,
+        "open": []
+       },
+       "$ref": "#/$defs/ControlWrap"
+      }
+     }
+    }
+   ]
+  },
+  "BlockList": {
+   "description": "The INFLATED content of a blocks node's blocks file (the file with role `blocks`): one JSON array of the node's blocks (paragraphs and tables), in reading order. WordCraft writes one block per line. A secondary story holds at least one paragraph; a `body` node may hold any number of blocks, including none. This definition is not referenced from the payload's own schema above: a reader validates the inflated file against it (`{\"$ref\": \"#/$defs/BlockList\"}` with this document's `$defs`).",
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/Block"
+   }
+  },
+  "Border": {
+   "description": "One border line.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The kind of line.",
+     "default": "none",
+     "$ref": "#/$defs/BorderStyle"
+    },
+    "width": {
+     "description": "Line width, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "color": {
+     "description": "Line colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: automatic (black on a light background).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "space": {
+     "description": "Distance between the border and the content it surrounds, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "BorderStyle": {
+   "description": "The kind of line a border is drawn with. Values: `none`: no line (explicitly none: it overrides an inherited border); `single`: one solid line; `double`: two parallel solid lines; `dotted`: a line of dots; `dashed`: a line of dashes; `thick`: one heavy solid line; `triple`: three parallel solid lines; `dotDash`: alternating dots and dashes; `wave`: a wavy line.",
+   "type": "string",
+   "enum": [
+    "none",
+    "single",
+    "double",
+    "dotted",
+    "dashed",
+    "thick",
+    "triple",
+    "dotDash",
+    "wave"
+   ]
+  },
+  "Borders": {
+   "description": "Borders on the four sides, plus the inner borders of tables and of runs of bordered paragraphs. A side that is null is not set here.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "top": {
+     "description": "The top border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "left": {
+     "description": "The left border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bottom": {
+     "description": "The bottom border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "right": {
+     "description": "The right border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "between": {
+     "description": "Between consecutive paragraphs (paragraph borders), or between rows: the inside horizontal lines (table borders). Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "inside_v": {
+     "description": "Between columns: the inside vertical lines of a table. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "CanvasStyle": {
+   "description": "The background fill and outline of a drawing canvas.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "fill": {
+     "description": "Background fill of the canvas, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "stroke": {
+     "description": "Outline colour of the canvas, `[red, green, blue]`, each an integer 0..255, sRGB. Null: no outline.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "strokeWidth": {
+     "description": "Outline width, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "Cell": {
+   "description": "A table cell.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "blocks"
+   ],
+   "properties": {
+    "props": {
+     "description": "Cell properties. Absent: all defaults.",
+     "default": {
+      "borders": null,
+      "margins": null,
+      "noWrap": false,
+      "shading": null,
+      "span": 0,
+      "textDirection": "horizontal",
+      "valign": "top",
+      "vmerge": "none",
+      "width": null
+     },
+     "$ref": "#/$defs/CellProps"
+    },
+    "blocks": {
+     "description": "The cell's content: paragraphs and nested tables, top to bottom. A cell holds at least one paragraph, and its last block is a paragraph.",
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Block"
+     }
+    },
+    "controls": {
+     "description": "Content controls around the cell. Absent: none.",
+     "default": {
+      "close": 0,
+      "open": []
+     },
+     "$ref": "#/$defs/ControlWrap"
+    }
+   }
+  },
+  "CellProps": {
+   "description": "Properties of one table cell.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "width": {
+     "description": "Preferred width of the cell, points (1/72 inch). Null: taken from the grid columns it spans.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "widthPct": {
+     "description": "Preferred width as a percentage (0..100) of the table's width. Null or absent: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "span": {
+     "description": "Number of grid columns the cell spans, at least 1 (1 = not merged horizontally).",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "vmerge": {
+     "description": "Vertical merging with the cells above and below in the same grid columns.",
+     "default": "none",
+     "$ref": "#/$defs/VMerge"
+    },
+    "shading": {
+     "description": "Background fill of the cell, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none of its own (the table's or the table style's applies).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "borders": {
+     "description": "The cell's own borders, overriding the table's on the sides given. `between` and `inside_v` are unused for a cell. Null: none of its own.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "valign": {
+     "description": "Where the cell's content sits between the cell's top and bottom.",
+     "default": "top",
+     "$ref": "#/$defs/VAlign"
+    },
+    "margins": {
+     "description": "The cell's own inner margins `[top, left, bottom, right]`, points (1/72 inch). Null: the table's `cellMargins`.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "textDirection": {
+     "description": "Which way the cell's text runs.",
+     "default": "horizontal",
+     "$ref": "#/$defs/TextDirection"
+    },
+    "noWrap": {
+     "description": "true: text in the cell is not wrapped to the cell's width (the column grows instead where the table is not fixed).",
+     "default": false,
+     "type": "boolean"
+    },
+    "hideMark": {
+     "description": "true: the cell's last paragraph takes no room when it is empty, so a row of such empty cells shrinks to its borders.",
+     "default": false,
+     "type": "boolean"
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the cell properties before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_CellProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "CharProps": {
+   "description": "Character formatting, as direct formatting or in a style. Every property is optional; null or absent means the property is not set here and is inherited.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The `id` of a character style in the stylesheet node. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "font": {
+     "description": "Font family name (for example `Aptos`, `Times New Roman`). A name only: the font file is not part of the document, and a reader without that font substitutes a similar one. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "size": {
+     "description": "Font size, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bold": {
+     "description": "Bold. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "italic": {
+     "description": "Italic. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "underline": {
+     "description": "Underline style (`none` explicitly removes an inherited underline). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Underline"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "underlineColor": {
+     "description": "Underline colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: the text colour.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "strike": {
+     "description": "Struck through with one line. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "doubleStrike": {
+     "description": "Struck through with two lines. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "color": {
+     "description": "Text colour. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextColor"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "highlight": {
+     "description": "Highlighter colour behind the text (`none` explicitly removes an inherited one). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Highlight"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shading": {
+     "description": "Background fill behind the text, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "border": {
+     "description": "A border around the text; a border whose `style` is `none` explicitly removes an inherited one. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "vertAlign": {
+     "description": "Superscript or subscript. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/VertAlign"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "caps": {
+     "description": "Shown in capitals (the stored text keeps its case). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "smallCaps": {
+     "description": "Lower-case letters shown as small capitals. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "hidden": {
+     "description": "Hidden text: not shown and not printed unless the reader is asked to show it. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spacing": {
+     "description": "Extra space after each character, points (1/72 inch); negative condenses. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "scale": {
+     "description": "Horizontal scaling of the glyphs, percent (100 = unscaled). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "position": {
+     "description": "Baseline shift, points (1/72 inch): positive raises the text, negative lowers it. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "kern": {
+     "description": "Pair kerning is applied to text at or above this font size, points (1/72 inch); 0 = kerning off. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "outline": {
+     "description": "Letters drawn as outlines. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shadow": {
+     "description": "Letters drawn with a simple drop shadow. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "emboss": {
+     "description": "Letters drawn embossed (raised). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "engrave": {
+     "description": "Letters drawn engraved (sunken). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "textEffects": {
+     "description": "Decorative text effects: fill, outline, shadow, glow, reflection. When inherited values combine, each of the five is taken whole from the nearest level that sets it. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextEffects"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "lang": {
+     "description": "Language of the text, a BCP 47 tag (`en-US`, `de-DE`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "noProof": {
+     "description": "true: spelling and grammar are not checked in this text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rtl": {
+     "description": "true: a right-to-left run; its characters are complex script and read right to left. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "cs": {
+     "description": "true: the whole run is formatted with the complex-script properties (`fontCs`, `sizeCs`, `boldCs`, `italicCs`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fontCs": {
+     "description": "Font family name for complex-script text (Arabic, Hebrew, Thai ...). Null or absent: inherited, and `font` when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fontEa": {
+     "description": "Font family name for East Asian text (Chinese, Japanese, Korean). Null or absent: inherited, and `font` when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sizeCs": {
+     "description": "Font size for complex-script text, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "boldCs": {
+     "description": "Bold for complex-script text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "italicCs": {
+     "description": "Italic for complex-script text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "langBidi": {
+     "description": "Language of complex-script text, a BCP 47 tag (`fa-IR`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "link": {
+     "description": "Hyperlink target of the text: a URL, or `#name` for the bookmark `name` in this document. A link is content to follow on the reader's request, never a dependency of the document. Null or absent: not a link.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "ins": {
+     "description": "The text is a tracked insertion made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `insert`). Null or absent: not a tracked insertion.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "del": {
+     "description": "The text is a tracked deletion made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `delete`): it is still stored, and is shown struck through or hidden. Null or absent: not a tracked deletion.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the formatting before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_CharProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "ChartSeries": {
+   "description": "One data series.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "name"
+   ],
+   "properties": {
+    "name": {
+     "description": "The series' name, shown in the legend.",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "values": {
+     "description": "One value per category, in category order; null: no value (a gap).",
+     "default": [],
+     "type": "array",
+     "items": {
+      "anyOf": [
+       {
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    }
+   }
+  },
+  "ChartSpec": {
+   "description": "The editable model of a chart: its type, categories, series and options.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "type"
+   ],
+   "properties": {
+    "type": {
+     "description": "What the chart shows its data as.",
+     "$ref": "#/$defs/ChartType"
+    },
+    "categories": {
+     "description": "Category labels, one per data point (for a scatter chart: the x values, as text).",
+     "default": [],
+     "type": "array",
+     "items": {
+      "type": "string",
+      "format": "werk-content-text"
+     }
+    },
+    "series": {
+     "description": "The data series.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ChartSeries"
+     }
+    },
+    "title": {
+     "description": "The chart's title. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "legend": {
+     "description": "Where the legend sits. Null: no legend.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/LegendPos"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "dataLabels": {
+     "description": "true: each point's value is shown next to it.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "ChartType": {
+   "description": "What a chart shows its data as. Values: `column`: Vertical columns, the series side by side within each category; `columnStacked`: Vertical columns, the series stacked on top of each other within each category; `bar`: Horizontal bars, the series side by side within each category; `barStacked`: Horizontal bars, the series stacked end to end within each category; `line`: Lines through the points of each series; `area`: Filled areas under the lines of each series; `pie`: A pie of the first series; `doughnut`: A ring of the first series; `scatter`: Points at (x, y) with markers: the categories are the x values, each series the y values.",
+   "type": "string",
+   "enum": [
+    "column",
+    "columnStacked",
+    "bar",
+    "barStacked",
+    "line",
+    "area",
+    "pie",
+    "doughnut",
+    "scatter"
+   ]
+  },
+  "ColJc": {
+   "description": "Justification of a matrix column. Values: `center`: Centred; `left`: Left-aligned; `right`: Right-aligned.",
+   "type": "string",
+   "enum": [
+    "center",
+    "left",
+    "right"
+   ]
+  },
+  "Columns": {
+   "description": "The text columns of a section.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "count": {
+     "description": "Number of columns, at least 1.",
+     "default": 1,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "space": {
+     "description": "Space between columns when they are equal (`widths` empty), points (1/72 inch).",
+     "default": 36.0,
+     "type": "number"
+    },
+    "separator": {
+     "description": "true: a vertical line is drawn between columns.",
+     "default": false,
+     "type": "boolean"
+    },
+    "widths": {
+     "description": "Unequal columns: one `[width, space after]` pair per column, points (1/72 inch), left to right. Empty: `count` equal columns separated by `space`.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+     }
+    }
+   }
+  },
+  "ConnEnd": {
+   "description": "One glued end of a connector: the shape it is glued to and the connection site on that shape.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "id",
+    "site"
+   ],
+   "properties": {
+    "id": {
+     "description": "The drawing id (`extra.id`) of the shape the connector end is glued to.",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "site": {
+     "description": "Index of the connection site on that shape, 0..64, in the shape's own unrotated frame of width w and height h (cx = w/2, cy = h/2). Ellipse: 0 (cx, 0), 1 (cx-dx, cy-dy), 2 (0, cy), 3 (cx-dx, cy+dy), 4 (cx, h), 5 (cx+dx, cy+dy), 6 (w, cy), 7 (cx+dx, cy-dy), with dx = cx/sqrt(2), dy = cy/sqrt(2). Triangle: 0 (cx, 0), 1 (cx/2, cy), 2 (0, h), 3 (cx, h), 4 (w, h), 5 (1.5 cx, cy). Line and connectors: 0 (0, 0), 1 (w, h). Every other shape: 0 (cx, 0) top, 1 (0, cy) left, 2 (cx, h) bottom, 3 (w, cy) right. An index the shape does not have leaves that end where it is.",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   }
+  },
+  "ContentControl": {
+   "description": "A content control (a form field that wraps content): its identity, behaviour and kind. Its content is the document content it wraps.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "description": "A number that identifies the control within the document; any 64-bit signed integer. Null or absent: none assigned.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "tag": {
+     "description": "A name for programs to find the control by; free text, may be empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "title": {
+     "description": "The title shown on the control; free text, may be empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "lock": {
+     "description": "What a user may do to the control.",
+     "default": "unlocked",
+     "$ref": "#/$defs/ControlLock"
+    },
+    "placeholder": {
+     "description": "Name of the building block that holds the placeholder content; empty when there is none. Informational: `placeholderText` is the text to show.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "showingPlaceholder": {
+     "description": "true: the control's content is its placeholder text, not real content.",
+     "default": false,
+     "type": "boolean"
+    },
+    "temporary": {
+     "description": "true: the control is removed as soon as its content is edited; the content stays.",
+     "default": false,
+     "type": "boolean"
+    },
+    "kind": {
+     "description": "What kind of control this is, with the settings of that kind.",
+     "default": {
+      "type": "richText"
+     },
+     "$ref": "#/$defs/ControlKind"
+    },
+    "placeholderText": {
+     "description": "The text shown while the control is empty; may be empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "block": {
+     "description": "true: the control wraps whole paragraphs (its start marker is at the start of the first, its end marker at the end of the last); false: it lies inside one paragraph.",
+     "default": false,
+     "type": "boolean"
+    },
+    "ooxmlSource": {
+     "description": "A key of the `fragments` map of the `x.wordcraft.ooxml.embedded` extension node: properties of the control this profile does not interpret (the formatting of text typed into it, of its end mark, and vendor additions), kept so that writing a WordprocessingML file reproduces them. A reader that skips extension nodes ignores it and loses nothing it could have used. Absent: none.",
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    }
+   }
+  },
+  "ControlKind": {
+   "description": "The kind of a content control, with the settings of that kind. `type` selects the kind.",
+   "oneOf": [
+    {
+     "description": "Formatted content of any kind: text, paragraphs, tables, pictures. Also used for a control whose kind this profile does not describe; its kind element is then one of the control's `extra` entries.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `richText`.",
+       "type": "string",
+       "const": "richText"
+      }
+     }
+    },
+    {
+     "description": "Unformatted text, on one line unless `multiLine` is true.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `text`.",
+       "type": "string",
+       "const": "text"
+      },
+      "multiLine": {
+       "description": "true: the text may contain line breaks; false: one line.",
+       "default": false,
+       "type": "boolean"
+      }
+     }
+    },
+    {
+     "description": "A check box: the control's content is the one character that shows its state.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "checked",
+      "checkedChar",
+      "checkedFont",
+      "uncheckedChar",
+      "uncheckedFont"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `checkBox`.",
+       "type": "string",
+       "const": "checkBox"
+      },
+      "checked": {
+       "description": "true when the box is checked.",
+       "type": "boolean"
+      },
+      "checkedChar": {
+       "description": "The single character shown when checked (default U+2612, ballot box with X).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "checkedFont": {
+       "description": "Font family name used to draw `checkedChar`; empty: the surrounding text's font.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "uncheckedChar": {
+       "description": "The single character shown when not checked (default U+2610, ballot box).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "uncheckedFont": {
+       "description": "Font family name used to draw `uncheckedChar`; empty: the surrounding text's font.",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "A list to choose from, in which other text may also be typed.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "items"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `comboBox`.",
+       "type": "string",
+       "const": "comboBox"
+      },
+      "items": {
+       "description": "The entries offered, in display order.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/ListItem"
+       }
+      },
+      "lastValue": {
+       "description": "The stored value of the entry last chosen; empty when none was chosen or the text was typed freely.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "A list to choose from.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "items"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `dropDown`.",
+       "type": "string",
+       "const": "dropDown"
+      },
+      "items": {
+       "description": "The entries offered, in display order.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/ListItem"
+       }
+      },
+      "lastValue": {
+       "description": "The stored value of the entry last chosen; empty when none was chosen.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "A date picker: `fullDate` is the chosen date, `format` the picture it is displayed with.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `date`.",
+       "type": "string",
+       "const": "date"
+      },
+      "fullDate": {
+       "description": "The chosen date, ISO 8601 (`2026-03-01T00:00:00Z`); empty when no date is chosen.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "format": {
+       "description": "The picture the date is displayed with: letters `d` day, `M` month, `y` year, `H`/`h` hour, `m` minute, `s` second, repeated for width (`M/d/yyyy`, `dd MMMM yyyy`); other characters are literal. Empty: the reader's default.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "lid": {
+       "description": "Language of the displayed date, a BCP 47 tag (`en-US`); empty: the document's language.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "calendar": {
+       "description": "Calendar the date is displayed in: `gregorian`, `hijri`, `hebrew`, `taiwan`, `japan`, `thai`, `korea`, `saka`, `gregorianXlitEnglish`, `gregorianXlitFrench`, `gregorianUs`, `gregorianMeFrench`, `gregorianArabic`, `umalqura` or `none`; empty: gregorian.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "storeAs": {
+       "description": "How a bound data store receives the date: `dateTime`, `date` or `text`; empty: `dateTime`.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "A picture: the control's content is one picture object.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `picture`.",
+       "type": "string",
+       "const": "picture"
+      }
+     }
+    },
+    {
+     "description": "A building-block gallery, or a building block placed from one (a table of contents, a cover page, a bibliography).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `gallery`.",
+       "type": "string",
+       "const": "gallery"
+      },
+      "list": {
+       "description": "true: a gallery to choose from; false: a building block already placed from a gallery.",
+       "default": false,
+       "type": "boolean"
+      },
+      "gallery": {
+       "description": "Name of the building-block gallery (for example `Table of Contents`, `Cover Pages`); empty: any.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "category": {
+       "description": "Category within the gallery; empty: any.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "unique": {
+       "description": "true: the document may hold only one building block from this gallery (inserting another replaces it).",
+       "default": false,
+       "type": "boolean"
+      }
+     }
+    },
+    {
+     "description": "A repeating section: its content is a sequence of items of the same shape (`repeatingSectionItem` controls).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `repeatingSection`.",
+       "type": "string",
+       "const": "repeatingSection"
+      },
+      "title": {
+       "description": "Title shown for the section's items; may be empty.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "noInsertDelete": {
+       "description": "true: users may not add or remove items.",
+       "default": false,
+       "type": "boolean"
+      }
+     }
+    },
+    {
+     "description": "One item of a repeating section.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `repeatingSectionItem`.",
+       "type": "string",
+       "const": "repeatingSectionItem"
+      }
+     }
+    }
+   ]
+  },
+  "ControlLock": {
+   "description": "What a user may do to a content control. Values: `unlocked`: The control can be deleted and its content edited; `sdtLocked`: The control cannot be deleted; its content can be edited; `contentLocked`: The content cannot be edited; the control can be deleted; `sdtContentLocked`: The control cannot be deleted and its content cannot be edited.",
+   "type": "string",
+   "enum": [
+    "unlocked",
+    "sdtLocked",
+    "contentLocked",
+    "sdtContentLocked"
+   ]
+  },
+  "ControlWrap": {
+   "description": "Content controls around a table, row or cell, where they cannot be written as marker objects in paragraph text: the controls that open just before it, outermost first, and how many open controls close just after it.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "open": {
+     "description": "The controls that open immediately before this table, row or cell, outermost first.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ContentControl"
+     }
+    },
+    "close": {
+     "description": "How many of the controls open at that point close immediately after this table, row or cell (innermost first).",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   }
+  },
+  "DocGrid": {
+   "description": "The document grid: a line pitch that line heights snap to and, optionally, a character pitch.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "description": "The kind of grid.",
+     "default": "default",
+     "$ref": "#/$defs/DocGridType"
+    },
+    "linePitch": {
+     "description": "Distance between consecutive grid lines, points (1/72 inch) (used between 1 and 1584).",
+     "default": 18.0,
+     "type": "number"
+    },
+    "charSpace": {
+     "description": "The character pitch is the default font size plus this value; unit 1/4096 point; range -6488064 .. 6488064.",
+     "default": 0,
+     "type": "integer",
+     "minimum": -2147483648,
+     "maximum": 2147483647
+    }
+   }
+  },
+  "DocGridType": {
+   "description": "The kind of document grid. Values: `default`: No grid; `lines`: A line grid only: line heights snap to the line pitch; `linesAndChars`: A line and character grid: East Asian characters advance by the character pitch; `snapToChars`: A line grid, and all text snaps to the character grid.",
+   "type": "string",
+   "enum": [
+    "default",
+    "lines",
+    "linesAndChars",
+    "snapToChars"
+   ]
+  },
+  "Float": {
+   "description": "How a drawing is placed: in line with the text or floating, and for a floating one where it sits, how text wraps around it, its rotation and flips.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "wrap": {
+     "description": "In line, or floating with this kind of text wrapping.",
+     "default": "inline",
+     "$ref": "#/$defs/Wrap"
+    },
+    "wrapText": {
+     "description": "For `square`, `tight` and `through` wrapping: which sides text may flow on. Absent: `bothSides`.",
+     "default": "bothSides",
+     "$ref": "#/$defs/WrapText"
+    },
+    "hRel": {
+     "description": "What `x` (or `hAlign`) is measured from, horizontally.",
+     "default": "column",
+     "$ref": "#/$defs/Anchor"
+    },
+    "vRel": {
+     "description": "What `y` (or `vAlign`) is measured from, vertically.",
+     "default": "column",
+     "$ref": "#/$defs/Anchor"
+    },
+    "x": {
+     "description": "Horizontal offset of the object's left edge from the `hRel` reference, points (1/72 inch), to the right; used when `hAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "y": {
+     "description": "Vertical offset of the object's top edge from the `vRel` reference, points (1/72 inch), downwards; used when `vAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "hAlign": {
+     "description": "Horizontal alignment within the `hRel` area; takes precedence over `x`. Null or absent: use `x`.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/FloatAlign"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "vAlign": {
+     "description": "Vertical alignment within the `vRel` area; takes precedence over `y`. Null or absent: use `y`.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/FloatAlign"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "dist": {
+     "description": "Distance kept between the object and surrounding text at its left and at its right, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "distTop": {
+     "description": "Distance kept between the object and surrounding text above it, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "distBottom": {
+     "description": "Distance kept between the object and surrounding text below it, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "effect": {
+     "description": "Room around the object taken by effects such as shadows: `[left, top, right, bottom]`, points (1/72 inch). Lines and surrounding text keep clear of it. Rotation's own overhang is NOT included: it follows from `rot`.",
+     "default": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 4,
+     "maxItems": 4
+    },
+    "rot": {
+     "description": "Rotation clockwise about the object's centre, degrees. Offsets and size (`x`, `y`, `w`, `h`) stay those of the unrotated frame. Absent: 0.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "flipH": {
+     "description": "true: mirrored left to right.",
+     "default": false,
+     "type": "boolean"
+    },
+    "flipV": {
+     "description": "true: mirrored top to bottom.",
+     "default": false,
+     "type": "boolean"
+    },
+    "wrapPolygon": {
+     "description": "The outline `tight` and `through` wrapping follow, in the object's own unrotated frame. Null or absent: derived from the object's shape (for a picture, from its non-transparent pixels).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/WrapPolygon"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "alt": {
+     "description": "Alternative text of the drawing, for screen readers. Absent: none.",
+     "default": {},
+     "$ref": "#/$defs/AltText"
+    }
+   }
+  },
+  "FloatAlign": {
+   "description": "Alignment of a floating object within its reference area, used instead of an offset. Values: `start`: At the area's left (horizontal) or top (vertical); `center`: Centred in the area; `end`: At the area's right (horizontal) or bottom (vertical); `inside`: Towards the binding: left (or top) on odd pages, right (or bottom) on even pages; `outside`: Away from the binding: right (or bottom) on odd pages, left (or top) on even pages.",
+   "type": "string",
+   "enum": [
+    "start",
+    "center",
+    "end",
+    "inside",
+    "outside"
+   ]
+  },
+  "FracKind": {
+   "description": "How a fraction is drawn. Values: `bar`: Stacked, with a horizontal rule between numerator and denominator; `skewed`: Skewed: numerator raised, a slanted slash, denominator lowered; `linear`: Linear: numerator, a slash, denominator on one line; `noBar`: Stacked without a rule (as in a binomial coefficient).",
+   "type": "string",
+   "enum": [
+    "bar",
+    "skewed",
+    "linear",
+    "noBar"
+   ]
+  },
+  "FreePath": {
+   "description": "One path: points joined by straight lines, optionally closed.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "pts": {
+     "description": "The points of the path, `[x, y]` in the freeform's coordinate space, joined by straight lines in order.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+     }
+    },
+    "closed": {
+     "description": "true: the last point is joined back to the first and the path can be filled.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "Freeform": {
+   "description": "A freeform shape's geometry: paths in a `w` x `h` coordinate space that is stretched over the shape's frame. The paths are drawn with the shape's outline colour and width, and closed paths that are not ink are filled with the shape's fill.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "w": {
+     "description": "Width of the paths' coordinate space; a path x coordinate c is drawn at c * (shape width) / w.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "h": {
+     "description": "Height of the paths' coordinate space; a path y coordinate c is drawn at c * (shape height) / h.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "paths": {
+     "description": "The paths, drawn in order.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/FreePath"
+     }
+    },
+    "alpha": {
+     "description": "Opacity of the outline, 0 (invisible) .. 1 (opaque).",
+     "default": 1.0,
+     "type": "number"
+    },
+    "ink": {
+     "description": "Set when the freeform is an ink stroke drawn by hand, naming the tool. Null or absent: an ordinary freeform shape.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/InkTool"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "order": {
+     "description": "For ink: the stroke's place in the order the strokes were drawn (1, 2, 3 ...), for replaying them. Null or absent: not recorded.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "Glow": {
+   "description": "A glow: a soft band of colour around the outline.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "color": {
+     "description": "Glow colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "default": [
+      21,
+      96,
+      130
+     ],
+     "$ref": "#/$defs/Rgb"
+    },
+    "size": {
+     "description": "Width of the glow band around the outline, points (1/72 inch), 0..150.",
+     "default": 5.0,
+     "type": "number"
+    },
+    "transparency": {
+     "description": "Transparency of the glow, percent, 0 (opaque) .. 100 (invisible).",
+     "default": 60.0,
+     "type": "number"
+    }
+   }
+  },
+  "GradStop": {
+   "description": "One colour stop of a gradient.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pos",
+    "color"
+   ],
+   "properties": {
+    "pos": {
+     "description": "Position along the gradient, percent 0..100.",
+     "type": "number"
+    },
+    "color": {
+     "description": "Colour at this position, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "$ref": "#/$defs/Rgb"
+    },
+    "transparency": {
+     "description": "Transparency at this position, percent 0 (opaque) .. 100.",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "Graphic": {
+   "description": "A chart or diagram as items ready to draw, plus its editable model when it has one.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind"
+   ],
+   "properties": {
+    "kind": {
+     "description": "What the graphic is.",
+     "$ref": "#/$defs/GraphicKind"
+    },
+    "items": {
+     "description": "What to draw, in order, positioned in points (1/72 inch) from the object's top-left corner. This is the complete picture of the graphic for a reader that does not rebuild it from `chart` or `smartArt`.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/GraphicItem"
+     }
+    },
+    "w": {
+     "description": "Width the `items` were laid out for, points (1/72 inch). When it differs from the object's displayed width the items are scaled; 0: the displayed width.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "h": {
+     "description": "Height the `items` were laid out for, points (1/72 inch); 0: the displayed height.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "smartArt": {
+     "description": "The editable model when the graphic is a diagram this profile describes fully (the `items` are then its drawing). Null or absent: not editable as such; draw `items`.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/SmartArtSpec"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "chart": {
+     "description": "The editable model when the graphic is a chart this profile describes fully (the `items` are then its drawing). Null or absent: not editable as such; draw `items`.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/ChartSpec"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "ooxmlSource": {
+     "description": "Set when the chart or diagram was read from a WordprocessingML file and its original markup is preserved: a key of the `objects` map of the `x.wordcraft.ooxml.embedded` node. A reader that skips extension nodes ignores it and draws `items`. Absent: no preserved original.",
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    }
+   }
+  },
+  "GraphicItem": {
+   "description": "One thing to draw of a chart or diagram, positioned in points from the object's top-left corner (x to the right, y downwards). Items are drawn in order, later ones over earlier ones.",
+   "oneOf": [
+    {
+     "description": "A shape filling `rect`.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "rect",
+      "kind"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `shape`.",
+       "type": "string",
+       "const": "shape"
+      },
+      "rect": {
+       "description": "The frame `[x, y, width, height]`, points (1/72 inch).",
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      "kind": {
+       "description": "The geometry drawn into the frame.",
+       "$ref": "#/$defs/ShapeKind"
+      },
+      "fill": {
+       "description": "Fill colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: not filled.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "stroke": {
+       "description": "Outline colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: no outline.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "stroke_width": {
+       "description": "Outline width, points (1/72 inch).",
+       "default": 0.0,
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "A path (polygons, pie slices, line series).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "segs"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `path`.",
+       "type": "string",
+       "const": "path"
+      },
+      "segs": {
+       "description": "The path's segments in order.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/PathSeg"
+       }
+      },
+      "fill": {
+       "description": "Fill colour, `[red, green, blue]`, each an integer 0..255, sRGB (non-zero winding). Null: not filled.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "stroke": {
+       "description": "Outline colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: no outline.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "stroke_width": {
+       "description": "Outline width, points (1/72 inch).",
+       "default": 0.0,
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "One line of text in `rect`, aligned horizontally by `align` and centred vertically.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "rect",
+      "text",
+      "size",
+      "color"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `text`.",
+       "type": "string",
+       "const": "text"
+      },
+      "rect": {
+       "description": "The frame `[x, y, width, height]`, points (1/72 inch).",
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      "text": {
+       "description": "The text, one line.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "size": {
+       "description": "Font size, points (1/72 inch).",
+       "type": "number"
+      },
+      "color": {
+       "description": "Text colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+       "$ref": "#/$defs/Rgb"
+      },
+      "bold": {
+       "description": "true: bold.",
+       "default": false,
+       "type": "boolean"
+      },
+      "align": {
+       "description": "Horizontal alignment within the frame.",
+       "default": "center",
+       "$ref": "#/$defs/TextAlign"
+      },
+      "font": {
+       "description": "Font family name. Null: the document's body font (settings node, `minorFont`).",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "description": "A picture stretched into `rect`.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "rect",
+      "media"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `image`.",
+       "type": "string",
+       "const": "image"
+      },
+      "rect": {
+       "description": "The frame `[x, y, width, height]`, points (1/72 inch).",
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      "media": {
+       "description": "The `key` of an entry of the document node's `media` list.",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    }
+   ]
+  },
+  "GraphicKind": {
+   "description": "What a graphic object is. Values: `chart`: a chart; `diagram`: a diagram (boxes and connectors arranged by a layout); `ink`: Hand-drawn ink in another application's native ink format, preserved in the extension nodes; shown as its fallback picture when it has one.",
+   "type": "string",
+   "enum": [
+    "chart",
+    "diagram",
+    "ink"
+   ]
+  },
+  "GroupChild": {
+   "description": "One member of a group: a picture or shape with its own size, at `x`, `y` in the group's coordinate space.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "x",
+    "y",
+    "obj"
+   ],
+   "properties": {
+    "x": {
+     "description": "Left edge of the member in the group's coordinate space (see the group's `ch_w`).",
+     "type": "number"
+    },
+    "y": {
+     "description": "Top edge of the member in the group's coordinate space (see the group's `ch_h`).",
+     "type": "number"
+    },
+    "obj": {
+     "description": "The member: an `image`, `shape` or `group` object. Its `w` and `h` are in the group's coordinate space; its `float` placement is unused, but its `float.rot`, `flipH` and `flipV` apply.",
+     "$ref": "#/$defs/InlineObject"
+    }
+   }
+  },
+  "HeaderSet": {
+   "description": "The header (or footer) stories a section uses. Each value is the `story.id` of a `core.text.blocks` node listed in the document node's `stories`, of kind `header` (or `footer`). Null: the section names none of its own for that case and continues the previous section's (the first section then has none).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "default": {
+     "description": "The story for ordinary pages (odd pages when the settings node's `evenOddHeaders` is true). Null: continue the previous section's.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "first": {
+     "description": "The story for the section's first page, used when the section's `titlePage` is true. Null: continue the previous section's.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "even": {
+     "description": "The story for even pages, used when the settings node's `evenOddHeaders` is true. Null: continue the previous section's.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "HeightRule": {
+   "description": "How a row's `height` is applied. Values: `auto`: the row is as tall as its content; `height` is ignored; `atLeast`: the row is at least `height` tall and grows with its content; `exact`: the row is exactly `height` tall; content that does not fit is clipped.",
+   "type": "string",
+   "enum": [
+    "auto",
+    "atLeast",
+    "exact"
+   ]
+  },
+  "Highlight": {
+   "description": "A highlighter colour behind text: one of sixteen fixed colours, or none. Values: `none`: No highlight (explicitly: removes an inherited one); `yellow`: #FFFF00; `brightGreen`: #00FF00; `turquoise`: #00FFFF; `pink`: #FF00FF; `blue`: #0000FF; `red`: #FF0000; `darkBlue`: #000080; `teal`: #008080; `green`: #008000; `violet`: #800080; `darkRed`: #800000; `darkYellow`: #808000; `gray50`: #808080; `gray25`: #C0C0C0; `black`: #000000; `white`: #FFFFFF.",
+   "type": "string",
+   "enum": [
+    "none",
+    "yellow",
+    "brightGreen",
+    "turquoise",
+    "pink",
+    "blue",
+    "red",
+    "darkBlue",
+    "teal",
+    "green",
+    "violet",
+    "darkRed",
+    "darkYellow",
+    "gray50",
+    "gray25",
+    "black",
+    "white"
+   ]
+  },
+  "InkTool": {
+   "description": "The tool an ink stroke was drawn with. A label: the stroke's look is fully given by the shape's stroke colour and width and the freeform's `alpha`. Values: `pen`: Drawn with the pen tool; `pencil`: Drawn with the pencil tool; `highlighter`: Drawn with the highlighter tool.",
+   "type": "string",
+   "enum": [
+    "pen",
+    "pencil",
+    "highlighter"
+   ]
+  },
+  "InlineObject": {
+   "description": "An object anchored at a U+FFFC character of the paragraph text: a picture, drawing, field, note reference, or one end of a range (field, content control, bookmark, comment, editable range). `type` selects which. The formatting of the U+FFFC's run applies to the object where it has text.",
+   "oneOf": [
+    {
+     "description": "A picture.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "media",
+      "w",
+      "h"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `image`.",
+       "type": "string",
+       "const": "image"
+      },
+      "media": {
+       "description": "The `key` of an entry of the document node's `media` list: the picture's pixels.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "w": {
+       "description": "Displayed width, points (1/72 inch), before cropping is NOT subtracted: the size of the visible (cropped) picture.",
+       "type": "number"
+      },
+      "h": {
+       "description": "Displayed height, points (1/72 inch): the size of the visible (cropped) picture.",
+       "type": "number"
+      },
+      "alt": {
+       "description": "Alternative text describing the picture, for screen readers; may be empty.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "float": {
+       "description": "Placement, wrapping, rotation and effect room. Absent: in line with the text, unrotated.",
+       "default": {
+        "dist": 0.0,
+        "distBottom": 0.0,
+        "distTop": 0.0,
+        "effect": [
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "hRel": "column",
+        "vRel": "column",
+        "wrap": "inline",
+        "x": 0.0,
+        "y": 0.0
+       },
+       "$ref": "#/$defs/Float"
+      },
+      "crop": {
+       "description": "Cropping: the fraction of the source picture cut away at `[left, top, right, bottom]`, each 0..1 (0 = nothing cut). The visible part is stretched to `w` x `h`.",
+       "default": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      "ooxmlSource": {
+       "description": "Set when the picture is the visible face of an embedded object (a spreadsheet, a drawing from another application) whose original markup is preserved: a key of the `objects` map of the `x.wordcraft.ooxml.embedded` node. A reader that skips extension nodes ignores it and shows the picture. Absent: an ordinary picture.",
+       "type": "string",
+       "pattern": "^[0-9a-f]{16}$"
+      }
+     }
+    },
+    {
+     "description": "A chart or a diagram.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "w",
+      "h",
+      "graphic"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `graphic`.",
+       "type": "string",
+       "const": "graphic"
+      },
+      "w": {
+       "description": "Displayed width, points (1/72 inch).",
+       "type": "number"
+      },
+      "h": {
+       "description": "Displayed height, points (1/72 inch).",
+       "type": "number"
+      },
+      "alt": {
+       "description": "Alternative text describing the chart or diagram; may be empty.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "float": {
+       "description": "Placement, wrapping, rotation and effect room. Absent: in line with the text.",
+       "default": {
+        "dist": 0.0,
+        "distBottom": 0.0,
+        "distTop": 0.0,
+        "effect": [
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "hRel": "column",
+        "vRel": "column",
+        "wrap": "inline",
+        "x": 0.0,
+        "y": 0.0
+       },
+       "$ref": "#/$defs/Float"
+      },
+      "graphic": {
+       "description": "The chart or diagram: what to draw, and its editable model when it has one.",
+       "$ref": "#/$defs/Graphic"
+      }
+     }
+    },
+    {
+     "description": "A drawn shape, line, connector, text box or freeform (ink).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "kind",
+      "w",
+      "h"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `shape`.",
+       "type": "string",
+       "const": "shape"
+      },
+      "kind": {
+       "description": "The geometry of the shape, drawn into the `w` x `h` frame.",
+       "$ref": "#/$defs/ShapeKind"
+      },
+      "w": {
+       "description": "Width of the shape's frame, points (1/72 inch) (before rotation).",
+       "type": "number"
+      },
+      "h": {
+       "description": "Height of the shape's frame, points (1/72 inch) (before rotation).",
+       "type": "number"
+      },
+      "fill": {
+       "description": "Fill colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: not filled.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "stroke": {
+       "description": "Outline colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: no outline.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "stroke_width": {
+       "description": "Outline width, points (1/72 inch). 0 with a `stroke` colour: a hairline.",
+       "default": 0.0,
+       "type": "number"
+      },
+      "float": {
+       "description": "Placement, wrapping, rotation and effect room. Absent: in line with the text.",
+       "default": {
+        "dist": 0.0,
+        "distBottom": 0.0,
+        "distTop": 0.0,
+        "effect": [
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "hRel": "column",
+        "vRel": "column",
+        "wrap": "inline",
+        "x": 0.0,
+        "y": 0.0
+       },
+       "$ref": "#/$defs/Float"
+      },
+      "story": {
+       "description": "The text inside the shape (a text box): the `story.id` of a `core.text.blocks` node listed in the document node's `stories`, of kind `textBox`. Null: the shape holds no text.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 4294967295
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "freeform": {
+       "description": "For a shape of kind `freeform`: its geometry (paths, or an ink stroke). Null or absent: none.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Freeform"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "effects": {
+       "description": "Shadow, glow and soft edges. Absent: none.",
+       "default": {},
+       "$ref": "#/$defs/ShapeEffects"
+      },
+      "extra": {
+       "description": "Further properties: drawing id, text warp, connector ends, arrowheads. Absent: none.",
+       "default": {},
+       "$ref": "#/$defs/ShapeExtra"
+      }
+     }
+    },
+    {
+     "description": "Pictures, shapes and text boxes grouped into one object that moves, wraps and resizes as one. The members are laid out in the group's own coordinate space `ch_w` x `ch_h`, which is stretched over the group's `w` x `h`, so resizing the group scales its members.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "w",
+      "h",
+      "ch_w",
+      "ch_h",
+      "children"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `group`.",
+       "type": "string",
+       "const": "group"
+      },
+      "w": {
+       "description": "Width of the group's frame, points (1/72 inch).",
+       "type": "number"
+      },
+      "h": {
+       "description": "Height of the group's frame, points (1/72 inch).",
+       "type": "number"
+      },
+      "float": {
+       "description": "Placement, wrapping and rotation of the group as a whole. Absent: in line with the text.",
+       "default": {
+        "dist": 0.0,
+        "distBottom": 0.0,
+        "distTop": 0.0,
+        "effect": [
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "hRel": "column",
+        "vRel": "column",
+        "wrap": "inline",
+        "x": 0.0,
+        "y": 0.0
+       },
+       "$ref": "#/$defs/Float"
+      },
+      "ch_w": {
+       "description": "Width of the members' coordinate space, in the same unit as the members' `x`, `w`: a member coordinate c is drawn at c * w / ch_w. For a drawing canvas it equals `w`.",
+       "type": "number"
+      },
+      "ch_h": {
+       "description": "Height of the members' coordinate space: a member coordinate c is drawn at c * h / ch_h. For a drawing canvas it equals `h`.",
+       "type": "number"
+      },
+      "children": {
+       "description": "The members, back to front (later members are drawn over earlier ones).",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/GroupChild"
+       }
+      },
+      "canvas": {
+       "description": "Present when the object is a drawing canvas rather than a group: it has its own background and outline, its frame does not scale its members (`ch_w` x `ch_h` equal `w` x `h`), and whatever lies outside the frame is clipped. Null or absent: an ordinary group.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/CanvasStyle"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "description": "A field: a computed piece of text (page number, date, cross-reference). `instr` is its code, `result` the text it showed when saved.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "instr"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `field`.",
+       "type": "string",
+       "const": "field"
+      },
+      "instr": {
+       "description": "The field code: the field's name and switches, for example `PAGE`, `NUMPAGES`, `DATE \\\\@ \"M/d/yyyy\"`, `TOC \\\\o \"1-3\"`, `REF bookmark \\\\h`.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "result": {
+       "description": "The text the field showed when the document was saved (its cached result). A reader that does not evaluate field codes shows this.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "locked": {
+       "description": "true: the result is kept as it is when fields are updated.",
+       "default": false,
+       "type": "boolean"
+      },
+      "code": {
+       "description": "A view state: true shows the field's code (`{ PAGE }`) instead of its result. Carries no document meaning; a reader may ignore it.",
+       "default": false,
+       "type": "boolean"
+      }
+     }
+    },
+    {
+     "description": "The start of a RANGE field: a field whose result is ordinary document content (formatted, possibly spanning several paragraphs) lying between this object and the matching `fieldEnd`. Tables of contents and citation fields are kept this way. Pairs nest like brackets and never cross out of a block list (a pair opened in a table cell closes in that cell).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "instr"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `fieldStart`.",
+       "type": "string",
+       "const": "fieldStart"
+      },
+      "instr": {
+       "description": "The field code (as for `field`).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "locked": {
+       "description": "true: the result is kept as it is when fields are updated.",
+       "default": false,
+       "type": "boolean"
+      }
+     }
+    },
+    {
+     "description": "The end of the innermost open `fieldStart`.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `fieldEnd`.",
+       "type": "string",
+       "const": "fieldEnd"
+      }
+     }
+    },
+    {
+     "description": "The start of a content control (a form field) whose content is the ordinary document content between this object and the matching `controlEnd`, possibly spanning paragraphs. Pairs nest like brackets and never cross out of a block list.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "control"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `controlStart`.",
+       "type": "string",
+       "const": "controlStart"
+      },
+      "control": {
+       "description": "The control's properties.",
+       "$ref": "#/$defs/ContentControl"
+      }
+     }
+    },
+    {
+     "description": "The end of the innermost open `controlStart`.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `controlEnd`.",
+       "type": "string",
+       "const": "controlEnd"
+      }
+     }
+    },
+    {
+     "description": "A footnote or endnote reference mark. The note's text is a story.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "kind",
+      "id"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `noteRef`.",
+       "type": "string",
+       "const": "noteRef"
+      },
+      "kind": {
+       "description": "Footnote or endnote.",
+       "$ref": "#/$defs/NoteKind"
+      },
+      "id": {
+       "description": "The note's text: the `story.id` of a `core.text.blocks` node listed in the document node's `stories`, of kind `footnote` or `endnote`.",
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      "custom": {
+       "description": "A custom reference mark (for example `*`). Empty: the note takes the next automatic number.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "The start of a bookmark: a named place or range, the target of `#name` links and of REF and PAGEREF fields.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "name"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `bookmarkStart`.",
+       "type": "string",
+       "const": "bookmarkStart"
+      },
+      "name": {
+       "description": "The bookmark's name, unique in the document.",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "The end of the bookmark of the same name. A bookmark with no end marks a single position.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "name"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `bookmarkEnd`.",
+       "type": "string",
+       "const": "bookmarkEnd"
+      },
+      "name": {
+       "description": "The name of the bookmark that ends here.",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "The start of the text a comment is about.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "id"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `commentStart`.",
+       "type": "string",
+       "const": "commentStart"
+      },
+      "id": {
+       "description": "The `id` of an entry of the `core.text.comments` node's `comments`.",
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      }
+     }
+    },
+    {
+     "description": "The end of the text a comment is about.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "id"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `commentEnd`.",
+       "type": "string",
+       "const": "commentEnd"
+      },
+      "id": {
+       "description": "The `id` of the comment whose range ends here.",
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      }
+     }
+    },
+    {
+     "description": "The start of a range that stays editable while the document is protected: for everyone (`group` = `everyone`), for another editing group, or for one editor (`editor`).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "id"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `permStart`.",
+       "type": "string",
+       "const": "permStart"
+      },
+      "id": {
+       "description": "A number pairing this start with its `permEnd`; unique among the editable ranges of the document.",
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      "group": {
+       "description": "The editing group that may edit the range: `everyone`, `editors`, `owners`, `contributors`, `administrators` or `current`. Empty when the range names one editor.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "editor": {
+       "description": "The one person who may edit the range: a user name or an e-mail address. Empty when the range is for a group.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      }
+     }
+    },
+    {
+     "description": "The end of the editable range that the `permStart` with the same `id` opened. A range with no end runs to the end of its story.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "id"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `permEnd`.",
+       "type": "string",
+       "const": "permEnd"
+      },
+      "id": {
+       "description": "The `id` of the `permStart` this ends.",
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      }
+     }
+    },
+    {
+     "description": "An equation: its linear text and, where stored, its structure.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "linear"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `equation`.",
+       "type": "string",
+       "const": "equation"
+      },
+      "linear": {
+       "description": "The equation in linear format, plain text: `x=(-b±√(b^2-4ac))/2a`. Always present; it is the equation's plain-text reading.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "display": {
+       "description": "true: a display equation, set on a line of its own; false: an inline equation within the text line.",
+       "default": false,
+       "type": "boolean"
+      },
+      "math": {
+       "description": "The equation's structure and layout options. Absent: none stored; build the equation from `linear`.",
+       "default": {},
+       "$ref": "#/$defs/Math"
+      }
+     }
+    },
+    {
+     "description": "A phonetic guide: small `ruby` text (furigana, pinyin) set over `base` text. The base text takes the formatting of the object's run.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "base",
+      "ruby",
+      "size",
+      "raise"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `ruby`.",
+       "type": "string",
+       "const": "ruby"
+      },
+      "base": {
+       "description": "The base text the phonetic guide belongs to. It counts as paragraph text for reading, although it is stored here and not in the paragraph's `text`.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "ruby": {
+       "description": "The phonetic guide text set above the base text.",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "align": {
+       "description": "How the guide text lines up over the base text.",
+       "default": "center",
+       "$ref": "#/$defs/RubyAlign"
+      },
+      "size": {
+       "description": "Font size of the guide text, points (1/72 inch).",
+       "type": "number"
+      },
+      "raise": {
+       "description": "Distance from the base text's baseline up to the guide text's baseline, points (1/72 inch).",
+       "type": "number"
+      },
+      "base_size": {
+       "description": "The font size of the base text the guide was set for, points (1/72 inch).",
+       "default": 0.0,
+       "type": "number"
+      },
+      "lang": {
+       "description": "Language of the guide text, a BCP 47 tag (`ja-JP`); empty: unspecified.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "props": {
+       "description": "Character formatting of the guide text, applied over the run's (font, colour); its size is `size`. Absent: none.",
+       "default": {},
+       "$ref": "#/$defs/CharProps"
+      }
+     }
+    },
+    {
+     "description": "Inline content of the document's original format that this profile does not interpret. A reader shows its `text` (which may be empty). The original markup is not here: it is kept in an extension node, see `ooxmlSource`.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "format"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `opaque`.",
+       "type": "string",
+       "const": "opaque"
+      },
+      "format": {
+       "description": "The name of the format the content came from: `docx` for WordprocessingML (ISO/IEC 29500-1).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "text": {
+       "description": "The plain-text reading of the content; empty when it has none.",
+       "default": "",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "ooxmlSource": {
+       "description": "A key of the `fragments` map of the `x.wordcraft.ooxml.embedded` extension node: the content's original markup, kept so that writing the document back to the format it came from loses nothing. A reader that skips extension nodes ignores it and shows `text`. Absent: no original is kept (the object is then only its `text`).",
+       "type": "string",
+       "pattern": "^[0-9a-f]{16}$"
+      }
+     }
+    },
+    {
+     "description": "The rule a note separator draws: a horizontal line above the footnotes (or endnotes) of a page. It appears only in the blocks of a `noteSeparator` story. A reader draws a horizontal line 0.5 point thick, in the text colour, at half the height of the text line it stands in: 144 points long (or the column width, if narrower) when `continuation` is false, as wide as the column when it is true.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "continuation"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `separatorLine`.",
+       "type": "string",
+       "const": "separatorLine"
+      },
+      "continuation": {
+       "description": "false: the short rule above a page's notes. true: the rule across the whole column above a note continued from the page before.",
+       "type": "boolean"
+      }
+     }
+    }
+   ]
+  },
+  "LegendPos": {
+   "description": "Where a chart's legend sits. Values: `right`: To the right of the plot; `left`: To the left of the plot; `top`: Above the plot; `bottom`: Below the plot.",
+   "type": "string",
+   "enum": [
+    "right",
+    "left",
+    "top",
+    "bottom"
+   ]
+  },
+  "LimLoc": {
+   "description": "Where an n-ary operator's limits go. Values: `undOvr`: Under and over the operator; `subSup`: As a subscript and a superscript after the operator.",
+   "type": "string",
+   "enum": [
+    "undOvr",
+    "subSup"
+   ]
+  },
+  "LineNumberRestart": {
+   "description": "When line numbering starts again. Values: `page`: on each page; `section`: in each section; `continuous`: never: numbered through the document.",
+   "type": "string",
+   "enum": [
+    "page",
+    "section",
+    "continuous"
+   ]
+  },
+  "LineNumbering": {
+   "description": "Line numbers printed in the margin beside the text.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "countBy": {
+     "description": "Print a number on every n-th line (1 = every line).",
+     "default": 1,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "start": {
+     "description": "The number of the first line.",
+     "default": 1,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "distance": {
+     "description": "Distance between the line numbers and the text, points (1/72 inch); 0 = automatic.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "restart": {
+     "description": "When the numbering starts again.",
+     "default": "page",
+     "$ref": "#/$defs/LineNumberRestart"
+    }
+   }
+  },
+  "LineSpacing": {
+   "description": "Line spacing: a rule and its value.",
+   "oneOf": [
+    {
+     "description": "A multiple of single line spacing.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule",
+      "value"
+     ],
+     "properties": {
+      "rule": {
+       "description": "Selects this alternative.",
+       "type": "string",
+       "const": "multiple"
+      },
+      "value": {
+       "description": "The multiple of single line spacing (the font's natural line height): 1.0 = single, 1.5, 2.0 = double.",
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "At least a given line height.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule",
+      "value"
+     ],
+     "properties": {
+      "rule": {
+       "description": "Selects this alternative.",
+       "type": "string",
+       "const": "atLeast"
+      },
+      "value": {
+       "description": "The minimum line height, points (1/72 inch); taller content makes the line taller.",
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "Exactly a given line height.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule",
+      "value"
+     ],
+     "properties": {
+      "rule": {
+       "description": "Selects this alternative.",
+       "type": "string",
+       "const": "exactly"
+      },
+      "value": {
+       "description": "The exact line height, points (1/72 inch); taller content is clipped.",
+       "type": "number"
+      }
+     }
+    }
+   ]
+  },
+  "ListItem": {
+   "description": "One entry of a combo box or drop-down list.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "display": {
+     "description": "The text the list shows for the entry.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "value": {
+     "description": "The value stored when the entry is chosen; empty: the display text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    }
+   }
+  },
+  "MNode": {
+   "description": "One node of an equation's structure. `t` selects the kind. An argument (`e`, `num`, `sub` …) is itself a sequence of math nodes.",
+   "oneOf": [
+    {
+     "description": "A run of math text. A run of math text.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "text"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `run`.",
+       "type": "string",
+       "const": "run"
+      },
+      "text": {
+       "description": "The characters of the run (letters, digits, operators as Unicode characters).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "sty": {
+       "description": "The run's style. Null or absent: the math default (letters italic, everything else upright).",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/MSty"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "scr": {
+       "description": "The math alphabet the letters are set in.",
+       "default": "roman",
+       "$ref": "#/$defs/MScr"
+      },
+      "nor": {
+       "description": "true: normal (non-math) text, set upright in the text font.",
+       "default": false,
+       "type": "boolean"
+      },
+      "lit": {
+       "description": "true: literal: characters are not treated as operators (no automatic spacing).",
+       "default": false,
+       "type": "boolean"
+      },
+      "size": {
+       "description": "Font size, points (1/72 inch). Null or absent: the surrounding text's.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "number"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "color": {
+       "description": "Text colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: the surrounding text's.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/Rgb"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "font": {
+       "description": "Font family name for normal text. Null or absent: the surrounding text's.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "brk": {
+       "description": "A manual line break BEFORE this run in a display equation: 0 = the new line wraps as usual; n >= 1 = the new line is aligned at the n-th operator of the first line. Null or absent: no break.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 255
+        },
+        {
+         "type": "null"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "description": "A fraction.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "num",
+      "den"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `frac`.",
+       "type": "string",
+       "const": "frac"
+      },
+      "kind": {
+       "description": "How the fraction is drawn.",
+       "default": "bar",
+       "$ref": "#/$defs/FracKind"
+      },
+      "num": {
+       "description": "The numerator.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "den": {
+       "description": "The denominator.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "A base with a superscript, a subscript, both, or scripts before it.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "kind",
+      "base"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `script`.",
+       "type": "string",
+       "const": "script"
+      },
+      "kind": {
+       "description": "Which scripts the base carries.",
+       "$ref": "#/$defs/ScriptKind"
+      },
+      "base": {
+       "description": "The base the scripts are attached to.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "sub": {
+       "description": "The subscript (lower-left for `pre`); empty when the kind has none.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "sup": {
+       "description": "The superscript (upper-left for `pre`); empty when the kind has none.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "A radical (root).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `rad`.",
+       "type": "string",
+       "const": "rad"
+      },
+      "deg": {
+       "description": "The degree (the 3 of a cube root); empty for a square root.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "deg_hide": {
+       "description": "true: the degree is not shown.",
+       "default": false,
+       "type": "boolean"
+      },
+      "e": {
+       "description": "The radicand: what stands under the root sign.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "An n-ary operator (sum, integral, product) with limits and an operand.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "chr",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `nary`.",
+       "type": "string",
+       "const": "nary"
+      },
+      "chr": {
+       "description": "The operator character, for example U+2211 (sum), U+222B (integral), U+220F (product).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "lim_loc": {
+       "description": "Where the limits go. Null or absent: integrals take them as sub- and superscripts, every other operator under and over.",
+       "default": null,
+       "anyOf": [
+        {
+         "$ref": "#/$defs/LimLoc"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "grow": {
+       "description": "true: the operator grows to the height of its operand.",
+       "default": false,
+       "type": "boolean"
+      },
+      "sub_hide": {
+       "description": "true: the lower limit is not shown.",
+       "default": false,
+       "type": "boolean"
+      },
+      "sup_hide": {
+       "description": "true: the upper limit is not shown.",
+       "default": false,
+       "type": "boolean"
+      },
+      "sub": {
+       "description": "The lower limit.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "sup": {
+       "description": "The upper limit.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "e": {
+       "description": "The operand: what the operator applies to.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "Delimiters (brackets) around one or more elements, with an optional separator between elements.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "elems"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `delim`.",
+       "type": "string",
+       "const": "delim"
+      },
+      "beg": {
+       "description": "The opening delimiter character. Null: none is drawn.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "end": {
+       "description": "The closing delimiter character. Null: none drawn.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "sep": {
+       "description": "The separator character drawn between elements. Null or absent: no separator is drawn.",
+       "default": null,
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        {
+         "type": "null"
+        }
+       ]
+      },
+      "grow": {
+       "description": "true: the delimiters grow to the height of their content. Absent: true.",
+       "default": true,
+       "type": "boolean"
+      },
+      "shp_match": {
+       "description": "true: the delimiters match the content's height exactly; false: they are centred on the math axis.",
+       "default": false,
+       "type": "boolean"
+      },
+      "elems": {
+       "description": "The elements between the delimiters; at least one.",
+       "type": "array",
+       "items": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/MNode"
+        }
+       }
+      }
+     }
+    },
+    {
+     "description": "A function applied to an argument (sin x).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "name",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `func`.",
+       "type": "string",
+       "const": "func"
+      },
+      "name": {
+       "description": "The function name (sin, lim …), set upright.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "e": {
+       "description": "The argument of the function.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "A base with a limit set below or above it.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "upper",
+      "e",
+      "lim"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `lim`.",
+       "type": "string",
+       "const": "lim"
+      },
+      "upper": {
+       "description": "true: the limit stands above the base; false: below it.",
+       "type": "boolean"
+      },
+      "e": {
+       "description": "The base.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      },
+      "lim": {
+       "description": "The limit text set above or below the base.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "An accent over a base.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "chr",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `acc`.",
+       "type": "string",
+       "const": "acc"
+      },
+      "chr": {
+       "description": "The accent character, for example U+0302 (circumflex), U+0303 (tilde), U+20D7 (right arrow above).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "e": {
+       "description": "The base the accent stands over.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "A bar over or under a base.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "top",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `bar`.",
+       "type": "string",
+       "const": "bar"
+      },
+      "top": {
+       "description": "true: a bar over the base; false: under it.",
+       "type": "boolean"
+      },
+      "e": {
+       "description": "The base.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "A box drawn around content, with optional strike-through lines.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `borderBox`.",
+       "type": "string",
+       "const": "borderBox"
+      },
+      "hide": {
+       "description": "Which sides of the box are NOT drawn: `[top, bottom, left, right]`.",
+       "default": [
+        false,
+        false,
+        false,
+        false
+       ],
+       "type": "array",
+       "items": {
+        "type": "boolean"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      "strike": {
+       "description": "Lines struck through the content: `[horizontal, vertical, bottom-left to top-right, top-left to bottom-right]`.",
+       "default": [
+        false,
+        false,
+        false,
+        false
+       ],
+       "type": "array",
+       "items": {
+        "type": "boolean"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      "e": {
+       "description": "The boxed content.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "An invisible box that groups content.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `boxed`.",
+       "type": "string",
+       "const": "boxed"
+      },
+      "e": {
+       "description": "The grouped content (an invisible box that keeps it together).",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "A stretched character (a brace, an arrow) under or over a base.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "chr",
+      "top",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `groupChr`.",
+       "type": "string",
+       "const": "groupChr"
+      },
+      "chr": {
+       "description": "The stretched character, for example U+23DF (bottom curly bracket), U+2192 (arrow).",
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      "top": {
+       "description": "true: the character stands over the base; false: under it.",
+       "type": "boolean"
+      },
+      "e": {
+       "description": "The base.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    },
+    {
+     "description": "An array of equations stacked vertically and aligned at their `&` marks.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "rows"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `eqArr`.",
+       "type": "string",
+       "const": "eqArr"
+      },
+      "rows": {
+       "description": "The rows of the array, top to bottom; within a row, `&` characters in runs mark alignment points.",
+       "type": "array",
+       "items": {
+        "type": "array",
+        "items": {
+         "$ref": "#/$defs/MNode"
+        }
+       }
+      }
+     }
+    },
+    {
+     "description": "A matrix.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "rows"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `matrix`.",
+       "type": "string",
+       "const": "matrix"
+      },
+      "rows": {
+       "description": "The matrix: rows top to bottom, each a list of cells left to right.",
+       "type": "array",
+       "items": {
+        "type": "array",
+        "items": {
+         "type": "array",
+         "items": {
+          "$ref": "#/$defs/MNode"
+         }
+        }
+       }
+      },
+      "col_jc": {
+       "description": "Justification of each column, left to right; a missing entry means centred.",
+       "default": [],
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/ColJc"
+       }
+      }
+     }
+    },
+    {
+     "description": "A phantom: content that can be hidden while still taking up room, or shown while taking up none.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "t",
+      "e"
+     ],
+     "properties": {
+      "t": {
+       "description": "Selects this alternative: the constant `phant`.",
+       "type": "string",
+       "const": "phant"
+      },
+      "show": {
+       "description": "true: the content is drawn; false: it only takes up room.",
+       "default": true,
+       "type": "boolean"
+      },
+      "zero_wid": {
+       "description": "true: the content takes up no width.",
+       "default": false,
+       "type": "boolean"
+      },
+      "zero_asc": {
+       "description": "true: the content takes up no height above the baseline.",
+       "default": false,
+       "type": "boolean"
+      },
+      "zero_desc": {
+       "description": "true: the content takes up no depth below the baseline.",
+       "default": false,
+       "type": "boolean"
+      },
+      "e": {
+       "description": "The content.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/MNode"
+       }
+      }
+     }
+    }
+   ]
+  },
+  "MScr": {
+   "description": "The math alphabet a run's letters are set in. Values: `roman`: The ordinary (serif) alphabet; `script`: Script (calligraphic) letters; `fraktur`: Fraktur (blackletter); `doubleStruck`: Double-struck (blackboard bold); `sansSerif`: Sans-serif; `monospace`: Monospace.",
+   "type": "string",
+   "enum": [
+    "roman",
+    "script",
+    "fraktur",
+    "doubleStruck",
+    "sansSerif",
+    "monospace"
+   ]
+  },
+  "MSty": {
+   "description": "The style of a math run. Values: `plain`: Upright, regular weight; `bold`: Upright bold; `italic`: Italic; `boldItalic`: Bold italic.",
+   "type": "string",
+   "enum": [
+    "plain",
+    "bold",
+    "italic",
+    "boldItalic"
+   ]
+  },
+  "Math": {
+   "description": "An equation's structure and its layout options.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "nodes": {
+     "description": "The equation's structure: a sequence of math nodes, left to right. Absent or empty: no structure is stored; parse the object's `linear` text.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/MNode"
+     }
+    },
+    "jc": {
+     "description": "Justification of a display equation. Absent: `centerGroup`.",
+     "default": "centerGroup",
+     "$ref": "#/$defs/MathJc"
+    },
+    "linear": {
+     "description": "true: the equation is shown as its linear-format text instead of built up two-dimensionally.",
+     "default": false,
+     "type": "boolean"
+    },
+    "ooxmlSource": {
+     "description": "For an equation read from a WordprocessingML file: a key of the `fragments` map of the `x.wordcraft.ooxml.embedded` extension node, which keeps the equation's original markup so that an unedited equation is written back unchanged. A reader that skips extension nodes ignores it: `nodes` (and the equation object's `linear` text) carry the whole equation. Absent: none.",
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    }
+   }
+  },
+  "MathJc": {
+   "description": "Justification of a display equation. Values: `centerGroup`: Centred as a group: the lines of the equation are left-aligned to each other and the block is centred; `center`: Each line centred; `left`: Left-aligned; `right`: Right-aligned.",
+   "type": "string",
+   "enum": [
+    "centerGroup",
+    "center",
+    "left",
+    "right"
+   ]
+  },
+  "NoteKind": {
+   "description": "The kind of note a reference mark refers to. Values: `footnote`: a footnote; `endnote`: an endnote.",
+   "type": "string",
+   "enum": [
+    "footnote",
+    "endnote"
+   ]
+  },
+  "NotePos": {
+   "description": "Where footnotes or endnotes are placed. Values: `pageBottom`: Footnotes: at the bottom of the page; `beneathText`: Footnotes: directly below the page's last line of text; `sectEnd`: Endnotes: at the end of each section; `docEnd`: Endnotes: at the end of the document.",
+   "type": "string",
+   "enum": [
+    "pageBottom",
+    "beneathText",
+    "sectEnd",
+    "docEnd"
+   ]
+  },
+  "NoteProps": {
+   "description": "Footnote or endnote options as stated at one level (the document, or one section). A field that is null or absent is not set at this level and comes from the level above: a section's from the document's (the settings node's `footnotePr` / `endnotePr`), the document's from the fixed defaults (footnotes at the bottom of the page, endnotes at the end of the document, numbered from 1, never restarting). The document's number FORMAT is the settings node's `footnoteFormat` / `endnoteFormat`, so `numFmt` is only ever set on a section.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "pos": {
+     "description": "Where the notes are placed. Null or absent: not set at this level.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NotePos"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numFmt": {
+     "description": "How note numbers are written. Null or absent: not set at this level.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumFormat"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numStart": {
+     "description": "The first note number, 1..32767. Null or absent: not set at this level (default 1).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numRestart": {
+     "description": "When note numbering starts again. Null or absent: not set at this level (default `continuous`).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NoteRestart"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "NoteRestart": {
+   "description": "When note numbering starts again. Values: `continuous`: Numbered on through the whole document; `eachSect`: Numbering starts again in each section; `eachPage`: Numbering starts again on each page.",
+   "type": "string",
+   "enum": [
+    "continuous",
+    "eachSect",
+    "eachPage"
+   ]
+  },
+  "NumChange": {
+   "description": "A tracked change of a paragraph's list numbering.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes`.",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "original": {
+     "description": "The list label as it was shown before the change (for example `2.`).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    }
+   }
+  },
+  "NumFormat": {
+   "description": "How a number (a list number, a page number, a note number) is written. For a value a reader cannot write, plain decimal is an acceptable fallback. Values: `decimal`: 1, 2, 3; `upperRoman`: I, II, III; `lowerRoman`: i, ii, iii; `upperLetter`: A, B, C … Z, AA, BB; `lowerLetter`: a, b, c … z, aa, bb; `ordinal`: 1st, 2nd, 3rd (in the text's language); `cardinalText`: One, Two, Three (in the text's language); `ordinalText`: First, Second, Third (in the text's language); `decimalZero`: 01, 02 … 09, 10, 11; `bullet`: no number: the level's `text` is a bullet character; `none`: no number and no label; `hex`: hexadecimal: 1 … 9, A … F, 10; `chicago`: footnote symbols * † ‡ §, then doubled (**, ††), tripled, and so on; `ideographDigital`: Chinese numerals written digit by digit: 一, 二, 三 … 一〇; `japaneseCounting`: Japanese counting numerals: 一, 二, 三 … 十, 十一; `aiueo`: half-width katakana in a-i-u-e-o order: ｱ, ｲ, ｳ; `iroha`: half-width katakana in iroha order: ｲ, ﾛ, ﾊ; `decimalFullWidth`: full-width digits: １, ２, ３; `decimalHalfWidth`: half-width digits: 1, 2, 3; `japaneseLegal`: Japanese legal (daiji) numerals: 壱, 弐, 参; `japaneseDigitalTenThousand`: Japanese numerals digit by digit with myriad grouping: 一, 二, 三; `decimalEnclosedCircle`: circled numbers: ①, ②, ③ (plain decimal above 20); `decimalFullWidth2`: full-width digits, second variant: １, ２, ３; `aiueoFullWidth`: full-width katakana in a-i-u-e-o order: ア, イ, ウ; `irohaFullWidth`: full-width katakana in iroha order: イ, ロ, ハ; `ganada`: Korean syllables: 가, 나, 다; `chosung`: Korean consonants: ㄱ, ㄴ, ㄷ; `decimalEnclosedFullstop`: numbers followed by a full stop in one character: ⒈, ⒉, ⒊ (plain decimal above 20); `decimalEnclosedParen`: parenthesised numbers in one character: ⑴, ⑵, ⑶ (plain decimal above 20); `decimalEnclosedCircleChinese`: circled numbers, Chinese typography: ①, ②, ③ (plain decimal above 10); `ideographEnclosedCircle`: circled ideographs: ㈠, ㈡, ㈢ (plain decimal above 10); `ideographTraditional`: the ten heavenly stems: 甲, 乙, 丙, 丁; `ideographZodiac`: the twelve earthly branches: 子, 丑, 寅, 卯; `ideographZodiacTraditional`: the sexagenary cycle (stem plus branch): 甲子, 乙丑, 丙寅; `taiwaneseCounting`: Chinese counting numerals, Taiwan: 一, 二, 三 … 十, 十一; `ideographLegalTraditional`: traditional Chinese legal numerals: 壹, 貳, 參; `taiwaneseCountingThousand`: Chinese counting numerals with thousands, Taiwan: 一, 二, 三; `taiwaneseDigital`: Chinese numerals digit by digit, Taiwan: 一, 二, 三 … 一○; `chineseCounting`: Chinese counting numerals: 一, 二, 三 … 十, 十一; `chineseLegalSimplified`: simplified Chinese legal numerals: 壹, 贰, 叁; `chineseCountingThousand`: Chinese counting numerals with thousands: 一, 二, 三; `koreanDigital`: Sino-Korean numerals digit by digit: 일, 이, 삼; `koreanCounting`: native Korean counting: 하나, 둘, 셋; `koreanLegal`: Sino-Korean legal numerals: 일, 이, 삼 … 십; `koreanDigital2`: Chinese numerals digit by digit, Korean typography: 一, 二, 三; `vietnameseCounting`: Vietnamese number words: một, hai, ba; `russianLower`: lower-case Cyrillic letters: а, б, в; `russianUpper`: upper-case Cyrillic letters: А, Б, В; `numberInDash`: decimal between dashes: - 1 -, - 2 -, - 3 -; `hebrew1`: Hebrew numerals: א, ב, ג … י, יא; `hebrew2`: Hebrew alphabet letters: א, ב, ג … ת, then repeated; `arabicAlpha`: Arabic letters in alphabetical (hija'i) order: أ, ب, ت; `arabicAbjad`: Arabic letters in abjad order: أ, ب, ج; `hindiVowels`: Devanagari vowels: अ, आ, इ; `hindiConsonants`: Devanagari consonants: क, ख, ग; `hindiNumbers`: Devanagari digits: १, २, ३; `hindiCounting`: Hindi number words: एक, दो, तीन; `thaiLetters`: Thai letters: ก, ข, ค; `thaiNumbers`: Thai digits: ๑, ๒, ๓; `thaiCounting`: Thai number words: หนึ่ง, สอง, สาม; `bahtText`: the number as an amount in Thai baht, in words; `dollarText`: the number as an amount in dollars, in English words.",
+   "type": "string",
+   "enum": [
+    "decimal",
+    "upperRoman",
+    "lowerRoman",
+    "upperLetter",
+    "lowerLetter",
+    "ordinal",
+    "cardinalText",
+    "ordinalText",
+    "decimalZero",
+    "bullet",
+    "none",
+    "hex",
+    "chicago",
+    "ideographDigital",
+    "japaneseCounting",
+    "aiueo",
+    "iroha",
+    "decimalFullWidth",
+    "decimalHalfWidth",
+    "japaneseLegal",
+    "japaneseDigitalTenThousand",
+    "decimalEnclosedCircle",
+    "decimalFullWidth2",
+    "aiueoFullWidth",
+    "irohaFullWidth",
+    "ganada",
+    "chosung",
+    "decimalEnclosedFullstop",
+    "decimalEnclosedParen",
+    "decimalEnclosedCircleChinese",
+    "ideographEnclosedCircle",
+    "ideographTraditional",
+    "ideographZodiac",
+    "ideographZodiacTraditional",
+    "taiwaneseCounting",
+    "ideographLegalTraditional",
+    "taiwaneseCountingThousand",
+    "taiwaneseDigital",
+    "chineseCounting",
+    "chineseLegalSimplified",
+    "chineseCountingThousand",
+    "koreanDigital",
+    "koreanCounting",
+    "koreanLegal",
+    "koreanDigital2",
+    "vietnameseCounting",
+    "russianLower",
+    "russianUpper",
+    "numberInDash",
+    "hebrew1",
+    "hebrew2",
+    "arabicAlpha",
+    "arabicAbjad",
+    "hindiVowels",
+    "hindiConsonants",
+    "hindiNumbers",
+    "hindiCounting",
+    "thaiLetters",
+    "thaiNumbers",
+    "thaiCounting",
+    "bahtText",
+    "dollarText"
+   ]
+  },
+  "NumRef": {
+   "description": "The list a paragraph belongs to, and its level in it.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "num",
+    "level"
+   ],
+   "properties": {
+    "num": {
+     "description": "The `id` of an entry of the numbering node's `nums`; 0 means no list (it removes numbering inherited from a style).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "level": {
+     "description": "The list level, 0 (outermost) .. 8.",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 255
+    }
+   }
+  },
+  "ParaProps": {
+   "description": "Paragraph formatting, as direct formatting or in a style. Every property is optional; null or absent means the property is not set here and is inherited.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The `id` of a paragraph style in the stylesheet node. Null or absent: the stylesheet's default paragraph style (`Normal` where it exists).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "align": {
+     "description": "Horizontal alignment. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Align"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentLeft": {
+     "description": "Left indent: distance from the text column's left edge to the paragraph's text, points (1/72 inch) (negative reaches into the margin). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentRight": {
+     "description": "Right indent: distance from the paragraph's text to the text column's right edge, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentFirst": {
+     "description": "First-line indent relative to `indentLeft`, points (1/72 inch); negative: a hanging indent (the first line starts to the left of the others). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentLeftChars": {
+     "description": "Left indent in characters, where one character is the font size of the paragraph mark. A non-zero value wins over `indentLeft`; 0 cancels an inherited value. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentRightChars": {
+     "description": "Right indent in characters (as `indentLeftChars`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentFirstChars": {
+     "description": "First-line indent in characters; negative: hanging (as `indentLeftChars`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceBefore": {
+     "description": "Space above the paragraph, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceAfter": {
+     "description": "Space below the paragraph, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceBeforeAuto": {
+     "description": "true: the space above is automatic instead of `spaceBefore`: 14 points, none at the top of the document or of a table cell, collapsing with the space below the previous paragraph. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceAfterAuto": {
+     "description": "true: the space below is automatic instead of `spaceAfter`: 14 points, none at the end of a table cell. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "lineSpacing": {
+     "description": "Line spacing. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/LineSpacing"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "contextualSpacing": {
+     "description": "true: no space is added between this paragraph and a neighbour of the same paragraph style. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "mirrorIndents": {
+     "description": "true: the left and right indents are inside and outside indents, so they swap sides on even pages. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "keepNext": {
+     "description": "Keep the paragraph on the same page as the next one. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "keepLines": {
+     "description": "Keep all lines of the paragraph on one page. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "pageBreakBefore": {
+     "description": "Start the paragraph on a new page. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "widowControl": {
+     "description": "Never leave a single first or last line of the paragraph alone on a page. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "outlineLevel": {
+     "description": "Outline level for the document's outline and table of contents: 0..8 = levels 1..9 (headings), 9 = body text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 255
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numbering": {
+     "description": "The list the paragraph belongs to and its level; a `num` of 0 removes numbering inherited from a style. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumRef"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "tabs": {
+     "description": "Tab stops. The list REPLACES the inherited one, except that a stop with `align: clear` removes the inherited stop at its position. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/TabStop"
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shading": {
+     "description": "Background fill of the paragraph, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "borders": {
+     "description": "Borders around the paragraph; `between` is drawn between consecutive paragraphs with the same borders, `inside_v` is unused. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "suppressHyphens": {
+     "description": "Do not hyphenate this paragraph. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "suppressLineNumbers": {
+     "description": "Skip this paragraph when numbering lines. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bidi": {
+     "description": "A right-to-left paragraph: its base direction is right to left, `left` alignment means the leading (right) edge, and the left and right indents swap sides. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "dropCap": {
+     "description": "Drop cap: the number of lines the paragraph's first character(s) drop over (0 = none). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 255
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "frame": {
+     "description": "A text frame: the paragraph is placed apart from the text flow, which may wrap around it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextFrame"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "kinsoku": {
+     "description": "East Asian line-breaking rules: no line starts with closing punctuation or ends with opening punctuation. Null or absent: inherited, and on when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "wordWrap": {
+     "description": "true: Latin words wrap whole; false: they may break at any character. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "overflowPunct": {
+     "description": "true: punctuation may hang past the end of the line. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "topLinePunct": {
+     "description": "true: punctuation at the start of a line is compressed. Null or absent: inherited, and false when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "autoSpaceDE": {
+     "description": "true: a small automatic space separates East Asian from Latin text. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "autoSpaceDN": {
+     "description": "true: a small automatic space separates East Asian text from numbers. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numChange": {
+     "description": "Tracked change of the paragraph's list numbering. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumChange"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the paragraph properties before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_ParaProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "snapToGrid": {
+     "description": "true: the paragraph's lines snap to the section's document grid. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "PathSeg": {
+   "description": "One segment of a path. Coordinates are points (1/72 inch) from the object's top-left corner.",
+   "oneOf": [
+    {
+     "description": "`{\"move\": [x, y]}`: start a new sub-path at (x, y).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "move"
+     ],
+     "properties": {
+      "move": {
+       "description": "`{\"move\": [x, y]}`: start a new sub-path at (x, y).",
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 2,
+       "maxItems": 2
+      }
+     }
+    },
+    {
+     "description": "`{\"line\": [x, y]}`: a straight line from the current point to (x, y).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "line"
+     ],
+     "properties": {
+      "line": {
+       "description": "`{\"line\": [x, y]}`: a straight line from the current point to (x, y).",
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 2,
+       "maxItems": 2
+      }
+     }
+    },
+    {
+     "description": "`{\"cubic\": [x1, y1, x2, y2, x, y]}`: a cubic Bezier curve from the current point to (x, y) with control points (x1, y1) and (x2, y2).",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "cubic"
+     ],
+     "properties": {
+      "cubic": {
+       "description": "`{\"cubic\": [x1, y1, x2, y2, x, y]}`: a cubic Bezier curve from the current point to (x, y) with control points (x1, y1) and (x2, y2).",
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 6,
+       "maxItems": 6
+      }
+     }
+    },
+    {
+     "description": "The string `close`: a straight line back to the start of the current sub-path.",
+     "type": "string",
+     "const": "close"
+    }
+   ]
+  },
+  "PropChange_CellProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/CellProps"
+    }
+   }
+  },
+  "PropChange_CharProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/CharProps"
+    }
+   }
+  },
+  "PropChange_ParaProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/ParaProps"
+    }
+   }
+  },
+  "PropChange_RowProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/RowProps"
+    }
+   }
+  },
+  "PropChange_SectionProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/SectionProps"
+    }
+   }
+  },
+  "PropChange_TableProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/TableProps"
+    }
+   }
+  },
+  "Reflection": {
+   "description": "A mirror image of the letters below them that fades out.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "transparency": {
+     "description": "Transparency of the reflection where it starts (nearest the letters), percent 0 (opaque) .. 100.",
+     "default": 50.0,
+     "type": "number"
+    },
+    "size": {
+     "description": "How much of the letters' height the reflection extends over before it has faded out, percent 0..100.",
+     "default": 50.0,
+     "type": "number"
+    },
+    "distance": {
+     "description": "Gap between the letters and the reflection, points (1/72 inch), 0..100.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "blur": {
+     "description": "Blur radius of the reflection, points (1/72 inch), 0..100.",
+     "default": 0.5,
+     "type": "number"
+    }
+   }
+  },
+  "Rgb": {
+   "description": "A colour: `[red, green, blue]`, each an integer 0..255, sRGB (IEC 61966-2-1), no alpha.",
+   "type": "array",
+   "items": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 255
+   },
+   "minItems": 3,
+   "maxItems": 3
+  },
+  "Row": {
+   "description": "A table row.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "cells"
+   ],
+   "properties": {
+    "props": {
+     "description": "Row properties. Absent: all defaults.",
+     "default": {
+      "cantSplit": false,
+      "header": false,
+      "height": null,
+      "heightRule": "auto"
+     },
+     "$ref": "#/$defs/RowProps"
+    },
+    "cells": {
+     "description": "The cells of the row, in logical order (the first cell stands at the left, or at the right in a right-to-left table). A cell spanning several grid columns appears once.",
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Cell"
+     }
+    },
+    "controls": {
+     "description": "Content controls around the row (repeating sections). Absent: none.",
+     "default": {
+      "close": 0,
+      "open": []
+     },
+     "$ref": "#/$defs/ControlWrap"
+    }
+   }
+  },
+  "RowProps": {
+   "description": "Properties of one table row.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "height": {
+     "description": "Row height, points (1/72 inch); what it means depends on `heightRule`. Null: no height stated (the row is as tall as its content).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "heightRule": {
+     "description": "How `height` is applied.",
+     "default": "auto",
+     "$ref": "#/$defs/HeightRule"
+    },
+    "header": {
+     "description": "true: the row is a header row and is repeated at the top of each page the table continues on.",
+     "default": false,
+     "type": "boolean"
+    },
+    "cantSplit": {
+     "description": "true: the row is never broken across two pages.",
+     "default": false,
+     "type": "boolean"
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the row properties before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_RowProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "RubyAlign": {
+   "description": "How phonetic guide text lines up over its base text. Values: `center`: Centred over the base text; `distributeLetter`: The guide's letters are spread evenly from edge to edge of the base text; `distributeSpace`: The guide's letters are spread evenly with half a gap at each edge; `left`: Flush with the base text's left edge; `right`: Flush with the base text's right edge; `rightVertical`: Right-aligned beside vertical text (in horizontal text the same as `right`).",
+   "type": "string",
+   "enum": [
+    "center",
+    "distributeLetter",
+    "distributeSpace",
+    "left",
+    "right",
+    "rightVertical"
+   ]
+  },
+  "Run": {
+   "description": "A formatting run: `len` bytes of the paragraph's text sharing one character formatting.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "len"
+   ],
+   "properties": {
+    "len": {
+     "description": "Length of the run in UTF-8 bytes of the paragraph's `text`, at least 1. Runs are consecutive from byte 0.",
+     "type": "integer",
+     "minimum": 0
+    },
+    "props": {
+     "description": "Direct character formatting of the run. A property that is null or absent is inherited (character style, paragraph style, document defaults). Absent: no direct formatting.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    }
+   }
+  },
+  "ScriptKind": {
+   "description": "Which scripts a base carries. Values: `sup`: a superscript only; `sub`: a subscript only; `subSup`: a subscript and a superscript, both after the base; `pre`: a subscript and a superscript BEFORE the base (pre-scripts).",
+   "type": "string",
+   "enum": [
+    "sup",
+    "sub",
+    "subSup",
+    "pre"
+   ]
+  },
+  "SectionProps": {
+   "description": "Page setup and section-level settings. Lengths are points (1/72 inch).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "start": {
+     "description": "Where the section begins relative to the previous one.",
+     "default": "nextPage",
+     "$ref": "#/$defs/SectionStart"
+    },
+    "pageW": {
+     "description": "Page width, points (1/72 inch), already swapped for landscape (so it is the horizontal extent as read).",
+     "default": 612.0,
+     "type": "number"
+    },
+    "pageH": {
+     "description": "Page height, points (1/72 inch), already swapped for landscape (so it is the vertical extent as read).",
+     "default": 792.0,
+     "type": "number"
+    },
+    "landscape": {
+     "description": "true: landscape orientation. Informational for a reader: `pageW` and `pageH` are already the horizontal and vertical extents.",
+     "default": false,
+     "type": "boolean"
+    },
+    "marginTop": {
+     "description": "Top margin: distance from the page's top edge to the text area, points (1/72 inch). Negative: the header may not push the text down.",
+     "default": 72.0,
+     "type": "number"
+    },
+    "marginBottom": {
+     "description": "Bottom margin: distance from the text area to the page's bottom edge, points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "marginLeft": {
+     "description": "Left margin (the inside margin when the settings node's `mirrorMargins` is true), points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "marginRight": {
+     "description": "Right margin (the outside margin when `mirrorMargins` is true), points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "header": {
+     "description": "Distance from the page's top edge to the top of the header, points (1/72 inch).",
+     "default": 36.0,
+     "type": "number"
+    },
+    "footer": {
+     "description": "Distance from the page's bottom edge to the bottom of the footer, points (1/72 inch).",
+     "default": 36.0,
+     "type": "number"
+    },
+    "gutter": {
+     "description": "Extra room added to the binding-side margin, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "columns": {
+     "description": "The text columns of the section.",
+     "default": {
+      "count": 1,
+      "separator": false,
+      "space": 36.0,
+      "widths": []
+     },
+     "$ref": "#/$defs/Columns"
+    },
+    "headers": {
+     "description": "The header stories of the section.",
+     "default": {
+      "default": null,
+      "even": null,
+      "first": null
+     },
+     "$ref": "#/$defs/HeaderSet"
+    },
+    "footers": {
+     "description": "The footer stories of the section.",
+     "default": {
+      "default": null,
+      "even": null,
+      "first": null
+     },
+     "$ref": "#/$defs/HeaderSet"
+    },
+    "titlePage": {
+     "description": "true: the section's first page uses the `first` header and footer stories.",
+     "default": false,
+     "type": "boolean"
+    },
+    "pageNumStart": {
+     "description": "The number of the section's first page. Null: numbering continues from the previous section (the first section starts at 1).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "pageNumFormat": {
+     "description": "How page numbers are written in this section.",
+     "default": "decimal",
+     "$ref": "#/$defs/NumFormat"
+    },
+    "lineNumbers": {
+     "description": "Line numbering in the margin. Null: lines are not numbered.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/LineNumbering"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "valign": {
+     "description": "Vertical position of the text on a page that it does not fill.",
+     "default": "top",
+     "$ref": "#/$defs/VAlign"
+    },
+    "pageBorders": {
+     "description": "Borders drawn around each page of the section; `between` and `inside_v` are unused. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rtl": {
+     "description": "true: a right-to-left section (columns run right to left, page-number position mirrors).",
+     "default": false,
+     "type": "boolean"
+    },
+    "textDirection": {
+     "description": "Which way the section's text runs. `down` and `up` turn the page's text area; headers and footers stay horizontal. Absent: horizontal.",
+     "default": "horizontal",
+     "$ref": "#/$defs/TextDirection"
+    },
+    "fmtChange": {
+     "description": "Tracked change of the section's properties: the properties before the change and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_SectionProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "docGrid": {
+     "description": "The document grid lines of text snap to. Null: the section has no grid.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/DocGrid"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "footnotePr": {
+     "description": "The section's own footnote options (unset fields: the document's, in the settings node). Absent: none of its own.",
+     "default": {},
+     "$ref": "#/$defs/NoteProps"
+    },
+    "endnotePr": {
+     "description": "The section's own endnote options (unset fields: the document's, in the settings node). Absent: none of its own.",
+     "default": {},
+     "$ref": "#/$defs/NoteProps"
+    }
+   }
+  },
+  "SectionStart": {
+   "description": "Where a section begins relative to the one before it. Values: `nextPage`: on a new page; `continuous`: on the same page, directly below the previous section; `evenPage`: on the next even-numbered page (a blank page is inserted if needed); `oddPage`: on the next odd-numbered page (a blank page is inserted if needed); `nextColumn`: at the top of the next column.",
+   "type": "string",
+   "enum": [
+    "nextPage",
+    "continuous",
+    "evenPage",
+    "oddPage",
+    "nextColumn"
+   ]
+  },
+  "Shadow": {
+   "description": "An outer shadow: a blurred copy of the silhouette cast `distance` away in direction `angle`.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "color": {
+     "description": "Shadow colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "default": [
+      0,
+      0,
+      0
+     ],
+     "$ref": "#/$defs/Rgb"
+    },
+    "transparency": {
+     "description": "Transparency of the shadow, percent, 0 (opaque) .. 100 (invisible).",
+     "default": 60.0,
+     "type": "number"
+    },
+    "blur": {
+     "description": "Blur radius, points (1/72 inch), 0..100.",
+     "default": 4.0,
+     "type": "number"
+    },
+    "distance": {
+     "description": "How far the shadow is cast from the shape, points (1/72 inch), 0..200.",
+     "default": 3.0,
+     "type": "number"
+    },
+    "angle": {
+     "description": "Direction the shadow is cast in, degrees clockwise from the positive x axis (0 = to the right, 90 = downwards), 0 <= angle < 360.",
+     "default": 45.0,
+     "type": "number"
+    },
+    "rotWithShape": {
+     "description": "true: `angle` is in the shape's own frame and turns with the shape when it is rotated or flipped; false: `angle` is in the page's frame.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "ShapeEffects": {
+   "description": "Effects on a shape. All absent: the shape is drawn plainly.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "shadow": {
+     "description": "An outer shadow. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Shadow"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "glow": {
+     "description": "A glow around the outline. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Glow"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "softEdge": {
+     "description": "Soft-edge radius, points (1/72 inch), 0..100: the shape fades out over this distance inside its outline. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "ShapeExtra": {
+   "description": "Further properties of a shape. All absent for most shapes.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "description": "The shape's drawing id, which connectors refer to (`extra.start.id`, `extra.end.id`); 0 = none. Unique among the shapes of the document when not 0.",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "warp": {
+     "description": "A warp applied to the shape's text (the text follows an arch, a wave and so on). Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextWarp"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "start": {
+     "description": "What the connector's start point is glued to. Null or absent: free.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/ConnEnd"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "end": {
+     "description": "What the connector's end point is glued to. Null or absent: free.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/ConnEnd"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "arrowStart": {
+     "description": "true: an arrowhead at the start of the line or connector.",
+     "default": false,
+     "type": "boolean"
+    },
+    "arrowEnd": {
+     "description": "true: an arrowhead at the end of the line or connector.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "ShapeKind": {
+   "description": "The geometry of a shape, drawn into the shape's `w` x `h` frame. Values: `rectangle`: a rectangle filling the frame; `roundedRectangle`: a rectangle filling the frame whose four corners are rounded with radius 0.16 x min(w, h); `ellipse`: the ellipse inscribed in the frame; `triangle`: an isosceles triangle with corners at the frame's top centre, bottom right and bottom left; `diamond`: a rhombus with its corners at the middles of the frame's four sides; `line`: an open straight line from the frame's top-left corner to its bottom-right corner (the float's `flipH` / `flipV` give the other diagonals); never filled; `arrow`: a block arrow pointing right: the closed polygon (x0, cy-0.2h), (x1-0.5h, cy-0.2h), (x1-0.5h, y0), (x1, cy), (x1-0.5h, y1), (x1-0.5h, cy+0.2h), (x0, cy+0.2h), where x0, y0, x1, y1 are the frame's left, top, right and bottom, h its height and cy its vertical centre; `star`: a five-pointed star: the closed polygon of 10 points i = 0..9 at angle a = i x 36 degrees - 90 degrees, point (cx + cos(a) x w/2 x r, cy + sin(a) x h/2 x r) with r = 1 for even i and 0.4 for odd i, where (cx, cy) is the frame's centre and w, h its size; `heart`: a heart: with the frame's left x0, top y0, right x1, bottom y1, width w, height h and horizontal centre cx, the closed path that starts at (cx, y0+0.3h) and follows four cubic Bezier curves (control 1, control 2, end): (cx, y0), (x0, y0), (x0, y0+0.3h); (x0, y0+0.6h), (cx-0.1w, y0+0.75h), (cx, y1); (cx+0.1w, y0+0.75h), (x1, y0+0.6h), (x1, y0+0.3h); (x1, y0), (cx, y0), (cx, y0+0.3h); `textBox`: a rectangle filling the frame that holds text (the shape's `story`); `freeform`: drawn from the shape's `freeform` paths; without them, a rectangle filling the frame; `straightConnector`: a connector: an open straight line between its two end points, which are the frame's top-left and bottom-right corners (mirrored by the flips); never filled; `elbowConnector`: a connector between the same two end points drawn with right-angle bends: horizontally to the frame's horizontal middle, vertically, then horizontally to the end; never filled; `curvedConnector`: a connector between the same two end points drawn as one S-shaped cubic curve; never filled.",
+   "type": "string",
+   "enum": [
+    "rectangle",
+    "roundedRectangle",
+    "ellipse",
+    "triangle",
+    "diamond",
+    "line",
+    "arrow",
+    "star",
+    "heart",
+    "textBox",
+    "freeform",
+    "straightConnector",
+    "elbowConnector",
+    "curvedConnector"
+   ]
+  },
+  "SmartArtColors": {
+   "description": "Which of the theme's colours (settings node, `themeColors`) a diagram's shapes take. Values: `accent1`: Every shape in theme accent 1; `accent2`: Every shape in theme accent 2; `accent3`: Every shape in theme accent 3; `accent4`: Every shape in theme accent 4; `accent5`: Every shape in theme accent 5; `accent6`: Every shape in theme accent 6; `colorful`: The shapes take accents 1 to 6 in turn.",
+   "type": "string",
+   "enum": [
+    "accent1",
+    "accent2",
+    "accent3",
+    "accent4",
+    "accent5",
+    "accent6",
+    "colorful"
+   ]
+  },
+  "SmartArtItem": {
+   "description": "One item of a diagram's outline.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "text"
+   ],
+   "properties": {
+    "text": {
+     "description": "The item's text.",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "level": {
+     "description": "The item's level in the outline: 0 is the top, at most 8.",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 255
+    }
+   }
+  },
+  "SmartArtLayout": {
+   "description": "How a diagram arranges its items. Values: `basicList`: Blocks in rows, left to right then top to bottom; `process`: Steps from left to right with arrows between them; `cycle`: Steps around a circle with arrows between them; `hierarchy`: A tree: each item hangs under the nearest preceding item that is one level higher; `pyramid`: Stacked bands that narrow towards the top; `radial`: The first item in the middle, the items under it around it; `matrix`: The first four items as the quadrants of a square; `venn`: Overlapping circles.",
+   "type": "string",
+   "enum": [
+    "basicList",
+    "process",
+    "cycle",
+    "hierarchy",
+    "pyramid",
+    "radial",
+    "matrix",
+    "venn"
+   ]
+  },
+  "SmartArtSpec": {
+   "description": "The editable model of a diagram: an outline of items, a layout and a colour scheme.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "layout"
+   ],
+   "properties": {
+    "layout": {
+     "description": "How the items are arranged.",
+     "$ref": "#/$defs/SmartArtLayout"
+    },
+    "items": {
+     "description": "The outline: the items in order, each with its level.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SmartArtItem"
+     }
+    },
+    "colors": {
+     "description": "Which theme colours the shapes take.",
+     "default": "accent1",
+     "$ref": "#/$defs/SmartArtColors"
+    }
+   }
+  },
+  "TabAlign": {
+   "description": "How text lines up at a tab stop. Values: `left`: the text starts at the stop; `center`: the text is centred on the stop; `right`: the text ends at the stop; `decimal`: the decimal separator of a number sits at the stop; `bar`: no text alignment: a vertical bar is drawn at the stop's position; `clear`: not a stop: it removes the stop inherited at this position.",
+   "type": "string",
+   "enum": [
+    "left",
+    "center",
+    "right",
+    "decimal",
+    "bar",
+    "clear"
+   ]
+  },
+  "TabLeader": {
+   "description": "The characters that fill the space a tab jumps over. Values: `none`: nothing; `dot`: full stops (.....); `hyphen`: hyphens (-----); `underscore`: a solid underline (_____); `middleDot`: middle dots (·····).",
+   "type": "string",
+   "enum": [
+    "none",
+    "dot",
+    "hyphen",
+    "underscore",
+    "middleDot"
+   ]
+  },
+  "TabStop": {
+   "description": "A tab stop.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pos"
+   ],
+   "properties": {
+    "pos": {
+     "description": "Position of the stop, points (1/72 inch) from the text column's left edge (not from the paragraph's indent).",
+     "type": "number"
+    },
+    "align": {
+     "description": "How text after the tab lines up at the stop.",
+     "default": "left",
+     "$ref": "#/$defs/TabAlign"
+    },
+    "leader": {
+     "description": "The characters that fill the space the tab jumps over.",
+     "default": "none",
+     "$ref": "#/$defs/TabLeader"
+    }
+   }
+  },
+  "TableFloat": {
+   "description": "Where a floating table sits. The text that follows it wraps around it.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "hRel": {
+     "description": "What `x` is measured from: `column`, `margin` or `page` (other values mean `column`).",
+     "default": "column",
+     "$ref": "#/$defs/Anchor"
+    },
+    "vRel": {
+     "description": "What `y` is measured from: `paragraph` (the text where the table stands), `margin` or `page` (other values mean `paragraph`).",
+     "default": "column",
+     "$ref": "#/$defs/Anchor"
+    },
+    "x": {
+     "description": "Horizontal offset of the table's left edge from the `hRel` reference, points (1/72 inch); used when `hAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "y": {
+     "description": "Vertical offset from the `vRel` reference, points (1/72 inch), downwards; used when `vAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "hAlign": {
+     "description": "Horizontal alignment within the `hRel` area, instead of `x`. Null: use `x`.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/FloatAlign"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "vAlign": {
+     "description": "Vertical alignment within the `vRel` area, instead of `y`. Null: use `y`.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/FloatAlign"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "dist": {
+     "description": "Distance kept from the surrounding text `[left, top, right, bottom]`, points (1/72 inch).",
+     "default": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ],
+     "type": "array",
+     "items": {
+      "type": "number"
+     },
+     "minItems": 4,
+     "maxItems": 4
+    },
+    "overlap": {
+     "description": "true: the table may overlap other floating tables; false: it is moved so that it does not.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "TableLook": {
+   "description": "Which special formats of the table style are applied to the table.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "headerRow": {
+     "description": "Apply the style's header-row format to the first row.",
+     "default": true,
+     "type": "boolean"
+    },
+    "totalRow": {
+     "description": "Apply the style's total-row format to the last row.",
+     "default": false,
+     "type": "boolean"
+    },
+    "bandedRows": {
+     "description": "Apply the style's row banding (alternating row bands).",
+     "default": true,
+     "type": "boolean"
+    },
+    "firstColumn": {
+     "description": "Apply the style's first-column format.",
+     "default": true,
+     "type": "boolean"
+    },
+    "lastColumn": {
+     "description": "Apply the style's last-column format.",
+     "default": false,
+     "type": "boolean"
+    },
+    "bandedColumns": {
+     "description": "Apply the style's column banding (alternating column bands).",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "TableProps": {
+   "description": "Table-wide properties.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The `id` of a table style in the stylesheet node. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "width": {
+     "description": "Preferred width of the table, points (1/72 inch). Null: automatic (as wide as its columns need, at most the text column).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "widthPct": {
+     "description": "Preferred width as a percentage (0..100) of the text column's width; when set it overrides `width`. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "align": {
+     "description": "Horizontal position of the table between the margins (`justify` and `distribute` mean `left`). Null: left (right in a right-to-left table).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Align"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indent": {
+     "description": "Indent of the table's leading edge from the margin, points (1/72 inch) (from the left margin; from the right margin in a right-to-left table). Null: 0.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "borders": {
+     "description": "The table's borders: outer sides, `between` (inside horizontal) and `inside_v` (inside vertical). Null: none of its own (the table style's apply).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "cellMargins": {
+     "description": "Default inner margins of the table's cells `[top, left, bottom, right]`, points (1/72 inch). Null: 0 top and bottom, 5.4 left and right.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fixed": {
+     "description": "true: the columns keep the widths in the table's `grid`; false: columns may grow and shrink to fit their content.",
+     "default": false,
+     "type": "boolean"
+    },
+    "look": {
+     "description": "Which special formats of the table style apply to this table.",
+     "default": {
+      "bandedColumns": false,
+      "bandedRows": true,
+      "firstColumn": true,
+      "headerRow": true,
+      "lastColumn": false,
+      "totalRow": false
+     },
+     "$ref": "#/$defs/TableLook"
+    },
+    "shading": {
+     "description": "Background fill of every cell, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "caption": {
+     "description": "Alternative text for the table: a short title. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "description": {
+     "description": "Alternative text for the table: a longer description. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "float": {
+     "description": "Floating placement: the table stands apart from the text flow and the following text wraps around it. Null or absent: the table is in the text flow.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TableFloat"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the table properties before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_TableProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bidiVisual": {
+     "description": "true: a right-to-left table: the first cell of each row stands at the right edge, cell margins and left/right borders mirror, and alignment and indent are measured from the right margin.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "TextAlign": {
+   "description": "Horizontal alignment of a line of text in its frame. Values: `left`: at the left edge; `center`: centred; `right`: at the right edge.",
+   "type": "string",
+   "enum": [
+    "left",
+    "center",
+    "right"
+   ]
+  },
+  "TextBody": {
+   "description": "How a text box shows its text: which way it runs, where it sits between the box's top and bottom, the box its overflow continues in, the inner margins, and whether the box grows to fit.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "vert": {
+     "description": "Which way the text runs inside the box.",
+     "default": "horz",
+     "$ref": "#/$defs/TextVert"
+    },
+    "anchor": {
+     "description": "Where the text sits between the box's top and bottom.",
+     "default": "top",
+     "$ref": "#/$defs/VAlign"
+    },
+    "next": {
+     "description": "Linked text boxes: the `story.id` of a `core.text.blocks` node listed in the document node's `stories` (kind `textBox`) in which this box's text continues when it does not fit. The linked box shows the overflow of THIS story; its own blocks are unused. Null: not linked.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "inset": {
+     "description": "Inner margins of the box `[left, top, right, bottom]`, in EMU (1 EMU = 1/914400 inch = 1/12700 point). Null: 91440, 45720, 91440, 45720 (0.1 inch left and right, 0.05 inch top and bottom).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4294967295
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "autoFit": {
+     "description": "true: the box is as tall as its text needs (it grows and shrinks), so no text is cut off; false: the box keeps its height and text that does not fit is cut off or continues in the `next` box.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "TextColor": {
+   "description": "A text colour: the string `Auto`, or `{\"Rgb\": [red, green, blue]}`.",
+   "oneOf": [
+    {
+     "description": "The string `Auto`: automatic colour, black on a light background and white on a dark one.",
+     "type": "string",
+     "const": "Auto"
+    },
+    {
+     "description": "`{\"Rgb\": [red, green, blue]}`: a fixed colour, each component an integer 0..255, sRGB.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "Rgb"
+     ],
+     "properties": {
+      "Rgb": {
+       "description": "`{\"Rgb\": [red, green, blue]}`: a fixed colour, each component an integer 0..255, sRGB.",
+       "$ref": "#/$defs/Rgb"
+      }
+     }
+    }
+   ]
+  },
+  "TextDirection": {
+   "description": "Which way lines of text run. Values: `horizontal`: Left to right, lines stacking downwards; `down`: Turned 90 degrees clockwise: lines read top to bottom and stack from right to left; `up`: Turned 90 degrees counter-clockwise: lines read bottom to top and stack from left to right.",
+   "type": "string",
+   "enum": [
+    "horizontal",
+    "down",
+    "up"
+   ]
+  },
+  "TextEffects": {
+   "description": "Decorative effects on a run's letters. An effect that is null or absent is not applied.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "fill": {
+     "description": "How the letters are filled. Null or absent: with the text colour.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextFill"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "outline": {
+     "description": "The line around the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextOutline"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shadow": {
+     "description": "A shadow behind the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Shadow"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "glow": {
+     "description": "A glow around the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Glow"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "reflection": {
+     "description": "A mirror image below the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Reflection"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "TextFill": {
+   "description": "How letters are filled. `type` selects the kind.",
+   "oneOf": [
+    {
+     "description": "Not filled: hollow letters, only their outline shows.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `none`.",
+       "type": "string",
+       "const": "none"
+      }
+     }
+    },
+    {
+     "description": "One colour.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "color"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `solid`.",
+       "type": "string",
+       "const": "solid"
+      },
+      "color": {
+       "description": "Fill colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+       "$ref": "#/$defs/Rgb"
+      },
+      "transparency": {
+       "description": "Transparency, percent 0 (opaque) .. 100.",
+       "default": 0.0,
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "A linear gradient across the run's letters.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "stops"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `gradient`.",
+       "type": "string",
+       "const": "gradient"
+      },
+      "stops": {
+       "description": "The colour stops, at least one, in order of `pos`.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/GradStop"
+       }
+      },
+      "angle": {
+       "description": "Direction of the gradient, degrees, 0 <= angle < 360: 0 = left to right, 90 = top to bottom.",
+       "default": 0.0,
+       "type": "number"
+      }
+     }
+    }
+   ]
+  },
+  "TextFrame": {
+   "description": "A text frame: the paragraph is placed apart from the text flow, in a box of its own. Lengths are points (1/72 inch).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "w": {
+     "description": "Width of the frame. Null: as wide as its text.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "h": {
+     "description": "Height of the frame: exact when `hExact` is true, otherwise a minimum. Null: as tall as its text.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "hExact": {
+     "description": "true: `h` is the exact height; false: `h` is a minimum.",
+     "default": false,
+     "type": "boolean"
+    },
+    "x": {
+     "description": "Horizontal offset from the `h_anchor` reference, points (1/72 inch); used when `xAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "y": {
+     "description": "Vertical offset from the `v_anchor` reference, points (1/72 inch); used when `yAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "xAlign": {
+     "description": "Horizontal alignment within the `hAnchor` area: `left`, `center`, `right`, `inside` or `outside`; takes precedence over `x`. Null: use `x`.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "yAlign": {
+     "description": "Vertical alignment within the `vAnchor` area: `top`, `center`, `bottom`, `inside` or `outside`; takes precedence over `y`. Null (or `inline`): use `y`.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "hAnchor": {
+     "description": "What `x` is measured from: `text` (the text column), `margin` or `page`. Empty: `text`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "vAnchor": {
+     "description": "What `y` is measured from: `text` (the paragraph's own position), `margin` or `page`. Empty: `text`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "wrap": {
+     "description": "How surrounding text treats the frame: `around` (wraps around it), `auto` (wraps when there is room), `notBeside` (no text beside it), `none`, `tight` or `through`. Empty: wrapping is the reader's choice (this writer wraps text around the frame when there is room).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "hSpace": {
+     "description": "Distance kept from the surrounding text at the left and right, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "vSpace": {
+     "description": "Distance kept from the surrounding text above and below, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "TextOutline": {
+   "description": "The line drawn around letters.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "color": {
+     "description": "Line colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: explicitly no line.",
+     "default": [
+      0,
+      0,
+      0
+     ],
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "width": {
+     "description": "Line width, points (1/72 inch), 0..20.",
+     "default": 0.75,
+     "type": "number"
+    },
+    "transparency": {
+     "description": "Transparency of the line, percent 0 (opaque) .. 100.",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "TextVert": {
+   "description": "Which way a text box's text runs. Values: `horz`: Horizontal: upright letters, lines stacking downwards; `vert`: The whole text turned 90 degrees clockwise; `vert270`: The whole text turned 270 degrees clockwise (90 degrees counter-clockwise); `stacked`: Upright letters stacked one above the other, columns running left to right.",
+   "type": "string",
+   "enum": [
+    "horz",
+    "vert",
+    "vert270",
+    "stacked"
+   ]
+  },
+  "TextWarp": {
+   "description": "A text warp: a named preset and its adjust values.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "preset"
+   ],
+   "properties": {
+    "preset": {
+     "description": "Name of the warp, one of the DrawingML preset text shapes: `textNoShape`, `textPlain`, `textStop`, `textTriangle`, `textTriangleInverted`, `textChevron`, `textChevronInverted`, `textRingInside`, `textRingOutside`, `textArchUp`, `textArchDown`, `textCircle`, `textButton`, `textArchUpPour`, `textArchDownPour`, `textCirclePour`, `textButtonPour`, `textCurveUp`, `textCurveDown`, `textCanUp`, `textCanDown`, `textWave1`, `textWave2`, `textDoubleWave1`, `textWave4`, `textInflate`, `textDeflate`, `textInflateBottom`, `textDeflateBottom`, `textInflateTop`, `textDeflateTop`, `textDeflateInflate`, `textDeflateInflateDeflate`, `textFadeRight`, `textFadeLeft`, `textFadeUp`, `textFadeDown`, `textSlantUp`, `textSlantDown`, `textCascadeUp`, `textCascadeDown`. `textNoShape` and `textPlain` leave the text straight.",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "adj": {
+     "description": "Adjust values of the warp: `[name, value]` pairs (`adj`, `adj1`, `adj2`); value in the preset's own unit (angles in 60000ths of a degree, fractions in 100000ths), magnitude at most 21600000. Absent: the preset's defaults.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "anyOf": [
+        {
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "minItems": 2,
+      "maxItems": 2
+     }
+    }
+   }
+  },
+  "Underline": {
+   "description": "Underline style. Values: `none`: no underline; `single`: one line under everything, spaces included; `words`: one line under words only, not under spaces; `double`: two lines; `thick`: one heavy line; `dotted`: a dotted line; `dash`: a dashed line; `dotDash`: alternating dots and dashes; `dotDotDash`: two dots then a dash, repeated; `wave`: a wavy line; `doubleWave`: two wavy lines.",
+   "type": "string",
+   "enum": [
+    "none",
+    "single",
+    "words",
+    "double",
+    "thick",
+    "dotted",
+    "dash",
+    "dotDash",
+    "dotDotDash",
+    "wave",
+    "doubleWave"
+   ]
+  },
+  "VAlign": {
+   "description": "Vertical position of content within the room it has. Values: `top`: at the top; `center`: centred; `bottom`: at the bottom.",
+   "type": "string",
+   "enum": [
+    "top",
+    "center",
+    "bottom"
+   ]
+  },
+  "VMerge": {
+   "description": "How a cell takes part in a vertical merge. Values: `none`: not merged vertically; `restart`: the first (top) cell of a vertically merged range: it holds the range's content; `continue`: continues the merged range of the cell above; its own content is not shown.",
+   "type": "string",
+   "enum": [
+    "none",
+    "restart",
+    "continue"
+   ]
+  },
+  "VertAlign": {
+   "description": "Vertical position of text relative to the line. Values: `baseline`: on the baseline (explicitly: it removes an inherited superscript or subscript); `superscript`: raised and reduced: a superscript; `subscript`: lowered and reduced: a subscript.",
+   "type": "string",
+   "enum": [
+    "baseline",
+    "superscript",
+    "subscript"
+   ]
+  },
+  "Wrap": {
+   "description": "Whether a drawing is in line with the text or floating, and how text wraps around a floating one. Values: `inline`: In line with the text: the object sits on the text line like a character, at its U+FFFC; `square`: Floating; text wraps around the object's bounding rectangle; `tight`: Floating; text wraps around the object's outline; `through`: Floating; text wraps around the outline and also fills its open inner areas; `topAndBottom`: Floating; text stops above the object and continues below it, none beside it; `behindText`: Floating; no wrapping, the object is drawn behind the text; `inFrontOfText`: Floating; no wrapping, the object is drawn over the text.",
+   "type": "string",
+   "enum": [
+    "inline",
+    "square",
+    "tight",
+    "through",
+    "topAndBottom",
+    "behindText",
+    "inFrontOfText"
+   ]
+  },
+  "WrapPolygon": {
+   "description": "A closed wrap polygon in a coordinate space where 21600 units span the object's width and 21600 its height (so (0, 0) is the top-left corner and (21600, 21600) the bottom-right).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "edited": {
+     "description": "true: the polygon was edited by hand; false: it was worked out from the object.",
+     "default": false,
+     "type": "boolean"
+    },
+    "points": {
+     "description": "The polygon's corners `[x, y]` in order; the last is joined back to the first. At most 1024.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "type": "integer",
+       "minimum": -2147483648,
+       "maximum": 2147483647
+      },
+      "minItems": 2,
+      "maxItems": 2
+     }
+    }
+   }
+  },
+  "WrapText": {
+   "description": "Which sides of a floating object text may flow on. Values: `bothSides`: Both sides; `left`: Only the left side; the band to the object's right stays empty; `right`: Only the right side; the band to the object's left stays empty; `largest`: Only whichever side has more room, decided line by line.",
+   "type": "string",
+   "enum": [
+    "bothSides",
+    "left",
+    "right",
+    "largest"
+   ]
+  }
+ }
+}

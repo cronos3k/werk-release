@@ -1,0 +1,462 @@
+{
+  "$defs": {
+    "border_line": {
+      "additionalProperties": false,
+      "description": "One edge of a cell border.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "Line colour."
+        },
+        "style": {
+          "description": "Line style. `None` = no line. Drawn widths in pixels at 100%: Hair, Thin, Dashed, Dotted, DashDot, DashDotDot = 1; Medium, MediumDashed, MediumDashDot, MediumDashDotDot, SlantDashDot = 2; Thick, Double = 3.",
+          "enum": [
+            "None",
+            "Thin",
+            "Medium",
+            "Thick",
+            "Dashed",
+            "Dotted",
+            "Double",
+            "Hair",
+            "MediumDashed",
+            "DashDot",
+            "MediumDashDot",
+            "DashDotDot",
+            "MediumDashDotDot",
+            "SlantDashDot"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "style",
+        "color"
+      ],
+      "type": "object"
+    },
+    "cell_format": {
+      "additionalProperties": false,
+      "description": "The complete format of a cell: font, fill, borders, alignment, number format, protection. Every part is always present (a default format spells out the defaults).",
+      "properties": {
+        "align": {
+          "additionalProperties": false,
+          "description": "Alignment.",
+          "properties": {
+            "h": {
+              "description": "Horizontal. `General` = numbers right, text left, booleans and errors centred.",
+              "enum": [
+                "General",
+                "Left",
+                "Center",
+                "Right",
+                "Fill",
+                "Justify",
+                "CenterAcross",
+                "Distributed"
+              ],
+              "type": "string"
+            },
+            "indent": {
+              "description": "Indent level, 0..255 (one level is about three spaces).",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "rotation": {
+              "description": "Text rotation in degrees counter-clockwise, -90..90; the special value 255 means vertically stacked letters.",
+              "maximum": 32767,
+              "minimum": -32768,
+              "type": "integer"
+            },
+            "shrink": {
+              "description": "Shrink the text to fit the cell width.",
+              "type": "boolean"
+            },
+            "v": {
+              "description": "Vertical.",
+              "enum": [
+                "Top",
+                "Center",
+                "Bottom",
+                "Justify",
+                "Distributed"
+              ],
+              "type": "string"
+            },
+            "wrap": {
+              "description": "Wrap text onto several lines within the cell.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "h",
+            "v",
+            "wrap",
+            "shrink",
+            "indent",
+            "rotation"
+          ],
+          "type": "object"
+        },
+        "borders": {
+          "additionalProperties": false,
+          "description": "The six border lines.",
+          "properties": {
+            "bottom": {
+              "$ref": "#/$defs/border_line",
+              "description": "Bottom edge."
+            },
+            "diag_down": {
+              "$ref": "#/$defs/border_line",
+              "description": "Diagonal from top-left to bottom-right."
+            },
+            "diag_up": {
+              "$ref": "#/$defs/border_line",
+              "description": "Diagonal from bottom-left to top-right."
+            },
+            "left": {
+              "$ref": "#/$defs/border_line",
+              "description": "Left edge."
+            },
+            "right": {
+              "$ref": "#/$defs/border_line",
+              "description": "Right edge."
+            },
+            "top": {
+              "$ref": "#/$defs/border_line",
+              "description": "Top edge."
+            }
+          },
+          "required": [
+            "left",
+            "right",
+            "top",
+            "bottom",
+            "diag_down",
+            "diag_up"
+          ],
+          "type": "object"
+        },
+        "fill": {
+          "additionalProperties": false,
+          "description": "The cell background.",
+          "properties": {
+            "bg": {
+              "$ref": "#/$defs/color",
+              "description": "Pattern background (unused by `Solid`)."
+            },
+            "fg": {
+              "$ref": "#/$defs/color",
+              "description": "Pattern foreground; THE fill colour when the pattern is `Solid`."
+            },
+            "pattern": {
+              "description": "`None` = no fill. `Solid` = filled with `fg`. Every other value is a two-colour pattern drawn in `fg` over `bg` (the ECMA-376 pattern types, e.g. Gray125 = 12.5% dots).",
+              "enum": [
+                "None",
+                "Solid",
+                "Gray50",
+                "Gray75",
+                "Gray25",
+                "Gray125",
+                "Gray0625",
+                "DarkHorizontal",
+                "DarkVertical",
+                "DarkDown",
+                "DarkUp",
+                "DarkGrid",
+                "DarkTrellis",
+                "LightHorizontal",
+                "LightVertical",
+                "LightDown",
+                "LightUp",
+                "LightGrid",
+                "LightTrellis"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern",
+            "fg",
+            "bg"
+          ],
+          "type": "object"
+        },
+        "font": {
+          "additionalProperties": false,
+          "description": "The font.",
+          "properties": {
+            "bold": {
+              "description": "Bold.",
+              "type": "boolean"
+            },
+            "color": {
+              "$ref": "#/$defs/color",
+              "description": "Text colour."
+            },
+            "italic": {
+              "description": "Italic.",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "Typeface family name, e.g. `Calibri`. Only a name: no font file is referenced or embedded, and a reader substitutes an available face. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "size": {
+              "description": "Size in points (1/72 inch), e.g. 11.",
+              "type": "number"
+            },
+            "strike": {
+              "description": "Strikethrough.",
+              "type": "boolean"
+            },
+            "underline": {
+              "description": "Underline. The Accounting kinds sit lower, below descenders.",
+              "enum": [
+                "None",
+                "Single",
+                "Double",
+                "SingleAccounting",
+                "DoubleAccounting"
+              ],
+              "type": "string"
+            },
+            "vert": {
+              "description": "Vertical position of the text.",
+              "enum": [
+                "Baseline",
+                "Superscript",
+                "Subscript"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "size",
+            "bold",
+            "italic",
+            "underline",
+            "strike",
+            "color",
+            "vert"
+          ],
+          "type": "object"
+        },
+        "num_fmt": {
+          "description": "Number format code in the spreadsheet format-code language (ECMA-376 Part 1, 18.8.31), written with `.` as the decimal point and `,` as the thousands separator, e.g. `General`, `0.00`, `#,##0.00`, `yyyy-mm-dd`, `0.0%`, `@`. It decides how a number is DISPLAYED, including whether a number is shown as a date; it never changes the stored value. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "protection": {
+          "additionalProperties": false,
+          "description": "What sheet protection does to the cell (only while the sheet is protected).",
+          "properties": {
+            "hidden": {
+              "description": "The cell's formula is not shown. Default false.",
+              "type": "boolean"
+            },
+            "locked": {
+              "description": "The cell cannot be edited. Default true.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "locked",
+            "hidden"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "font",
+        "fill",
+        "borders",
+        "align",
+        "num_fmt",
+        "protection"
+      ],
+      "type": "object"
+    },
+    "cell_ref": {
+      "additionalProperties": false,
+      "description": "One cell of the grid, by ZERO-BASED row and column: the cell written `A1` is {\"row\": 0, \"col\": 0}, `C7` is {\"row\": 6, \"col\": 2}.",
+      "properties": {
+        "col": {
+          "description": "Zero-based column index, 0..16383 (the grid has 16,384 columns; column 0 is `A`, 25 is `Z`, 26 is `AA`).",
+          "maximum": 16383,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "row": {
+          "description": "Zero-based row index, 0..1048575 (the grid has 1,048,576 rows).",
+          "maximum": 1048575,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "row",
+        "col"
+      ],
+      "type": "object"
+    },
+    "color": {
+      "description": "A colour: automatic, an explicit RGB value, or a slot of the workbook theme with a tint.",
+      "oneOf": [
+        {
+          "const": "Auto",
+          "description": "Automatic: black for text and lines, no fill for fills."
+        },
+        {
+          "additionalProperties": false,
+          "description": "An explicit sRGB colour.",
+          "properties": {
+            "Rgb": {
+              "description": "0xRRGGBB packed in one integer: red*65536 + green*256 + blue, each component 0..255, sRGB.",
+              "maximum": 16777215,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Rgb"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A theme colour with a tint.",
+          "properties": {
+            "Theme": {
+              "description": "[slot, tint]. slot: index 0..255 into `theme.colors` of the styles node (0 = light 1 / background, 1 = dark 1 / text, 2 = light 2, 3 = dark 2, 4..9 = accent 1..6, 10 = hyperlink, 11 = followed hyperlink; a slot beyond 11 resolves to black). tint: -1000..1000 thousandths; 0 = the theme colour itself. To resolve: convert the theme colour to HSL; if tint < 0 then L' = L * (1 + tint/1000), else L' = L * (1 - tint/1000) + tint/1000; convert back to RGB.",
+              "items": {
+                "maximum": 32767,
+                "minimum": -32768,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "Theme"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "range_ref": {
+      "additionalProperties": false,
+      "description": "A rectangle of cells, both corners INCLUDED. `start` is the top-left corner and `end` the bottom-right one (start.row <= end.row and start.col <= end.col; a reader that finds them swapped swaps them back). A whole row spans columns 0..16383; a whole column spans rows 0..1048575.",
+      "properties": {
+        "end": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Bottom-right cell."
+        },
+        "start": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Top-left cell."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.sheet.styles.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The formats of a spreadsheet/1 document (node type core.sheet.styles, node_id `styles`).",
+  "properties": {
+    "cell_formats": {
+      "description": "The cell formats. A cell's `style` number (in the cells binary), and the `style` of a row or column record, is the ZERO-BASED index into this array. Entry 0 is the default format. The array only ever grows: an index, once written, keeps its meaning in every later revision of the same document. A style number beyond the end of the array means entry 0.",
+      "items": {
+        "$ref": "#/$defs/cell_format"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "named_styles": {
+      "description": "Named cell styles (a styles gallery): a name and the format it stands for. Cells do not refer to them.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One named style.",
+        "properties": {
+          "name": {
+            "description": "The style's name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "style": {
+            "$ref": "#/$defs/cell_format",
+            "description": "The format."
+          }
+        },
+        "required": [
+          "name",
+          "style"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "theme": {
+      "additionalProperties": false,
+      "description": "The workbook theme.",
+      "properties": {
+        "colors": {
+          "description": "The twelve theme colours, each 0xRRGGBB packed as red*65536 + green*256 + blue (sRGB), in this order: light 1, dark 1, light 2, dark 2, accent 1..6, hyperlink, followed hyperlink. A `Theme` colour's slot indexes this array.",
+          "items": {
+            "maximum": 16777215,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 12,
+          "minItems": 12,
+          "type": "array"
+        },
+        "major_font": {
+          "description": "Heading typeface family name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "minor_font": {
+          "description": "Body typeface family name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "name": {
+          "description": "Theme name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "colors",
+        "major_font",
+        "minor_font"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "cell_formats",
+    "named_styles",
+    "theme"
+  ],
+  "title": "core.sheet.styles - cell formats, named styles and theme",
+  "type": "object"
+}

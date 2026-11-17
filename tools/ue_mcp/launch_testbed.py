@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ue_client import DEFAULT_PORTS, port_is_free  # noqa: E402
 
 DEFAULT_ENGINE = r"C:\Program Files\Epic Games\UE_5.7"
-# <testbed> is WERK_UE_TESTBED: the Unreal test project folder (adapters/unreal/TESTBED.md).
+# <testbed> is WERK_UE_TESTBED: the Unreal test project folder (plugins/unreal/TESTBED.md).
 TESTBED = os.environ.get("WERK_UE_TESTBED", "<WERK_UE_TESTBED unset>")
 DEFAULT_PROJECT = os.path.join(TESTBED, "WerkTest", "WerkTest.uproject")
 LOG_DIR = os.path.join(TESTBED, "logs")

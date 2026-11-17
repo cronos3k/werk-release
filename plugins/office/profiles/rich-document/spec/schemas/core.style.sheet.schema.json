@@ -1,0 +1,2200 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.style.sheet.schema.json",
+ "title": "core.style.sheet — styles and formatting defaults",
+ "description": "The document's stylesheet: the document defaults and the named paragraph, character, table and list styles. Formatting is resolved in this order, later wins: reader defaults, `defaultChr` / `defaultPara`, the style chain from the root of `basedOn` down to the style, direct formatting. spec/PROFILE-RICH-DOCUMENT.md section 3. Lengths are points (1/72 inch).",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "defaultChr",
+  "defaultPara",
+  "styles"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "defaultChr": {
+   "description": "Document defaults for character formatting: what a property not set by any style or direct formatting takes. A property null or absent here falls back to the reader's own default (an 11-point body font, black, no decoration).",
+   "$ref": "#/$defs/CharProps"
+  },
+  "defaultPara": {
+   "description": "Document defaults for paragraph formatting. A property null or absent here falls back to: left-aligned, no indents, no space before or after, single line spacing.",
+   "$ref": "#/$defs/ParaProps"
+  },
+  "defaultParaPresent": {
+   "description": "true: the document states its paragraph defaults explicitly, even when `defaultPara` is empty; false: it states none and leaves them to the reader. Kept so that a stated-but-empty default is not confused with an unstated one.",
+   "default": false,
+   "type": "boolean"
+  },
+  "styles": {
+   "description": "The styles, in their stored order. Style `id`s are unique.",
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/Style"
+   }
+  }
+ },
+ "$defs": {
+  "Align": {
+   "description": "Horizontal alignment of text between the left and right indents. Values: `left`: flush left, ragged right (in a right-to-left paragraph: at the leading edge, which is the right); `center`: centred; `right`: flush right, ragged left; `justify`: both edges flush; the last line is left-aligned; `distribute`: both edges flush on every line, the last line included, by spacing characters.",
+   "type": "string",
+   "enum": [
+    "left",
+    "center",
+    "right",
+    "justify",
+    "distribute"
+   ]
+  },
+  "Border": {
+   "description": "One border line.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The kind of line.",
+     "default": "none",
+     "$ref": "#/$defs/BorderStyle"
+    },
+    "width": {
+     "description": "Line width, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "color": {
+     "description": "Line colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: automatic (black on a light background).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "space": {
+     "description": "Distance between the border and the content it surrounds, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "BorderStyle": {
+   "description": "The kind of line a border is drawn with. Values: `none`: no line (explicitly none: it overrides an inherited border); `single`: one solid line; `double`: two parallel solid lines; `dotted`: a line of dots; `dashed`: a line of dashes; `thick`: one heavy solid line; `triple`: three parallel solid lines; `dotDash`: alternating dots and dashes; `wave`: a wavy line.",
+   "type": "string",
+   "enum": [
+    "none",
+    "single",
+    "double",
+    "dotted",
+    "dashed",
+    "thick",
+    "triple",
+    "dotDash",
+    "wave"
+   ]
+  },
+  "Borders": {
+   "description": "Borders on the four sides, plus the inner borders of tables and of runs of bordered paragraphs. A side that is null is not set here.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "top": {
+     "description": "The top border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "left": {
+     "description": "The left border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bottom": {
+     "description": "The bottom border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "right": {
+     "description": "The right border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "between": {
+     "description": "Between consecutive paragraphs (paragraph borders), or between rows: the inside horizontal lines (table borders). Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "inside_v": {
+     "description": "Between columns: the inside vertical lines of a table. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "CharProps": {
+   "description": "Character formatting, as direct formatting or in a style. Every property is optional; null or absent means the property is not set here and is inherited.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The `id` of a character style in the stylesheet node. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "font": {
+     "description": "Font family name (for example `Aptos`, `Times New Roman`). A name only: the font file is not part of the document, and a reader without that font substitutes a similar one. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "size": {
+     "description": "Font size, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bold": {
+     "description": "Bold. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "italic": {
+     "description": "Italic. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "underline": {
+     "description": "Underline style (`none` explicitly removes an inherited underline). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Underline"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "underlineColor": {
+     "description": "Underline colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: the text colour.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "strike": {
+     "description": "Struck through with one line. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "doubleStrike": {
+     "description": "Struck through with two lines. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "color": {
+     "description": "Text colour. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextColor"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "highlight": {
+     "description": "Highlighter colour behind the text (`none` explicitly removes an inherited one). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Highlight"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shading": {
+     "description": "Background fill behind the text, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "border": {
+     "description": "A border around the text; a border whose `style` is `none` explicitly removes an inherited one. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "vertAlign": {
+     "description": "Superscript or subscript. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/VertAlign"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "caps": {
+     "description": "Shown in capitals (the stored text keeps its case). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "smallCaps": {
+     "description": "Lower-case letters shown as small capitals. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "hidden": {
+     "description": "Hidden text: not shown and not printed unless the reader is asked to show it. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spacing": {
+     "description": "Extra space after each character, points (1/72 inch); negative condenses. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "scale": {
+     "description": "Horizontal scaling of the glyphs, percent (100 = unscaled). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "position": {
+     "description": "Baseline shift, points (1/72 inch): positive raises the text, negative lowers it. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "kern": {
+     "description": "Pair kerning is applied to text at or above this font size, points (1/72 inch); 0 = kerning off. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "outline": {
+     "description": "Letters drawn as outlines. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shadow": {
+     "description": "Letters drawn with a simple drop shadow. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "emboss": {
+     "description": "Letters drawn embossed (raised). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "engrave": {
+     "description": "Letters drawn engraved (sunken). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "textEffects": {
+     "description": "Decorative text effects: fill, outline, shadow, glow, reflection. When inherited values combine, each of the five is taken whole from the nearest level that sets it. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextEffects"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "lang": {
+     "description": "Language of the text, a BCP 47 tag (`en-US`, `de-DE`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "noProof": {
+     "description": "true: spelling and grammar are not checked in this text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rtl": {
+     "description": "true: a right-to-left run; its characters are complex script and read right to left. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "cs": {
+     "description": "true: the whole run is formatted with the complex-script properties (`fontCs`, `sizeCs`, `boldCs`, `italicCs`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fontCs": {
+     "description": "Font family name for complex-script text (Arabic, Hebrew, Thai ...). Null or absent: inherited, and `font` when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fontEa": {
+     "description": "Font family name for East Asian text (Chinese, Japanese, Korean). Null or absent: inherited, and `font` when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "sizeCs": {
+     "description": "Font size for complex-script text, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "boldCs": {
+     "description": "Bold for complex-script text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "italicCs": {
+     "description": "Italic for complex-script text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "langBidi": {
+     "description": "Language of complex-script text, a BCP 47 tag (`fa-IR`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "link": {
+     "description": "Hyperlink target of the text: a URL, or `#name` for the bookmark `name` in this document. A link is content to follow on the reader's request, never a dependency of the document. Null or absent: not a link.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "ins": {
+     "description": "The text is a tracked insertion made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `insert`). Null or absent: not a tracked insertion.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "del": {
+     "description": "The text is a tracked deletion made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `delete`): it is still stored, and is shown struck through or hidden. Null or absent: not a tracked deletion.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the formatting before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_CharProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "Glow": {
+   "description": "A glow: a soft band of colour around the outline.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "color": {
+     "description": "Glow colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "default": [
+      21,
+      96,
+      130
+     ],
+     "$ref": "#/$defs/Rgb"
+    },
+    "size": {
+     "description": "Width of the glow band around the outline, points (1/72 inch), 0..150.",
+     "default": 5.0,
+     "type": "number"
+    },
+    "transparency": {
+     "description": "Transparency of the glow, percent, 0 (opaque) .. 100 (invisible).",
+     "default": 60.0,
+     "type": "number"
+    }
+   }
+  },
+  "GradStop": {
+   "description": "One colour stop of a gradient.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pos",
+    "color"
+   ],
+   "properties": {
+    "pos": {
+     "description": "Position along the gradient, percent 0..100.",
+     "type": "number"
+    },
+    "color": {
+     "description": "Colour at this position, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "$ref": "#/$defs/Rgb"
+    },
+    "transparency": {
+     "description": "Transparency at this position, percent 0 (opaque) .. 100.",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "Highlight": {
+   "description": "A highlighter colour behind text: one of sixteen fixed colours, or none. Values: `none`: No highlight (explicitly: removes an inherited one); `yellow`: #FFFF00; `brightGreen`: #00FF00; `turquoise`: #00FFFF; `pink`: #FF00FF; `blue`: #0000FF; `red`: #FF0000; `darkBlue`: #000080; `teal`: #008080; `green`: #008000; `violet`: #800080; `darkRed`: #800000; `darkYellow`: #808000; `gray50`: #808080; `gray25`: #C0C0C0; `black`: #000000; `white`: #FFFFFF.",
+   "type": "string",
+   "enum": [
+    "none",
+    "yellow",
+    "brightGreen",
+    "turquoise",
+    "pink",
+    "blue",
+    "red",
+    "darkBlue",
+    "teal",
+    "green",
+    "violet",
+    "darkRed",
+    "darkYellow",
+    "gray50",
+    "gray25",
+    "black",
+    "white"
+   ]
+  },
+  "LineSpacing": {
+   "description": "Line spacing: a rule and its value.",
+   "oneOf": [
+    {
+     "description": "A multiple of single line spacing.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule",
+      "value"
+     ],
+     "properties": {
+      "rule": {
+       "description": "Selects this alternative.",
+       "type": "string",
+       "const": "multiple"
+      },
+      "value": {
+       "description": "The multiple of single line spacing (the font's natural line height): 1.0 = single, 1.5, 2.0 = double.",
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "At least a given line height.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule",
+      "value"
+     ],
+     "properties": {
+      "rule": {
+       "description": "Selects this alternative.",
+       "type": "string",
+       "const": "atLeast"
+      },
+      "value": {
+       "description": "The minimum line height, points (1/72 inch); taller content makes the line taller.",
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "Exactly a given line height.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "rule",
+      "value"
+     ],
+     "properties": {
+      "rule": {
+       "description": "Selects this alternative.",
+       "type": "string",
+       "const": "exactly"
+      },
+      "value": {
+       "description": "The exact line height, points (1/72 inch); taller content is clipped.",
+       "type": "number"
+      }
+     }
+    }
+   ]
+  },
+  "NumChange": {
+   "description": "A tracked change of a paragraph's list numbering.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes`.",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "original": {
+     "description": "The list label as it was shown before the change (for example `2.`).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    }
+   }
+  },
+  "NumRef": {
+   "description": "The list a paragraph belongs to, and its level in it.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "num",
+    "level"
+   ],
+   "properties": {
+    "num": {
+     "description": "The `id` of an entry of the numbering node's `nums`; 0 means no list (it removes numbering inherited from a style).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "level": {
+     "description": "The list level, 0 (outermost) .. 8.",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 255
+    }
+   }
+  },
+  "ParaProps": {
+   "description": "Paragraph formatting, as direct formatting or in a style. Every property is optional; null or absent means the property is not set here and is inherited.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The `id` of a paragraph style in the stylesheet node. Null or absent: the stylesheet's default paragraph style (`Normal` where it exists).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "align": {
+     "description": "Horizontal alignment. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Align"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentLeft": {
+     "description": "Left indent: distance from the text column's left edge to the paragraph's text, points (1/72 inch) (negative reaches into the margin). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentRight": {
+     "description": "Right indent: distance from the paragraph's text to the text column's right edge, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentFirst": {
+     "description": "First-line indent relative to `indentLeft`, points (1/72 inch); negative: a hanging indent (the first line starts to the left of the others). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentLeftChars": {
+     "description": "Left indent in characters, where one character is the font size of the paragraph mark. A non-zero value wins over `indentLeft`; 0 cancels an inherited value. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentRightChars": {
+     "description": "Right indent in characters (as `indentLeftChars`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "indentFirstChars": {
+     "description": "First-line indent in characters; negative: hanging (as `indentLeftChars`). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceBefore": {
+     "description": "Space above the paragraph, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceAfter": {
+     "description": "Space below the paragraph, points (1/72 inch). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceBeforeAuto": {
+     "description": "true: the space above is automatic instead of `spaceBefore`: 14 points, none at the top of the document or of a table cell, collapsing with the space below the previous paragraph. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "spaceAfterAuto": {
+     "description": "true: the space below is automatic instead of `spaceAfter`: 14 points, none at the end of a table cell. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "lineSpacing": {
+     "description": "Line spacing. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/LineSpacing"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "contextualSpacing": {
+     "description": "true: no space is added between this paragraph and a neighbour of the same paragraph style. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "mirrorIndents": {
+     "description": "true: the left and right indents are inside and outside indents, so they swap sides on even pages. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "keepNext": {
+     "description": "Keep the paragraph on the same page as the next one. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "keepLines": {
+     "description": "Keep all lines of the paragraph on one page. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "pageBreakBefore": {
+     "description": "Start the paragraph on a new page. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "widowControl": {
+     "description": "Never leave a single first or last line of the paragraph alone on a page. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "outlineLevel": {
+     "description": "Outline level for the document's outline and table of contents: 0..8 = levels 1..9 (headings), 9 = body text. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 255
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numbering": {
+     "description": "The list the paragraph belongs to and its level; a `num` of 0 removes numbering inherited from a style. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumRef"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "tabs": {
+     "description": "Tab stops. The list REPLACES the inherited one, except that a stop with `align: clear` removes the inherited stop at its position. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/TabStop"
+       }
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shading": {
+     "description": "Background fill of the paragraph, `[red, green, blue]`, each an integer 0..255, sRGB. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "borders": {
+     "description": "Borders around the paragraph; `between` is drawn between consecutive paragraphs with the same borders, `inside_v` is unused. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "suppressHyphens": {
+     "description": "Do not hyphenate this paragraph. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "suppressLineNumbers": {
+     "description": "Skip this paragraph when numbering lines. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bidi": {
+     "description": "A right-to-left paragraph: its base direction is right to left, `left` alignment means the leading (right) edge, and the left and right indents swap sides. Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "dropCap": {
+     "description": "Drop cap: the number of lines the paragraph's first character(s) drop over (0 = none). Null or absent: inherited.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 255
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "frame": {
+     "description": "A text frame: the paragraph is placed apart from the text flow, which may wrap around it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextFrame"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "kinsoku": {
+     "description": "East Asian line-breaking rules: no line starts with closing punctuation or ends with opening punctuation. Null or absent: inherited, and on when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "wordWrap": {
+     "description": "true: Latin words wrap whole; false: they may break at any character. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "overflowPunct": {
+     "description": "true: punctuation may hang past the end of the line. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "topLinePunct": {
+     "description": "true: punctuation at the start of a line is compressed. Null or absent: inherited, and false when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "autoSpaceDE": {
+     "description": "true: a small automatic space separates East Asian from Latin text. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "autoSpaceDN": {
+     "description": "true: a small automatic space separates East Asian text from numbers. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numChange": {
+     "description": "Tracked change of the paragraph's list numbering. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumChange"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fmtChange": {
+     "description": "Tracked formatting change: the paragraph properties before the change, and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_ParaProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "snapToGrid": {
+     "description": "true: the paragraph's lines snap to the section's document grid. Null or absent: inherited, and true when nothing sets it.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "boolean"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "PropChange_CharProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/CharProps"
+    }
+   }
+  },
+  "PropChange_ParaProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/ParaProps"
+    }
+   }
+  },
+  "Reflection": {
+   "description": "A mirror image of the letters below them that fades out.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "transparency": {
+     "description": "Transparency of the reflection where it starts (nearest the letters), percent 0 (opaque) .. 100.",
+     "default": 50.0,
+     "type": "number"
+    },
+    "size": {
+     "description": "How much of the letters' height the reflection extends over before it has faded out, percent 0..100.",
+     "default": 50.0,
+     "type": "number"
+    },
+    "distance": {
+     "description": "Gap between the letters and the reflection, points (1/72 inch), 0..100.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "blur": {
+     "description": "Blur radius of the reflection, points (1/72 inch), 0..100.",
+     "default": 0.5,
+     "type": "number"
+    }
+   }
+  },
+  "Rgb": {
+   "description": "A colour: `[red, green, blue]`, each an integer 0..255, sRGB (IEC 61966-2-1), no alpha.",
+   "type": "array",
+   "items": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 255
+   },
+   "minItems": 3,
+   "maxItems": 3
+  },
+  "Shadow": {
+   "description": "An outer shadow: a blurred copy of the silhouette cast `distance` away in direction `angle`.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "color": {
+     "description": "Shadow colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "default": [
+      0,
+      0,
+      0
+     ],
+     "$ref": "#/$defs/Rgb"
+    },
+    "transparency": {
+     "description": "Transparency of the shadow, percent, 0 (opaque) .. 100 (invisible).",
+     "default": 60.0,
+     "type": "number"
+    },
+    "blur": {
+     "description": "Blur radius, points (1/72 inch), 0..100.",
+     "default": 4.0,
+     "type": "number"
+    },
+    "distance": {
+     "description": "How far the shadow is cast from the shape, points (1/72 inch), 0..200.",
+     "default": 3.0,
+     "type": "number"
+    },
+    "angle": {
+     "description": "Direction the shadow is cast in, degrees clockwise from the positive x axis (0 = to the right, 90 = downwards), 0 <= angle < 360.",
+     "default": 45.0,
+     "type": "number"
+    },
+    "rotWithShape": {
+     "description": "true: `angle` is in the shape's own frame and turns with the shape when it is rotated or flipped; false: `angle` is in the page's frame.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "Style": {
+   "description": "A named set of formatting that paragraphs, text runs, tables or lists refer to by `id`.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "id": {
+     "description": "The style's identifier (`Heading1`): what paragraph and character formatting's `style`, a table's `style`, `basedOn`, `next` and `linked` refer to. Unique in the stylesheet; it never changes when the style is renamed.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "name": {
+     "description": "The name shown to users (`Heading 1`).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "kind": {
+     "description": "What the style applies to.",
+     "default": "paragraph",
+     "$ref": "#/$defs/StyleKind"
+    },
+    "basedOn": {
+     "description": "The `id` of the style this one inherits from: properties not set here come from it. Null: based on the document defaults.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "next": {
+     "description": "The `id` of the style a new paragraph takes when it is started after a paragraph of this style. Null: this same style.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "linked": {
+     "description": "The `id` of the character style linked to this paragraph style (or the reverse): the pair presents one style that can be applied to a paragraph or to text. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "para": {
+     "description": "The paragraph formatting the style sets (null properties are inherited through `basedOn`).",
+     "default": {},
+     "$ref": "#/$defs/ParaProps"
+    },
+    "chr": {
+     "description": "The character formatting the style sets (null properties are inherited through `basedOn`).",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "priority": {
+     "description": "Position in style lists: lower numbers come first. Null: after all styles that have one.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "quick": {
+     "description": "true: the style is offered in the short list of frequently used styles.",
+     "default": false,
+     "type": "boolean"
+    },
+    "hidden": {
+     "description": "true: the style is not offered in style lists.",
+     "default": false,
+     "type": "boolean"
+    },
+    "builtin": {
+     "description": "true: one of the application's built-in styles; a user interface does not let it be deleted. No effect on formatting.",
+     "default": false,
+     "type": "boolean"
+    },
+    "locked": {
+     "description": "true: the style cannot be applied while the document restricts formatting (settings node, `protectFormatting`).",
+     "default": false,
+     "type": "boolean"
+    },
+    "table": {
+     "description": "For a table style: its borders, shading and the conditional formats of header row, banding and so on. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TableStyleParts"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "StyleKind": {
+   "description": "What a style applies to. Values: `paragraph`: whole paragraphs (paragraph and character formatting); `character`: runs of text (character formatting only); `table`: tables; `numbering`: lists (it names a numbering definition).",
+   "type": "string",
+   "enum": [
+    "paragraph",
+    "character",
+    "table",
+    "numbering"
+   ]
+  },
+  "TabAlign": {
+   "description": "How text lines up at a tab stop. Values: `left`: the text starts at the stop; `center`: the text is centred on the stop; `right`: the text ends at the stop; `decimal`: the decimal separator of a number sits at the stop; `bar`: no text alignment: a vertical bar is drawn at the stop's position; `clear`: not a stop: it removes the stop inherited at this position.",
+   "type": "string",
+   "enum": [
+    "left",
+    "center",
+    "right",
+    "decimal",
+    "bar",
+    "clear"
+   ]
+  },
+  "TabLeader": {
+   "description": "The characters that fill the space a tab jumps over. Values: `none`: nothing; `dot`: full stops (.....); `hyphen`: hyphens (-----); `underscore`: a solid underline (_____); `middleDot`: middle dots (·····).",
+   "type": "string",
+   "enum": [
+    "none",
+    "dot",
+    "hyphen",
+    "underscore",
+    "middleDot"
+   ]
+  },
+  "TabStop": {
+   "description": "A tab stop.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pos"
+   ],
+   "properties": {
+    "pos": {
+     "description": "Position of the stop, points (1/72 inch) from the text column's left edge (not from the paragraph's indent).",
+     "type": "number"
+    },
+    "align": {
+     "description": "How text after the tab lines up at the stop.",
+     "default": "left",
+     "$ref": "#/$defs/TabAlign"
+    },
+    "leader": {
+     "description": "The characters that fill the space the tab jumps over.",
+     "default": "none",
+     "$ref": "#/$defs/TabLeader"
+    }
+   }
+  },
+  "TableStyleParts": {
+   "description": "The formatting a table style gives a table: borders, shading and margins for the whole table, and special formats for its header row, total row, first and last column and bands. Which special formats apply to a given table is decided by that table's `look`.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "borders": {
+     "description": "Borders of the whole table: outer sides, `between` (inside horizontal), `inside_v` (inside vertical). Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "fill": {
+     "description": "Shading of every cell of the table, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "cellMargins": {
+     "description": "Inner margins of the table's cells `[top, left, bottom, right]`, points (1/72 inch). Null: not set by the style.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "array",
+       "items": {
+        "type": "number"
+       },
+       "minItems": 4,
+       "maxItems": 4
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "headerFill": {
+     "description": "Shading of the header (first) row's cells, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "headerChr": {
+     "description": "Character formatting of text in the header (first) row.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "headerBorders": {
+     "description": "Cell borders of the header (first) row: `between` is the border between header rows, `inside_v` the border between its cells. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bandFill": {
+     "description": "Shading of the odd row bands (the 1st, 3rd … band of `bandSize` rows, not counting the header row), `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bandChr": {
+     "description": "Character formatting of text in the odd row bands.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "bandBorders": {
+     "description": "Cell borders of the odd row bands. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bandSize": {
+     "description": "Number of rows in one band. Null: 1.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "firstColChr": {
+     "description": "Character formatting of text in the first column.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "totalChr": {
+     "description": "Character formatting of text in the total (last) row.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "totalBorderTop": {
+     "description": "The border above the total (last) row. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "firstColFill": {
+     "description": "Shading of the first column's cells, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "firstColBorders": {
+     "description": "Cell borders of the first column. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "lastColFill": {
+     "description": "Shading of the last column's cells, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "lastColChr": {
+     "description": "Character formatting of text in the last column.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "lastColBorders": {
+     "description": "Cell borders of the last column. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "totalFill": {
+     "description": "Shading of the total (last) row's cells, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "totalBorders": {
+     "description": "Cell borders of the total (last) row; a top edge left unset falls back to `totalBorderTop`. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "colBandFill": {
+     "description": "Shading of the odd column bands (1st, 3rd … column), `[red, green, blue]`, each an integer 0..255, sRGB. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "colBandChr": {
+     "description": "Character formatting of text in the odd column bands.",
+     "default": {},
+     "$ref": "#/$defs/CharProps"
+    },
+    "colBandBorders": {
+     "description": "Cell borders of the odd column bands. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "TextColor": {
+   "description": "A text colour: the string `Auto`, or `{\"Rgb\": [red, green, blue]}`.",
+   "oneOf": [
+    {
+     "description": "The string `Auto`: automatic colour, black on a light background and white on a dark one.",
+     "type": "string",
+     "const": "Auto"
+    },
+    {
+     "description": "`{\"Rgb\": [red, green, blue]}`: a fixed colour, each component an integer 0..255, sRGB.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "Rgb"
+     ],
+     "properties": {
+      "Rgb": {
+       "description": "`{\"Rgb\": [red, green, blue]}`: a fixed colour, each component an integer 0..255, sRGB.",
+       "$ref": "#/$defs/Rgb"
+      }
+     }
+    }
+   ]
+  },
+  "TextEffects": {
+   "description": "Decorative effects on a run's letters. An effect that is null or absent is not applied.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "fill": {
+     "description": "How the letters are filled. Null or absent: with the text colour.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextFill"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "outline": {
+     "description": "The line around the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/TextOutline"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "shadow": {
+     "description": "A shadow behind the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Shadow"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "glow": {
+     "description": "A glow around the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Glow"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "reflection": {
+     "description": "A mirror image below the letters. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Reflection"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "TextFill": {
+   "description": "How letters are filled. `type` selects the kind.",
+   "oneOf": [
+    {
+     "description": "Not filled: hollow letters, only their outline shows.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `none`.",
+       "type": "string",
+       "const": "none"
+      }
+     }
+    },
+    {
+     "description": "One colour.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "color"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `solid`.",
+       "type": "string",
+       "const": "solid"
+      },
+      "color": {
+       "description": "Fill colour, `[red, green, blue]`, each an integer 0..255, sRGB.",
+       "$ref": "#/$defs/Rgb"
+      },
+      "transparency": {
+       "description": "Transparency, percent 0 (opaque) .. 100.",
+       "default": 0.0,
+       "type": "number"
+      }
+     }
+    },
+    {
+     "description": "A linear gradient across the run's letters.",
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "type",
+      "stops"
+     ],
+     "properties": {
+      "type": {
+       "description": "Selects this alternative: the constant `gradient`.",
+       "type": "string",
+       "const": "gradient"
+      },
+      "stops": {
+       "description": "The colour stops, at least one, in order of `pos`.",
+       "type": "array",
+       "items": {
+        "$ref": "#/$defs/GradStop"
+       }
+      },
+      "angle": {
+       "description": "Direction of the gradient, degrees, 0 <= angle < 360: 0 = left to right, 90 = top to bottom.",
+       "default": 0.0,
+       "type": "number"
+      }
+     }
+    }
+   ]
+  },
+  "TextFrame": {
+   "description": "A text frame: the paragraph is placed apart from the text flow, in a box of its own. Lengths are points (1/72 inch).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "w": {
+     "description": "Width of the frame. Null: as wide as its text.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "h": {
+     "description": "Height of the frame: exact when `hExact` is true, otherwise a minimum. Null: as tall as its text.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "number"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "hExact": {
+     "description": "true: `h` is the exact height; false: `h` is a minimum.",
+     "default": false,
+     "type": "boolean"
+    },
+    "x": {
+     "description": "Horizontal offset from the `h_anchor` reference, points (1/72 inch); used when `xAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "y": {
+     "description": "Vertical offset from the `v_anchor` reference, points (1/72 inch); used when `yAlign` is null.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "xAlign": {
+     "description": "Horizontal alignment within the `hAnchor` area: `left`, `center`, `right`, `inside` or `outside`; takes precedence over `x`. Null: use `x`.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "yAlign": {
+     "description": "Vertical alignment within the `vAnchor` area: `top`, `center`, `bottom`, `inside` or `outside`; takes precedence over `y`. Null (or `inline`): use `y`.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "string",
+       "format": "werk-content-text"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "hAnchor": {
+     "description": "What `x` is measured from: `text` (the text column), `margin` or `page`. Empty: `text`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "vAnchor": {
+     "description": "What `y` is measured from: `text` (the paragraph's own position), `margin` or `page`. Empty: `text`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "wrap": {
+     "description": "How surrounding text treats the frame: `around` (wraps around it), `auto` (wraps when there is room), `notBeside` (no text beside it), `none`, `tight` or `through`. Empty: wrapping is the reader's choice (this writer wraps text around the frame when there is room).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "hSpace": {
+     "description": "Distance kept from the surrounding text at the left and right, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "vSpace": {
+     "description": "Distance kept from the surrounding text above and below, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "TextOutline": {
+   "description": "The line drawn around letters.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "color": {
+     "description": "Line colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: explicitly no line.",
+     "default": [
+      0,
+      0,
+      0
+     ],
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "width": {
+     "description": "Line width, points (1/72 inch), 0..20.",
+     "default": 0.75,
+     "type": "number"
+    },
+    "transparency": {
+     "description": "Transparency of the line, percent 0 (opaque) .. 100.",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "Underline": {
+   "description": "Underline style. Values: `none`: no underline; `single`: one line under everything, spaces included; `words`: one line under words only, not under spaces; `double`: two lines; `thick`: one heavy line; `dotted`: a dotted line; `dash`: a dashed line; `dotDash`: alternating dots and dashes; `dotDotDash`: two dots then a dash, repeated; `wave`: a wavy line; `doubleWave`: two wavy lines.",
+   "type": "string",
+   "enum": [
+    "none",
+    "single",
+    "words",
+    "double",
+    "thick",
+    "dotted",
+    "dash",
+    "dotDash",
+    "dotDotDash",
+    "wave",
+    "doubleWave"
+   ]
+  },
+  "VertAlign": {
+   "description": "Vertical position of text relative to the line. Values: `baseline`: on the baseline (explicitly: it removes an inherited superscript or subscript); `superscript`: raised and reduced: a superscript; `subscript`: lowered and reduced: a subscript.",
+   "type": "string",
+   "enum": [
+    "baseline",
+    "superscript",
+    "subscript"
+   ]
+  }
+ }
+}

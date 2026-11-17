@@ -1,0 +1,1410 @@
+{
+  "schema_version": 1,
+  "skeleton_id": "core-hands-v1",
+  "name": "werk canonical humanoid hands v1",
+  "status": "approved",
+  "canon_version": "1.0",
+  "approval": {
+    "decided_on": "2026-08-08",
+    "ruling": "docs/RULINGS-2026-08-08.md ruling 7",
+    "note": "Hand proportions approved as drafted; ruling 9 changed nothing here, because the hands parent to l-hand/r-hand and the arm chain did not move."
+  },
+  "extends": "canonical-humanoid-v1",
+  "epistemic": "authored",
+  "reference_height_m": 1.75,
+  "pose_name": "t-pose-palms-down",
+  "conventions": {
+    "up_axis": "y",
+    "forward_axis": "-z",
+    "right_axis": "+x",
+    "handedness": "right",
+    "quat_order": "wxyz",
+    "units_per_meter": 1.0,
+    "bone_axis_along": "+y",
+    "bone_axis_back": "+z",
+    "composition": "M_bone = M_parent * T(rest_translation) * R(rest_rotation)"
+  },
+  "note": "APPROVED 2026-08-08, canon version 1.0. 15 bones per hand, attached to l-hand and r-hand of canonical-humanoid-v1 - parenting unchanged by the skeleton rulings, because nothing in the arm chain moved. A consumer that ignores this file keeps a working 23-bone skeleton (law 3).",
+  "bones": [
+    {
+      "bone_id": "l-thumb-metacarpal",
+      "parent": "l-hand",
+      "role": "thumb",
+      "side": "left",
+      "mirror_of": "r-thumb-metacarpal",
+      "rest_rotation": [
+        0.980453945,
+        0.0,
+        0.0,
+        -0.196748727
+      ],
+      "rest_translation": [
+        0.025,
+        0.02,
+        0.0
+      ],
+      "length_m": 0.059615434,
+      "model_rest_rotation": [
+        0.588601336,
+        -0.588601336,
+        0.391852609,
+        0.391852609
+      ],
+      "model_rest_head_m": [
+        -0.73,
+        1.41,
+        -0.025
+      ],
+      "model_rest_tail_m": [
+        -0.785,
+        1.41,
+        -0.048
+      ],
+      "axis_along": [
+        -0.922579877,
+        0.0,
+        -0.38580613
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-thumb-proximal",
+      "parent": "l-thumb-metacarpal",
+      "role": "thumb",
+      "side": "left",
+      "mirror_of": "r-thumb-proximal",
+      "rest_rotation": [
+        0.999969677,
+        0.0,
+        0.0,
+        0.007787454
+      ],
+      "rest_translation": [
+        0.0,
+        0.059615434,
+        0.0
+      ],
+      "length_m": 0.032310989,
+      "model_rest_rotation": [
+        0.585531954,
+        -0.585531954,
+        0.396424433,
+        0.396424433
+      ],
+      "model_rest_head_m": [
+        -0.785,
+        1.41,
+        -0.048
+      ],
+      "model_rest_tail_m": [
+        -0.815,
+        1.41,
+        -0.06
+      ],
+      "axis_along": [
+        -0.928476691,
+        0.0,
+        -0.371390676
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-thumb-distal",
+      "parent": "l-thumb-proximal",
+      "role": "thumb",
+      "side": "left",
+      "mirror_of": "r-thumb-distal",
+      "rest_rotation": [
+        0.998931793,
+        0.0,
+        0.0,
+        0.046209004
+      ],
+      "rest_translation": [
+        0.0,
+        0.032310989,
+        0.0
+      ],
+      "length_m": 0.028160256,
+      "model_rest_rotation": [
+        0.566588106,
+        -0.566588106,
+        0.423057818,
+        0.423057818
+      ],
+      "model_rest_head_m": [
+        -0.815,
+        1.41,
+        -0.06
+      ],
+      "model_rest_tail_m": [
+        -0.842,
+        1.41,
+        -0.068
+      ],
+      "axis_along": [
+        -0.958798113,
+        0.0,
+        -0.28408833
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "l-index-proximal",
+      "parent": "l-hand",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-index-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.02,
+        0.09,
+        0.0
+      ],
+      "length_m": 0.04,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.8,
+        1.41,
+        -0.02
+      ],
+      "model_rest_tail_m": [
+        -0.84,
+        1.41,
+        -0.02
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-index-intermediate",
+      "parent": "l-index-proximal",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-index-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.04,
+        0.0
+      ],
+      "length_m": 0.025,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.84,
+        1.41,
+        -0.02
+      ],
+      "model_rest_tail_m": [
+        -0.865,
+        1.41,
+        -0.02
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-index-distal",
+      "parent": "l-index-intermediate",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-index-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.025,
+        0.0
+      ],
+      "length_m": 0.019,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.865,
+        1.41,
+        -0.02
+      ],
+      "model_rest_tail_m": [
+        -0.884,
+        1.41,
+        -0.02
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "l-middle-proximal",
+      "parent": "l-hand",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-middle-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.095,
+        0.0
+      ],
+      "length_m": 0.044,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.805,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.849,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-middle-intermediate",
+      "parent": "l-middle-proximal",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-middle-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.044,
+        0.0
+      ],
+      "length_m": 0.028,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.849,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.877,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-middle-distal",
+      "parent": "l-middle-intermediate",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-middle-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.028,
+        0.0
+      ],
+      "length_m": 0.02,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.877,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        -0.897,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "l-ring-proximal",
+      "parent": "l-hand",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-ring-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        -0.018,
+        0.09,
+        0.0
+      ],
+      "length_m": 0.041,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.8,
+        1.41,
+        0.018
+      ],
+      "model_rest_tail_m": [
+        -0.841,
+        1.41,
+        0.018
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-ring-intermediate",
+      "parent": "l-ring-proximal",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-ring-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.041,
+        0.0
+      ],
+      "length_m": 0.026,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.841,
+        1.41,
+        0.018
+      ],
+      "model_rest_tail_m": [
+        -0.867,
+        1.41,
+        0.018
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-ring-distal",
+      "parent": "l-ring-intermediate",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-ring-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.026,
+        0.0
+      ],
+      "length_m": 0.019,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.867,
+        1.41,
+        0.018
+      ],
+      "model_rest_tail_m": [
+        -0.886,
+        1.41,
+        0.018
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "l-pinky-proximal",
+      "parent": "l-hand",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-pinky-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        -0.036,
+        0.08,
+        0.0
+      ],
+      "length_m": 0.032,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.79,
+        1.41,
+        0.036
+      ],
+      "model_rest_tail_m": [
+        -0.822,
+        1.41,
+        0.036
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-pinky-intermediate",
+      "parent": "l-pinky-proximal",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-pinky-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.032,
+        0.0
+      ],
+      "length_m": 0.019,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.822,
+        1.41,
+        0.036
+      ],
+      "model_rest_tail_m": [
+        -0.841,
+        1.41,
+        0.036
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "l-pinky-distal",
+      "parent": "l-pinky-intermediate",
+      "role": "finger",
+      "side": "left",
+      "mirror_of": "r-pinky-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.019,
+        0.0
+      ],
+      "length_m": 0.016,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        0.5,
+        0.5
+      ],
+      "model_rest_head_m": [
+        -0.841,
+        1.41,
+        0.036
+      ],
+      "model_rest_tail_m": [
+        -0.857,
+        1.41,
+        0.036
+      ],
+      "axis_along": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-thumb-metacarpal",
+      "parent": "r-hand",
+      "role": "thumb",
+      "side": "right",
+      "mirror_of": "l-thumb-metacarpal",
+      "rest_rotation": [
+        0.980453945,
+        0.0,
+        0.0,
+        0.196748727
+      ],
+      "rest_translation": [
+        -0.025,
+        0.02,
+        0.0
+      ],
+      "length_m": 0.059615434,
+      "model_rest_rotation": [
+        0.588601336,
+        -0.588601336,
+        -0.391852609,
+        -0.391852609
+      ],
+      "model_rest_head_m": [
+        0.73,
+        1.41,
+        -0.025
+      ],
+      "model_rest_tail_m": [
+        0.785,
+        1.41,
+        -0.048
+      ],
+      "axis_along": [
+        0.922579877,
+        0.0,
+        -0.38580613
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-thumb-proximal",
+      "parent": "r-thumb-metacarpal",
+      "role": "thumb",
+      "side": "right",
+      "mirror_of": "l-thumb-proximal",
+      "rest_rotation": [
+        0.999969677,
+        0.0,
+        0.0,
+        -0.007787454
+      ],
+      "rest_translation": [
+        0.0,
+        0.059615434,
+        0.0
+      ],
+      "length_m": 0.032310989,
+      "model_rest_rotation": [
+        0.585531954,
+        -0.585531954,
+        -0.396424433,
+        -0.396424433
+      ],
+      "model_rest_head_m": [
+        0.785,
+        1.41,
+        -0.048
+      ],
+      "model_rest_tail_m": [
+        0.815,
+        1.41,
+        -0.06
+      ],
+      "axis_along": [
+        0.928476691,
+        0.0,
+        -0.371390676
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-thumb-distal",
+      "parent": "r-thumb-proximal",
+      "role": "thumb",
+      "side": "right",
+      "mirror_of": "l-thumb-distal",
+      "rest_rotation": [
+        0.998931793,
+        0.0,
+        0.0,
+        -0.046209004
+      ],
+      "rest_translation": [
+        0.0,
+        0.032310989,
+        0.0
+      ],
+      "length_m": 0.028160256,
+      "model_rest_rotation": [
+        0.566588106,
+        -0.566588106,
+        -0.423057818,
+        -0.423057818
+      ],
+      "model_rest_head_m": [
+        0.815,
+        1.41,
+        -0.06
+      ],
+      "model_rest_tail_m": [
+        0.842,
+        1.41,
+        -0.068
+      ],
+      "axis_along": [
+        0.958798113,
+        0.0,
+        -0.28408833
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-index-proximal",
+      "parent": "r-hand",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-index-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        -0.02,
+        0.09,
+        0.0
+      ],
+      "length_m": 0.04,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.8,
+        1.41,
+        -0.02
+      ],
+      "model_rest_tail_m": [
+        0.84,
+        1.41,
+        -0.02
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-index-intermediate",
+      "parent": "r-index-proximal",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-index-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.04,
+        0.0
+      ],
+      "length_m": 0.025,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.84,
+        1.41,
+        -0.02
+      ],
+      "model_rest_tail_m": [
+        0.865,
+        1.41,
+        -0.02
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-index-distal",
+      "parent": "r-index-intermediate",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-index-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.025,
+        0.0
+      ],
+      "length_m": 0.019,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.865,
+        1.41,
+        -0.02
+      ],
+      "model_rest_tail_m": [
+        0.884,
+        1.41,
+        -0.02
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-middle-proximal",
+      "parent": "r-hand",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-middle-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.095,
+        0.0
+      ],
+      "length_m": 0.044,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.805,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.849,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-middle-intermediate",
+      "parent": "r-middle-proximal",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-middle-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.044,
+        0.0
+      ],
+      "length_m": 0.028,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.849,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.877,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-middle-distal",
+      "parent": "r-middle-intermediate",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-middle-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.028,
+        0.0
+      ],
+      "length_m": 0.02,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.877,
+        1.41,
+        0.0
+      ],
+      "model_rest_tail_m": [
+        0.897,
+        1.41,
+        0.0
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-ring-proximal",
+      "parent": "r-hand",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-ring-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.018,
+        0.09,
+        0.0
+      ],
+      "length_m": 0.041,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.8,
+        1.41,
+        0.018
+      ],
+      "model_rest_tail_m": [
+        0.841,
+        1.41,
+        0.018
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-ring-intermediate",
+      "parent": "r-ring-proximal",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-ring-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.041,
+        0.0
+      ],
+      "length_m": 0.026,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.841,
+        1.41,
+        0.018
+      ],
+      "model_rest_tail_m": [
+        0.867,
+        1.41,
+        0.018
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-ring-distal",
+      "parent": "r-ring-intermediate",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-ring-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.026,
+        0.0
+      ],
+      "length_m": 0.019,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.867,
+        1.41,
+        0.018
+      ],
+      "model_rest_tail_m": [
+        0.886,
+        1.41,
+        0.018
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    },
+    {
+      "bone_id": "r-pinky-proximal",
+      "parent": "r-hand",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-pinky-proximal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.036,
+        0.08,
+        0.0
+      ],
+      "length_m": 0.032,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.79,
+        1.41,
+        0.036
+      ],
+      "model_rest_tail_m": [
+        0.822,
+        1.41,
+        0.036
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-pinky-intermediate",
+      "parent": "r-pinky-proximal",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-pinky-intermediate",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.032,
+        0.0
+      ],
+      "length_m": 0.019,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.822,
+        1.41,
+        0.036
+      ],
+      "model_rest_tail_m": [
+        0.841,
+        1.41,
+        0.036
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": false
+    },
+    {
+      "bone_id": "r-pinky-distal",
+      "parent": "r-pinky-intermediate",
+      "role": "finger",
+      "side": "right",
+      "mirror_of": "l-pinky-distal",
+      "rest_rotation": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rest_translation": [
+        0.0,
+        0.019,
+        0.0
+      ],
+      "length_m": 0.016,
+      "model_rest_rotation": [
+        0.5,
+        -0.5,
+        -0.5,
+        -0.5
+      ],
+      "model_rest_head_m": [
+        0.841,
+        1.41,
+        0.036
+      ],
+      "model_rest_tail_m": [
+        0.857,
+        1.41,
+        0.036
+      ],
+      "axis_along": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "axis_back": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "leaf": true
+    }
+  ]
+}

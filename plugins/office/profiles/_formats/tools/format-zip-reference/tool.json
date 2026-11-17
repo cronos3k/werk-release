@@ -1,0 +1,38 @@
+{
+  "config": {
+    "definition": "spec/formats/zip.md",
+    "format": "zip",
+    "test_vectors": [
+      "python-zipfile",
+      "python-streamed-data-descriptor",
+      "python-zip64-local-header",
+      "dotnet",
+      "zip64-end-records",
+      "names-cp437-and-unicode-path"
+    ]
+  },
+  "entrypoint": "tools/format-zip-reference/zip_dump.py",
+  "files": [
+    {
+      "path": "tools/format-zip-reference/zip_dump.py",
+      "role": "source",
+      "sha256": "b52278d0fa0602966e11e5cd597f71115b679218acbfe2b783ec9a020ce8e583",
+      "size": 13495
+    }
+  ],
+  "form": "source",
+  "invocation": {
+    "dependencies": [],
+    "example": "python tools/format-zip-reference/zip_dump.py <input file> > <output>   # writes the canonical text listing of the entries to stdout",
+    "toolchain": "python>=3.8"
+  },
+  "language": "python",
+  "license": {
+    "spdx_id": "MIT OR Apache-2.0"
+  },
+  "name": "zip reference decoder",
+  "role": "viewer",
+  "schema_version": 1,
+  "tool_id": "format-zip-reference",
+  "version": "1"
+}

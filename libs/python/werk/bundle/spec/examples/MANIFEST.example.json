@@ -1,0 +1,680 @@
+{
+  "werk": {
+    "major": 1,
+    "minor": 0
+  },
+  "profile": "3d-entity/1",
+  "manifest_schema": "spec/schemas/manifest.schema.json",
+  "spec_sha256": "4c520ed4d0864f6f4f8a7abce0651faf71f95cf23271915e6431281700b5b9c2",
+  "entity": {
+    "uuid": "6f1c2b7a-9d3e-4a10-8c55-2b8e41d0a7c3",
+    "name": "Wooden crate",
+    "summary": "ILLUSTRATIVE EXAMPLE, not a real package. The file sizes are plausible and the sha256 values are deterministic placeholders, not hashes of real bytes: each one is sha256 of the ASCII string 'werk example placeholder: <path>'. Everything else - structure, conventions, edges, stamps - is exactly what a real manifest looks like, and this file validates against manifest.schema.json. IT IS ALSO ABRIDGED, and you must not model completeness on it: the core.spec node lists five representative spec/ files and a core.loader node lists one of the three loaders, whereas SPEC.md section 2 requires that EVERY byte in a real container be reachable from exactly one node version's files[] - so a real package's core.spec node lists every file under spec/, and there is one core.loader node per loader. For a complete, conformant, byte-real package see the conformance fixture, not this file.",
+    "created": "2026-08-08T09:00:00Z"
+  },
+  "conventions": {
+    "endianness": "le",
+    "units_per_meter": 1.0,
+    "length_unit": "metre",
+    "angle_unit": "radian",
+    "time_unit": "second",
+    "mass_unit": "kilogram",
+    "up_axis": "y",
+    "forward_axis": "-z",
+    "right_axis": "+x",
+    "handedness": "right",
+    "winding": "ccw",
+    "quat_order": "wxyz",
+    "oct_encoding_pole": "y",
+    "sh_l1_order": [
+      "dc",
+      "y",
+      "z",
+      "x"
+    ],
+    "color_space_default": "srgb",
+    "uv_origin": "top-left",
+    "alignment_bytes": 16,
+    "text_encoding": "utf-8",
+    "id_case": "kebab-case",
+    "hash_algorithm": "sha256",
+    "signature_algorithm": "ed25519"
+  },
+  "primary": {
+    "mesh": "geom-game",
+    "sound": "audio-crate-impact"
+  },
+  "container": {
+    "form": "zip",
+    "zip_compression": "store",
+    "entry_order": [
+      "MANIFEST.json",
+      "SIGNATURE.json",
+      "LICENSE",
+      "README.txt",
+      "loaders/werk_read.py",
+      "spec/",
+      "semantics/semantics.json",
+      "imposters/preview-albedo.png",
+      "audio/crate/crate-impact-hard-surface.wav",
+      "geometry/",
+      "textures/",
+      "physics/",
+      "poses/",
+      "properties/",
+      "audio/",
+      "provenance/"
+    ],
+    "preview_prefix_bytes": 393216
+  },
+  "license": {
+    "spdx_id": "CC-BY-4.0",
+    "file": "LICENSE",
+    "sha256": "2c6ac2c9e6aaeac1c9a41b5540d6c6edcbd25a1547d0a3ad168df73b8d6a43db"
+  },
+  "schemas": {
+    "core.material": "spec/schemas/core.material.schema.json",
+    "core.imposter": "spec/schemas/core.imposter.schema.json",
+    "core.phys.colliders": "spec/schemas/core.phys.colliders.schema.json",
+    "core.phys.bounds": "spec/schemas/core.phys.bounds.schema.json",
+    "core.phys.body": "spec/schemas/core.phys.body.schema.json",
+    "core.skeleton": "spec/schemas/core.skeleton.schema.json",
+    "core.anim.clip": "spec/schemas/core.anim.clip.schema.json",
+    "core.audio.package": "spec/schemas/core.audio.package.schema.json",
+    "core.audio.effect": "spec/schemas/core.audio.effect.schema.json",
+    "core.audio.ambience": "spec/schemas/core.audio.effect.schema.json",
+    "core.destruct": "spec/schemas/core.destruct.schema.json",
+    "core.props": "spec/schemas/core.props.schema.json",
+    "core.semantics": "spec/schemas/core.semantics.schema.json",
+    "core.provenance": "spec/schemas/core.provenance.schema.json"
+  },
+  "layouts": {
+    "core.field.flow": "spec/layouts/flowfield.layout.txt",
+    "core.pose.rest": "spec/layouts/restposes.layout.txt",
+    "core.anim.clip": "spec/layouts/animclip.layout.txt",
+    "core.skeleton": "spec/layouts/skeleton.layout.txt",
+    "core.imposter": "spec/layouts/imposter.layout.txt"
+  },
+  "parts": [
+    {
+      "part_id": "crate",
+      "name": "Crate body",
+      "parent": null,
+      "transform": {
+        "translation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    },
+    {
+      "part_id": "crate-lid",
+      "name": "Lid",
+      "parent": "crate",
+      "transform": {
+        "translation": [
+          0.0,
+          0.42,
+          0.0
+        ],
+        "rotation": [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  ],
+  "materials": [
+    {
+      "material_id": "oak-slats",
+      "part_id": "crate",
+      "name": "Oak slats",
+      "class": "wood"
+    },
+    {
+      "material_id": "iron-banding",
+      "part_id": "crate",
+      "name": "Iron banding",
+      "class": "metal"
+    }
+  ],
+  "nodes": [
+    {
+      "node_id": "spec",
+      "type": "core.spec",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "spec/SPEC.md",
+              "sha256": "603b26574aa34716338ca51a181c65561ac1dfe05aec218b27c2fc9f2fd7d739",
+              "size": 21000,
+              "media_type": "text/markdown"
+            },
+            {
+              "path": "spec/MINI-SPECS.md",
+              "sha256": "885d44060a0a92eff6330c7f8e4005ac1fefe4cc29831a91f1650cdd469e2349",
+              "size": 19000,
+              "media_type": "text/markdown"
+            },
+            {
+              "path": "spec/facets.json",
+              "sha256": "3d169303dc5a829bbdc8465e94a8c22ebfc4835b1588b76915393c1d3ba9c3db",
+              "size": 9000,
+              "media_type": "application/json"
+            },
+            {
+              "path": "spec/schemas/manifest.schema.json",
+              "sha256": "d286c982af2a0fc7d1f418627a47b1afd345f1b0d4256bf34b06bd691308425d",
+              "size": 27000,
+              "media_type": "application/json"
+            },
+            {
+              "path": "spec/layouts/ENVELOPE.layout.txt",
+              "sha256": "f0a9c667bd742a0c26386ae8db2835a52eae4fa9e12ab2ae738a50052d46daf6",
+              "size": 13000,
+              "media_type": "text/plain"
+            }
+          ],
+          "note": "The specification this package conforms to, travelling with it so the file explains itself (law 2).",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "license",
+      "type": "core.license",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "LICENSE",
+              "sha256": "2c6ac2c9e6aaeac1c9a41b5540d6c6edcbd25a1547d0a3ad168df73b8d6a43db",
+              "size": 1075,
+              "media_type": "text/plain"
+            }
+          ],
+          "note": "Full licence text embedded, never a link (law 7).",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "readme",
+      "type": "core.readme",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "README.txt",
+              "sha256": "833da5080e1d5e2d0848798bd3fd5a9e2d4932bbb548a921893acc3b218a1e41",
+              "size": 480,
+              "media_type": "text/plain"
+            }
+          ],
+          "note": "One paragraph for a human who opened the zip by hand.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "loader-python",
+      "type": "core.loader",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "loaders/werk_read.py",
+              "sha256": "3bd8ef3d5eb2add5b600520076c5a00777f97866f1df6a9d86de3b71d3d495ca",
+              "size": 14000,
+              "media_type": "text/x-python"
+            }
+          ],
+          "note": "Bootstrap reader so the package carries a way to read itself; stdlib only, read-only.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "meta": {
+        "language": "python",
+        "form": "source",
+        "entrypoint": "loaders/werk_read.py",
+        "toolchain": "python>=3.8",
+        "dependencies": [],
+        "capabilities": [
+          "read-manifest",
+          "verify-hashes",
+          "read-envelope",
+          "read-audio"
+        ]
+      }
+    },
+    {
+      "node_id": "geom-game",
+      "type": "core.geom.game",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "geometry/game.glb",
+              "sha256": "172fb963c2726fd3d39adefe28f6e98e74adcc44fada5b34c4c2bb93a2995acf",
+              "size": 184320,
+              "media_type": "model/gltf-binary"
+            }
+          ],
+          "note": "Authored game mesh: the representation every consumer can use.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "part_id": "crate"
+    },
+    {
+      "node_id": "geom-lod1",
+      "type": "core.geom.lod",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "geometry/lod1.glb",
+              "sha256": "87d189ab9ef0e1c47eee25b5e37ceb984a03c5244f4f2f03aa583c2e5f4a8978",
+              "size": 61440,
+              "media_type": "model/gltf-binary"
+            }
+          ],
+          "note": "First decimation step; silhouette error measured against the game mesh, not estimated.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "geometry/game.glb"
+          ],
+          "input_hash": "52e3ca83da9a697793ef6a591bceac9f256f946784def73741be963016181ef4",
+          "input_params": {}
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "geom-game",
+          "kind": "requires",
+          "role": "lod-of"
+        }
+      ],
+      "part_id": "crate",
+      "meta": {
+        "lod_level": 1,
+        "screen_space_error_px": 2.4,
+        "reference_resolution_px": 1080,
+        "triangle_count": 1208,
+        "vertex_count": 742
+      }
+    },
+    {
+      "node_id": "tex-basecolor",
+      "type": "core.tex",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "textures/crate-basecolor.png",
+              "sha256": "975fc88cc5f11652f4b071c2894e1ae6df740cad59e4dbf3a672bffda651d060",
+              "size": 1048576,
+              "media_type": "image/png"
+            }
+          ],
+          "note": "Base colour map as delivered by the source asset.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [],
+      "material_id": "oak-slats",
+      "meta": {
+        "color_space": "srgb",
+        "usage": "base-color",
+        "width": 2048,
+        "height": 2048,
+        "channels": 4,
+        "bit_depth": 8
+      }
+    },
+    {
+      "node_id": "mat-oak",
+      "type": "core.material",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "materials/oak-slats.json",
+              "sha256": "519fe76f286a4288f50be84a2e5f276b009a4e24294cc9f636996a173969fafc",
+              "size": 1400,
+              "media_type": "application/json"
+            }
+          ],
+          "note": "Metallic-roughness parameters for the slatted oak body.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "authored",
+          "created": "2026-08-08T09:00:00Z"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "tex-basecolor",
+          "kind": "enhances",
+          "role": "sampled-by"
+        }
+      ],
+      "material_id": "oak-slats"
+    },
+    {
+      "node_id": "bounds",
+      "type": "core.phys.bounds",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "physics/bounds.json",
+              "sha256": "4c61621e98638b7f9610aeffcd1494b3a007f37846708d67d25b40aa2284113a",
+              "size": 900,
+              "media_type": "application/json"
+            }
+          ],
+          "note": "AABB and true minimal sphere, computed with Welzl rather than circumscribing the box.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "geometry/game.glb"
+          ],
+          "input_hash": "52e3ca83da9a697793ef6a591bceac9f256f946784def73741be963016181ef4",
+          "input_params": {}
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "geom-game",
+          "kind": "requires",
+          "role": "measured-from"
+        }
+      ]
+    },
+    {
+      "node_id": "rest-poses",
+      "type": "core.pose.rest",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "poses/rest.wkrp",
+              "sha256": "b80a85d31d7c8083ef70ab264c337b468709594c70c3b623052c81950fa23c4f",
+              "size": 176
+            }
+          ],
+          "note": "Settled orientations from a drop simulation; probabilities are measured over the trials recorded in the header.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "geometry/game.glb",
+            "physics/bounds.json"
+          ],
+          "input_hash": "5b8751b9c44bd466d7bed890663213699eee2db8876c5c63bcbf2474dddd7040",
+          "input_params": {}
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "geom-game",
+          "kind": "enhances",
+          "role": "measured-from"
+        }
+      ]
+    },
+    {
+      "node_id": "semantics",
+      "type": "core.semantics",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "semantics/semantics.json",
+              "sha256": "a27021d5f25486de146f8beecec47cd5750606364458ba7ca04aa474ebb075ef",
+              "size": 4800,
+              "media_type": "application/json"
+            }
+          ],
+          "note": "Facet tags, style embedding and palette; the store indexes a dropped file from this node alone (law 9).",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "inferred",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "textures/crate-basecolor.png"
+          ],
+          "input_hash": "36a3cd5a3e5a1522ef126eeb1140e36856552b855d4b36bd859225e246a01b7a",
+          "input_params": {}
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "props",
+      "type": "core.props",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "properties/props.json",
+              "sha256": "cd7bea3ae18972aaf03abd8bfa9e6c188c433e35aada5ec413bfd1af8244df8b",
+              "size": 6400,
+              "media_type": "application/json"
+            }
+          ],
+          "note": "Simulation properties per material region, every value stamped individually because most of them are a model's guess.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "inferred",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "semantics/semantics.json"
+          ],
+          "input_hash": "b11b562b419792c708a322d440a5d20bd93f70b457c4193a4df81e930a5f0942",
+          "input_params": {}
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "semantics",
+          "kind": "enhances"
+        }
+      ]
+    },
+    {
+      "node_id": "audio-package",
+      "type": "core.audio.package",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "audio/package.json",
+              "sha256": "6288e80a61c2133dc78b847e08a9cc77d813f4b7765eca9e1fcd3fb35a9101bf",
+              "size": 12800,
+              "media_type": "application/json"
+            }
+          ],
+          "note": "Index of the sound world: described objects, effect plan, and every take with its score.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "geometry/game.glb"
+          ],
+          "input_hash": "52e3ca83da9a697793ef6a591bceac9f256f946784def73741be963016181ef4",
+          "input_params": {}
+        }
+      ],
+      "active": 1,
+      "edges": []
+    },
+    {
+      "node_id": "audio-crate-impact",
+      "type": "core.audio.effect",
+      "versions": [
+        {
+          "v": 1,
+          "files": [
+            {
+              "path": "audio/crate/crate-impact-hard-surface.wav",
+              "sha256": "097197d6ab3171dba9f85bf8fc25e59c61faab9ede1ba59432a80a810b5d0142",
+              "size": 264644,
+              "media_type": "audio/wav",
+              "role": "best"
+            },
+            {
+              "path": "audio/crate/crate-impact-hard-surface.raw.wav",
+              "sha256": "8e28eaf1ae3daef6e80d1b1fa2e0f24a6a68e40c80935411316d17cb5e40c74e",
+              "size": 264644,
+              "media_type": "audio/wav",
+              "role": "raw"
+            },
+            {
+              "path": "audio/crate/crate-impact-hard-surface.var2.wav",
+              "sha256": "f0ee7b57036da13bd0e44be3c845d9b1f4c1136f0e5bd55ad1c5ef920e579c13",
+              "size": 264644,
+              "media_type": "audio/wav",
+              "role": "variation"
+            },
+            {
+              "path": "audio/crate/crate-impact-hard-surface.json",
+              "sha256": "676acdfe4918d2d6dbde79bcee306e9ed31679db1a4deb47e26eccd8d01724ca",
+              "size": 1600,
+              "media_type": "application/json",
+              "role": "descriptor"
+            }
+          ],
+          "note": "Hard impact one-shot; refinement kept the isolated event and raised the CLAP score, so it shipped refined.",
+          "producer": {
+            "tool": "werk-example",
+            "version": "0.1"
+          },
+          "epistemic": "measured",
+          "created": "2026-08-08T09:00:00Z",
+          "input_files": [
+            "audio/package.json"
+          ],
+          "input_hash": "3228280531c64ea2d677efcb7075d920ddb8de47ed6f6f0b17eefba42e0939dc",
+          "input_params": {},
+          "payload_file": "audio/crate/crate-impact-hard-surface.wav"
+        }
+      ],
+      "active": 1,
+      "edges": [
+        {
+          "to": "audio-package",
+          "kind": "requires"
+        }
+      ],
+      "material_id": "oak-slats"
+    }
+  ],
+  "signature_file": "SIGNATURE.json",
+  "generator": {
+    "tool": "spec/examples/make-examples.py",
+    "version": "1"
+  }
+}

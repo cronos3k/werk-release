@@ -1,0 +1,10 @@
+{
+  "name": "werk",
+  "version": "0.1.0",
+  "description": "Read and write werk packages. No dependencies; Node 18+, Adobe UXP, browsers, and an ES3 build for ExtendScript.",
+  "main": "dist/werk.js",
+  "bin": { "werk": "bin/werk.js" },
+  "files": ["dist/", "bin/", "src/"],
+  "engines": { "node": ">=18" },
+  "private": true
+}

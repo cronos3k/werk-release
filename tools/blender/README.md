@@ -1,12 +1,13 @@
 # tools/blender
 
-Host-side tooling for the Stage 11 Blender adapter. Nothing here runs inside
-Blender; the add-on itself lives in `adapters/blender/werk_blender/`.
+Where a Blender binary for the gate goes. The add-on lives in
+`plugins/blender/werk_blender/`; its host-side scripts (`vendor_spec.py`,
+`build_addon_zip.py`) are in `plugins/blender/tools/`.
 
 | script | what it does |
 |---|---|
-| `vendor_spec.py` | copies `spec/` and `loaders/werk_read.py` into the add-on, verbatim; `--check` verifies byte-identity and exits 1 on drift |
-| `build_addon_zip.py` | builds the installable add-on zip into `adapters/blender/dist/` |
+| `plugins/blender/tools/vendor_spec.py` | copies `spec/`, `loaders/werk_read.py` and `libs/python/werk_single.py` into the add-on, verbatim; `--check` verifies byte-identity and exits 1 on drift |
+| `plugins/blender/tools/build_addon_zip.py` | builds the installable add-on zip into `plugins/blender/dist/` |
 
 ## Re-run `vendor_spec.py` after editing `spec/` or `loaders/`
 
@@ -17,11 +18,11 @@ copy is therefore structural, not lazy — and the defence against it drifting
 is that drift is a **measured gate failure**, not a discovery:
 
 ```
-python tools/blender/vendor_spec.py          # refresh
-python tools/blender/vendor_spec.py --check  # verify; exit 1 on any difference
+python plugins/blender/tools/vendor_spec.py          # refresh
+python plugins/blender/tools/vendor_spec.py --check  # verify; exit 1 on any difference
 ```
 
-`adapters/blender/test_gate.py` runs `--check` as its second clause and
+`plugins/blender/test_gate.py` runs `--check` as its second clause and
 `build_addon_zip.py` refuses to build on drift. This is the same standing
 obligation `tests/fixtures/crate.werk` already carries ("editing `spec/` or
 `loaders/` changes bytes it embeds, so it must be rebuilt after either").

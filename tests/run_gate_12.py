@@ -901,7 +901,7 @@ def main(argv=None):
         record("fixtures.json record", "FAIL", repr(e))
 
     # -- 13. the vendored Blender copy is current ---------------------------
-    rc, out = run([sys.executable, os.path.join(ROOT, "tools", "blender",
+    rc, out = run([sys.executable, os.path.join(ROOT, "plugins", "blender", "tools",
                                                 "vendor_spec.py"), "--check"])
     record("Blender vendored spec is current", "PASS" if rc == 0 else "FAIL",
            out.strip().splitlines()[-1] if out.strip() else "")

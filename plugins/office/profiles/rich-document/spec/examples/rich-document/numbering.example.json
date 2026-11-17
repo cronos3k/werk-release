@@ -1,0 +1,31 @@
+{
+  "abstracts": [
+    {
+      "id": 0,
+      "levels": [
+        {
+          "align": "left",
+          "chr": {},
+          "format": "decimal",
+          "hanging": 18.0,
+          "indent": 36.0,
+          "legal": false,
+          "restart": true,
+          "start": 1,
+          "style": null,
+          "suffix": "tab",
+          "text": "%1."
+        }
+      ],
+      "name": "Numbered"
+    }
+  ],
+  "nums": [
+    {
+      "abstractId": 0,
+      "id": 1,
+      "startOverrides": []
+    }
+  ],
+  "schema_version": 1
+}

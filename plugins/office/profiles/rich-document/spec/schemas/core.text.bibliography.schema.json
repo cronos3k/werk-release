@@ -1,0 +1,143 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.bibliography.schema.json",
+ "title": "core.text.bibliography — bibliography sources",
+ "description": "The sources that citations refer to by `tag` (a CITATION field's code names a tag). spec/PROFILE-RICH-DOCUMENT.md section 3.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "sources"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "sources": {
+   "description": "The sources, in their stored order. `tag` is unique.",
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/Source"
+   }
+  }
+ },
+ "$defs": {
+  "Source": {
+   "description": "One bibliography source. All fields are text; an empty text means not given.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "tag": {
+     "description": "The source's tag: the unique name a citation refers to it by.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "kind": {
+     "description": "The kind of source: `book`, `bookSection`, `article` (journal article), `periodical`, `conference`, `report`, `website`, `film` or `other`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "author": {
+     "description": "The authors, as `Last, First; Last, First`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "title": {
+     "description": "Title of the work.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "year": {
+     "description": "Year of publication, as text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "publisher": {
+     "description": "Publisher.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "city": {
+     "description": "City of publication.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "journal": {
+     "description": "Name of the journal, periodical or containing book.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "volume": {
+     "description": "Volume.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "pages": {
+     "description": "Page range, as text (`12-34`).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "url": {
+     "description": "Web address of the source, as text (content, never followed by a reader).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "editor": {
+     "description": "The editors, as `Last, First; Last, First`.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "edition": {
+     "description": "Edition, as text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "issue": {
+     "description": "Issue number, as text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "month": {
+     "description": "Month of publication, as text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "day": {
+     "description": "Day of publication, as text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "accessed": {
+     "description": "The date a web source was accessed, as text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "doi": {
+     "description": "Digital Object Identifier.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,332 @@
+{
+  "custom_shows": [],
+  "default_text_style": {
+    "levels": [
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 0.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 36.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 72.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 108.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 144.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 180.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 216.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 252.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      },
+      {
+        "para": {
+          "align": "left",
+          "margin_left": 288.0
+        },
+        "run": {
+          "fill": {
+            "color": {
+              "base": {
+                "kind": "scheme",
+                "slot": "tx1"
+              }
+            },
+            "kind": "solid"
+          },
+          "font": "+mn-lt",
+          "kern": 12.0,
+          "size": 18.0
+        }
+      }
+    ]
+  },
+  "embedded_fonts": [],
+  "first_slide_number": 1,
+  "handout_master": null,
+  "header_footer": {
+    "date": false,
+    "date_format": "",
+    "date_text": "",
+    "footer": false,
+    "footer_text": "",
+    "header": false,
+    "hide_on_title": false,
+    "slide_number": false
+  },
+  "masters": [
+    {
+      "id": 76,
+      "layouts": [
+        {
+          "id": 12,
+          "node": "layout-12"
+        },
+        {
+          "id": 18,
+          "node": "layout-18"
+        },
+        {
+          "id": 24,
+          "node": "layout-24"
+        },
+        {
+          "id": 31,
+          "node": "layout-31"
+        },
+        {
+          "id": 40,
+          "node": "layout-40"
+        },
+        {
+          "id": 45,
+          "node": "layout-45"
+        },
+        {
+          "id": 49,
+          "node": "layout-49"
+        },
+        {
+          "id": 56,
+          "node": "layout-56"
+        },
+        {
+          "id": 63,
+          "node": "layout-63"
+        },
+        {
+          "id": 69,
+          "node": "layout-69"
+        },
+        {
+          "id": 75,
+          "node": "layout-75"
+        }
+      ],
+      "node": "master-76"
+    }
+  ],
+  "media": [
+    {
+      "excerpt": null,
+      "id": 301,
+      "node": "media-301",
+      "poster": null,
+      "rendition": null
+    },
+    {
+      "excerpt": null,
+      "id": 302,
+      "node": "media-302",
+      "poster": null,
+      "rendition": "media-302-png"
+    }
+  ],
+  "next_id": 302,
+  "notes_master": null,
+  "notes_size": {
+    "height": 720.0,
+    "width": 540.0
+  },
+  "ooxml": null,
+  "props": {
+    "author": "An Author",
+    "category": "",
+    "comments": "",
+    "company": "",
+    "created": "",
+    "keywords": "",
+    "last_modified_by": "",
+    "modified": "",
+    "revision": 0,
+    "subject": "",
+    "title": "Example deck"
+  },
+  "schema_version": 1,
+  "sections": [
+    {
+      "name": "Results",
+      "slides": [
+        201,
+        202
+      ]
+    }
+  ],
+  "show": {
+    "laser_color": {
+      "a": 255,
+      "b": 0,
+      "g": 0,
+      "r": 255
+    },
+    "loop_until_esc": false,
+    "pen_color": {
+      "a": 255,
+      "b": 0,
+      "g": 0,
+      "r": 255
+    },
+    "show_media_controls": true,
+    "show_type": "speaker",
+    "use_timings": true,
+    "without_animation": false,
+    "without_narration": false
+  },
+  "slide_size": {
+    "height": 540.0,
+    "width": 960.0
+  },
+  "slides": [
+    {
+      "id": 201,
+      "node": "slide-201"
+    },
+    {
+      "id": 202,
+      "node": "slide-202"
+    }
+  ]
+}

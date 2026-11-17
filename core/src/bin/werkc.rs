@@ -29,8 +29,19 @@ const CREATED: &str = "2026-08-08T09:00:00Z";
 /// fixture must never carry a real key.
 const FIXTURE_SK: &str = "9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60";
 
+#[path = "werkc_rel/mod.rs"]
+mod rel;
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+    // The release commands (libs/ of the werk release): pack-image, pack-mesh,
+    // extract, cat, append, sign, and `verify --json`. Same options, exit
+    // statuses and output bytes as `python -m werk` and the JavaScript CLI.
+    if let Some(cmd) = args.get(1) {
+        if let Some(code) = rel::run(cmd, &args[2..]) {
+            std::process::exit(code);
+        }
+    }
     let code = match args.get(1).map(String::as_str) {
         Some("info") => cmd_info(args.get(2)),
         Some("verify") => cmd_verify(args.get(2)),
@@ -39,7 +50,14 @@ fn main() {
             eprintln!(
                 "werkc {} — werk reference tool\n\n\
                  usage:\n  werkc info <package>\n  werkc verify <package>\n  \
-                 werkc build-fixture <out-dir>",
+                 werkc build-fixture <out-dir>\n  \
+                 werkc extract <package> <out-dir> [--node ID ...] [--all-versions]\n  \
+                 werkc cat <package> <path> | --payload NODE [--version N]\n  \
+                 werkc pack-image <out> --png F --name N [--thumb F] [--recipe F] [--disclosure F] [...]\n  \
+                 werkc pack-mesh <out> --glb F --name N [--texture ID=F[:usage]] [--material ID[:tex]] [--preview F]\n  \
+                 werkc append <package> <out> --node ID --file PKGPATH=FILE --note TEXT [--type T]\n  \
+                 werkc sign <package> <out> --sign-key HEX --signer-uri U [--signer-kind K]\n\n\
+                 Options and exit statuses of the release commands are those of `python -m werk`; verify takes --json.",
                 werk::VERSION
             );
             2

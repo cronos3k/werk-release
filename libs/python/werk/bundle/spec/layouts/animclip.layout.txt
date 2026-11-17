@@ -1,0 +1,318 @@
+core.anim.clip — layout grammar v2
+==================================
+
+Magic "WKAC" (57 4B 41 43), envelope version 1 or 2 — see below.
+Read spec/layouts/ENVELOPE.layout.txt first.
+
+GRAMMAR REVISION 2, ruled 2026-08-08 (S6-4). Layout revisions are
+INCREMENTAL INTEGERS, the same rule node versions follow: 1, 2, 3, ...,
+never semver, and a reader compares rather than parses.
+
+WHICH INTEGER A CLIP CARRIES. Per ENVELOPE.layout.txt section 5a, the
+version field declares the MINIMUM grammar revision needed to read the file
+completely, and a writer emits the lowest revision that covers what the file
+actually uses. So:
+
+  * a clip with NO "bone-translations" section is written as version 1 and
+    is byte-for-byte what a revision-1 writer produced — no existing file
+    changes, no existing reader notices anything, and none of the fixtures
+    in this repository moved;
+  * a clip WITH the section is written as version 2.
+
+That is what makes this extension free: the cost of a new capability falls
+only on the files that use it.
+
+What changed, in full: ONE optional payload section, "bone-translations",
+plus three optional header keys that describe it. Nothing else moved. The
+root track is byte-identical, the bone-rotations section is byte-identical
+and still section index 1, every existing header key means exactly what it
+meant, and a v1 clip is a legal v2 clip that simply carries no translation.
+
+BACKWARD COMPATIBILITY IS A PROPERTY OF THE ENVELOPE, NOT A PROMISE MADE
+HERE. Every section's name, offset, size, dtype, shape and stride is declared
+in the header (ENVELOPE.layout.txt sections 1, 5 and 5a), so a reader finds
+sections BY NAME and never by position. A revision-1 reader meeting a
+version-2 clip therefore:
+
+  * finds "root-track" and "bone-rotations" exactly where its own grammar
+    says they are, because it looks them up rather than counting;
+  * finds one section whose name it does not recognise, which
+    ENVELOPE.layout.txt section 5a requires it to SKIP AND REPORT
+    ("section-skipped-unknown", info) — not guess at, and not treat as
+    damage;
+  * plays the clip with rotations only, says so in its report, and is
+    conformant while doing it.
+
+The one thing such a reader MUST NOT do is refuse the clip for carrying a
+version integer higher than its own — ENVELOPE.layout.txt section 5a makes
+that normative, and it is stated there rather than here because it is true of
+every envelope kind, not just clips. It reports "layout-version-newer" as
+info, reads what it knows, and continues. A reader that DOES implement
+revision 2 and finds the section MUST use it: silently dropping declared
+translation is the bug this revision exists to prevent.
+The clip's human/tooling-facing metadata (name, tags, retarget notes, event
+semantics) is ALSO available as JSON — see spec/schemas/core.anim.clip.
+schema.json. The binary and the JSON must agree; where they disagree the
+binary header is authoritative for anything a player needs.
+
+What it is
+----------
+One animation clip, sampled at a uniform rate. No curves, no keyframe
+interpolation modes, no tangent handles: a fixed grid of samples, because a
+fixed grid is the thing every runtime can play and every tool can resample,
+and because law 11 forbids clever packing in core. A curve-fitted variant is
+welcome in x.*.
+
+The root is a SEPARATE track carrying translation AND rotation. Most bones
+carry rotation only, and bone lengths normally never change: they live in the
+skeleton (spec/skeleton/canonical-humanoid-v1.json and
+spec/schemas/core.skeleton.schema.json).
+
+PER-BONE TRANSLATION IS OPTIONAL AND EXPLICIT (v2, S6-4). D-AC-4 ruled
+translation on non-root bones a rig feature rather than an animation feature,
+and the argument was good: admitting it doubles every track for the 1 % of
+clips that need it. The measurement said the 1 % is not 1 %. Unreal keys
+pelvis translation as a matter of course — 0.111 m on a one-second walk,
+which is the whole vertical bob of the gait — and a COLLADA-exported glTF
+keys translation on EVERY joint. A retarget solver has to read that
+translation correctly or it poisons the calibration before it starts, and
+then it had nowhere to put it. So v2 admits it, and pays the cost only where
+it is used: the section carries ONLY the bones that are actually translated,
+named in the header, so a rotation-only clip pays nothing at all and a clip
+with one translated pelvis pays for one bone. That is the compromise D-AC-4
+did not consider, and it is why the ruling is an extension rather than a
+reversal.
+
+Header keys (in addition to the mandatory envelope keys)
+--------------------------------------------------------
+
+  key             type            meaning
+  --------------  --------------  -----------------------------------------
+  "clip_id"       str             kebab-case id, unique in the package.
+  "skeleton_id"   str             id of the core.skeleton node these bone
+                                  names belong to. An identity reference
+                                  through the manifest (law 4), never a
+                                  path and never an index.
+  "bone_count"    uint            number of per-bone rotation tracks.
+  "frame_count"   uint            number of samples per track, >= 1.
+  "rate_hz"       float           sample rate. Frame f is at time
+                                  t = f / rate_hz seconds. > 0.
+  "duration_s"    float           declared, not derived. MUST equal
+                                  frame_count / rate_hz within 1e-6. (Yes,
+                                  it is derivable; it is declared anyway so
+                                  a truncated file is caught by a compare
+                                  instead of by silently short playback.)
+  "flags"         uint            bit field, see below.
+  "bones"         array<str>      bone_count ids, IN TRACK ORDER. This is
+                                  what makes the clip an island (law 3): it
+                                  names its bones rather than indexing into
+                                  a skeleton that may not be present. Ids
+                                  MUST be unique. A player binds by name.
+  "root_bone"     str             the bone the root track drives. Normally
+                                  "root" — which, since the 2026-08-08
+                                  skeleton ruling, is a real base bone at
+                                  the origin with the pelvis parented to it,
+                                  so a travelling clip carries its
+                                  locomotion here and leaves "hips" a body
+                                  bone. MUST NOT appear in "bones".
+  "translated_bones"
+                  array<str>      OPTIONAL (v2). The bone ids the
+                                  "bone-translations" section carries, IN
+                                  SECTION ORDER. Every id MUST also appear
+                                  in "bones". Present if and only if the
+                                  section is present. Named rather than
+                                  implied for the same reason "bones" is:
+                                  a subset identified by position is a
+                                  subset nobody can check.
+  "source_had_bone_translation"
+                  bool            OPTIONAL (v2). True means the SOURCE this
+                                  clip was converted from animated bone
+                                  translation. It is written by a converter
+                                  that DROPPED it as well as by one that
+                                  kept it — that is the point: a clip that
+                                  lost something says so instead of being
+                                  quietly poorer than its source.
+  "max_bone_translation_m"
+                  float           OPTIONAL (v2). The largest per-bone
+                                  translation magnitude, in metres, in the
+                                  source. Meaningful with
+                                  source_had_bone_translation either way:
+                                  with the section present it is a checkable
+                                  bound, and with the section absent it is
+                                  the measured size of what was dropped, so
+                                  a consumer can tell a rounding error from
+                                  a lost gait.
+  "events"        array<map>      optional, see "Event track" below.
+  "loop"          bool            optional, default false. True means frame
+                                  frame_count-1 is intended to blend back
+                                  into frame 0.
+
+  flags bit assignment (all other bits reserved, MUST be 0):
+    bit 0 (0x1)  IN_PLACE       root translation is authored as zero and
+                                the clip does not travel; a locomotion
+                                system supplies motion. When this bit is
+                                set the root track's position components
+                                MUST all be exactly 0.0.
+    bit 1 (0x2)  ADDITIVE       the clip is a delta to be added on top of a
+                                base pose; rotations are relative to the
+                                skeleton rest pose rather than absolute
+                                local rotations.
+    bit 2 (0x4)  ROOT_YAW_ONLY  the root rotation track only ever rotates
+                                about the up axis. A hint, checkable.
+
+Payload sections
+----------------
+
+  section 0
+    "name"   : "root-track"
+    "dtype"  : "f32"
+    "shape"  : [frame_count, 7]
+    "stride" : 28
+    "size"   : 28 * frame_count
+
+    Frame f, at offset + 28*f:
+      +0   f32  pos_x   metres, model space, relative to the skeleton's
+      +4   f32  pos_y   own origin (the floor point under the character in
+      +8   f32  pos_z   the canonical skeleton)
+      +12  f32  quat_w
+      +16  f32  quat_x
+      +20  f32  quat_y
+      +24  f32  quat_z
+
+  section 1
+    "name"   : "bone-rotations"
+    "dtype"  : "f32"
+    "shape"  : [bone_count, frame_count, 4]
+    "stride" : 16
+    "size"   : 16 * bone_count * frame_count
+
+    BONE-MAJOR: all frames of bone 0, then all frames of bone 1, and so on.
+    Bone b, frame f, at
+        offset + 16 * (b * frame_count + f)
+    components w,x,y,z at +0, +4, +8, +12.
+
+    The rotation is the bone's LOCAL rotation relative to its parent, in the
+    same sense as the skeleton's rest_rotation. It REPLACES the rest
+    rotation (unless the ADDITIVE flag is set, in which case it is composed
+    onto it as q_final = q_rest * q_clip).
+
+  section 2 — OPTIONAL (v2)
+    "name"   : "bone-translations"
+    "dtype"  : "f32"
+    "shape"  : [n_translated, frame_count, 3]
+    "stride" : 12
+    "size"   : 12 * n_translated * frame_count
+
+    n_translated = len(header["translated_bones"]), which MUST be >= 1 when
+    the section is present. A zero-length section is not a way of saying
+    "none"; omitting the section is.
+
+    BONE-MAJOR, exactly like section 1, for exactly the reasons below: all
+    frames of translated bone 0, then all frames of translated bone 1.
+    Translated bone i, frame f, at
+        offset + 12 * (i * frame_count + f)
+    components x,y,z at +0, +4, +8.
+
+    The translation is the bone's LOCAL translation relative to its parent,
+    in metres, in the same sense as the skeleton's rest_translation. It
+    REPLACES the rest translation (or, under the ADDITIVE flag, is ADDED to
+    it — addition, not composition, because a translation delta is a vector
+    sum while a rotation delta is a product, and a reader that treats them
+    alike gets one of them wrong).
+
+    Bones NOT named in "translated_bones" keep their skeleton rest
+    translation for every frame. There is no interpolation between a
+    translated and an untranslated bone, and no implied zero: an absent bone
+    is at rest, which is a different statement from being at the origin.
+
+    Interpolation between frames is linear, matching the root track's
+    positions.
+
+Why bone-major (law 9, two masters)
+-----------------------------------
+A player streaming a whole pose per frame wants frame-major; a tool that
+wants one bone's whole curve — retarget solvers, curve editors, per-bone LOD
+that drops finger tracks at distance, and diffing two versions of a clip —
+wants bone-major. Bone-major lets a consumer read a contiguous slice for a
+SUBSET of bones with one seek per bone and skip the rest of the file
+entirely, which is the bigger win and the one that scales with bone count.
+Frame-major saves nothing a memory-mapped file does not already give.
+
+Interpolation between frames (normative)
+----------------------------------------
+Positions: linear. Rotations: shortest-arc SLERP, i.e. if
+dot(q_a, q_b) < 0 negate q_b before interpolating. When
+dot > 0.9995 fall back to normalised LERP. Two conformant players MUST agree
+within 1e-4 radians on any interpolated rotation.
+
+Time outside [0, duration_s): if "loop" is true, wrap; otherwise clamp to
+the first/last frame. Never extrapolate.
+
+Event track
+-----------
+"events" is an array of maps, sorted ascending by "t_s", each:
+
+  key          type    meaning
+  -----------  ------  ------------------------------------------------
+  "t_s"        float   time in seconds from clip start, in [0,duration_s]
+  "kind"       str     one of: "audio", "footstep", "contact", "effect",
+                       "attach", "detach", "marker"
+  "effect_id"  str     optional. For kind "audio"/"footstep": the id of a
+                       core.audio effect in this package (its "slug").
+                       Identity, never a path.
+  "part_id"    str     optional. Which part of the entity the event is
+                       about, joining to manifest parts[].
+  "bone"       str     optional. Which bone, joining to "bones"/"root_bone".
+  "params"     map     optional. str -> (float|str|bool). Free.
+
+An event is `enhances`: a player that ignores the whole event array still
+plays the clip correctly. An audio event whose effect_id does not resolve
+is dropped with a report, never a hard failure (law 3).
+
+Worked size example
+-------------------
+23 bones, 3 seconds at 30 Hz (frame_count 90), header_len 512:
+  payload_origin = 16*ceil(524/16) = 16*33 = 528
+  root-track  offset 528,   size 28*90        = 2520,  end 3048
+  3048 % 16 == 8, so 8 bytes padding -> next aligned offset 3056
+  bone-rotations offset 3056, size 16*23*90   = 33120, end 36176
+  36176 % 16 == 0, payload_size = 36176 - 528 = 35648
+  file size = 36176
+
+Same clip, v2, with one translated bone ("hips"):
+  ... as above through bone-rotations, ending at 36176
+  36176 % 16 == 0, so no padding
+  bone-translations offset 36176, size 12*1*90 = 1080, end 37256
+  37256 % 16 == 8, so 8 bytes of trailing padding -> 37264
+  payload_size = 37264 - 528 = 36736
+  file size = 37264
+  The whole cost of admitting translation for this clip is 1080 bytes on
+  35 648, i.e. 3 %. Admitting it for all 23 bones would have cost 70 %,
+  which is D-AC-4's number and why the section names its bones.
+
+Decisions recorded here
+-----------------------
+  D-AC-1  Bone-major track order (rationale above). Declared explicitly so
+          no reader has to guess from a stride.
+  D-AC-2  "bones" is a name array in the header, not an implicit index into
+          a skeleton. Costs bytes; buys law 3 islandhood and makes retarget
+          possible from the clip alone.
+  D-AC-3  Uniform sampling only in core. Curve compression is exactly the
+          kind of cleverness law 11 reserves for x.*.
+  D-AC-4  Rotation-only per-bone tracks. Translation on non-root bones is a
+          rig feature, not an animation feature, and admitting it would
+          double every track's size for the 1% of clips that need it.
+          AMENDED by D-AC-6.
+  D-AC-6  (v2, ruled 2026-08-08, S6-4) Per-bone translation IS admitted, as
+          an optional section carrying only the bones that use it, named in
+          the header. D-AC-4's cost argument is answered rather than
+          overruled: a rotation-only clip pays zero bytes, and the measured
+          evidence — an Unreal walk keying 0.111 m of pelvis translation,
+          a COLLADA glTF keying translation on every joint — said the
+          exception was not the 1 % D-AC-4 assumed. Clips that DROP source
+          translation now say so via source_had_bone_translation and
+          max_bone_translation_m, so the loss is declared rather than
+          discovered.
+  D-AC-5  duration_s is declared even though it is derivable, per law 8's
+          corollary — the derived and declared values disagreeing is the
+          cheapest possible truncation detector.

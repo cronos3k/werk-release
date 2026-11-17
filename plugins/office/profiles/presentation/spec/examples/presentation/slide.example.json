@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "slide": {
+    "animations": [
+      {
+        "auto_reverse": false,
+        "bounce_end": 0.0,
+        "class": "entrance",
+        "delay_ms": 0,
+        "duration_ms": 500,
+        "effect": "fly",
+        "option": "l",
+        "repeat": 1,
+        "rewind": false,
+        "shape": 212,
+        "smooth_end": 0.0,
+        "smooth_start": 0.0,
+        "start": "onClick",
+        "text_build": "asOne"
+      }
+    ],
+    "comments": [
+      {
+        "author": "Ann",
+        "date": "2026-10-12T08:30:00Z",
+        "initials": "A",
+        "replies": [],
+        "resolved": false,
+        "shape": 212,
+        "text": "Check the 12 %.",
+        "x": 20.0,
+        "y": 20.0
+      }
+    ],
+    "hidden": false,
+    "id": 201,
+    "layout": 18,
+    "name": "",
+    "notes": {
+      "body": {},
+      "paragraphs": [
+        {
+          "level": 0,
+          "runs": [
+            {
+              "text": "Open with the headline number."
+            }
+          ]
+        }
+      ]
+    },
+    "shapes": [
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 211,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Title 1",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 0,
+          "kind": "title",
+          "vertical": false
+        },
+        "text": {
+          "body": {},
+          "paragraphs": [
+            {
+              "level": 0,
+              "runs": [
+                {
+                  "text": "Quarterly results"
+                }
+              ]
+            }
+          ]
+        },
+        "text_box": false,
+        "title": ""
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 212,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Content 2",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 1,
+          "kind": "body",
+          "vertical": false
+        },
+        "text": {
+          "body": {},
+          "paragraphs": [
+            {
+              "level": 0,
+              "runs": [
+                {
+                  "text": "Revenue grew "
+                },
+                {
+                  "props": {
+                    "bold": true
+                  },
+                  "text": "12 %"
+                },
+                {
+                  "text": " year over year"
+                }
+              ]
+            },
+            {
+              "level": 1,
+              "props": {
+                "bullet": {
+                  "char": "–",
+                  "kind": "char"
+                }
+              },
+              "runs": [
+                {
+                  "text": "See slide "
+                },
+                {
+                  "kind": {
+                    "field": "slidenum",
+                    "kind": "field"
+                  },
+                  "text": "2"
+                },
+                {
+                  "kind": {
+                    "kind": "break"
+                  },
+                  "text": ""
+                },
+                {
+                  "props": {
+                    "link": {
+                      "action": {
+                        "kind": "slide",
+                        "slide": 202
+                      },
+                      "highlight_click": false,
+                      "tooltip": "Next"
+                    }
+                  },
+                  "text": "details"
+                }
+              ]
+            }
+          ]
+        },
+        "text_box": false,
+        "title": ""
+      },
+      {
+        "decorative": false,
+        "descr": "A two by two colour swatch",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 213,
+        "kind": {
+          "fill": {
+            "adjust": {
+              "brightness": 0.0,
+              "contrast": 0.0,
+              "grayscale": false,
+              "sharpen": 0.0
+            },
+            "crop": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "media": 301,
+            "mode": {
+              "fill_rect": [
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "kind": "stretch"
+            }
+          },
+          "type": "picture"
+        },
+        "locked": false,
+        "name": "Swatch",
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 200.0,
+          "w": 200.0,
+          "x": 640.0,
+          "y": 300.0
+        }
+      }
+    ],
+    "show_master_shapes": true,
+    "transition": {
+      "advance_on_click": true,
+      "duration_ms": 700,
+      "kind": "fade",
+      "option": ""
+    }
+  }
+}

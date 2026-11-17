@@ -1,0 +1,42 @@
+{
+  "charts": [
+    {
+      "barDirection": "col",
+      "part": "word/charts/chart1.xml",
+      "series": [
+        {
+          "categories": [
+            "Apples",
+            "Pears",
+            "Plums"
+          ],
+          "name": "Count",
+          "plot": "bar",
+          "values": [
+            3.0,
+            12.0,
+            null
+          ]
+        },
+        {
+          "categories": [
+            "Apples",
+            "Pears",
+            "Plums"
+          ],
+          "name": "Price",
+          "plot": "line",
+          "values": [
+            1.2,
+            0.85,
+            2.5
+          ]
+        }
+      ],
+      "source": "69497532ba3ed5a4",
+      "title": "Fruit counted",
+      "type": "bar"
+    }
+  ],
+  "schema_version": 1
+}

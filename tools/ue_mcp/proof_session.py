@@ -197,7 +197,7 @@ def main():
     # change the level viewport, which produced two "lit" and "unlit" images
     # that were the same picture. Rather than ship a pair of screenshots whose
     # labels are wrong, the view-mode idea is dropped and the limitation is
-    # written down in adapters/unreal/TESTBED.md.
+    # written down in plugins/unreal/TESTBED.md.
     shots = []
     for name, eye, target in (
         ("01-viewport-wide.png", (-360.0, -330.0, 260.0), (110.0, 0.0, 60.0)),

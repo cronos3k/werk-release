@@ -1,0 +1,83 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.comments.schema.json",
+ "title": "core.text.comments — the comments of a document",
+ "description": "Who wrote each comment and when. A comment's text is a story (a `core.text.blocks` node of kind `comment`); the text it is about lies between the `commentStart` and `commentEnd` objects carrying its id. spec/PROFILE-RICH-DOCUMENT.md section 3.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "comments"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "comments": {
+   "description": "The comments, in ascending order of `id`.",
+   "type": "array",
+   "items": {
+    "description": "The facts about one comment. Its text is a story.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ],
+    "properties": {
+     "id": {
+      "description": "The comment's number: what `commentStart` / `commentEnd` objects and a reply's `parent` refer to. Unique.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+     },
+     "author": {
+      "description": "Name of the comment's author.",
+      "default": "",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "initials": {
+      "description": "The author's initials.",
+      "default": "",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "date": {
+      "description": "When the comment was written, ISO 8601; may be empty.",
+      "default": "",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "parent": {
+      "description": "For a reply: the `id` of the comment it replies to. Null: a top-level comment.",
+      "default": null,
+      "anyOf": [
+       {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 4294967295
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "resolved": {
+      "description": "true: the comment is marked as resolved (done).",
+      "default": false,
+      "type": "boolean"
+     },
+     "part": {
+      "description": "The comment's text: the `story.id` of a `core.text.blocks` node listed in the document node's `stories`, of kind `comment`.",
+      "default": 0,
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+     }
+    }
+   }
+  }
+ }
+}

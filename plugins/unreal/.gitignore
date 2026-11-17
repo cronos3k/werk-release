@@ -1,0 +1,7 @@
+# Build output of the standalone gate (plugins/unreal/tests/build_gate.bat).
+# The gate is reproducible from source; its binaries are not part of the format.
+tests/.build/
+
+# UE build output, if someone copies the plugin into a project in place.
+WerkLink/Binaries/
+WerkLink/Intermediate/

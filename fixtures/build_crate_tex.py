@@ -19,7 +19,7 @@ for the texture and material paths. Nothing here pretends to be a scan.
 How it is built, and why through Blender
 ----------------------------------------
 The mesh is `fixtures/crate-v1.werk`'s own game geometry, imported by the
-gate-proven Blender add-on (`adapters/blender`), given UVs, dressed with three
+gate-proven Blender add-on (`plugins/blender`), given UVs, dressed with three
 generated maps and exported by the same add-on's exporter. That route was
 chosen over hand-writing a package because the add-on's textured export is
 already gate-measured, so this fixture is produced by code that is under test

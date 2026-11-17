@@ -21,10 +21,10 @@ data/
 
 # Stage 11, the Blender adapter.
 # The gate's exported packages and the built add-on zip are OUTPUT: both are
-# reproducible from the tree by `python adapters/blender/test_gate.py` and
-# `python tools/blender/build_addon_zip.py`.
-/adapters/blender/_gate_out/
-/adapters/blender/dist/
+# reproducible from the tree by `python plugins/blender/test_gate.py` and
+# `python plugins/blender/tools/build_addon_zip.py`.
+/plugins/blender/_gate_out/
+/plugins/blender/dist/
 # Scratch directories the importer/exporter make beside a package and remove
 # again; listed so a crashed run cannot leave one in a commit.
 .werk-blender-tmp/
@@ -73,3 +73,22 @@ data/
 /evidence/second-lab/roundNC/dryrun/**/*.obj
 /evidence/second-lab/roundNC/dryrun/**/*.raw
 /evidence/second-lab/roundNC/dryrun/**/*.f32
+
+# Library test scratch and the libraries' own cargo target (libs/README.md).
+/libs/_scratch/
+/libs/_target/
+
+# Plug-in gate output, logs and local build products (plugins/README.md).
+/plugins/*/_gate_out/
+/plugins/*/_logs/
+/plugins/*/_scratch/
+/plugins/*/_bin/
+/plugins/*/_build/
+/plugins/*/_repo/
+/plugins/*/_target/
+/plugins/*/project/
+/plugins/unreal/WerkLink/Binaries/
+/plugins/unreal/WerkLink/Intermediate/
+/contrib/experimental/photoshop-uxp/_gate_out/
+/contrib/experimental/photoshop-uxp/_selftest/
+/contrib/experimental/photoshop-uxp/_bin/

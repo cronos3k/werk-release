@@ -1,0 +1,26 @@
+{
+  "books": [
+    {
+      "number": 1,
+      "origin": "file:///C:/somewhere/else/Rates.xlsx",
+      "sheets": [
+        {
+          "cells": [
+            {
+              "kind": "number",
+              "ref": "A1",
+              "value": 0.07
+            },
+            {
+              "kind": "text",
+              "ref": "B1",
+              "value": "VAT"
+            }
+          ],
+          "name": "Rates"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

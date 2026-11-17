@@ -1,0 +1,254 @@
+{
+  "bundle_source_rev": "fa32df8ba956ba717ed545db0c942ee35bc689bf",
+  "formats": {
+    "opc": {
+      "definition_sha256": "5335bdd19616218fd8b23d145f02824eb2dd8e7b9d78e7f80e5624eeef0d112c",
+      "requires": [
+        "zip"
+      ],
+      "tools": [
+        {
+          "files": [
+            {
+              "media_type": "application/json",
+              "path": "tools/format-opc-reference/tool.json",
+              "role": "payload",
+              "sha256": "28fedda248b3ef1671a64a5e3f69108a3477aff7371daeead1dd15809e4356b0",
+              "size": 874
+            },
+            {
+              "media_type": "text/x-python",
+              "path": "tools/format-opc-reference/opc_dump.py",
+              "role": "source",
+              "sha256": "3665bc015583eefdf9c1ebff953ae4ac25d400546efc034dae6378ff5a560453",
+              "size": 21675
+            }
+          ],
+          "from": "formats/ref/opc_dump.py",
+          "meta": null,
+          "node_id": "format-opc-reference",
+          "note": "Reference implementation (source) of a format this document's payloads are encoded in, named by that format's definition.",
+          "payload_file": "tools/format-opc-reference/tool.json"
+        }
+      ]
+    },
+    "pdf": {
+      "definition_sha256": "0dde82eed19b16824fd13145206f2ce7d6f3f0538c2ead5fab5681594845000e",
+      "requires": [
+        "zlib-deflate"
+      ],
+      "tools": [
+        {
+          "files": [
+            {
+              "media_type": "application/json",
+              "path": "tools/format-pdf-reference/tool.json",
+              "role": "payload",
+              "sha256": "29636660062f7b53ada8079ca874428729e98155d0aaecd562f093eb6e13655f",
+              "size": 1251
+            },
+            {
+              "media_type": "text/x-python",
+              "path": "tools/format-pdf-reference/pdf_dump.py",
+              "role": "source",
+              "sha256": "fc9b33242975ec8210a980a33495606dc71ba59dc51aadb5869dd4e232fa1d8b",
+              "size": 45816
+            }
+          ],
+          "from": "pdfcraft/signed-fixture.werk",
+          "meta": null,
+          "node_id": "format-pdf-reference",
+          "note": "Reference implementation (source) of a format this document's payloads are encoded in, named by that format's definition.",
+          "payload_file": "tools/format-pdf-reference/tool.json"
+        }
+      ]
+    },
+    "zip": {
+      "definition_sha256": "fbeb731575d83bf8a7b47f7f3b54129a15784cca686580fd996cf2dfd851ff81",
+      "requires": [
+        "zlib-deflate"
+      ],
+      "tools": [
+        {
+          "files": [
+            {
+              "media_type": "application/json",
+              "path": "tools/format-zip-reference/tool.json",
+              "role": "payload",
+              "sha256": "e5047af0bb392aca7256487c13d4ac14914cf4bad38e20e8f37d543495f2a6e3",
+              "size": 1025
+            },
+            {
+              "media_type": "text/x-python",
+              "path": "tools/format-zip-reference/zip_dump.py",
+              "role": "source",
+              "sha256": "b52278d0fa0602966e11e5cd597f71115b679218acbfe2b783ec9a020ce8e583",
+              "size": 13495
+            }
+          ],
+          "from": "wordcraft/maximal.werk",
+          "meta": null,
+          "node_id": "format-zip-reference",
+          "note": "Reference implementation (source) of a format this document's payloads are encoded in, named by that format's definition.",
+          "payload_file": "tools/format-zip-reference/tool.json"
+        }
+      ]
+    },
+    "zlib-deflate": {
+      "definition_sha256": "2d1e9781a56867b005d7fa763be000badbf95532e8906660d5ebf36fb2e509c9",
+      "requires": [],
+      "tools": [
+        {
+          "files": [
+            {
+              "media_type": "application/json",
+              "path": "tools/format-zlib-deflate-reference/tool.json",
+              "role": "payload",
+              "sha256": "4e969fd028bff268c4adec16e3040a1684b8322ac4d98bd81e5daa4654024b0a",
+              "size": 973
+            },
+            {
+              "media_type": "text/x-python",
+              "path": "tools/format-zlib-deflate-reference/inflate.py",
+              "role": "source",
+              "sha256": "ac730786449a7c9b7f5ff5ddfea4d57759878d5fa0525f06a5ee7f5aa4b8ad3e",
+              "size": 9307
+            }
+          ],
+          "from": "gridcraft/sales.werk",
+          "meta": null,
+          "node_id": "format-zlib-deflate-reference",
+          "note": "Reference implementation (source) of a format this document's payloads are encoded in, named by that format's definition.",
+          "payload_file": "tools/format-zlib-deflate-reference/tool.json"
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "presentation": {
+      "files": {
+        "HOW-TO-READ.md": "4e9b92715a56a0ef019e3616b1de9082721feea3cf38cecdf86c6dcb4c29289a",
+        "spec/CRAFT-BASE.md": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+        "spec/PROFILE-PRESENTATION.md": "b5d55ba2be5cc93a9a537ee00f194d5b69c5230b1c48050d6afd2fba7a1577ee",
+        "spec/conventions-map.presentation.json": "4150ec69952d3a25570815429ec327a7f3281eed3c08d49e24bf5dcfc29ee5db",
+        "spec/examples/presentation/README.md": "bbdedae23c18812c8cc8b2695dfae13b209bded0725d7f8cef9541f18c30af76",
+        "spec/examples/presentation/asset.example.json": "c36aabb552348ad96da60b74dfc50cfb9a3cec6cc66d605f0b155f1a7d1e3a49",
+        "spec/examples/presentation/document.example.json": "a26e63412534d4c442a9d842a9f78d7f0f636c94fd1332b16646e5a3330de9f2",
+        "spec/examples/presentation/geometry.example.json": "e8a0618a9476aefc2a414eb2b490502b052a58e22df01e02d04be6b4562663bb",
+        "spec/examples/presentation/layout.example.json": "4be2d3eab3d4cf58a304ab3129c9896241e1696f856ceeda0990106787c2091f",
+        "spec/examples/presentation/master.example.json": "1c38ca4b6e84fe40105a532df03c197a04ef87e2599e9a9efa76f6c420d79507",
+        "spec/examples/presentation/ooxml.example.json": "83f59a4482d62f19dee672a62c753fdd96ed9e8311426e26a3f52ed2da50d345",
+        "spec/examples/presentation/outline.example.txt": "d86d4b5b55ed59053d13d32668ac948f250a90eb3d3a337575436e7825b54f5d",
+        "spec/examples/presentation/read_presentation.py": "53f790d1ef5d098aed03d210dc87614dd4e86d9323adc3beff7d894a7e18ad8f",
+        "spec/examples/presentation/slide-every-kind.example.json": "733424f70b04120dc2e03b5601c67ca5671c3f913eabeac40e1f2dc63b7ff070",
+        "spec/examples/presentation/slide.example.json": "c49de089c9a776d5193392d83591bef63dc63b19cc2ecc42e2837ee8287cf661",
+        "spec/examples/presentation/write_minimal.py": "06f677de0dd87200cb3e43ca88e8059c951bc76b131a557e3955524da31247f6",
+        "spec/schemas/core.media.asset.schema.json": "0c3b6b3c29018fbe2bbfc637b0d9fbd27b815a595a9ffe1b6cad8acdab224b88",
+        "spec/schemas/core.slide.document.schema.json": "6dff73e15dce60bcac0fd3c8a71fa3cbddaa4cab18f2c31da2592ea6036eb9a5",
+        "spec/schemas/core.slide.geometry.schema.json": "c7ec2fe94064f7465a96d839c65230da5e3302347487235a31571ab413ddf39e",
+        "spec/schemas/core.slide.layout.schema.json": "29db026649d72fc776f2c6884e851c696d2f053d593371eaad17a1704fe25586",
+        "spec/schemas/core.slide.master.schema.json": "f94529f5d48d845f6254914f9567b8610cf7e43bf888d865d08d4eb0749c8ea8",
+        "spec/schemas/core.slide.slide.schema.json": "1f6a070c5a4483c255caeea5b14411972343bc96d210153721809a91605d206c",
+        "spec/schemas/manifest.presentation.schema.json": "38795c452fb87b49053ece5728fbb1d2a7569b94f66967fb0dca9fdff75c9666",
+        "spec/schemas/x.deckcraft.ooxml.schema.json": "d998da458d07edfb9da5837bba28bfc831641f65c528f7d15ea2ae7dc70e00cf"
+      },
+      "source": "deckcraft/sample-deck.werk",
+      "source_sha256": "48b96ec45745fa8e98aed3cda612d2446b668ff851f89c0b3efa3b513770b56a"
+    },
+    "rich-document": {
+      "files": {
+        "HOW-TO-READ.md": "48c397698cd5432ebffafd1dbe9d50db2d3450e1f31f2baf3aaa0ec08000c878",
+        "spec/CRAFT-BASE.md": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+        "spec/PROFILE-RICH-DOCUMENT.md": "bf8e9a58b258705965fd8ad6fafb51c0b9aee89ab73ee3e1ada59326158d7d89",
+        "spec/conventions-map.rich-document.json": "14b96d276c65e2ef16022c5934757fb8e3083d763c4dd90b3cc3d3f1805454bc",
+        "spec/examples/rich-document/README.md": "ae5f572d8a2d9c950e0c7c4b15e1f46feb093d04956c93173b13e98b2cee22d2",
+        "spec/examples/rich-document/bibliography.example.json": "ff6d6a92a0c199718faad2aa62d673b508056dbdd21b9506f60de780aa9e4778",
+        "spec/examples/rich-document/blocks-story.example.blocks.json": "30b860d18e22a89c9c7b2647e0325e887191965a547dcb6679adfdbdc6be78ff",
+        "spec/examples/rich-document/blocks-story.example.blocks.zlib": "37165fff09058fb0d8c013d7afeba8d3b8678f363e14eee0cbb58e1de7769b39",
+        "spec/examples/rich-document/blocks-story.example.json": "fc7fdfb0f673ab849b985e3592a46334da157e01f8a5b1e98658a265f2ac77c4",
+        "spec/examples/rich-document/blocks.example.blocks.json": "b9d1930c3e74f4cfe5f9cace32b96a0b8cb41ab9af218b820114af39608ace95",
+        "spec/examples/rich-document/blocks.example.blocks.zlib": "77239e57104b7abbed1bbbdb4ba78481b4569979fe440d74bbb6ff48290f9544",
+        "spec/examples/rich-document/blocks.example.json": "65c8b84945704320e9f553943ca8ab8d4f1329577ef810bbcba5a14ec762767e",
+        "spec/examples/rich-document/chart-data.example.json": "3e0789142b3a2222348b727e45dac3a5407f078cc3ef0648f066c94b3db94594",
+        "spec/examples/rich-document/comments.example.json": "a852939cba07300b9685dd623f36b1d9239cfd157739f99c59f4061b776e71c7",
+        "spec/examples/rich-document/document.example.json": "a9f3396cb7fe87bd1b652bca5f7f16d08ae8d366ad7c5ed6f91474b9498a300c",
+        "spec/examples/rich-document/embedded.example.json": "72d701ec4d76a7015bc5a3584484e1b8b6e8387f3928bb4df0b8ad5eb15b53e0",
+        "spec/examples/rich-document/numbering.example.json": "a5bfa6666d513029b528b0eafd90d53c9aded3d5ef829d0fc722b3cc95eaf286",
+        "spec/examples/rich-document/part-descriptor.example.json": "e9dab598059f9705043e2403fbcb1c5cd34dfcaa148447a078480bd985f914a4",
+        "spec/examples/rich-document/plain-text.example.txt": "d366d999127efec042bcdbb185a9da08b797944a9ae588da264aa00f6a8df22b",
+        "spec/examples/rich-document/plain-text.example.txt.zlib": "af3746128133d75ca88384c58f4e756454cc3c222d18b4854fbfc8134b896596",
+        "spec/examples/rich-document/properties.example.json": "77dd4105867cf0b8f0fcdd904fc6942bbc5f6d20730cbe175a3c4c08df227701",
+        "spec/examples/rich-document/read_document.py": "d9e4d05d0ec719970c00d275bbf0aa04ec80c42e67fc2793c1eadcc897385866",
+        "spec/examples/rich-document/settings.example.json": "ad58e6183e64241fe4957bd7d523623f071e1cbf992a332f46cf592646384dce",
+        "spec/examples/rich-document/source-descriptor.example.json": "73a3f7c2749d006e5a0955e78e6f1db3a1ece930a6af91a37eb87c705983afe5",
+        "spec/examples/rich-document/styles.example.json": "4b4c7622d2c8b0faeb6991dfc14e7782506fa54e7bbf8e15a167224c62151dc1",
+        "spec/examples/rich-document/tracked-changes.example.json": "1b58b76e57c5d6119d7bb404fe717cf846766fdec02aeb4d7140c26ddba591f0",
+        "spec/examples/rich-document/write_minimal.py": "54a3106d6bf5ae3884ca96dbd2bae28bed73d8f18d03d69f3c1d5f23d8c5f81e",
+        "spec/layouts/x.wordcraft.ooxml.part.layout.txt": "9f4b9a0951f7cea2c91bb873b8e76d6f5c15bc056eab30a357cb121acd15eaeb",
+        "spec/layouts/x.wordcraft.source.other.layout.txt": "df8506d6680c0f723ef1ebe677e638ad1bebff7689acde8bc165634f9dfb0acb",
+        "spec/schemas/core.chart.data.schema.json": "4a52d2683a938cb07bb9f4701334712f009afcf15a7c660eabcdf6cb2c7377a7",
+        "spec/schemas/core.style.numbering.schema.json": "f12d5d518bf1af00cfd3ebb597a37c35a71e584ae4f7513acbed24492b3cad97",
+        "spec/schemas/core.style.sheet.schema.json": "56053dc18b9e3cb6686245a6847265c4b5cd01a753847d4e9a3c012bd3062a2e",
+        "spec/schemas/core.text.bibliography.schema.json": "66d09137f94ed3327dd2a3eeace92704fe8f82a109ecfd4ff9e079bec47cf01c",
+        "spec/schemas/core.text.blocks.schema.json": "560980cf85ff731d9f407a6741b68a87c30a50fa2bc6d757909445b09e8c74de",
+        "spec/schemas/core.text.comments.schema.json": "8f5167b3b9c8b27aae25abf0ee3ebacdeee50e60af00b46ea72b2641225a3254",
+        "spec/schemas/core.text.document.schema.json": "0e7152a4a887f14cb9a395d71fd333b5694a65447e98bdb7d4b5f2154cc54671",
+        "spec/schemas/core.text.properties.schema.json": "e20c07eb84add8db7378eb404d132bffe8f86ea8c7bf5687e1805c365c069f45",
+        "spec/schemas/core.text.settings.schema.json": "8ec654d7b44fba6de82bd1ed55d9d131daa3c0b701e1c49277a39a465cc50344",
+        "spec/schemas/core.text.tracked-changes.schema.json": "01bf8f879241edbd33b89175f240cef92d42dc9202a1ddc6f4536e0405d32b45",
+        "spec/schemas/manifest.rich-document.schema.json": "b130a479a78fd51ccb1a5ac4e190ec6545a5a85689d143c8e246d0a918fe4f07",
+        "spec/schemas/x.wordcraft.ooxml.embedded.schema.json": "0baa50eead369286356f748aa32738fd70e425d6b3a14efe3869cf58273e7a69"
+      },
+      "source": "wordcraft/report.werk",
+      "source_sha256": "5498b9e2b925363b9a58049785c07ccc98da600143b434a3c68e514b8876a1a8"
+    },
+    "spreadsheet": {
+      "files": {
+        "HOW-TO-READ.md": "9f755848ac50affbee58c9897c66bc531c32ff5a398b8175d0683987712f0fa4",
+        "spec/CRAFT-BASE.md": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+        "spec/PROFILE-SPREADSHEET.md": "48ded78f388c66841a1c5b463fd08c8c858eb439dc2c5346390ba2619f0d0aac",
+        "spec/conventions-map.spreadsheet.json": "ce5e3ee7024b3a60241bcafb949c493c1e816af42de5cbc41a930af2caefa80e",
+        "spec/examples/spreadsheet/README.md": "c756dac63792a5d84784c64c0ac98b3f22b3c03290427b74bee133fa796d354c",
+        "spec/examples/spreadsheet/cells.example.hex.txt": "2c4e456b3156723537806b8287b84b111de5efcbe526c818d4263fb7ba7f062b",
+        "spec/examples/spreadsheet/cells.example.json": "e7e67991ccecb9f2eae89c93b5e3e868e01fbd16c0f433c3d3552733ea518637",
+        "spec/examples/spreadsheet/cells.example.wkx": "47660b755cebc7a3346dd178e1ecf7ff75e76365c5440bd6bd32892d2a51e4bb",
+        "spec/examples/spreadsheet/cells.rows-0000000.example.wkx.zlib": "325dd82723031de221a8368b7491f99ffb2ff379eacd9267ef4a2bff35779d34",
+        "spec/examples/spreadsheet/chart.example.json": "5e80ec7aec983ab64e65bdb0224cecf4c7bcdf16e9e1f095b95169c8b55ca890",
+        "spec/examples/spreadsheet/computed.example.hex.txt": "24fa841ceb38812e8872c3d6d0ac82455f30865d754367da10069a1fcf7a7bf8",
+        "spec/examples/spreadsheet/computed.example.json": "e9997fc544715c903b3e7a5aaaa647c5567cb71d46551022114ee82b4aeb52c8",
+        "spec/examples/spreadsheet/computed.example.wkx": "b7a74499486837948876ed443a4118265eb69439a0d9973d980c80fa8a2b7d8c",
+        "spec/examples/spreadsheet/computed.rows-0000000.example.wkx.zlib": "2a73b5f1e98001b8e67e39fc7694f84e18bb5390cf1f5485ae67271a9374d128",
+        "spec/examples/spreadsheet/external-values.example.json": "d6e1dbe4cd2d5b690a6825621aed64aeeac3ed7a643fdc8c1155bf9b3ea6551c",
+        "spec/examples/spreadsheet/first-rows.example.csv": "e26ea03ad9f671ee5fd60a42e437417c6d4d1d4330fc1147039c33ef9097ddd3",
+        "spec/examples/spreadsheet/names.example.json": "5e518ee8caf5973f910b733d86af92875e3dee9e13072630982d62ce89387f5e",
+        "spec/examples/spreadsheet/ooxml-index.example.json": "b40675d7ea0bfbbdf5c6419fc9376f80b8a2ab6942098d2c839891003e11ff4c",
+        "spec/examples/spreadsheet/pivot.example.json": "527a40bf1d7976c41b2137fa15c4f62f535b40c99693452b15914f1eeef78630",
+        "spec/examples/spreadsheet/preview.example.png": "7d4284324ce1e5be22d352b3dfca25f6efea668c37f73c87588f180943359414",
+        "spec/examples/spreadsheet/read_spreadsheet.py": "39e1ff65471cdfe7f5286c5ba3b10c2aeee262d434eb5d0024b7807b1260fa89",
+        "spec/examples/spreadsheet/sheet.example.json": "97d1e460c24468e568a2f55d6a4c00b7a6e2810157cf6cf62652cfae339e925b",
+        "spec/examples/spreadsheet/styles.example.json": "1dcf744fea5fb727b07c9c269a71c32d44247d7280c131541fe647d65ec48162",
+        "spec/examples/spreadsheet/vba.example.json": "27648e91adf5312a00522fcc42e67f778e120b9d2491cdf258751bbf7d0d9ea5",
+        "spec/examples/spreadsheet/workbook.example.json": "8b73461e2f1d24ae74a1bd3a6c20d7606d1d69219b314174353690fb9e656936",
+        "spec/examples/spreadsheet/write_minimal.py": "5a61cabe35761fd4e85ee00fd201b3580775885bf8f05c749bfa5b2603f1c5b9",
+        "spec/layouts/core.sheet.cells.layout.txt": "e7b581f0d341d37c9493706c4245f662f847247666583398451be7d97bba7041",
+        "spec/layouts/core.sheet.computed.layout.txt": "8d2bd38005ab19414d749c282654f2acc7899604f72c08c21dbd61355e0bc9c5",
+        "spec/layouts/x.gridcraft.source.media.layout.txt": "ea5fd4cbedc80ac47c7a4ef37e3da0e85621a33f312e2bc0a6272b8a8d2c9ec2",
+        "spec/schemas/core.sheet.cells.schema.json": "7d7051b601a34ee9b35b0eaeac16a9f3bac559cf2ddf99a82f3f2ab72451b066",
+        "spec/schemas/core.sheet.chart.schema.json": "273755b405e54b1d0cf1823c9faf2153ab43ef9bacf3d3b0cbc08bf82b74b3b8",
+        "spec/schemas/core.sheet.computed.schema.json": "4aafaf1f6aa192e624d599150b99fb344b225819bbc71fe8958bf26c50a7d7ae",
+        "spec/schemas/core.sheet.external-values.schema.json": "28dfcea072a1083d663a27597f9ea1f5dddc0f989cc169bd326fd1c725453efc",
+        "spec/schemas/core.sheet.names.schema.json": "df4536ee9fbd04d6a7162d50bd8d0002e5405e47cdc8bf95d9474ba30ad6e4c5",
+        "spec/schemas/core.sheet.pivot.schema.json": "a10e991c95671bd5b0abd35dd14a005a872abb1c4152b13d0dbe9dc921456c09",
+        "spec/schemas/core.sheet.sheet.schema.json": "2cd96541321dc4f5258d62b97748cbf8f99a783d25e224315c820fc4a8e1a4e3",
+        "spec/schemas/core.sheet.styles.schema.json": "1e8a50be771639968dbb77988e8a33b87e4188f3b778444e6c3956e601e8813f",
+        "spec/schemas/core.sheet.vba-project.schema.json": "714cfe49b6e6f7ceb85409c3495377006d6e20866c2395dd7dddb2bfb5fe24b6",
+        "spec/schemas/core.sheet.workbook.schema.json": "3ffa810454ad90e024cf62e036b368c710cb8ecbfbf0fe0425bd6a85e461db81",
+        "spec/schemas/manifest.spreadsheet.schema.json": "a312df57d1a164e39d5ba24a529481aa8dc7bb9d73d3405e79a4d55bb66c536f",
+        "spec/schemas/x.gridcraft.ooxml.schema.json": "959da9d54a449d4f420802e68305783d0fcf1ec1c3ec70cd64accd9eaf93af4f",
+        "spec/schemas/x.gridcraft.vba.schema.json": "46e01071e188c10fa189ac21cb1b2b2a7ea8a867f666e2b04df93f9e1e28e927"
+      },
+      "source": "gridcraft/sales.werk",
+      "source_sha256": "90625a3da1a78553cdb64a5367e4307e1f4265b844df9bd4a30b348537b8905a"
+    }
+  }
+}

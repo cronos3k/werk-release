@@ -1,0 +1,125 @@
+{
+  "$id": "https://werk.format/spec/schemas/core.sheet.cells.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Index of the AUTHORED cells of one sheet (constants, formula source text, cell-format numbers) (node type core.sheet.cells). The data itself is in the BAND files of this node, one per range of rows that holds data. Each band file is one zlib stream (RFC 1950: a 2-byte header, raw DEFLATE data, a 4-byte Adler-32 checksum; format definition spec/formats/zlib-deflate.md, named for the role `band` in this node's `meta.file_formats`). Inflating it gives one werk binary envelope, whose layout is spec/layouts/core.sheet.cells.layout.txt. To read the store: for each band in order, find the file by `stored_sha256`, inflate it, check `inflated_size` and `inflated_sha256`, decode the envelope; the store is the entries of all bands in order. A store with no data has an empty `bands` list and no band file.",
+  "properties": {
+    "band_format": {
+      "const": "zlib-deflate",
+      "description": "The format id of every band file: a key of the `formats` map in MANIFEST.json, which gives the path of the format's definition.",
+      "type": "string"
+    },
+    "band_rows": {
+      "description": "Rows per band the writer used: band k starts at row k * band_rows. 1048576 means the whole sheet is one band. A reader does not need it (each band says its own rows); a writer that changes one cell re-stores only the band that holds its row.",
+      "maximum": 1048576,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "bands": {
+      "description": "The bands, in ascending row order. Empty for a store with no data.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One band: the entries of a contiguous range of rows, in one file of this node.",
+        "properties": {
+          "entry_count": {
+            "description": "Number of stored cells in the band (the n of the layout grammar).",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "first_row": {
+            "description": "Zero-based index of the first row of the band. Bands are listed in ascending row order and do not overlap.",
+            "maximum": 1048575,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "inflated_sha256": {
+            "description": "Lowercase hex sha256 of the inflated bytes. A reader checks it after inflating.",
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "inflated_size": {
+            "description": "Size in bytes of the band after inflating: the size of the envelope.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "path": {
+            "description": "The band file's LOGICAL path. Informative: the file is found by `stored_sha256` (see there). In MANIFEST.json the file's `path` is this string, or this string with a version marker `@N` before its last extension (`.../rows-0000000.wkx@1.zlib`) when a later version of the node superseded it.",
+            "pattern": "^[a-z0-9/.-]+$",
+            "type": "string"
+          },
+          "row_count": {
+            "description": "Number of rows the band covers: rows first_row .. first_row + row_count - 1. Every entry in the band lies in that range; a reader refuses a band that holds an entry outside it.",
+            "maximum": 1048576,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "stored_sha256": {
+            "description": "Lowercase hex sha256 of the band file as stored. THE way to find the file: it is the one entry in this node version's `files` list in MANIFEST.json (role `band`) whose `sha256` equals this value.",
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "stored_size": {
+            "description": "Size in bytes of the band file as stored (the zlib stream).",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "first_row",
+          "row_count",
+          "entry_count",
+          "stored_size",
+          "stored_sha256",
+          "inflated_size",
+          "inflated_sha256"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "entry_count": {
+      "description": "Total number of stored cells in the store: the sum of the bands' `entry_count`.",
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "inflated_layout": {
+      "const": "spec/layouts/core.sheet.cells.layout.txt",
+      "description": "Path, inside this package, of the layout grammar of a band's inflated bytes.",
+      "format": "werk-path",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "sheet_uid": {
+      "description": "The uid of the sheet the store belongs to: the <uid> of this node's id. Every band's envelope header repeats it.",
+      "maximum": 4294967295,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "store": {
+      "const": "cells",
+      "description": "Which store this index describes.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "store",
+    "sheet_uid",
+    "band_rows",
+    "band_format",
+    "inflated_layout",
+    "entry_count",
+    "bands"
+  ],
+  "title": "core.sheet.cells - index of the banded, zlib-compressed store of the AUTHORED cells of one sheet (constants, formula source text, cell-format numbers)",
+  "type": "object"
+}

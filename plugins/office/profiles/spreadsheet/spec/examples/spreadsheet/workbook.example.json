@@ -1,0 +1,31 @@
+{
+  "active_sheet": "sheet-1",
+  "active_sheet_index": 0,
+  "calc": {
+    "iterative": false,
+    "max_change": 0.001,
+    "max_iterations": 100,
+    "mode": "Automatic",
+    "precision_as_displayed": false
+  },
+  "custom_lists": [],
+  "date_system": "D1900",
+  "external_values": "external-values",
+  "names": "names",
+  "ooxml": "ooxml-workbook",
+  "props": {
+    "author": "",
+    "company": "",
+    "description": "",
+    "keywords": "",
+    "subject": "",
+    "title": "Example prices"
+  },
+  "protected_structure": false,
+  "schema_version": 1,
+  "sheets": [
+    "sheet-1"
+  ],
+  "styles": "styles",
+  "vba": "vba"
+}

@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.destruct.schema.json",
+  "title": "core.destruct — fracture sets, thresholds, debris mapping",
+  "description": "How this entity comes apart. A fracture SET is one precomputed way of breaking, with its own pieces and its own trigger threshold; an entity may carry several (a gentle split, a violent shatter) and a runtime picks by impact energy. The piece geometry travels as GLB nodes; this file is the map from energy to pieces to sounds. Everything here is 'enhances': an entity with an unreadable destruct node is simply indestructible.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sets"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "sets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["set_id", "trigger", "geometry_node", "pieces"],
+        "properties": {
+          "set_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "name": {"type": "string"},
+          "method": {"type": "string", "description": "e.g. 'voronoi-32', 'authored', 'boolean-plane-split'."},
+          "trigger": {
+            "description": "When this set fires. Energy in joules, because joules are what a physics engine already has and a 'strength 0..1' would not survive contact with any real simulation.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["min_impact_energy_j"],
+            "properties": {
+              "min_impact_energy_j": {"type": "number", "exclusiveMinimum": 0},
+              "max_impact_energy_j": {"type": "number", "exclusiveMinimum": 0, "description": "Upper bound of this set's band; the next, more violent set starts here. Omit on the most violent set."},
+              "min_impulse_ns": {"type": "number", "minimum": 0, "description": "Optional secondary gate, newton-seconds."},
+              "directional": {"type": "boolean", "description": "True when the set only applies to impacts within cone_half_angle_rad of axis."},
+              "axis": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "Model-space unit vector, required when directional is true."},
+              "cone_half_angle_rad": {"type": "number", "minimum": 0, "maximum": 3.14159265358979}
+            }
+          },
+          "geometry_node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "node_id of the GLB holding every piece of this set, one mesh per piece, named by piece_id."},
+          "pieces": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["piece_id", "mesh_name", "mass_kg", "center_of_mass_m"],
+              "properties": {
+                "piece_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+                "mesh_name": {"type": "string", "description": "Exact node name inside geometry_node's GLB. A name, not an index (law 4)."},
+                "mass_kg": {"type": "number", "exclusiveMinimum": 0},
+                "center_of_mass_m": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+                "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+                "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "Which original part this piece came from."},
+                "debris_class": {
+                  "enum": ["chunk", "shard", "splinter", "dust", "fragment", "plank", "panel"],
+                  "description": "Drives which debris sound and particle set a runtime picks."
+                },
+                "size_class": {"enum": ["dust", "tiny", "small", "medium", "large"]},
+                "audio_effect_id": {"type": "string", "description": "Slug of the core.audio effect this piece plays when it first lands."},
+                "collider_node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+                "neighbors": {
+                  "type": "array",
+                  "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+                  "description": "piece_ids sharing a fracture face with this one. Lets a runtime break partially: sever only the bonds the impact reached."
+                },
+                "bond_strength_n": {
+                  "type": "array",
+                  "items": {"type": "number", "minimum": 0},
+                  "description": "Force in newtons needed to sever each bond, parallel to 'neighbors' and the same length. A validator MUST check the lengths match."
+                }
+              }
+            }
+          },
+          "residue": {
+            "description": "What stays behind: the stump, the frame, the hole.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "geometry_node": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+              "mesh_name": {"type": "string"}
+            }
+          },
+          "audio": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "break_effect_id": {"type": "string", "description": "The one-shot played at the moment of breaking."},
+              "settle_effect_id": {"type": "string", "description": "The tail as pieces come to rest."}
+            }
+          },
+          "mass_check": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Measured conservation: the pieces plus residue should weigh what the whole did.",
+            "properties": {
+              "sum_piece_mass_kg": {"type": "number", "minimum": 0},
+              "body_mass_kg": {"type": "number", "minimum": 0},
+              "relative_error": {"type": "number", "minimum": 0, "description": "|sum - body| / body. A conformant enrichment pipeline keeps this below 0.02."}
+            }
+          }
+        }
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"]},
+    "note": {"type": "string"}
+  }
+}

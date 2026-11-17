@@ -14,8 +14,14 @@
 # binary by the extension rules below, which come later and therefore win.
 spec/** text eol=lf
 loaders/** text eol=lf
-adapters/blender/werk_blender/spec/** text eol=lf
-adapters/blender/werk_blender/vendor/** text eol=lf
+plugins/blender/werk_blender/spec/** text eol=lf
+plugins/blender/werk_blender/vendor/** text eol=lf
+# The libraries vendor the same spec/ + loaders/ bytes (libs/bundle and the
+# Python package's copy) and the plug-ins vendor the single-file libraries.
+libs/bundle/** text eol=lf
+libs/python/werk/bundle/** text eol=lf
+libs/python/werk_single.py text eol=lf
+libs/js/dist/** text eol=lf
 
 # Payload fixtures are bytes and are never translated.
 *.png binary
@@ -49,3 +55,12 @@ fixtures/*.werk binary
 # normalised line ending on checkout and both checks fail, on the machine that
 # did nothing wrong.
 retarget/testdata/** binary
+
+# Plug-ins: the Office profile definitions are copied byte for byte into the
+# packages werk-office writes (their hashes are in those manifests), and the
+# remaining binary payload kinds the plug-ins carry.
+plugins/office/profiles/** binary
+*.zlib binary
+*.wkx binary
+*.wkxz binary
+*.uasset binary

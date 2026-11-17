@@ -1,0 +1,15 @@
+{
+  "blocks": {
+    "count": 7,
+    "format": "zlib-deflate",
+    "inflated_sha256": "b9d1930c3e74f4cfe5f9cace32b96a0b8cb41ab9af218b820114af39608ace95",
+    "inflated_size": 2381,
+    "role": "blocks",
+    "stored_sha256": "77239e57104b7abbed1bbbdb4ba78481b4569979fe440d74bbb6ff48290f9544",
+    "stored_size": 723
+  },
+  "schema_version": 1,
+  "story": {
+    "kind": "body"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "profile": "spreadsheet/1",
+  "manifest_schema": "spec/schemas/manifest.spreadsheet.schema.json",
+  "profile_spec": "spec/PROFILE-SPREADSHEET.md",
+  "conventions_map": "spec/conventions-map.spreadsheet.json",
+  "conventions": {
+    "a1_row_base": 1,
+    "alignment_bytes": 16,
+    "angle_unit": "degree",
+    "cell_index_base": 0,
+    "color_rgb_packing": "0xRRGGBB",
+    "color_space": "srgb",
+    "csv_field_separator": "comma",
+    "csv_quote": "double-quote",
+    "csv_record_terminator": "lf",
+    "date_1900_fictitious_leap_day_serial": 60,
+    "date_1900_serial_of_1900_01_01": 1,
+    "date_1900_serial_of_1900_03_01": 61,
+    "date_1904_serial_of_1904_01_01": 0,
+    "date_serial_unit": "day",
+    "endianness": "le",
+    "formula_argument_separator": "comma",
+    "formula_array_row_separator": "semicolon",
+    "formula_decimal_separator": "period",
+    "formula_grammar": "excel-a1-en-us",
+    "formula_leading_equals": false,
+    "grid_cols": 16384,
+    "grid_rows": 1048576,
+    "hash_algorithm": "sha256",
+    "id_case": "kebab-case",
+    "length_unit": "point",
+    "number_type": "ieee754-binary64",
+    "page_margin_unit": "inch",
+    "points_per_inch": 72,
+    "preview_pixel_origin": "top-left",
+    "preview_sample_format": "rgb8",
+    "signature_algorithm": "ed25519",
+    "text_encoding": "utf-8",
+    "theme_tint_scale": 1000,
+    "y_axis_direction": "down"
+  },
+  "schemas": {
+    "core.revisions": "spec/schemas/core.revisions.schema.json",
+    "core.sheet.cells": "spec/schemas/core.sheet.cells.schema.json",
+    "core.sheet.chart": "spec/schemas/core.sheet.chart.schema.json",
+    "core.sheet.computed": "spec/schemas/core.sheet.computed.schema.json",
+    "core.sheet.names": "spec/schemas/core.sheet.names.schema.json",
+    "core.sheet.sheet": "spec/schemas/core.sheet.sheet.schema.json",
+    "core.sheet.styles": "spec/schemas/core.sheet.styles.schema.json",
+    "core.sheet.workbook": "spec/schemas/core.sheet.workbook.schema.json",
+    "core.tool": "spec/schemas/core.tool.schema.json"
+  },
+  "layouts": {
+    "core.sheet.cells": "spec/layouts/core.sheet.cells.layout.txt",
+    "core.sheet.computed": "spec/layouts/core.sheet.computed.layout.txt"
+  },
+  "entry_order": [
+    "MANIFEST.json",
+    "SIGNATURE.json",
+    "LICENSE",
+    "README.txt",
+    "HOW-TO-READ.md",
+    "loaders/",
+    "spec/",
+    "revisions/",
+    "workbook/workbook.json",
+    "preview/",
+    "sheets/",
+    "tools/",
+    "workbook/"
+  ],
+  "preview_tier": [
+    "MANIFEST.json",
+    "SIGNATURE.json",
+    "LICENSE",
+    "README.txt",
+    "HOW-TO-READ.md",
+    "loaders/",
+    "spec/",
+    "revisions/",
+    "workbook/workbook.json",
+    "preview/"
+  ],
+  "loader_meta": {
+    "loader-python": {
+      "capabilities": [
+        "read-manifest",
+        "verify-hashes",
+        "read-envelope",
+        "materialize"
+      ],
+      "dependencies": [],
+      "entrypoint": "loaders/werk_read.py",
+      "form": "source",
+      "language": "python",
+      "toolchain": "python>=3.8"
+    },
+    "loader-rust": {
+      "build_command": "rustc -O --edition 2021 loaders/werk_read.rs -o werk_read",
+      "capabilities": [
+        "read-manifest",
+        "verify-hashes",
+        "read-envelope",
+        "materialize"
+      ],
+      "dependencies": [],
+      "entrypoint": "loaders/werk_read.rs",
+      "form": "source",
+      "language": "rust",
+      "toolchain": "rustc>=1.70 --edition 2021"
+    },
+    "loader-c": {
+      "build_command": "cc -std=c99 -O2 loaders/werk_read.c -o werk_read",
+      "capabilities": [
+        "read-manifest",
+        "verify-hashes",
+        "read-envelope",
+        "materialize"
+      ],
+      "dependencies": [],
+      "entrypoint": "loaders/werk_read.c",
+      "form": "source",
+      "language": "c",
+      "toolchain": "c99"
+    }
+  }
+}

@@ -1,0 +1,652 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/manifest.schema.json",
+  "title": "werk MANIFEST.json — profile 3d-entity/1",
+  "description": "The single source of structure for a werk 3D entity. Validates MANIFEST.json at the package root. This schema is deliberately standalone: it contains no $ref to any other file, so a validator needs no resolver and an agent can read it alone. Manifesto laws 1, 4, 5, 6, 8 all land here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "werk",
+    "profile",
+    "entity",
+    "conventions",
+    "container",
+    "license",
+    "schemas",
+    "spec_sha256",
+    "parts",
+    "materials",
+    "nodes"
+  ],
+  "properties": {
+    "werk": {
+      "description": "Format version of the werk doctrine this package conforms to. Numbers, not a string, so a reader compares rather than parses.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["major", "minor"],
+      "properties": {
+        "major": {"type": "integer", "const": 1},
+        "minor": {"type": "integer", "minimum": 0}
+      }
+    },
+    "profile": {
+      "description": "Which profile instantiates the laws here.",
+      "type": "string",
+      "const": "3d-entity/1"
+    },
+    "manifest_schema": {
+      "description": "OPTIONAL. Path inside this package of the JSON Schema that validates THIS manifest. Added when a second profile appeared (image/1), because 'which schema validates the manifest' had until then been answered by knowing, which is the one thing law 8's corollary forbids: declared beats derived, and deriving a filename from a profile string is deriving. When the key is absent the fallback is spec/schemas/manifest.schema.json, which is what every profile-1 package written before the key existed means.",
+      "type": "string",
+      "pattern": "^spec/schemas/[A-Za-z0-9._-]+\\.schema\\.json$"
+    },
+    "profile_spec": {
+      "description": "OPTIONAL (ruling 2 of 2026-10-13, PROPOSED). Path inside this package of the NARRATIVE specification of the profile - the document a reader starts with and the one that carries the normative 'Writing a minimal valid package' section. Declared rather than derived, exactly like manifest_schema. ABSENT means spec/SPEC.md, which is what every profile-1 package written before the key existed means. See spec/SPEC.md section 2.2.",
+      "type": "string",
+      "pattern": "^spec/[A-Za-z0-9._/-]+\\.md$"
+    },
+    "entity": {
+      "description": "Identity for recognition, never for external reference (laws 1 and 4).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uuid", "name"],
+      "properties": {
+        "uuid": {
+          "description": "RFC 4122 UUID, lowercase hex with hyphens. Two hermetic copies of the same entity carry the same uuid; a derived-but-different entity gets a new one.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "summary": {
+          "description": "One paragraph, human-readable. Also the store's search text (law 9).",
+          "type": "string",
+          "maxLength": 4000
+        },
+        "created": {"type": "string", "format": "date-time"}
+      }
+    },
+
+    "conventions": {
+      "description": "Law 8. Every one of these is a machine-checkable value, never prose and never an advisory string. A reader MUST verify it supports each declared value BEFORE consuming any payload, and MUST refuse rather than guess. Values are pinned by profile 3d-entity/1; a future profile may widen them, which is exactly why they are written down instead of assumed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endianness", "units_per_meter", "length_unit", "angle_unit",
+        "time_unit", "mass_unit", "up_axis", "forward_axis", "right_axis",
+        "handedness", "winding", "quat_order", "oct_encoding_pole",
+        "sh_l1_order", "color_space_default", "uv_origin",
+        "alignment_bytes", "text_encoding", "id_case", "hash_algorithm",
+        "signature_algorithm"
+      ],
+      "properties": {
+        "endianness": {"const": "le", "description": "All custom binary payloads are little-endian. Note that MessagePack header integers inside those payloads are big-endian by MessagePack's own definition; see spec/layouts/ENVELOPE.layout.txt section 4."},
+        "units_per_meter": {"const": 1.0, "description": "Geometry units per metre. SI throughout."},
+        "length_unit": {"const": "metre"},
+        "angle_unit": {"const": "radian"},
+        "time_unit": {"const": "second"},
+        "mass_unit": {"const": "kilogram"},
+        "up_axis": {"const": "y"},
+        "forward_axis": {"const": "-z", "description": "The direction the entity faces in its own model space."},
+        "right_axis": {"const": "+x", "description": "Declared rather than derived from up x forward, because deriving it is where handedness mistakes hide."},
+        "handedness": {"const": "right"},
+        "winding": {"const": "ccw", "description": "Front-facing triangle vertex order, counter-clockwise when viewed from the front."},
+        "quat_order": {"const": "wxyz", "description": "Component order of every quaternion in every payload, JSON and binary alike."},
+        "oct_encoding_pole": {"const": "y", "description": "The axis the octahedral mapping folds about. See spec/layouts/imposter.layout.txt section 2."},
+        "sh_l1_order": {
+          "description": "Component order of L1 spherical harmonics wherever they appear.",
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {"type": "string"},
+          "const": ["dc", "y", "z", "x"]
+        },
+        "color_space_default": {"const": "srgb", "description": "Applies only where a texture does not declare its own color_space. Every core.tex node MUST declare one anyway."},
+        "uv_origin": {"const": "top-left", "description": "UV (0,0) is the top-left texel of a texture, matching PNG raster order."},
+        "alignment_bytes": {"const": 16, "description": "Payload sections in envelope binaries start on this boundary."},
+        "text_encoding": {"const": "utf-8"},
+        "id_case": {"const": "kebab-case", "description": "Every id in this format matches ^[a-z0-9]+(-[a-z0-9]+)*$."},
+        "hash_algorithm": {"const": "sha256", "description": "Lowercase hex, 64 characters. Test vectors in spec/MINI-SPECS.md."},
+        "signature_algorithm": {"const": "ed25519", "description": "RFC 8032. Test vectors in spec/MINI-SPECS.md."},
+        "sh_coeff_order": {
+          "const": "coefficient-major",
+          "description": "OPTIONAL, added for core.geom.gsplat (Stage 12). Memory order of a per-primitive spherical-harmonic coefficient array: coefficient-major means all channels of coefficient 0, then all channels of coefficient 1, and so on. It is NOT sh_l1_order, which names the BASIS order an x.* extension uses for per-vertex L1 irradiance; the two describe different things and collapsing them would give one convention two meanings (D-GS-3). ABSENCE MEANS 'coefficient-major', which is what every package written before this key existed means and what spec/layouts/gsplat.layout.txt section 4 requires anyway. It is optional rather than mandatory because making it mandatory would have made every previously conformant package non-conformant for declining to answer a question about a node type it does not contain."
+        },
+        "sh_degree": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "description": "OPTIONAL, added for core.geom.gsplat (Stage 12). The MAXIMUM spherical-harmonic degree any node in this package carries, so a consumer can size a buffer before parsing a 100 MB payload. IT IS NOT THE AUTHORITY ON ANY PAYLOAD: each WKGS envelope declares its own sh_degree in its header and that is what governs that payload. A payload declaring a degree HIGHER than this key is a producer error and a reader reports the disagreement (report code sh-degree-exceeds-declared) rather than picking one — the same rule SPEC.md section 3.12 clause 5 states for recipe vs disclosure. Absent means the package makes no package-level claim."
+        }
+      }
+    },
+
+    "container": {
+      "description": "How this package is materialised. Directory and zip layouts are identical; both are the format.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["form", "zip_compression", "entry_order"],
+      "properties": {
+        "form": {
+          "description": "ADVISORY, and frozen at authoring time: the form the package was written in when it was last signed. It is NOT a claim about the form you are holding. Directory and zip layouts are identical and both are the format, so unzipping a package does not make it a different package — but the signature covers the manifest's exact bytes, so 'correcting' this field on unzip would invalidate a valid chain to record something a reader can see for itself. A reader that finds this field disagreeing with the form in front of it MUST treat that as an informational note and MUST NOT treat it as damage, a validation failure, or a reason to rewrite anything (recorded as Stage 2 spec finding S-4, resolved as Stage 1 decision 20).",
+          "enum": ["directory", "zip"]
+        },
+        "zip_compression": {
+          "description": "STORE is the default and what conformance fixtures use: a zero-dependency zip reader is about a hundred lines in any language WITHOUT an inflate implementation, and the payload formats (PNG, GLB, WAV) are already internally compressed. DEFLATE remains legal for packages that value bytes over bootstrap simplicity.",
+          "enum": ["store", "deflate"],
+          "default": "store"
+        },
+        "entry_order": {
+          "description": "Law 9, preview-first byte layout: the physical order zip entries were written in, so a ranged read of the first bytes yields a browsable, searchable, auditable listing. A reader MUST NOT depend on this order for correctness; it exists so a store can exploit it. S-14, RULING, implemented, and it is a SHOULD: a writer SHOULD write entries preview-first, a reader NEVER depends on entry order, and a package written in any order at all is fully conformant. MATCHING RULE: an element ending in '/' is a DIRECTORY PREFIX matching every entry beneath it; anything else is an EXACT path. Matching is two-pass, exact paths first and prefixes second, so an exact entry listed between two prefixes lands where it is listed rather than being swallowed by the prefix above it. This is what every existing implementation already does, worked out by inspection; the ruling only stops it being a convention discovered rather than declared. Order affects how early the browsable tier appears, never correctness. See spec/SPEC.md section 1.",
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        },
+        "total_size_bytes": {
+          "description": "OPTIONAL. The sum of the `size` fields of every DISTINCT path declared in nodes[].versions[].files[]: payload bytes only, excluding MANIFEST.json, SIGNATURE.json and all container framing, so it is the same number in the directory form and in the zip. A path listed by several versions of ONE node counts ONCE — the S-18 reading of what a file belongs to, applied arithmetically. It exists so a store can size a fetch before parsing the graph, and it is advisory: a reader that needs the number computes it. S-30, RULING, implemented: THE NORMATIVE DEFINITION NOW LIVES IN spec/SPEC.md SECTION 2, where a reader looking for container semantics will meet it; this description is a copy of it, not its home. A definition reachable only from a schema description is worth less than one in SPEC.md, which a second gauntlet reader demonstrated by losing minutes to this exact field after it had supposedly been fixed. S-26, RULING: the field previously had no definition anywhere in the spec, and a gauntlet reader established what it meant by trying candidates against the file, which is exactly the \"if you had to ask a person, that is a spec bug\" case this format is supposed to remove.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "preview_prefix_bytes": {
+          "description": "A HINT, and DECLARED-NOT-GUARANTEED (S-15, RULING, implemented). The APPROXIMATE byte offset of the end of the last container entry belonging to the PREVIEW TIER, measured from the start of the zip: fetch roughly this many leading bytes and you hold a browsable, searchable, auditable record. The preview tier is named explicitly by container.preview_tier, and where that key is absent the profile default is MANIFEST.json, SIGNATURE.json, LICENSE, README.txt, loaders/, spec/, semantics/, imposters/ and the one entry named by primary.sound. A writer SHOULD emit the recomputed value rather than an estimate. A READER MUST NOT TREAT IT AS EXACT: it must check what a range request actually returned, and it must not report a disagreement as damage or refuse a package over one. The reason it is a hint is arithmetic and was measured (S10-2): the field is a measurement of the container that contains it, so writing it changes the length of MANIFEST.json, which moves every later entry, which changes the measurement. Every writer here iterates to a fixed point and converges; a MUST that a correct writer can fail for that reason is a MUST in the wrong place. See spec/SPEC.md section 1.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "preview_tier": {
+          "description": "OPTIONAL (S-15, RULING, implemented). The entries preview_prefix_bytes was computed over, listed rather than implied, so a reader can recompute the number without knowing this profile's default set. Same matching rule as entry_order: a trailing '/' means directory prefix, anything else is an exact path.",
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        }
+      }
+    },
+
+    "primary": {
+      "description": "OPTIONAL. Which node a consumer should reach for when it wants ONE of something: the mesh, a sound to audition, a still to show. Every value is a node_id in this manifest. Added because three independently-written readers each had to GUESS what 'the primary mesh' meant — the spec distinguished core.geom.source from core.geom.game in prose and left the choice to inference, which is exactly what law 8 says a convention must never be. A reader that finds this block uses it; a reader that does not MAY fall back to the documented inference (SPEC.md section 2), and a package that means something other than the obvious choice can now say so. Serves two masters (law 9): a runtime asks the same question a store's browser listing asks. IT NAMES A NODE, AND A NODE MAY HOLD SEVERAL FILES: following primary.sound to its node is only half the journey. The other half is SPEC.md section 2.1 -- resolve the node's active version's `payload_file`, and where it is absent apply that section's ordered rules. A consumer MUST NOT take files[0]: a core.audio.effect's files[] begins with its descriptor, and an implementer that took the first entry shipped the JSON as the sound while reporting success (S-OW-2, measured 2026-08-08).",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mesh": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "node_id of the mesh to render when only one is wanted. Normally the core.geom.game node, never a core.geom.lod. The narrower key: it still means a MESH. A package whose primary geometry is not a mesh uses 'geometry' instead."
+        },
+        "geometry": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "S12-7, RULING, implemented. node_id of the geometry to reach for when only one is wanted, of ANY core.geom.* type — the type-agnostic slot. Added because 'primary' offered mesh, sound and image and a Gaussian splat or point cloud is none of the three: a splat package's only honest move was to omit the block entirely and leave the reader a documented mesh fallback that finds nothing. Splat and point-cloud packages get a primary key like everyone else. Where a package's primary geometry IS a mesh and both keys appear, they name the same node; a reader that finds them disagreeing in such a package reports the disagreement rather than picking one."
+        },
+        "sound": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "node_id of the one-shot to audition — the hover preview of law 9's corollary. It SHOULD be a node whose bytes sit inside container.preview_prefix_bytes, so auditioning costs a ranged read and not a download."
+        },
+        "image": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "node_id of the still to show in a listing: an imposter tier, a texture, or an x.* evidence view. Same preview-prefix guidance as 'sound'."
+        },
+        "scene": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "Ruling 5 of 2026-10-13, PROPOSED. node_id of the core.scene node: the versioned record of how the parts are placed and shown (spec/SPEC.md section 3.20). Absent in a package that has none, which then shows every part, at the placement parts[] gives."
+        }
+      }
+    },
+    "license": {
+      "description": "Law 7: the license travels as full embedded text, never as a link. S12-9, RULING: the format provides the structured place for licence facts and nothing more — filling it truthfully is the responsibility of the author and their tool or export implementation, and the format neither vets nor enforces content licensing. No conformance clause turns on what the text SAYS; the manifest hash and signature chain only guarantee it cannot be swapped or stripped silently. The doctrine's home is spec/SPEC.md section 2, beside the disclosure no-enforcement doctrine of section 3.12, of which it is the licence-side twin.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256"],
+      "properties": {
+        "spdx_id": {"type": "string", "description": "Advisory shorthand only. The embedded text is the license."},
+        "file": {"type": "string", "const": "LICENSE"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+
+    "schemas": {
+      "description": "Map from node type id to the path of the JSON Schema that validates that node's structured payload, inside this package. Declared rather than derived from a filename convention, so a reader never has to guess a path. Every type appearing in nodes[] whose payload is JSON MUST have an entry. AN EMPTY MAP IS CONFORMANT (S10-1, RULING, implemented): a package holding only core.geom.*, core.license, core.readme, core.spec and core.loader nodes has no schema-bearing node type at all, and {} is then the truthful answer rather than a defect. Measured, not theorised: a mesh-only export was rejected for an empty schemas map and validated with zero errors the moment one audio node was added, which is a schema punishing a package for being small. The minProperties:1 that did that is gone.",
+      "type": "object",
+      "propertyNames": {"pattern": "^(core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"},
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^spec/schemas/[A-Za-z0-9._-]+\\.schema\\.json$"
+      }
+    },
+
+    "layouts": {
+      "description": "Map from node type id to the path of the layout grammar for that node's custom binary payload. Every type appearing in nodes[] whose payload is a custom binary MUST have an entry. As with schemas, an empty map is the conformant answer for a package that carries no custom binary (S10-1).",
+      "type": "object",
+      "propertyNames": {"pattern": "^(core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"},
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^spec/layouts/[A-Za-z0-9._-]+\\.layout\\.txt$"
+      }
+    },
+
+    "formats": {
+      "description": "OPTIONAL (ruling 1 of 2026-10-13, PROPOSED). Map from FORMAT ID to the path, inside this package, of that format's definition document - a self-contained, normative, byte-level description with hash-checkable test vectors, from which a decoder can be built. Parallel to schemas and layouts: a node whose payload (or another of its files) is in a foreign encoding names the format id in its meta (payload_format / file_formats / contained_formats) and this map says where the definition is. It lists every format some node of the package names and every definition those build on (`requires`); it is absent or {} when no node names one. The documents are files of a core.spec node and so are covered by spec_sha256. See spec/SPEC.md section 3.18.",
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^spec/formats/[A-Za-z0-9._-]+\\.md$"
+      }
+    },
+
+    "spec_sha256": {
+      "description": "MANDATORY (S-29, RULING, implemented). One sha256 over the spec/ tree THIS PACKAGE CARRIES, so a reader can tell in one comparison whether the schemas travelling inside the file are the ones it already knows. Vendoring spec/ is structural for every writer in every language - an add-on installed from a zip onto a machine that has never seen the source repository cannot ship a path, it has to ship bytes - and until this field existed nothing said WHICH revision those bytes were, so two tools could emit mutually contradictory schemas while both claiming the same profile. ALGORITHM, stated completely because a hash whose input order is a convention is not a hash: take every file under spec/ that this manifest declares in some node files[]; sort by package-relative path ascending, comparing UTF-8 BYTES; for each, append the path UTF-8 bytes, one 0x0A, that file own sha256 as 32 RAW BYTES, one 0x0A; spec_sha256 is the sha256 of that concatenation. Paths are included, so moving a file changes the hash; raw hash bytes rather than hex, deliberately the same shape as input_hash. Note the consequence, because it catches people: for a set of exactly one file this is NOT that file own sha256. See spec/SPEC.md section 2.",
+      "$ref": "#/$defs/sha256"
+    },
+
+    "conventions_map": {
+      "description": "OPTIONAL (S-17, RULING, implemented). Path inside this package of the machine-readable convention to node-type map: which node types each convention in `conventions` actually governs, so a reader that does not support one refuses exactly those nodes and loads everything else. Declared rather than derived, exactly like manifest_schema, schemas and layouts. ABSENCE means the profile table as printed in the vendored spec/SPEC.md section 10.1, which is what every package written before the key existed means. Where a package carries both and they disagree, the JSON in that package wins for that package and the disagreement is a report entry, because that is the copy a reader can check. See spec/SPEC.md section 10.2.",
+      "type": "string",
+      "pattern": "^spec/[A-Za-z0-9._/-]+\\.json$"
+    },
+
+    "parts": {
+      "description": "The stable-id join key across every node family (law 4). Ids survive re-export; indices rot.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["part_id", "name", "parent", "transform"],
+        "properties": {
+          "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "name": {"type": "string", "minLength": 1},
+          "parent": {
+            "description": "part_id of the parent part, or null for a root part.",
+            "type": ["string", "null"],
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "transform": {
+            "description": "Local transform relative to the parent part. TRS, never a matrix: a matrix hides whether it is row- or column-major and whether it was written transposed, and that ambiguity is the exact class of bug this format exists to remove.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["translation", "rotation", "scale"],
+            "properties": {
+              "translation": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "metres, [x,y,z]"},
+              "rotation": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}, "description": "unit quaternion [w,x,y,z]"},
+              "scale": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "not": {"const": 0}}, "description": "dimensionless, [x,y,z]. Never zero. A NEGATIVE component is a reflection along that axis (ruling 5 of 2026-10-13, PROPOSED; before it the schema required every component to be strictly positive, and every package written under that rule is unaffected). An odd number of negative components reverses the handedness of everything this part places, so a consumer drawing triangles reverses the effective winding for it; a consumer that does not implement reflections says so (report code `part-reflection-unsupported`) rather than drawing the absolute value silently. See spec/SPEC.md section 3.20."}
+            }
+          },
+          "bounds_node": {"type": "string", "description": "node_id of a core.phys.bounds node scoped to this part."}
+        }
+      }
+    },
+
+    "materials": {
+      "description": "Material identity. Joins geometry to materials/, properties/ and the audio material-sound sets.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["material_id", "name"],
+        "properties": {
+          "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "part_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "name": {"type": "string", "minLength": 1},
+          "class": {
+            "description": "Coarse physical class, used by audio and properties when nothing more specific is known.",
+            "enum": ["wood", "metal", "stone", "ceramic", "glass", "plastic", "rubber", "fabric", "leather", "paper", "liquid", "organic", "composite", "unknown"]
+          }
+        }
+      }
+    },
+
+    "nodes": {
+      "description": "The graph. Every node is an island (law 3): self-contained, meaningful alone, never reaching into another node's bytes. Cross-references are by identity through this array only.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/node"}
+    },
+
+    "signature_file": {
+      "description": "Present when a signature chain accompanies this package. Its absence is the 'anonymous' state of the three-state doctrine and breaks nothing (law 7). SIGNATURE.json is NOT listed in any node's files[] and is NOT hashed by this manifest, because it signs this manifest.",
+      "type": "string",
+      "const": "SIGNATURE.json"
+    },
+
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool", "version"],
+      "properties": {
+        "tool": {"type": "string"},
+        "version": {"type": "string"},
+        "model": {"type": "string"}
+      }
+    }
+  },
+
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+
+    "path": {
+      "description": "Package-relative POSIX path. No leading slash, no drive letter, no '..' segment, no backslash. Case-sensitive.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9][A-Za-z0-9._@/-]*$"
+    },
+
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "type", "versions", "active", "edges"],
+      "properties": {
+        "node_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "type": {
+          "description": "Namespaced node type. core.* is the profile's constitution; x.* is open frontier and a reader that does not know an x.* type skips it and loses nothing (law 12).",
+          "anyOf": [
+            {
+              "enum": [
+                "core.spec",
+                "core.loader",
+                "core.license",
+                "core.readme",
+                "core.geom.source",
+                "core.geom.game",
+                "core.geom.lod",
+                "core.tex",
+                "core.material",
+                "core.imposter",
+                "core.phys.colliders",
+                "core.phys.bounds",
+                "core.phys.body",
+                "core.field.flow",
+                "core.pose.rest",
+                "core.skeleton",
+                "core.anim.clip",
+                "core.retarget.bind",
+                "core.audio.package",
+                "core.audio.effect",
+                "core.audio.ambience",
+                "core.destruct",
+                "core.props",
+                "core.semantics",
+                "core.provenance",
+                "core.recipe",
+                "core.disclosure",
+                "core.embedding",
+                "core.geom.points",
+                "core.geom.gsplat",
+                "core.tool",
+                "core.tool.config",
+                "core.revisions",
+                "core.scene"
+              ]
+            },
+            {"type": "string", "pattern": "^x\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"}
+          ]
+        },
+        "part_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "material_id": {"type": ["string", "null"], "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+        "versions": {
+          "description": "Append-only (law 6). A node may hold multiple coexisting versions. Old versions are never rewritten; compaction is an explicit, signed, logged choice, never silent housekeeping.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/version"}
+        },
+        "active": {
+          "description": "The v number of the author's RECOMMENDED version — a recommendation, not a command. Consumers may select any version. If it names a version that is missing or unreadable, a resilient reader MAY fall back to the newest valid earlier version and MUST report having done so.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["to", "kind"],
+            "properties": {
+              "to": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "description": "node_id of the target node. MUST name a node in this manifest's nodes[]; a writer MUST NOT emit an edge to an absent node (SPEC section 5)."},
+              "kind": {
+                "description": "'requires' means this node is meaningless without the target; 'enhances' means it adds a feature the target does not need. Almost everything is 'enhances' (law 3). A 'requires' edge into a dead node, or to a node absent from nodes[], kills this node too (requires-dead-node, requires-missing-node); an 'enhances' edge into a dead or absent node costs one feature (SPEC section 5).",
+                "enum": ["requires", "enhances"]
+              },
+              "role": {
+                "description": "Optional relationship label, e.g. 'lod-of', 'mirror-of', 'baked-from', 'fractures', 'sounds-for'.",
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+              }
+            }
+          }
+        },
+        "meta": {
+          "description": "Type-specific node metadata that a reader needs BEFORE opening the payload — selection metrics, capability flags, language. Payload-internal detail belongs in the payload, not here.",
+          "type": "object"
+        }
+      },
+
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "core.geom.lod"}}, "required": ["type"]},
+          "then": {
+            "required": ["meta"],
+            "properties": {
+              "meta": {
+                "type": "object",
+                "required": ["lod_level", "screen_space_error_px", "triangle_count", "reference_resolution_px"],
+                "properties": {
+                  "lod_level": {"type": "integer", "minimum": 1, "maximum": 4},
+                  "screen_space_error_px": {
+                    "description": "Maximum silhouette deviation from core.geom.game, in pixels, when the entity's bounding sphere is rendered at reference_resolution_px vertical pixels with a 60 degree vertical field of view. A selector switches to this LOD when its own budget exceeds this number. Measured, not asserted.",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "reference_resolution_px": {"type": "integer", "const": 1080},
+                  "triangle_count": {"type": "integer", "minimum": 0},
+                  "vertex_count": {"type": "integer", "minimum": 0}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "core.tex"}}, "required": ["type"]},
+          "then": {
+            "required": ["meta"],
+            "properties": {
+              "meta": {
+                "type": "object",
+                "required": ["color_space", "usage", "width", "height", "channels", "bit_depth"],
+                "properties": {
+                  "color_space": {
+                    "description": "Mandatory per texture. 'srgb' means the stored 8-bit values are sRGB-encoded and a consumer MUST linearise before lighting maths. 'linear' means the values are already linear. Getting this wrong is invisible in review and obvious on screen.",
+                    "enum": ["srgb", "linear"]
+                  },
+                  "usage": {"enum": ["base-color", "normal", "metallic-roughness", "occlusion", "emissive", "height", "opacity", "mrao", "depth", "other"]},
+                  "width": {"type": "integer", "minimum": 1},
+                  "height": {"type": "integer", "minimum": 1},
+                  "channels": {"type": "integer", "minimum": 1, "maximum": 4},
+                  "bit_depth": {"enum": [8, 16]},
+                  "normal_convention": {
+                    "description": "Required when usage is 'normal'. Tangent-space green channel direction. MikkTSpace tangents are assumed; a package producing anything else MUST say so here.",
+                    "enum": ["opengl-y-up", "directx-y-down"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"type": {"const": "core.loader"}}, "required": ["type"]},
+          "then": {
+            "required": ["meta"],
+            "properties": {"meta": {"$ref": "#/$defs/loaderMeta"}}
+          }
+        }
+      ]
+    },
+
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v", "files", "note", "producer", "epistemic", "created"],
+      "properties": {
+        "v": {
+          "description": "Version number: an INCREMENTAL INTEGER - 1, 2, 3, ... It is NOT semver: no dots, no minor, no patch, and no ordering rule beyond integer comparison (S-18, RULING, implemented). Starts at 1, strictly increasing within a node, never reused, never renumbered. A writer that wants to say this was a small change says it in the mandatory work note, which is what the note is for. A node has AT LEAST ONE version and EXACTLY ONE active version.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "files": {
+          "description": "Every byte this version owns. Every byte in the container except MANIFEST.json and SIGNATURE.json is reachable from exactly one NODE's files[]. Nothing floats. S-18, RULING, implemented: the unit is the NODE, not the node version — two versions of one node may both list an unchanged file, with identical path, hash and size, which is what law 6's coexisting append-only versions make normal. Two DIFFERENT nodes claiming one path remains an error. The alternative reading (exactly one node VERSION, so a shared file must be copied) is defensible and would push dedup entirely into the store; it was not chosen because it would make the file a worse record of what happened, for a saving the store already provides.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "sha256", "size"],
+            "properties": {
+              "path": {"$ref": "#/$defs/path"},
+              "sha256": {"$ref": "#/$defs/sha256"},
+              "size": {"type": "integer", "minimum": 0, "description": "Exact byte length. Declared, never derived from the filesystem."},
+              "media_type": {"type": "string", "description": "IANA media type where one exists, e.g. image/png, audio/wav, model/gltf-binary, application/json, text/plain. Advisory; the node type is the authority."},
+              "offset_hint": {
+                "description": "Byte offset of this file's DATA within the zip form, when known. A hint for ranged reads (law 9); a reader MUST verify by parsing the zip's own headers and MUST NOT trust this number.",
+                "type": "integer",
+                "minimum": 0
+              },
+              "role": {
+                "description": "Which slot this file fills within a multi-file node, e.g. 'albedo', 'normal', 'depth', 'mrao', 'descriptor', 'best', 'variation'. Open kebab-case vocabulary (law 12) with THREE RESERVED VALUES a reader may rely on across every node type: 'payload' means this file IS the node's payload, at most one per version; 'descriptor' means a sidecar ABOUT the payload and is NEVER selected as the payload; 'best' means the recommended one of several interchangeable takes and is the payload role for the core.audio.* families. See SPEC.md section 2.1 for the normative resolution order (S-XV-4 / S-OW-2).",
+                "type": "string",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+              }
+            }
+          }
+        },
+        "payload_file": {
+          "description": "PROPOSED (S-XV-4 / S-OW-2), optional and purely additive. The package-relative path of the file that IS this node's payload -- the one a consumer asking 'give me the sound' or 'give me the mesh' wants. MUST equal the `path` of exactly one entry in THIS version's files[]. It exists because primary.{mesh,geometry,sound,image} names a NODE and a node may hold several files: an 8B implementer followed primary.sound to its node, took files[0], and wrote out the DESCRIPTOR JSON where a WAV was asked for -- while reporting success. Law 8: a convention is a machine-checkable value, never an inference. A writer SHOULD emit it on every version whose files[] has more than one entry; on a single-file version it is redundant. When it is absent a consumer resolves by SPEC.md section 2.1's ordered rules (single file; role 'payload'; the node type's documented payload role) and, failing all of them, MUST report `payload-file-ambiguous` and MUST NOT silently take files[0].",
+          "$ref": "#/$defs/path"
+        },
+        "note": {
+          "description": "MANDATORY (law 6). One sentence saying why this version exists. This is payload, not tooling metadata: the artifact carries its own reasoning, and these notes are also the changelog (law 9). 'update' is not a note.",
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 2000
+        },
+        "producer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tool", "version"],
+          "properties": {
+            "tool": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1},
+            "model": {"type": "string", "description": "Model id when a model produced this, e.g. an image or language model. Required in spirit whenever epistemic is 'inferred' and a model was involved."},
+            "host": {"type": "string", "description": "Optional machine or service identifier."}
+          }
+        },
+        "input_hash": {
+          "description": "sha256 over this version's declared inputs (law 5): the concatenation, in the order given by input_files, of each input file's own sha256 as 32 RAW BYTES, followed by the UTF-8 bytes of the canonical JSON of input_params. AN ABSENT input_params IS THE EMPTY OBJECT: its canonical JSON is the two bytes '{}' and those two bytes are appended exactly as they would be if the key were written out. Absent and {} are the same input to this hash; nothing is ever appended as nothing. A consumer validates-or-recomputes rather than trusts, so stale derived data is detectable from the file alone. See spec/MINI-SPECS.md section 11, 'What gets hashed', for the algorithm and a worked example.",
+          "$ref": "#/$defs/sha256"
+        },
+        "input_files": {
+          "description": "The ordered list of paths whose hashes went into input_hash. Ordered, because a hash over an unordered set is not reproducible.",
+          "type": "array",
+          "items": {"$ref": "#/$defs/path"}
+        },
+        "input_params": {
+          "description": "The parameters that went into input_hash. Canonical JSON means: object keys sorted by UTF-8 byte order, no insignificant whitespace, numbers in shortest round-tripping form. A writer SHOULD emit this key explicitly as {} when there are no parameters, rather than omitting it: the two spellings hash identically, and writing it out means no reader ever has to discover that for itself.",
+          "type": "object"
+        },
+        "epistemic": {
+          "description": "How sure we are (law 5). 'authored' a human or a deliberate authoring act made it. 'measured' it came out of a simulation, a bake or an instrument and is reproducible from its inputs. 'inferred' a model guessed it. An inferred value is useful BECAUSE it is labelled inferred; authored beats inferred.",
+          "enum": ["authored", "measured", "inferred"]
+        },
+        "confidence": {
+          "description": "0..1. Meaningful only with epistemic 'inferred' or 'measured'.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "created": {"type": "string", "format": "date-time"},
+        "spec_sha256": {
+          "description": "OPTIONAL (S-29, RULING, implemented). The revision of the spec THIS VERSION PAYLOAD conforms to: the same construction as the manifest global spec_sha256, computed over exactly the spec files this version payload conforms to - its entry in `schemas`, its entry in `layouts`, or both, sorted by the same rule. It answers a narrower question than the global field (which revision of THIS schema was this payload written against), and that is the question that bites when an append-only node gains a v2 years later under a newer spec. Global is mandatory because a package always has a spec/ tree; this is optional because most nodes never outlive a revision.",
+          "$ref": "#/$defs/sha256"
+        },
+        "supersedes": {
+          "description": "The v number this version was made to replace, when it was. Never removes the earlier version.",
+          "type": "integer",
+          "minimum": 1
+        },
+        "compacted": {
+          "description": "Present only on a version whose files were removed by an explicit compaction. The record stays; the bytes went. Compaction is a signed, logged choice (law 6).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["at", "by", "reason"],
+          "properties": {
+            "at": {"type": "string", "format": "date-time"},
+            "by": {"type": "string"},
+            "reason": {"type": "string", "minLength": 8}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "description": "Law 5, machine-checked: anything not authored was derived from something, so it must say what from. 'authored' may still carry input_hash and often should.",
+          "if": {"properties": {"epistemic": {"enum": ["measured", "inferred"]}}, "required": ["epistemic"]},
+          "then": {"required": ["input_hash", "input_files"]}
+        }
+      ]
+    },
+
+    "loaderMeta": {
+      "description": "core.loader — the reference readers that travel INSIDE the package. Law 1 taken to its conclusion: a werk file does not merely describe how to read it, it carries a working reader. These are simplified read-only bootstrap loaders, single-file and dependency-free by construction; they are not the full reference implementation.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "form", "entrypoint", "dependencies", "capabilities"],
+      "properties": {
+        "language": {"enum": ["python", "rust", "c", "cpp", "javascript", "other"]},
+        "form": {
+          "description": "'source' is always permitted. 'prebuilt' is optional payload and carries the execution restriction below.",
+          "enum": ["source", "prebuilt"]
+        },
+        "entrypoint": {"$ref": "#/$defs/path"},
+        "dependencies": {
+          "description": "MUST be an empty array for a core.loader. A loader with a dependency is a promise about other files, which law 1 bans at the constitutional level. Pure stdlib for python; bare rustc with no crates for rust; any conforming C compiler with only the C standard library for c. A DEPENDENCY IS SOMETHING A CONSUMER MUST ACQUIRE — a package, a crate, a vendored third-party source file. The platform's own headers, shipped with every hosted implementation of the named toolchain, are not dependencies: nothing is fetched and nothing can be missing. A C loader MAY therefore include <direct.h>/<io.h>/<fcntl.h> or <sys/stat.h> behind a platform #if, for the 'materialize' capability ONLY (directory creation and putting an already-open stream into binary mode are the two things standard C genuinely lacks; fopen(path,\"wb\") is not one of them). Every other declared capability must build in strict hosted C99 with the standard library alone. See spec/SPEC.md section 7.",
+          "type": "array",
+          "maxItems": 0,
+          "items": {"type": "string"}
+        },
+        "toolchain": {
+          "description": "The minimum toolchain that turns entrypoint into a running reader, stated concretely, e.g. 'python>=3.8', 'rustc>=1.70 --edition 2021', 'c99'.",
+          "type": "string"
+        },
+        "build_command": {
+          "description": "The literal command, if a build step is needed. Must not fetch anything from a network.",
+          "type": "string"
+        },
+        "capabilities": {
+          "description": "What this loader can actually do. Honest and narrow beats aspirational: the conformance harness runs each declared capability.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"enum": ["read-manifest", "verify-hashes", "read-envelope", "read-geometry", "read-textures", "read-audio", "read-skeleton", "read-animation", "materialize", "verify-signature", "summarize-points", "summarize-gsplat"]}
+        },
+        "prebuilt": {
+          "description": "Present only when form is 'prebuilt'. A prebuilt binary is DATA, and a conformant tool MUST NOT execute it automatically under any circumstances. See spec/SPEC.md section 7 for the full normative rule.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["platform", "arch", "abi", "sha256", "built_from"],
+          "properties": {
+            "platform": {"enum": ["windows", "linux", "macos", "wasm", "other"]},
+            "arch": {"enum": ["x86-64", "aarch64", "wasm32", "other"]},
+            "abi": {"type": "string", "description": "e.g. 'msvc', 'gnu', 'musl', 'wasi'."},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "built_from": {
+              "description": "Path of the source entrypoint in THIS package that this binary was built from, so a suspicious consumer can rebuild and compare instead of trusting.",
+              "$ref": "#/$defs/path"
+            },
+            "reproducible_build_command": {"type": "string"}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"form": {"const": "prebuilt"}}, "required": ["form"]},
+          "then": {"required": ["prebuilt"]}
+        }
+      ]
+    }
+  }
+}

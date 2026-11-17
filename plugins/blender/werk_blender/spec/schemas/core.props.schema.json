@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.props.schema.json",
+  "title": "core.props — simulation properties per material region, with the v1 property registry",
+  "description": "What the stuff this entity is made of DOES when a simulation pushes on it, heats it, ignites it, electrifies it, wets it or magnetises it. Every single value carries its own epistemic stamp (law 5): most of these will be inferred by a vision-language model from a picture of a crate, and an inferred Young's modulus is useful precisely because it is labelled inferred and never laundered into fact. Values are SI, and every quantity declares its unit as a constant so no reader converts by guessing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_version", "regions"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "registry_version": {
+      "type": "integer", "const": 1,
+      "description": "Version of the property registry — the fixed set of groups and field names below. Adding a field bumps the minor werk version and is additive-only (law 12); removing or repurposing one is a major change."
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["region_id", "properties"],
+        "properties": {
+          "region_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "material_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "label": {"type": "string", "description": "Human name of what this region is, e.g. 'oak slats', 'iron banding'."},
+          "properties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "flammability": {"$ref": "#/$defs/flammability"},
+              "electrical": {"$ref": "#/$defs/electrical"},
+              "thermal": {"$ref": "#/$defs/thermal"},
+              "mechanical": {"$ref": "#/$defs/mechanical"},
+              "fluid": {"$ref": "#/$defs/fluid"},
+              "magnetic": {"$ref": "#/$defs/magnetic"},
+              "x": {"type": "object", "description": "Extension frontier (law 12). Anything not in registry v1 lives here and every reader may ignore it."}
+            }
+          }
+        }
+      }
+    },
+    "note": {"type": "string"}
+  },
+
+  "$defs": {
+    "stamp": {
+      "description": "The epistemic stamp every measurement carries.",
+      "type": "object",
+      "required": ["epistemic"],
+      "properties": {
+        "epistemic": {"enum": ["authored", "measured", "inferred"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "source": {"type": "string", "description": "Free text: a reference table, an instrument, a model prompt. Never a URL that must resolve (law 1)."}
+      }
+    },
+    "num": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "unit", "epistemic"],
+      "properties": {
+        "value": {"type": "number"},
+        "unit": {"type": "string"},
+        "epistemic": {"enum": ["authored", "measured", "inferred"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "source": {"type": "string"},
+        "range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}, "description": "Optional plausible [low, high] for an inferred value. The honest way to say 'somewhere around'."}
+      }
+    },
+    "flag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "epistemic"],
+      "properties": {
+        "value": {"type": "boolean"},
+        "epistemic": {"enum": ["authored", "measured", "inferred"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "source": {"type": "string"}
+      }
+    },
+    "cat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "epistemic"],
+      "properties": {
+        "value": {"type": "string"},
+        "epistemic": {"enum": ["authored", "measured", "inferred"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "source": {"type": "string"}
+      }
+    },
+
+    "flammability": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Units: degC for temperatures, MJ/kg for heat of combustion, mm/min for burn rate, dimensionless fraction for the limiting oxygen index.",
+      "properties": {
+        "class": {"allOf": [{"$ref": "#/$defs/cat"}], "description": "value in: non-combustible | self-extinguishing | slow-burning | flammable | highly-flammable"},
+        "flash_point": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'degC'"},
+        "autoignition_point": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'degC'"},
+        "heat_of_combustion": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'MJ/kg'"},
+        "burn_rate": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'mm/min'"},
+        "limiting_oxygen_index": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1' (dimensionless fraction of O2 needed to sustain burning)"},
+        "smoke_density": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', 0 clear to 1 opaque"},
+        "produces_embers": {"$ref": "#/$defs/flag"},
+        "self_extinguishing": {"$ref": "#/$defs/flag"}
+      }
+    },
+
+    "electrical": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class": {"allOf": [{"$ref": "#/$defs/cat"}], "description": "value in: insulator | semiconductor | conductor | superconductor"},
+        "resistivity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'ohm*m'"},
+        "relative_permittivity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1'"},
+        "dielectric_strength": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'MV/m'"},
+        "triboelectric_rank": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1'; negative attracts electrons, positive gives them up"},
+        "conducts_when_wet": {"$ref": "#/$defs/flag"}
+      }
+    },
+
+    "thermal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "conductivity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'W/(m*K)'"},
+        "specific_heat": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'J/(kg*K)'"},
+        "melting_point": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'degC'"},
+        "glass_transition": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'degC'"},
+        "max_service_temperature": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'degC'"},
+        "emissivity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', 0..1 long-wave infrared"},
+        "linear_expansion": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1/K'"},
+        "chars_before_melting": {"$ref": "#/$defs/flag"}
+      }
+    },
+
+    "mechanical": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "density": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'kg/m^3'. MUST agree with core.phys.body densities for the same material_id, within 1%."},
+        "youngs_modulus": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa'"},
+        "shear_modulus": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa'"},
+        "bulk_modulus": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa'"},
+        "poisson_ratio": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', typically 0..0.5"},
+        "yield_strength": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa'"},
+        "ultimate_tensile_strength": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa'"},
+        "compressive_strength": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa'"},
+        "fracture_toughness": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa*m^0.5'"},
+        "hardness_mohs": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', 1..10"},
+        "hardness_shore_d": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', 0..100"},
+        "damping_ratio": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1'; also drives how long an impact sound rings"},
+        "failure_mode": {"allOf": [{"$ref": "#/$defs/cat"}], "description": "value in: brittle | ductile | crushing | tearing | shattering | splintering | plastic-deformation"},
+        "anisotropic": {"$ref": "#/$defs/flag"},
+        "grain_direction": {
+          "description": "Model-space unit vector along which the material is strongest, when anisotropic is true.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "epistemic"],
+          "properties": {
+            "value": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}},
+            "epistemic": {"enum": ["authored", "measured", "inferred"]},
+            "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "source": {"type": "string"}
+          }
+        }
+      }
+    },
+
+    "fluid": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "porosity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', void fraction 0..1"},
+        "permeability": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'm^2' (intrinsic permeability)"},
+        "water_absorption": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', mass fraction gained at saturation"},
+        "contact_angle_water": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'deg'; below 90 wets, above 90 beads"},
+        "dynamic_viscosity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'Pa*s'; only for regions that are themselves fluid"},
+        "surface_tension": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'N/m'"},
+        "floats_in_water": {"$ref": "#/$defs/flag"},
+        "watertight": {"$ref": "#/$defs/flag"},
+        "drag_coefficient": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1', referenced to the frontal area in core.phys.bounds. Pairs with core.field.flow."}
+      }
+    },
+
+    "magnetic": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "class": {"allOf": [{"$ref": "#/$defs/cat"}], "description": "value in: diamagnetic | paramagnetic | ferromagnetic | ferrimagnetic | antiferromagnetic | non-magnetic"},
+        "relative_permeability": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be '1'"},
+        "saturation_magnetization": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'T'"},
+        "remanence": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'T'"},
+        "coercivity": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'A/m'"},
+        "curie_point": {"allOf": [{"$ref": "#/$defs/num"}], "description": "unit MUST be 'degC'"},
+        "attracted_by_magnet": {"$ref": "#/$defs/flag"}
+      }
+    }
+  }
+}

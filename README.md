@@ -24,7 +24,9 @@ the author's private lineage; `RELEASE-ASSEMBLY.md` says from what and how.
 | [core/](core/) | The reference core (Rust, `werk-core`): a C ABI (`include/werk.h`), the `werkc` CLI, conformance tests. |
 | [bindings/python/](bindings/python/) | Python over the core's C ABI (ctypes, no pip dependencies). |
 | [store/](store/), [pipeline/](pipeline/), [retarget/](retarget/), [tools/](tools/) | The content store, the enrichment pipeline, the retargeter, helper tools. |
-| [adapters/blender/](adapters/blender/), [adapters/unreal/](adapters/unreal/) | Host adapters (Blender 4.2 add-on, Unreal 5.7 WerkLink). |
+| [plugins/](plugins/) | Host plug-ins, each gated in the real host: Blender 4.2, GIMP 3, Unreal Engine 5.8.2 (WerkLink; 5.7 untested), Photoshop 2020 (21.0.3; 2024 self-test only), Illustrator 2020, After Effects 2020, Office 2016 (`werk-office` CLI). Results in each folder's `GATE-RESULTS.md`; overview in [plugins/README.md](plugins/README.md). |
+| [libs/](libs/) | Read/write libraries: Python (package + single file, stdlib only), JavaScript (ES2017 + ES3 for ExtendScript); `werkc` release commands live in `core/`. |
+| [contrib/experimental/](contrib/experimental/) | Untested contributions (Photoshop UXP plug-in). |
 | [fixtures/](fixtures/) | Conformance fixtures, their builders, and their pinned hashes (`fixtures.json`, `FIXTURES.md`, `CC0-FIXTURES.md`). |
 | [tests/](tests/) | The gate harnesses (`run_gate*.py`). |
 | [gauntlet/](gauntlet/) | The agent-implementability protocol and the committed run records. |

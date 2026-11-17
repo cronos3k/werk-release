@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/core.anim.clip.schema.json",
+  "title": "core.anim.clip — clip metadata sidecar",
+  "description": "The tooling-facing half of an animation clip. The samples live in a WKAC envelope binary described by spec/layouts/animclip.layout.txt, and the binary's MessagePack header restates every field a player needs so the binary is an island on its own (law 3). This sidecar carries what a browser, a retargeter and a human need: what the clip is for, how it loops, what it assumes about the rig, and what its events mean. Where the two disagree the binary header wins for playback and this file wins for description.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "clip_id", "name", "skeleton_id", "bone_count", "frame_count", "rate_hz", "duration_s", "flags", "binary"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "clip_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "name": {"type": "string", "minLength": 1},
+    "skeleton_id": {"type": "string", "description": "Identity of the core.skeleton node this clip's bone names belong to. Never a path, never an index (law 4)."},
+    "bone_count": {"type": "integer", "minimum": 0},
+    "frame_count": {"type": "integer", "minimum": 1},
+    "rate_hz": {"type": "number", "exclusiveMinimum": 0},
+    "duration_s": {"type": "number", "exclusiveMinimum": 0, "description": "MUST equal frame_count / rate_hz within 1e-6, and MUST equal the binary header's duration_s exactly."},
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in_place", "additive", "root_yaw_only"],
+      "properties": {
+        "in_place": {"type": "boolean", "description": "Mirrors bit 0 of the binary header's flags. When true, the root track's position components are all exactly 0."},
+        "additive": {"type": "boolean", "description": "Bit 1. Rotations are deltas onto the rest pose."},
+        "root_yaw_only": {"type": "boolean", "description": "Bit 2. The root rotation only turns about the up axis."}
+      }
+    },
+    "loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["loops"],
+      "properties": {
+        "loops": {"type": "boolean"},
+        "blend_frames": {"type": "integer", "minimum": 0, "description": "How many frames at the end are intended to cross-fade into the start."},
+        "seam_error_rad": {"type": "number", "minimum": 0, "description": "Measured maximum per-bone angular discontinuity between the last and first frame. A loop claim with a large seam error is a claim a consumer can check."}
+      }
+    },
+    "binary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "magic", "envelope_version"],
+      "properties": {
+        "path": {"type": "string"},
+        "magic": {"const": "WKAC"},
+        "envelope_version": {"type": "integer", "minimum": 1, "description": "The version integer in the WKAC envelope. It declares the MINIMUM grammar revision needed to read the binary COMPLETELY (spec/layouts/ENVELOPE.layout.txt section 5a), and a writer emits the lowest revision covering what the file actually uses: 1 for a rotation-only clip, 2 for one carrying the optional bone-translations section. So a clip that uses nothing new stays byte-identical to what a revision-1 writer produced."}
+      }
+    },
+    "bone_translation": {
+      "description": "OPTIONAL (S6-4, RULING, implemented 2026-08-08; layout revision 2). Per-bone translation, which D-AC-4 originally ruled out of core as a rig feature. The measurement overturned the cost argument rather than the principle: Unreal keys pelvis translation as a matter of course - 0.111 m on a one-second walk, the whole vertical bob of the gait - and a COLLADA-exported glTF keys translation on EVERY joint. A retarget solver must read that correctly or it poisons the calibration before it starts, and then it had nowhere to store it. THIS BLOCK IS ALSO THE PLACE A CLIP THAT DROPPED TRANSLATION SAYS SO: set source_had_translation true with the section absent and max_m measured, and the loss is declared rather than discovered by whoever notices the gait is flat.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_had_translation"],
+      "properties": {
+        "source_had_translation": {
+          "type": "boolean",
+          "description": "True means the source this clip was converted from animated bone translation - whether or not this clip kept it. Mirrors the binary header key source_had_bone_translation."
+        },
+        "carried": {
+          "type": "boolean",
+          "description": "True means the binary carries the bone-translations section. False (or absent) with source_had_translation true means it was dropped, and max_m says how much was lost."
+        },
+        "bones": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "description": "The translated bone ids IN SECTION ORDER, mirroring the binary header key translated_bones. Every id also appears in `bones`. Named rather than implied, for the same reason `bones` is: a subset identified by position is a subset nobody can check."
+        },
+        "max_m": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Largest per-bone translation magnitude in the SOURCE, metres. Measured. With the section present it is a checkable bound; with it absent it is the size of what was dropped, which is what lets a consumer tell a rounding error from a lost gait."
+        },
+        "note": {"type": "string"}
+      }
+    },
+
+    "root_bone": {"type": "string", "default": "root"},
+    "bones": {
+      "description": "Optional mirror of the binary header's bone name array, in the same track order. Present so a tool can list a clip's bones without opening the binary; a reader MUST treat the binary as authoritative.",
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "category": {
+      "enum": ["locomotion", "idle", "action", "reaction", "transition", "gesture", "facial", "cinematic", "procedural-source"],
+      "description": "Coarse role, for browsing."
+    },
+    "tags": {"type": "array", "items": {"type": "string", "pattern": "^(x\\.)?[a-z0-9]+(-[a-z0-9]+)*$"}},
+    "locomotion": {
+      "description": "Present for clips that travel. Lets a runtime match playback rate to actual movement without measuring the clip itself.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "distance_m": {"type": "number", "minimum": 0, "description": "Total root displacement over the clip, metres. 0 when in_place is true."},
+        "average_speed_m_s": {"type": "number", "minimum": 0},
+        "direction": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number"}, "description": "Unit vector of net travel in the skeleton's own frame."},
+        "cycle_count": {"type": "number", "exclusiveMinimum": 0, "description": "How many full gait cycles the clip contains, e.g. 2.0 for a two-step walk loop."}
+      }
+    },
+    "events": {
+      "description": "Mirror of the binary header's event array, for tools. Same fields, same ordering rule (ascending t_s). An event is always 'enhances': a player that ignores every event still plays the clip correctly.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["t_s", "kind"],
+        "properties": {
+          "t_s": {"type": "number", "minimum": 0},
+          "kind": {"enum": ["audio", "footstep", "contact", "effect", "attach", "detach", "marker"]},
+          "effect_id": {"type": "string", "description": "The slug of a core.audio effect in this package. An unresolvable id is dropped with a report, never a hard failure (law 3)."},
+          "part_id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+          "bone": {"type": "string"},
+          "params": {"type": "object"}
+        }
+      }
+    },
+    "retarget": {
+      "description": "What a retargeter needs to know about the assumptions baked into this clip.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "reference_height_m": {"type": "number", "exclusiveMinimum": 0, "description": "The stature this clip was authored against; a retargeter scales root translation by the ratio to the target rig."},
+        "foot_contact_bones": {"type": "array", "items": {"type": "string"}, "description": "Bones whose contact with the ground the clip depends on, so an IK pass knows what to pin."},
+        "hand_contact_bones": {"type": "array", "items": {"type": "string"}},
+        "tolerance_rad": {"type": "number", "minimum": 0, "description": "Declared acceptable per-bone angular residual after retargeting. Conformance test 3 measures against this number."}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"enum": ["mocap", "keyframe", "procedural", "generated", "retargeted"]},
+        "original_rate_hz": {"type": "number", "exclusiveMinimum": 0, "description": "Rate before resampling to rate_hz, when they differ."},
+        "resample_method": {"enum": ["nearest", "linear-slerp", "cubic-then-resample"]}
+      }
+    },
+    "epistemic": {"enum": ["authored", "measured", "inferred"]},
+    "note": {"type": "string"}
+  }
+}

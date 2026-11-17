@@ -1,0 +1,9 @@
+Slide 1: Quarterly results
+	Revenue grew 12 % year over year
+		See slide 2 details
+Notes: Open with the headline number.
+
+Slide 2: 
+	New
+	Region | Sales
+	North | 4.2

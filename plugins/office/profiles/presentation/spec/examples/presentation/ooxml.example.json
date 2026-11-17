@@ -1,0 +1,14 @@
+{
+  "entries": [
+    {
+      "pointer": "/slide/shapes/8/raw_ext",
+      "xml": "<p:extLst/>"
+    },
+    {
+      "pointer": "/slide/shapes/8/kind/xml",
+      "xml": "<p:graphicFrame><!-- a diagram this application keeps as it was --></p:graphicFrame>"
+    }
+  ],
+  "owner": "slide-202",
+  "schema_version": 1
+}

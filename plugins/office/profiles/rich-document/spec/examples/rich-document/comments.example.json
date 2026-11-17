@@ -1,0 +1,14 @@
+{
+  "comments": [
+    {
+      "author": "A Reviewer",
+      "date": "2026-03-01T10:15:00Z",
+      "id": 0,
+      "initials": "AR",
+      "parent": null,
+      "part": 3,
+      "resolved": false
+    }
+  ],
+  "schema_version": 1
+}
