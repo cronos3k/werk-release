@@ -17,7 +17,7 @@
       "x/"
     ],
     "form": "zip",
-    "preview_prefix_bytes": 872048,
+    "preview_prefix_bytes": 872369,
     "zip_compression": "store"
   },
   "conventions": {
@@ -308,8 +308,8 @@
             {
               "media_type": "text/x-python",
               "path": "loaders/werk_read.py",
-              "sha256": "d8c633e4af1fa35f57c45c5d0ab0ecf197263d1bb6c51f12f1b03dc036de63f7",
-              "size": 63944
+              "sha256": "f639dd417689e60bac2852bcc5e79bda5776c513407d419b3033ed31837c2794",
+              "size": 64265
             }
           ],
           "note": "Single-file zero-dependency bootstrap reader, so the package carries a way to read itself (law 1).",

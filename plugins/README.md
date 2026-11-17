@@ -26,10 +26,13 @@ unsafe `files[]` path now kills its node instead of refusing the package at
 `--extract`; `--help`), which the libraries embed, and the libraries'
 own reader (a `requires` edge to a node absent from `nodes[]` now kills its
 source, `requires-missing-node`, SPEC section 5, as werk-core and the loaders
-already did). Every plug-in now vendors the rebuilt library
-(`werk_single.py` `d7cc89cc…`, `werk.jsx` `6a4fbb10…`, `werk.js`
-`ebf195d8…`, bundle at `bc23529`). The plug-in code did not change. Which gates were re-run on the re-vendored library is recorded
-in `RELEASE-PINS.md`.
+already did). A third followed: an unsafe `files[]` path makes only its
+version unusable (the node falls back to the newest valid earlier version,
+SPEC section 10 step 5), in werk-core, `werk_read.py` and the libraries
+alike. Every plug-in now vendors the rebuilt library
+(`werk_single.py` `ff3de49b…`, `werk.jsx` `14c0afff…`, `werk.js`
+`fdee63c4…`, bundle at `509ebf8`). The plug-in code did not change. Which gates were re-run on the re-vendored library is recorded
+in `RELEASE-PINS.md` and in each plug-in's `GATE-RESULTS.md`.
 
 **What is not in the repository.** The gates' raw logs (`_logs/`) and their
 outputs (`_gate_out/`) are not committed; the `GATE-RESULTS.md` files quote
