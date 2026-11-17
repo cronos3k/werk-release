@@ -1,4 +1,27 @@
-# werk-office -- gate results (W5c, 2026-11-07/08, final re-vendor to release-fixes 26e3e14)
+# werk-office -- gate results
+
+## Re-gate on the re-vendored release library (W10, 2026-11-17)
+
+**60 PASS, 0 FAIL, 0 NOT-RUN** (318 s), the same clause set and counts as the W5c run below:
+A 4, B 3, C 29, D 6, E 6, F 6, G 6. Hosts as below (Word / Excel / PowerPoint 2016, `16.0`,
+private `DispatchEx` instances; the instances the gate started and could not quit were ended
+by pid, as before; a Word process already running on the desktop was not touched).
+
+| | |
+|---|---|
+| repository | `<repo-archive>` = `git archive c5276a1` (release commit content) + the release assets via `tools/fetch_fixtures.py --from-dir <release-assets>` |
+| library gated | `libs/` of that archive, bundle `source_rev` `509ebf83be6dd998a255cceca234ceca0b8ac025`; vendored `vendor/werk_single.py` sha256 **`ff3de49babadffa942469a8d6103cac0ecd13804b847b75cabe70acb3a680600`**; werkc built from the archive into `libs/_target` |
+| ArtCraft samples | `<artcraft-samples>` (read-only), part G |
+
+Command: `PYTHONIOENCODING=utf-8 py -3.12 gate/gate.py --libs <repo-archive>/libs --repo <repo-archive> --samples <artcraft-samples>`.
+A first attempt without `PYTHONIOENCODING=utf-8` stopped at clause E with a
+`UnicodeEncodeError` from the Windows console encoding while printing a passing clause's
+non-ASCII detail (no gate clause had failed); set the variable when running the gate from a
+console that is not UTF-8.
+
+---
+
+## (W5c, 2026-11-07/08, final re-vendor to release-fixes 26e3e14)
 
 Final run: **60 PASS, 0 FAIL, 0 NOT-RUN** (1163 s), release-fixes library and loaders. The
 attempt just before it (same code) was 59 PASS / 1 FAIL: reopening the rebuilt `sales.xlsx` hung

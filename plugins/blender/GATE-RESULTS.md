@@ -1,5 +1,7 @@
 # Blender add-on — gate results
 
+> **Re-gate on the re-vendored release library (W10, 2026-11-17):** `gate_release.py` **98 PASS, 0 FAIL, 0 SKIP, 0 NOTE** (59.9 s), Blender 4.2.1, run from `<repo-archive>` = `git archive c5276a1` + release assets, `vendor/werk_single.py` `ff3de49b…` (byte-identical to `libs/`, bundle `509ebf8`). `test_gate.py` 20 PASS, 0 FAIL on the same library in the repository gate run (`RELEASE-PINS.md`).
+
 Run 2026-11-07 on <lab-workstation> (final re-run: library and fixtures at release-fixes 26e3e14) (Windows 10 19045), from `<plugins>\blender`.
 
 | | |

@@ -1,5 +1,7 @@
 # GIMP plug-in — gate results
 
+> **Re-gate on the re-vendored release library (W10, 2026-11-17):** **34 PASS, 0 FAIL, 0 SKIP, 3 NOTE** (107.5 s), GIMP 3.2.4, run from `<repo-archive>` = `git archive c5276a1` + release assets, `plug-ins/file-werk/werk_single.py` `ff3de49b…` (byte-identical to `libs/`, bundle `509ebf8`); raster-layers/1 capsules from `<artcraft-samples>` as below.
+
 Run 2026-11-07 on <lab-workstation> (final re-run: library and fixtures at release-fixes 26e3e14) (Windows 10 19045), from `<plugins>\gimp`.
 
 | | |

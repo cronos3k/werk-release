@@ -1,4 +1,36 @@
-# WerkLink on UE 5.8 -- gate results (W5c, 2026-11-07, final re-vendor)
+# WerkLink on UE 5.8 -- gate results
+
+## Re-gate on the re-vendored release library (W10, 2026-11-17)
+
+**147 PASS, 0 FAIL, 4 NOT-RUN** (gate 129 s after the plug-in build), the same clause set and
+counts as the W5c run below: A 14, A2 22 (21 of 21 reader-rule variants agree with
+`python -m werk` and werkc, + exit status), B 18, C 93 PASS + 4 NOT-RUN (the same four: gsplat
+and retarget fixtures import correctly but create no assets).
+
+| | |
+|---|---|
+| host | Unreal Engine 5.8.2-56702186+++UE5+Release-5.8, `UnrealEditor-Cmd.exe`, Windows 10 19045, MSVC 2022 |
+| plug-in | this folder at release commit `c5276a1` (`git archive` of `main`, plug-in code unchanged since W9), `RunUAT BuildPlugin -TargetPlatforms=Win64 -Rocket`: `BUILD SUCCESSFUL`, exit 0, 0 warnings, 0 errors |
+| gate project | a fresh `project/WerkGate` (Config + uproject only; plug-in installed as a copy) |
+| repository | `<repo-archive>` = `git archive c5276a1` + the release assets via `tools/fetch_fixtures.py --from-dir <release-assets>` (all present and verified) |
+| library gated | `libs/` of that archive, bundle `source_rev` `509ebf83be6dd998a255cceca234ceca0b8ac025`; vendored `vendor/werk_single.py` sha256 **`ff3de49babadffa942469a8d6103cac0ecd13804b847b75cabe70acb3a680600`**; werkc built from the archive's `core/` into `libs/_target` |
+
+Command: `sh tests/rebuild_and_gate.sh` from `<repo-archive>/plugins/unreal` (defaults:
+`WERK_REPO` = the archive, `WERK_LIBS` = its `libs/`).
+
+**Found, not fixed (recorded for the next release):** WerkLink's own C++ reader does not apply
+MINI-SPECS 5.4 to the paths `MANIFEST.json` declares. A `files[]` path `../evil.png` whose zip
+entry carries that name is read and verified (`werk_gate.exe --verdict`: exit 0, nothing dead,
+no error), where werk-core, the three bootstrap loaders and the libraries refuse that version
+(a single-version node dies; a multi-version node falls back; exit 1). No file is written
+outside the project (the bytes come from the zip in memory), but the verdict disagrees. The fix
+belongs in `Private/Core/werk_manifest.cpp` (version loop: `IsSafeZipName(F.path)` before
+`Reader.Read`, then report every unsafe path in a version the loop did not try) plus an A2
+variant; it was not made because it changes a shipped plug-in after the release-commit runs.
+
+---
+
+## W5c, 2026-11-07, final re-vendor
 
 Final run, against the **release-fixes** library and repository: **147 PASS, 0 FAIL, 4 NOT-RUN**
 (140 s). Raw output `_gate_out/gate-run.txt`, per-clause JSON `_gate_out/gate.json`, in-editor
