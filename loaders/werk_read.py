@@ -362,8 +362,16 @@ class ZipContainer(Container):
         return [n for n in self.order if self.entries[n][0] == 8]
 
 
+def _unsafe_path(path):
+    """MINI-SPECS 5.4: relative, forward slashes, no `..` segment, no drive
+    letter, no leading slash (and no NUL)."""
+    return (path.startswith("/") or "\\" in path or "\x00" in path
+            or ".." in path.split("/")
+            or (len(path) >= 2 and path[1] == ":" and path[0].isalpha()))
+
+
 def _reject_unsafe(path):
-    if path.startswith("/") or "\\" in path or ".." in path.split("/"):
+    if _unsafe_path(path):
         raise ValueError("refusing an unsafe package path: %r" % path)
 
 
@@ -596,6 +604,14 @@ class Package:
                 # node alive (W2 damage_agree, finding b).
                 if not isinstance(f.get("path"), str):
                     return "a files[] entry has no path"
+                # MINI-SPECS 5.4: a package path is relative, forward-slashed,
+                # with no `..` segment. One that is not names no file this
+                # reader will touch: the node is dead, the package is not --
+                # as in the core (schema), the C and Rust loaders and the
+                # libraries. This reader used to load such a node and then
+                # refuse the whole package at --extract.
+                if _unsafe_path(f["path"]):
+                    return "a files[] entry has an unsafe path %r" % f["path"]
                 if not isinstance(f.get("sha256"), str):
                     return "a files[] entry has no sha256"
                 if not is_int(f.get("size")) or f["size"] < 0:
@@ -1286,7 +1302,29 @@ def main(argv):
         return 2
 
 
+USAGE = """usage: python werk_read.py <package> [options]
+       python werk_read.py --selftest | --help
+
+  <package>                     a .werk file or a directory-form package
+  (no option)                   list the node graph, with each node's state
+  --report                      every report entry
+  --verify                      hash every declared file
+  --strict                      with the three above: exit 1 when a node is
+                                dead or the report holds an error
+  --extract <node_id> [--out <dir>]   write that node's resolved files
+                                (exit 1 if the node has no usable version)
+  --cat <path>                  one file's bytes to stdout
+  --envelope <path>             decode a binary envelope's header
+  --points <path> | --gsplat <path> [--head N]   decode a WKPC / WKGS payload
+
+Exit status (SPEC section 10.1): 2 when the package as a whole is refused
+or not found; otherwise 0, or 1 under --strict as above."""
+
+
 def _main(argv):
+    if "--help" in argv[1:2] or "-h" in argv[1:2]:
+        print(USAGE)
+        return 0
     if "--selftest" in argv:
         return 0 if selftest() else 1
     if len(argv) < 2:

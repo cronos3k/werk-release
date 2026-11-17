@@ -205,6 +205,10 @@ def cases(I, big_mb):
         ("tampered-manifest", "zip", [["pack-image", "{out}"] + full_img + sign1, ["@tamper-manifest"]]),
         ("duplicate-entry", "zip", [["pack-image", "{out}"] + img, ["@duplicate-entry", "README.txt"]]),
         ("truncated", "zip", [["pack-image", "{out}"] + img, ["@truncate", "1000"]]),
+        # MINI-SPECS 5.4 path rule, node scope (SPEC 12.1): a files[] path
+        # `../evil.txt` (and a zip entry by that name) kills its node; the
+        # package loads, nothing is written outside the target folder.
+        ("unsafe-path", "zip", [["pack-image", "{out}"] + img, ["@unsafe-path", "README.txt"]]),
     ]
 
 
@@ -253,6 +257,33 @@ def damage(path, step):
             warnings.simplefilter("ignore")
             with zipfile.ZipFile(path, "a", compression=zipfile.ZIP_STORED) as z:
                 z.writestr(zipfile.ZipInfo(step[1], (2026, 11, 7, 12, 0, 0)), b"a second README.txt\n")
+        return
+    elif kind == "@unsafe-path":
+        # rename one declared file to `../evil.txt` in the manifest and in
+        # the container (same bytes, same sha256 and size); every other
+        # entry is copied unchanged.
+        import zipfile
+        bad = "../evil.txt"
+        with zipfile.ZipFile(path) as z:
+            items = [(i.filename, z.read(i.filename)) for i in z.infolist()]
+        man = json.loads(dict(items)["MANIFEST.json"].decode("utf-8"))
+        hit = 0
+        for n in man["nodes"]:
+            for v in n["versions"]:
+                for f in v["files"]:
+                    if f["path"] == step[1]:
+                        f["path"] = bad
+                        hit += 1
+                if v.get("payload_file") == step[1]:
+                    v["payload_file"] = bad
+        assert hit == 1, "unsafe-path: %s declared %d times" % (step[1], hit)
+        with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_STORED) as z:
+            for name, data in items:
+                if name == "MANIFEST.json":
+                    data = json.dumps(man, indent=1).encode("utf-8")
+                elif name == step[1]:
+                    name = bad
+                z.writestr(zipfile.ZipInfo(name, (2026, 11, 17, 12, 0, 0)), data)
         return
     elif kind == "@truncate":
         blob = blob[:int(step[1])]
