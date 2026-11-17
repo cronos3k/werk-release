@@ -55,3 +55,32 @@ in the release asset `evidence/second-lab/roundNC-binaries.tar.gz`
   them.
 
 The review that produced these points is summarised in `RELEASE-ASSEMBLY.md`.
+
+## Added after the first assembly: PR #13 follow-up (cb0b4b3, 3beea56, 61a873f)
+
+Three more of his commits, replayed with his authorship and relocated the same
+way. They change two of the points above:
+
+* `audits/rubric.md` and `audits/criteria-2026-10-05.md` now state the
+  criteria behind the changed verdicts, and `audits/rubric_check.py`
+  re-derives all 31 round-1 verdicts. It needs his stored re-runs
+  (`RERUNS_DIR`), which are not in this repository: they are an author-lab
+  asset (`second-lab-reruns-2026-10-12`, pinned by sha256 in
+  `RELEASE-ASSETS.md`, not hosted or verified here). Until a reader has that
+  file, the 31 verdicts are documented but not reproducible from this
+  repository alone.
+* `trials/` now holds the programs, reports and small outputs of 11 of the 12
+  fresh-agent trials, with `trials/check_trials.py`, which re-runs each
+  program on the exact fixture bytes it ran on. Those bytes are historical:
+  `crate-v1.werk` `0a7a7341…` and `gsplat-v1.werk` `ede0aee6…` (built from an
+  earlier spec revision; listed in `RELEASE-ASSETS.md`, not hosted here) and
+  `mini-v1.werk` `f7bdcc85…` (in the repository at
+  `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk`). The checker keeps
+  those pins on purpose and refuses this release's rebuilt fixtures. On this
+  release tree, with the two historical files supplied: 11 of 11 trials
+  reproduce their output bytes (trial `r1-t3`'s program exits 1, its output
+  matches; that is the trial as recorded).
+* The negative-control scripts (`roundNC/build_expectations.py`,
+  `roundNC/run_nc_trials.sh`) now point at the historical mini-v1 file, since
+  `gauntlet/roundOW/mini-v1.werk` was rebuilt under the ruling on #11.
+

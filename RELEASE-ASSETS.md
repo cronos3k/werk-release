@@ -23,3 +23,16 @@ carries the placeholder `{RELEASE_BASE_URL}` until the release is published.
 | `evidence/second-lab/roundNC-binaries.tar.gz` | 2 328 731 | `71847a908a7ef68859e57e34381f132b183778e19927bda9b4e962a9c49cd036` | `{RELEASE_BASE_URL}/evidence/second-lab/roundNC-binaries.tar.gz` | second-lab negative-control round (PR #8): reproducible run outputs and logs, listed in evidence/second-lab/roundNC/OUT-OF-GIT.txt |
 
 11 files, 152 678 423 bytes in total.
+
+## External and historical files (not hosted with this release)
+
+The evidence refers to these files, but this release does not host
+them and `tools/fetch_fixtures.py` does not fetch them. They are
+pinned so a copy obtained elsewhere can be checked
+(`sha256sum`, or `certutil -hashfile <file> SHA256`).
+
+| name | bytes | sha256 | source | needed by |
+|---|---:|---|---|---|
+| second-lab-reruns-2026-10-12 | not measured here | ec069bba92ac9196f35465d16f2f1f91a6fdbd36abfb40cc5f70bd5462e99889 | author-lab asset: a GitHub release asset published by the second lab (Yuvraj Puyam), tag `second-lab-reruns-2026-10-12`, about 9.0 MB as stated by its publisher. Not downloaded or verified for this release | `evidence/second-lab/audits/rubric_check.py RERUNS_DIR` (the 31 round-1 verdicts); without it those verdicts cannot be re-derived from this repository |
+| crate-v1.werk (historical) | 13 684 477 | 0a7a7341d5d508c75925a8c3be0b6c8ccdcced607d9bdd0b26f04e264f029106 | the earlier public snapshot's fixture downloads; built from an earlier spec revision, superseded by `fixtures/crate-v1.werk` above | `evidence/second-lab/trials/check_trials.py --fixtures DIR` (the trials ran on these bytes) |
+| gsplat-v1.werk (historical) | 30 235 611 | ede0aee6cc5659af741059b747dc3f3459db220234e7ffb95c4437c02337090a | the earlier public snapshot's fixture downloads; built from an earlier spec revision, superseded by `fixtures/gsplat-v1.werk` above | `evidence/second-lab/trials/check_trials.py --fixtures DIR` |

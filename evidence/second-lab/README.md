@@ -1,5 +1,8 @@
 # Second-lab evidence
 
+> **Exploratory data.** Read [EXPLORATORY.md](EXPLORATORY.md) first: where these
+> files came from, the path mapping, and the provisional rulings on how to read them.
+
 This folder holds the evidence from an independent second lab.
 The core is an attempt ledger: one row per agent attempt, across both labs.
 "Author" rows are the original rounds. "Second" rows are the second-lab trials.

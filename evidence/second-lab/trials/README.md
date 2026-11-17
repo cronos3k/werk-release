@@ -10,6 +10,29 @@ This folder lets a reader check the second-lab claim "12 of 12 fresh-agent trial
 
 So 11 of the 12 trials can be checked from these files. The August trial cannot.
 
+## In this release (read this first)
+
+These trials are historical. They ran on fixture bytes built from an earlier
+spec revision, not on this release's fixtures, so the checker keeps its
+original pins in [batch2/FIXTURE-SHA256.txt](batch2/FIXTURE-SHA256.txt) and
+refuses the release's own `fixtures/crate-v1.werk` and `fixtures/gsplat-v1.werk`
+(their hashes differ). What it needs:
+
+| file | sha256 | where |
+|---|---|---|
+| `crate-v1.werk` | `0a7a7341d5d508c75925a8c3be0b6c8ccdcced607d9bdd0b26f04e264f029106` | not hosted with this release; see "External and historical files" in `RELEASE-ASSETS.md` |
+| `gsplat-v1.werk` | `ede0aee6cc5659af741059b747dc3f3459db220234e7ffb95c4437c02337090a` | same |
+| `mini-v1.werk` | `f7bdcc853009504b1d31b2934a7a8294cbf0e6f227c95f7de1e81af0947e9837` | in the repository at `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk`; the checker picks it up by itself |
+
+Put the two historical `.werk` files in one folder and run, from the repository root:
+
+```
+python evidence/second-lab/trials/check_trials.py --fixtures DIR
+```
+
+Paths below that start with `results/second-lab/` are this folder's paths in
+the second lab's own tree; here they start with `evidence/second-lab/`.
+
 ## Check the trials yourself
 
 You need Python 3.10 or later, standard library only. You also need `fixtures/crate-v1.werk` and `fixtures/gsplat-v1.werk` from `tools/fetch_fixtures.py` or the `fixtures-v1` release. The trials ran on `gauntlet/roundOW/mini-v1.werk` as it was before the ruling on #11 (`f7bdcc85...`). Once #11 rebuilds that file, the old bytes are at `gauntlet/roundOW/historical/mini-v1-f7bdcc85.werk`, and the checker uses them.
