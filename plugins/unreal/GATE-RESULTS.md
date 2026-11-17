@@ -2,7 +2,10 @@
 
 ## Re-gate on the re-vendored release library (W10, 2026-11-17)
 
-**147 PASS, 0 FAIL, 4 NOT-RUN** (gate 129 s after the plug-in build), the same clause set and
+**147 PASS, 0 FAIL, 4 NOT-RUN** on `c5276a1` (gate 129 s after the plug-in build) and again
+**147 PASS, 0 FAIL, 4 NOT-RUN** on `5a51fef` (111 s; the engine-free core's GCC spelling fix,
+`static_cast` instead of `double(long long(D))`, build again `BUILD SUCCESSFUL`, 0 warnings),
+the same clause set and
 counts as the W5c run below: A 14, A2 22 (21 of 21 reader-rule variants agree with
 `python -m werk` and werkc, + exit status), B 18, C 93 PASS + 4 NOT-RUN (the same four: gsplat
 and retarget fixtures import correctly but create no assets).
@@ -10,7 +13,7 @@ and retarget fixtures import correctly but create no assets).
 | | |
 |---|---|
 | host | Unreal Engine 5.8.2-56702186+++UE5+Release-5.8, `UnrealEditor-Cmd.exe`, Windows 10 19045, MSVC 2022 |
-| plug-in | this folder at release commit `c5276a1` (`git archive` of `main`, plug-in code unchanged since W9), `RunUAT BuildPlugin -TargetPlatforms=Win64 -Rocket`: `BUILD SUCCESSFUL`, exit 0, 0 warnings, 0 errors |
+| plug-in | this folder at `c5276a1` and at `5a51fef` (`git archive` of `main`), `RunUAT BuildPlugin -TargetPlatforms=Win64 -Rocket`: `BUILD SUCCESSFUL`, exit 0, 0 warnings, 0 errors |
 | gate project | a fresh `project/WerkGate` (Config + uproject only; plug-in installed as a copy) |
 | repository | `<repo-archive>` = `git archive c5276a1` + the release assets via `tools/fetch_fixtures.py --from-dir <release-assets>` (all present and verified) |
 | library gated | `libs/` of that archive, bundle `source_rev` `509ebf83be6dd998a255cceca234ceca0b8ac025`; vendored `vendor/werk_single.py` sha256 **`ff3de49babadffa942469a8d6103cac0ecd13804b847b75cabe70acb3a680600`**; werkc built from the archive's `core/` into `libs/_target` |
