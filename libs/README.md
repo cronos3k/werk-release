@@ -304,7 +304,7 @@ fifth implementation can join:
 | JavaScript API, both builds | `node js/tests/api_smoke.js _scratch/inputs` (needs `_scratch/inputs` from `tests/make_inputs.py`, a signed `_scratch/img2.werk` packed from its `source.png` + `thumb.png` with `key.hex`, and `_scratch/dup.werk` from `test_api.py`) | 15 PASS, 0 FAIL |
 | ES3 syntax | `node --expose-internals js/tests/es3_check.js` | `werk.jsx` parses as ECMAScript 3 (acorn), no ES5+ API outside the Node-only IO block |
 | inside real ExtendScript | `js/tests/extendscript_host_wrapper.jsx` in Illustrator 2020 | see `tests/results/extendscript-illustrator2020.txt` (2026-11-07, an earlier build of `werk.jsx`; not re-run on this build) |
-| writers × readers | `python tests/cross_matrix.py --fixtures <fixtures dir>` | 20 cases + the release fixtures, 0 failures: `tests/results/CROSS-MATRIX.md` |
+| writers × readers | `python tests/cross_matrix.py --fixtures <fixtures dir>` | 22 cases + the 15 release fixtures, 0 failures: `tests/results/CROSS-MATRIX.md` |
 | one-bit damage, readers agree | `python tests/damage_agree.py` | see `tests/results/damage_agree.json` (1532 variants: py = js = es3 on 1532; werkc agrees on 1524, the 8 are listed under known gaps) |
 
 `tests/cross_matrix.py` is pure standard library and path-agnostic: on Linux
