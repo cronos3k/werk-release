@@ -16,16 +16,16 @@ parsing vendored byte-identically from `loaders/werk_read.py`. No pip, ever —
 an add-on that needed one would be a promise about another file, which law 1
 bans at the constitutional level.
 
-Blender 4.x. Registered through `bl_info`, which 4.0 through 4.4 accept; the
-4.2+ extension platform accepts a legacy add-on unchanged, so one form serves
-both. Installing from a zip and running the package straight off disk both
+Blender 4.2 LTS through 5.0 (gated on 4.2.1 and 5.0.1). Registered through
+`bl_info`; the 4.2+ extension platform, 5.0 included, accepts a legacy add-on
+unchanged, so one form serves both. Installing from a zip and running the package straight off disk both
 work, and `test_gate.py` measures both.
 """
 
 bl_info = {
     "name": "werk Entity (.werk)",
     "author": "werk",
-    "version": (1, 1, 0),
+    "version": (1, 1, 1),
     "blender": (4, 0, 0),
     "location": "File > Import/Export > werk Entity (.werk)",
     "description": "Import and export werk hermetic 3D entity packages",

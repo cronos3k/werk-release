@@ -42,7 +42,7 @@ from .importer import (PROP_CLIP_ID, PROP_LICENSE, PROP_MATERIALS, PROP_MATERIAL
                        PROP_SEMANTICS, PROP_SKELETON_ID, PROP_UUID)
 
 TOOL = "werk_blender"
-TOOL_VERSION = "1.1.0"
+TOOL_VERSION = "1.1.1"
 
 #: The spec tree vendored into this add-on, shipped inside every package it
 #: writes so the manifest's `schemas` map points at files that are really

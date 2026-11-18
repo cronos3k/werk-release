@@ -508,12 +508,74 @@ def _import_glb(pkg, res, scratch, path, label):
     with open(tmp, "wb") as fh:
         fh.write(data)
     before = {o.name for o in bpy.data.objects}
+    mats_before = {m.name for m in bpy.data.materials}
     try:
         bpy.ops.import_scene.gltf(filepath=tmp)
     except Exception as e:  # noqa: BLE001 - one bad GLB kills one node, not the load
         res.add("error", "gltf-import-failed", "%s: %s" % (label, e))
         return []
-    return _new_objects(before)
+    objs = _new_objects(before)
+    _drop_synthesized_materials(objs, mats_before, _glb_material_names(data),
+                                res, label)
+    return objs
+
+
+def _glb_material_names(data):
+    """The material names a GLB declares, read from its JSON chunk; None when
+    the bytes are not a readable GLB (then nothing is dropped)."""
+    try:
+        if data[:4] != b"glTF":
+            return None
+        import struct
+        clen, ctype = struct.unpack_from("<II", data, 12)
+        if ctype != 0x4E4F534A:  # "JSON"
+            return None
+        doc = json.loads(data[20:20 + clen].decode("utf-8"))
+        return {m.get("name") for m in doc.get("materials") or []}
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def _drop_synthesized_materials(objs, mats_before, glb_names, res, label):
+    """Undo the material Blender's glTF importer invents for a primitive that
+    has none.
+
+    From Blender 5.0 (io_scene_gltf2 5.0) a primitive without a `material`
+    gets a new "DefaultMaterial" instead of an empty slot. That material is not
+    in the file, so it must not come back out of it: it would turn a
+    material-less point cloud into one with a material on re-export, and it
+    would keep `_assign_material` from putting the package's own
+    `core.material` on geometry the GLB left bare. The slot is kept and
+    emptied, so face material indices do not move; the datablock is removed
+    once nothing uses it. Blender 4.x leaves the slot empty already, and then
+    nothing here matches."""
+    if glb_names is None:
+        return
+    synth = set()
+    for m in bpy.data.materials:
+        if m.name in mats_before:
+            continue
+        base = m.name.rsplit(".", 1)[0] if m.name[-4:-3] == "." and \
+            m.name[-3:].isdigit() else m.name
+        if base == "DefaultMaterial" and "DefaultMaterial" not in glb_names:
+            synth.add(m.name)
+    if not synth:
+        return
+    cleared = 0
+    for obj in objs:
+        if obj.type != "MESH":
+            continue
+        for i, slot in enumerate(obj.data.materials):
+            if slot is not None and slot.name in synth:
+                obj.data.materials[i] = None
+                cleared += 1
+    for name in synth:
+        m = bpy.data.materials.get(name)
+        if m is not None and m.users == 0:
+            bpy.data.materials.remove(m)
+    res.add("info", "gltf-default-material-dropped",
+            "%s: %d slot(s) emptied of the glTF importer's DefaultMaterial; the "
+            "GLB declares no material for those primitives" % (label, cleared))
 
 
 def _reparent(objects, root, target, collection=None):
@@ -1022,6 +1084,25 @@ def _build_armature(payload, res, target, root, node_id):
 
 # --- animation -------------------------------------------------------------
 
+def _action_fcurves(action):
+    """Every F-curve of `action`, on either side of Blender's slotted actions.
+
+    Up to 4.3 an Action owns its F-curves (`action.fcurves`). 4.4 moved them
+    into layers > keyframe strips > one channelbag per slot and kept
+    `action.fcurves` as a proxy for the first slot; 5.0 removed the proxy. The
+    importer builds one action for one armature, so walking every channelbag
+    of every strip is the same set the old attribute returned."""
+    legacy = getattr(action, "fcurves", None)
+    if legacy is not None:
+        return list(legacy)
+    out = []
+    for layer in getattr(action, "layers", ()):
+        for strip in layer.strips:
+            for bag in getattr(strip, "channelbags", ()):
+                out.extend(bag.fcurves)
+    return out
+
+
 def _import_animation(pkg, res, node_ids):
     import struct
 
@@ -1143,7 +1224,7 @@ def _import_animation(pkg, res, node_ids):
         # section says positions are linear and rotations shortest-arc SLERP,
         # and Blender's default Bezier handles would overshoot between the very
         # samples the format went to the trouble of fixing.
-        for fc in action.fcurves:
+        for fc in _action_fcurves(action):
             for kp in fc.keyframe_points:
                 kp.interpolation = "LINEAR"
             fc.update()

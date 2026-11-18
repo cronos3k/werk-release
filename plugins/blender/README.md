@@ -1,6 +1,7 @@
-# werk_blender — werk for Blender 4.2
+# werk_blender — werk for Blender 4.2 to 5.0
 
-Import and export werk packages in Blender 4.x (gated on 4.2.1 LTS):
+Import and export werk packages in Blender 4.2 LTS through 5.0 (gated on
+4.2.1 LTS and 5.0.1):
 
 * **3d-entity/1** — import a package as objects (mesh, materials + textures,
   colliders, skeleton, animation, point clouds); export the selection or the
@@ -30,11 +31,11 @@ extra fields, entry order equal to `werk.physical_order`.
 **As a zip** (what you give someone else):
 
 ```
-python tools/build_addon_zip.py            # -> dist/werk_blender-1.1.0.zip
+python tools/build_addon_zip.py            # -> dist/werk_blender-1.1.1.zip
 ```
 
 Blender → `Edit > Preferences > Add-ons > Install…` → pick the zip → enable
-**werk Entity (.werk)**. (Blender 4.2+ accepts this legacy add-on unchanged.)
+**werk Entity (.werk)**. (Blender 4.2 through 5.0 accept this legacy add-on unchanged.)
 
 **From this folder** (development, CI): put this folder on `sys.path`
 (`import werk_blender` puts its own parent there), or add it to Blender's

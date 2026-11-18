@@ -21,7 +21,7 @@ from .common import Scratch, sha256_hex
 from .libwerk import werk
 
 TOOL = "werk_blender"
-TOOL_VERSION = "1.1.0"
+TOOL_VERSION = "1.1.1"
 
 PROP_UUID = "werk_entity_uuid"
 PROP_NAME = "werk_entity_name"
