@@ -6,8 +6,8 @@ Measured from the working tree of the commit below with
 
 | | |
 |---|---|
-| pinned commit | `04e976d` (branch `main`) |
-| tree | `47d8060a3d479b5d0c469d978285b58687209aa6` |
+| pinned commit | `583ee1d` (branch `main`) |
+| tree | `58413fc1264b28e449244a4442e51c0889edc364` |
 | `spec_sha256` of the release `spec/` | `55882f4b05e7fee1c1113662499dc5c62297020c23aa5d271c42ccb8791d40b3` |
 | bootstrap loader `loaders/werk_read.py` | `f639dd417689e60bac2852bcc5e79bda5776c513407d419b3033ed31837c2794` (64 265 B) |
 
@@ -95,12 +95,14 @@ Bundle `source_rev`: `509ebf83be6dd998a255cceca234ceca0b8ac025`.
 | plug-in re-gates on the re-vendored library (`git archive c5276a1`, same libraries and fixtures; Unreal re-run on `5a51fef`, see its `GATE-RESULTS.md`) | Unreal 5.8.2 147 PASS / 0 FAIL / 4 NOT-RUN; Office 2016 60 / 0; Blender `gate_release.py` 98 / 0; GIMP 3.2.4 34 / 0 / 3 NOTE |
 | Unreal 5.8.2 WerkLink gate on `git archive 04e976d` (WerkLink's reader applies MINI-SPECS 5.4 to manifest paths, version-scoped; A2 +7 unsafe-path / version-walk variants) | 154 PASS / 0 FAIL / 4 NOT-RUN (A 14, A2 29, B 18, C 93 + 4 NOT-RUN) |
 | WerkLink engine-free core + `tests/fixture_pin.py` on clean clones of `04e976d`: Windows 10 (MSVC), srvg + srv80 (Ubuntu 24.04, g++ 13.3) | 11 PASS / 0 FAIL and 18 of 18 on each |
+| Blender add-on 1.1.1 on clean clones of `583ee1d` (5.0 F-curve API + glTF `DefaultMaterial`; `plugins/` only): Windows 10, Blender 4.2.1 LTS; srvg, Blender 5.0.1 | `test_gate.py` 20 PASS / 0 FAIL / 0 SKIP and `gate_release.py` 98 PASS / 0 FAIL / 0 SKIP / 0 NOTE on each; `tests/fixture_pin.py` 18 of 18 on each |
 
 The repository gates ran on the working tree at `ea58f7a` (this commit's
 fixtures and libraries; `a00312d` added the refreshed test-result files and
 the README count, `5a51fef` the one-line GCC spelling fix in the Unreal
 plug-in's engine-free core, which the Windows gates also compile; `04e976d`
-WerkLink's version walk and its A2 gate variants, `plugins/unreal/` only -- `spec/`,
+WerkLink's version walk and its A2 gate variants, `plugins/unreal/` only; `583ee1d` the Blender
+add-on 1.1.1, `plugins/` only -- `spec/`,
 `loaders/`, `fixtures/`, `gauntlet/`, `libs/`, `core/` and `RELEASE-ASSETS.md` are unchanged
 since `5a51fef`, and every fixture, asset and library hash above re-measured equal). Not re-run on the re-vendored library:
 Photoshop, Illustrator, After Effects (Adobe re-gates wait for the final

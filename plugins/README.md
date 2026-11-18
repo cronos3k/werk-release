@@ -7,7 +7,7 @@ repository root, never here.
 
 | folder | host, version gated | reads / writes | gate result (final run) |
 |---|---|---|---|
-| [blender/](blender/) | Blender add-on 1.1.1 (4.2.1 LTS, 5.0.1) | 3d-entity/1, image/1 | 20 PASS / 0 FAIL (add-on gate) + 88 PASS / 0 FAIL (release gate) |
+| [blender/](blender/) | Blender add-on 1.1.1 (4.2.1 LTS, 5.0.1) | 3d-entity/1, image/1 | 20 PASS / 0 FAIL (add-on gate) + 98 PASS / 0 FAIL (release gate), each on 4.2.1 and 5.0.1 |
 | [gimp/](gimp/) | GIMP 3.2.4 plug-in | image/1, raster-layers/1 | 34 PASS / 0 FAIL / 3 NOTE |
 | [unreal/](unreal/) | Unreal Engine **5.8.2** (WerkLink 0.2); 5.7 untested | 3d-entity/1, textures of image/1 | 154 PASS / 0 FAIL / 4 NOT-RUN |
 | [photoshop/](photoshop/) | Photoshop **2020 (21.0.3)**, ExtendScript; 2024 (25.11): self-test only, no complete gate run | image/1, raster-layers/1 | 35 PASS / 0 FAIL / 5 NOTE |

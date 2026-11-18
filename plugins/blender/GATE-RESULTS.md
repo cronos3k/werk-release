@@ -1,5 +1,18 @@
 # Blender add-on — gate results
 
+> **Blender 5.0.1 (W15, 2026-11-19), add-on 1.1.1 at `583ee1d`:** clean clones, release assets copied in, fixture pins 18/18 on both.
+> Windows 10, Blender 4.2.1 LTS: `test_gate.py` **20 PASS, 0 FAIL, 0 SKIP** (10.3 s); `gate_release.py` **98 PASS, 0 FAIL, 0 SKIP, 0 NOTE** (99.2 s; werkc, `.py`, `.c`, `.rs` readers all ran).
+> srvg (Ubuntu 24.04), Blender 5.0.1 (snap, hash a3db93c5b259): `test_gate.py` **20 PASS, 0 FAIL, 0 SKIP** (6.4 s); `gate_release.py` **98 PASS, 0 FAIL, 0 SKIP, 0 NOTE** (34.3 s; werkc, `.py`, `.c`, `.rs` readers all ran).
+> Before the fix (clean clone of `a30c290`, Blender 5.0.1): `test_gate.py` 18 PASS / 1 FAIL / 1 SKIP (SKIP = werk-core library not built in that clone; it was built for the later runs). The FAIL is
+> "rig round trip (skeleton + clip)", clause did not run: `importer._import_animation` read `action.fcurves`, which Blender 5.0 removed
+> (slotted actions, introduced in 4.4; F-curves live in `action.layers[].strips[].channelbags[].fcurves`). With only that fixed,
+> `gate_release.py` measured 95 / 3: the three gsplat round trips came back with 1 material instead of 0, because io_scene_gltf2 5.0
+> creates a `DefaultMaterial` for every glTF primitive without a material. The same behaviour silently replaced the package's own
+> material on bare-GLB meshes (crate-v1, mini-v1: the count stayed 1, the material was `DefaultMaterial` instead of `Crate softwood`).
+> 1.1.1 walks F-curves through either API and empties the slots that hold a `DefaultMaterial` the GLB does not declare (slot kept, so
+> face indices do not move; orphan removed; reported as `gltf-default-material-dropped`). On 4.2.1 the new path never fires (0 reports).
+> Supported range declared: Blender 4.2 LTS through 5.0. Logs: release evidence `runs/{godd,srvg}/release-w15/`.
+
 > **Re-gate on the re-vendored release library (W10, 2026-11-17):** `gate_release.py` **98 PASS, 0 FAIL, 0 SKIP, 0 NOTE** (59.9 s), Blender 4.2.1, run from `<repo-archive>` = `git archive c5276a1` + release assets, `vendor/werk_single.py` `ff3de49b…` (byte-identical to `libs/`, bundle `509ebf8`). `test_gate.py` 20 PASS, 0 FAIL on the same library in the repository gate run (`RELEASE-PINS.md`).
 
 Run 2026-11-07 on <lab-workstation> (final re-run: library and fixtures at release-fixes 26e3e14) (Windows 10 19045), from `<plugins>\blender`.
