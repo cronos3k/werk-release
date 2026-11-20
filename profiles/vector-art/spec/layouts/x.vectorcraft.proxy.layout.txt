@@ -1,0 +1,16 @@
+x.vectorcraft.proxy - a linked image's low-resolution preview
+
+What it is
+    The picture VectorCraft shows for a LINKED image while the linked file cannot be read: the
+    image scaled to at most 256 pixels on its longer side. One file, carried verbatim.
+
+Encoding
+    PNG (ISO/IEC 15948; spec/MINI-SPECS.md section 8) when the file starts with the bytes
+    89 50 4E 47 0D 0A 1A 0A, else JPEG (ISO/IEC 10918-1 in a JFIF wrapper; starts FF D8 FF).
+    The manifest's files[].media_type says which (image/png or image/jpeg).
+
+Who refers to it
+    The x.vectorcraft.embedded node: images[].proxy = {"is": "node", "node": "<this node_id>"}.
+
+Opaque to every other reader. Safe to skip: the image's full pixels are in its
+core.vector.image node. Derived data: VectorCraft makes it again from the image.

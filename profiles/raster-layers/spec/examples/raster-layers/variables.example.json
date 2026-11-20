@@ -1,0 +1,37 @@
+{
+  "active": 0,
+  "data_sets": [
+    {
+      "name": "German",
+      "values": [
+        {
+          "kind": "text",
+          "text": "Hallo, werk",
+          "variable": "headline"
+        },
+        {
+          "kind": "visibility",
+          "variable": "show_logo",
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "defs": [
+    {
+      "kind": {
+        "type": "textReplacement"
+      },
+      "layer": "layer-2",
+      "name": "headline"
+    },
+    {
+      "kind": {
+        "type": "visibility"
+      },
+      "layer": "layer-5",
+      "name": "show_logo"
+    }
+  ],
+  "schema_version": 1
+}

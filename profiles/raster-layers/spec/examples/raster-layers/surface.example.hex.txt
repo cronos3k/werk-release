@@ -1,0 +1,90 @@
+surface.example.wkx - annotated hex dump
+========================================
+
+The INDEX file of a core.raster.surface node (spec/layouts/core.raster.surface.layout.txt section 4): a layer mask,
+8-bit gray, one stored tile at tile (0, 0); every pixel outside that tile has the default pixel 255 (reveals).
+
+File size: 480 bytes. sha256: 12cf629a4ce5c48e00fe736413d62c02bf7cf761099cec3fd31fa39b9627cd07.
+Offsets are hexadecimal, from the start of the file. Read spec/layouts/ENVELOPE.layout.txt
+first: the fixed prefix and the payload are LITTLE-endian, the MessagePack header BIG-endian.
+
+--- fixed prefix -----------------------------------------------------------
+  000000  57 4b 58 30                            magic "WKX0"
+  000004  01 00 00 00                            version = 1 (u32 little-endian)
+  000008  a5 01 00 00                            header_len = 421 (u32 little-endian)
+
+--- header: one MessagePack map, bytes 0x00000c .. 0x0001b1 ------------------
+  00000c  8f                                     map, 15 pair(s)
+  00000d  a8 63 68 61 6e 6e 65 6c 73               key "channels"
+  000016  91                                         = array, 1 element(s)
+  000017  a4 67 72 61 79                               fixstr(4) "gray"
+  00001c  aa 65 6e 64 69 61 6e 6e 65 73 73         key "endianness"
+  000027  a2 6c 65                                   = fixstr(2) "le"
+  00002a  a9 68 61 73 5f 61 6c 70 68 61            key "has_alpha"
+  000034  c2                                         = false
+  000035  a4 6b 69 6e 64                           key "kind"
+  00003a  b3 63 6f 72 65 2e 72 61 73 74 65 72 ..     = fixstr(19) "core.raster.surface"
+  00004e  a9 6e 6f 6e 66 69 6e 69 74 65            key "nonfinite"
+  000058  c2                                         = false
+  000059  a4 70 61 72 74                           key "part"
+  00005e  a5 69 6e 64 65 78                          = fixstr(5) "index"
+  000064  ae 70 61 79 6c 6f 61 64 5f 6f 72 69 ..   key "payload_origin"
+  000073  cd 01 c0                                   = uint16 448 (big-endian)
+  000076  ac 70 61 79 6c 6f 61 64 5f 73 69 7a ..   key "payload_size"
+  000083  20                                         = uint 32
+  000084  aa 70 69 78 65 6c 5f 6d 6f 64 65         key "pixel_mode"
+  00008f  a9 67 72 61 79 73 63 61 6c 65              = fixstr(9) "grayscale"
+  000099  ab 73 61 6d 70 6c 65 5f 74 79 70 65      key "sample_type"
+  0000a5  a2 75 38                                   = fixstr(2) "u8"
+  0000a8  a8 73 65 63 74 69 6f 6e 73               key "sections"
+  0000b1  92                                         = array, 2 element(s)
+  0000b2  86                                           map, 6 pair(s)
+  0000b3  a5 64 74 79 70 65                              key "dtype"
+  0000b9  a2 75 38                                         = fixstr(2) "u8"
+  0000bc  a4 6e 61 6d 65                                 key "name"
+  0000c1  ad 64 65 66 61 75 6c 74 2d 70 69 78 ..           = fixstr(13) "default-pixel"
+  0000cf  a6 6f 66 66 73 65 74                           key "offset"
+  0000d6  cd 01 c0                                         = uint16 448 (big-endian)
+  0000d9  a5 73 68 61 70 65                              key "shape"
+  0000df  91                                               = array, 1 element(s)
+  0000e0  01                                                 uint 1
+  0000e1  a4 73 69 7a 65                                 key "size"
+  0000e6  01                                               = uint 1
+  0000e7  a6 73 74 72 69 64 65                           key "stride"
+  0000ee  01                                               = uint 1
+  0000ef  86                                           map, 6 pair(s)
+  0000f0  a5 64 74 79 70 65                              key "dtype"
+  0000f6  a3 69 33 32                                      = fixstr(3) "i32"
+  0000fa  a4 6e 61 6d 65                                 key "name"
+  0000ff  aa 74 69 6c 65 2d 69 6e 64 65 78                 = fixstr(10) "tile-index"
+  00010a  a6 6f 66 66 73 65 74                           key "offset"
+  000111  cd 01 d0                                         = uint16 464 (big-endian)
+  000114  a5 73 68 61 70 65                              key "shape"
+  00011a  92                                               = array, 2 element(s)
+  00011b  01                                                 uint 1
+  00011c  04                                                 uint 4
+  00011d  a4 73 69 7a 65                                 key "size"
+  000122  10                                               = uint 16
+  000123  a6 73 74 72 69 64 65                           key "stride"
+  00012a  10                                               = uint 16
+  00012b  aa 74 69 6c 65 5f 63 6f 75 6e 74         key "tile_count"
+  000136  01                                         = uint 1
+  000137  b0 74 69 6c 65 5f 66 69 6c 65 5f 73 ..   key "tile_file_sha256"
+  000148  91                                         = array, 1 element(s)
+  000149  d9 40 34 31 32 65 33 39 31 32 34 63 ..       str8(64) "412e39124c7b604bf702b38040b7dce2a5a62125faa52d52cfcd126913a3261d"
+  00018b  aa 74 69 6c 65 5f 66 69 6c 65 73         key "tile_files"
+  000196  91                                         = array, 1 element(s)
+  000197  ac 7a 74 69 6c 65 73 2d 70 30 2d 70 ..       fixstr(12) "ztiles-p0-p0"
+  0001a4  a9 74 69 6c 65 5f 73 69 7a 65            key "tile_size"
+  0001ae  cd 01 00                                   = uint16 256 (big-endian)
+
+--- padding ----------------------------------------------------------------
+  0001b1  00 00 00 00 00 00 00 00 00 00 00 00 .. 15 zero byte(s) up to payload_origin = 448 (0x1c0), the next multiple of 16
+
+--- section "default-pixel": dtype u8, shape [1], stride 1, bytes 0x0001c0 .. 0x0001c1 (1 bytes)
+  0001c0  ff                                     255
+  0001c1  00 00 00 00 00 00 00 00 00 00 00 00 .. zero padding to the next multiple of 16
+
+--- section "tile-index": dtype i32, shape [1, 4], stride 16, bytes 0x0001d0 .. 0x0001e0 (16 bytes)
+  0001d0  00 00 00 00 00 00 00 00 00 00 00 00    0, 0, 0
+  0001dc  00 00 00 00                            0

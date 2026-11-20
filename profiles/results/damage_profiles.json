@@ -1,0 +1,1119 @@
+{
+ "note": "profiles/tools/damage_profiles.py on the committed fixtures: raster-layers and motion-comp from the second run (after their final rebuild), the other four from the first run (their bytes did not change). Every disagreement is a one-bit flip inside MANIFEST.json that breaks one node record's manifest schema: werkc (a JSON Schema validator) kills that node, the libs readers do not validate JSON Schema (libs/README.md) and keep it; in vector-art the flip removes `node_id`, the libs name the node `<node 4>`, the bootstrap loaders do not name nodes without an id. Same class as the release's own known gaps (libs/tests/results/damage_agree.json).",
+ "tools": {
+  "python": "C:\\Program Files\\Python312\\python.exe",
+  "node": "C:\\Program Files\\nodejs\\node.EXE",
+  "werkc": "<work>/bin/werkc.exe",
+  "ref-c": "<work>\\scratch\\damage\\bin\\werk_read_c.exe",
+  "ref-rs": "<work>\\scratch\\damage\\bin\\werk_read_rs.exe",
+  "cc": "C:\\msys64\\mingw64\\bin\\cc.EXE",
+  "rustc": "<home>\\.cargo\\bin\\rustc.EXE"
+ },
+ "fixtures": {
+  "presentation-v1.werk": {
+   "tally": {
+    "container_variants": 596,
+    "payload_variants": 13,
+    "agree": 607,
+    "reader_named_damage": 13,
+    "refused_by_all": 212
+   },
+   "disagreements": [
+    [
+     "c0024968.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "loader-rust"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0029953.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "format-zlib-deflate-reference"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ]
+   ],
+   "disagreement_count": 2,
+   "payload_cases": {
+    "p0000.werk": {
+     "node": "document",
+     "path": "deck/document.json",
+     "full_dead": [
+      "document"
+     ],
+     "werkc_dead": [
+      "document"
+     ]
+    },
+    "p0001.werk": {
+     "node": "outline",
+     "path": "deck/outline.txt",
+     "full_dead": [
+      "outline"
+     ],
+     "werkc_dead": [
+      "outline"
+     ]
+    },
+    "p0002.werk": {
+     "node": "layout-2",
+     "path": "deck/layouts/layout-2.json",
+     "full_dead": [
+      "layout-2"
+     ],
+     "werkc_dead": [
+      "layout-2"
+     ]
+    },
+    "p0003.werk": {
+     "node": "layout-5",
+     "path": "deck/layouts/layout-5.json",
+     "full_dead": [
+      "layout-5"
+     ],
+     "werkc_dead": [
+      "layout-5"
+     ]
+    },
+    "p0004.werk": {
+     "node": "master-1",
+     "path": "deck/masters/master-1.json",
+     "full_dead": [
+      "layout-2",
+      "layout-5",
+      "master-1"
+     ],
+     "werkc_dead": [
+      "layout-2",
+      "layout-5",
+      "master-1"
+     ]
+    },
+    "p0005.werk": {
+     "node": "media-10",
+     "path": "deck/media/media-10/asset.json",
+     "full_dead": [
+      "media-10"
+     ],
+     "werkc_dead": [
+      "media-10"
+     ]
+    },
+    "p0006.werk": {
+     "node": "media-10",
+     "path": "deck/media/media-10/harbour-lights-logo.werk",
+     "full_dead": [
+      "media-10"
+     ],
+     "werkc_dead": [
+      "media-10"
+     ]
+    },
+    "p0007.werk": {
+     "node": "media-10-png",
+     "path": "deck/media/media-10/rendition.png",
+     "full_dead": [
+      "media-10-png"
+     ],
+     "werkc_dead": [
+      "media-10-png"
+     ]
+    },
+    "p0008.werk": {
+     "node": "media-11",
+     "path": "deck/media/media-11/asset.json",
+     "full_dead": [
+      "media-11"
+     ],
+     "werkc_dead": [
+      "media-11"
+     ]
+    },
+    "p0009.werk": {
+     "node": "media-11",
+     "path": "deck/media/media-11/harbour-at-dusk.png",
+     "full_dead": [
+      "media-11"
+     ],
+     "werkc_dead": [
+      "media-11"
+     ]
+    },
+    "p0010.werk": {
+     "node": "slide-3",
+     "path": "deck/slides/slide-3.json",
+     "full_dead": [
+      "outline",
+      "slide-3"
+     ],
+     "werkc_dead": [
+      "outline",
+      "slide-3"
+     ]
+    },
+    "p0011.werk": {
+     "node": "slide-4",
+     "path": "deck/slides/slide-4.json",
+     "full_dead": [
+      "outline",
+      "slide-4"
+     ],
+     "werkc_dead": [
+      "outline",
+      "slide-4"
+     ]
+    },
+    "p0012.werk": {
+     "node": "slide-6",
+     "path": "deck/slides/slide-6.json",
+     "full_dead": [
+      "outline",
+      "slide-6"
+     ],
+     "werkc_dead": [
+      "outline",
+      "slide-6"
+     ]
+    }
+   }
+  },
+  "rich-document-v1.werk": {
+   "tally": {
+    "container_variants": 624,
+    "payload_variants": 7,
+    "agree": 628,
+    "reader_named_damage": 7,
+    "refused_by_all": 218
+   },
+   "disagreements": [
+    [
+     "c0011010.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "spec"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0033941.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "format-zlib-deflate-reference"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0039923.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "document"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ]
+   ],
+   "disagreement_count": 3,
+   "payload_cases": {
+    "p0000.werk": {
+     "node": "document",
+     "path": "document/document.json",
+     "full_dead": [
+      "document"
+     ],
+     "werkc_dead": [
+      "document"
+     ]
+    },
+    "p0001.werk": {
+     "node": "text-000001",
+     "path": "preview/text/body-000001.txt.zlib",
+     "full_dead": [
+      "text-000001"
+     ],
+     "werkc_dead": [
+      "text-000001"
+     ]
+    },
+    "p0002.werk": {
+     "node": "properties",
+     "path": "document/properties.json",
+     "full_dead": [
+      "properties"
+     ],
+     "werkc_dead": [
+      "properties"
+     ]
+    },
+    "p0003.werk": {
+     "node": "styles",
+     "path": "document/styles.json",
+     "full_dead": [
+      "styles"
+     ],
+     "werkc_dead": [
+      "styles"
+     ]
+    },
+    "p0004.werk": {
+     "node": "media-harbour-at-dusk-png",
+     "path": "media/harbour-at-dusk.png",
+     "full_dead": [
+      "media-harbour-at-dusk-png"
+     ],
+     "werkc_dead": [
+      "media-harbour-at-dusk-png"
+     ]
+    },
+    "p0005.werk": {
+     "node": "body-000001",
+     "path": "text/body-000001.blocks.zlib",
+     "full_dead": [
+      "body-000001",
+      "text-000001"
+     ],
+     "werkc_dead": [
+      "body-000001",
+      "text-000001"
+     ]
+    },
+    "p0006.werk": {
+     "node": "body-000001",
+     "path": "text/body-000001.json",
+     "full_dead": [
+      "body-000001",
+      "text-000001"
+     ],
+     "werkc_dead": [
+      "body-000001",
+      "text-000001"
+     ]
+    }
+   }
+  },
+  "spreadsheet-v1.werk": {
+   "tally": {
+    "container_variants": 648,
+    "payload_variants": 13,
+    "agree": 658,
+    "reader_named_damage": 13,
+    "refused_by_all": 230
+   },
+   "disagreements": [
+    [
+     "c0035935.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "styles"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0044908.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "sheet-2-computed"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0045905.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "sheet-2-computed"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ]
+   ],
+   "disagreement_count": 3,
+   "payload_cases": {
+    "p0000.werk": {
+     "node": "names",
+     "path": "workbook/names.json",
+     "full_dead": [
+      "names",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "names",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ]
+    },
+    "p0001.werk": {
+     "node": "styles",
+     "path": "workbook/styles.json",
+     "full_dead": [
+      "styles"
+     ],
+     "werkc_dead": [
+      "styles"
+     ]
+    },
+    "p0002.werk": {
+     "node": "workbook",
+     "path": "workbook/workbook.json",
+     "full_dead": [
+      "sheet-1-computed",
+      "sheet-2-computed",
+      "workbook"
+     ],
+     "werkc_dead": [
+      "sheet-1-computed",
+      "sheet-2-computed",
+      "workbook"
+     ]
+    },
+    "p0003.werk": {
+     "node": "sheet-1-cells",
+     "path": "sheets/sheet-1/cells.json",
+     "full_dead": [
+      "sheet-1-cells",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-1-cells",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ]
+    },
+    "p0004.werk": {
+     "node": "sheet-1-cells",
+     "path": "sheets/sheet-1/cells/rows-0000000.wkx.zlib",
+     "full_dead": [
+      "sheet-1-cells",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-1-cells",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ]
+    },
+    "p0005.werk": {
+     "node": "sheet-1-computed",
+     "path": "sheets/sheet-1/computed.json",
+     "full_dead": [
+      "sheet-1-computed"
+     ],
+     "werkc_dead": [
+      "sheet-1-computed"
+     ]
+    },
+    "p0006.werk": {
+     "node": "sheet-1-computed",
+     "path": "sheets/sheet-1/computed/rows-0000000.wkx.zlib",
+     "full_dead": [
+      "sheet-1-computed"
+     ],
+     "werkc_dead": [
+      "sheet-1-computed"
+     ]
+    },
+    "p0007.werk": {
+     "node": "sheet-1",
+     "path": "sheets/sheet-1/sheet.json",
+     "full_dead": [
+      "sheet-1",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-1",
+      "sheet-1-computed",
+      "sheet-2-computed"
+     ]
+    },
+    "p0008.werk": {
+     "node": "sheet-2-cells",
+     "path": "sheets/sheet-2/cells.json",
+     "full_dead": [
+      "sheet-2-cells",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-2-cells",
+      "sheet-2-computed"
+     ]
+    },
+    "p0009.werk": {
+     "node": "sheet-2-cells",
+     "path": "sheets/sheet-2/cells/rows-0000000.wkx.zlib",
+     "full_dead": [
+      "sheet-2-cells",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-2-cells",
+      "sheet-2-computed"
+     ]
+    },
+    "p0010.werk": {
+     "node": "sheet-2-computed",
+     "path": "sheets/sheet-2/computed.json",
+     "full_dead": [
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-2-computed"
+     ]
+    },
+    "p0011.werk": {
+     "node": "sheet-2-computed",
+     "path": "sheets/sheet-2/computed/rows-0000000.wkx.zlib",
+     "full_dead": [
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-2-computed"
+     ]
+    },
+    "p0012.werk": {
+     "node": "sheet-2",
+     "path": "sheets/sheet-2/sheet.json",
+     "full_dead": [
+      "sheet-2",
+      "sheet-2-computed"
+     ],
+     "werkc_dead": [
+      "sheet-2",
+      "sheet-2-computed"
+     ]
+    }
+   }
+  },
+  "vector-art-v1.werk": {
+   "tally": {
+    "container_variants": 629,
+    "payload_variants": 6,
+    "agree": 634,
+    "reader_named_damage": 6,
+    "refused_by_all": 221
+   },
+   "disagreements": [
+    [
+     "c0032944.werk",
+     [
+      [
+       "ref-py",
+       [
+        1,
+        "absent",
+        []
+       ],
+       [
+        1,
+        "absent",
+        [
+         "<node 4>"
+        ]
+       ]
+      ],
+      [
+       "ref-c",
+       [
+        0,
+        "absent",
+        []
+       ],
+       [
+        1,
+        "absent",
+        [
+         "<node 4>"
+        ]
+       ]
+      ],
+      [
+       "ref-rs",
+       [
+        1,
+        "absent",
+        []
+       ],
+       [
+        1,
+        "absent",
+        [
+         "<node 4>"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "disagreement_count": 1,
+   "payload_cases": {
+    "p0000.werk": {
+     "node": "document",
+     "path": "vector/document.json",
+     "full_dead": [
+      "document",
+      "preview"
+     ],
+     "werkc_dead": [
+      "document",
+      "preview"
+     ]
+    },
+    "p0001.werk": {
+     "node": "preview",
+     "path": "preview/artboard.png",
+     "full_dead": [
+      "preview"
+     ],
+     "werkc_dead": [
+      "preview"
+     ]
+    },
+    "p0002.werk": {
+     "node": "artboard-1",
+     "path": "vector/artboards/artboard-1.json",
+     "full_dead": [
+      "artboard-1",
+      "preview"
+     ],
+     "werkc_dead": [
+      "artboard-1",
+      "preview"
+     ]
+    },
+    "p0003.werk": {
+     "node": "layer-1",
+     "path": "vector/layers/layer-1.json",
+     "full_dead": [
+      "layer-1",
+      "preview"
+     ],
+     "werkc_dead": [
+      "layer-1",
+      "preview"
+     ]
+    },
+    "p0004.werk": {
+     "node": "layer-2",
+     "path": "vector/layers/layer-2.json",
+     "full_dead": [
+      "layer-2",
+      "preview"
+     ],
+     "werkc_dead": [
+      "layer-2",
+      "preview"
+     ]
+    },
+    "p0005.werk": {
+     "node": "swatches",
+     "path": "vector/swatches.json",
+     "full_dead": [
+      "swatches"
+     ],
+     "werkc_dead": [
+      "swatches"
+     ]
+    }
+   }
+  },
+  "motion-comp-v1.werk": {
+   "tally": {
+    "container_variants": 621,
+    "payload_variants": 7,
+    "agree": 626,
+    "reader_named_damage": 7,
+    "refused_by_all": 215
+   },
+   "disagreements": [
+    [
+     "c0027959.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "spec"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0033941.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "readme"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ]
+   ],
+   "disagreement_count": 2,
+   "payload_cases": {
+    "p0000.werk": {
+     "node": "project",
+     "path": "project/project.json",
+     "full_dead": [
+      "project"
+     ],
+     "werkc_dead": [
+      "project"
+     ]
+    },
+    "p0001.werk": {
+     "node": "comp-3",
+     "path": "comps/comp-3/comp.json",
+     "full_dead": [
+      "comp-3"
+     ],
+     "werkc_dead": [
+      "comp-3"
+     ]
+    },
+    "p0002.werk": {
+     "node": "layer-4",
+     "path": "comps/comp-3/layer-4.json",
+     "full_dead": [
+      "layer-4",
+      "layer-4-keys"
+     ],
+     "werkc_dead": [
+      "layer-4",
+      "layer-4-keys"
+     ]
+    },
+    "p0003.werk": {
+     "node": "layer-4-keys",
+     "path": "comps/comp-3/layer-4.keys.wkx",
+     "full_dead": [
+      "layer-4-keys"
+     ],
+     "werkc_dead": [
+      "layer-4-keys"
+     ]
+    },
+    "p0004.werk": {
+     "node": "layer-5",
+     "path": "comps/comp-3/layer-5.json",
+     "full_dead": [
+      "layer-5"
+     ],
+     "werkc_dead": [
+      "layer-5"
+     ]
+    },
+    "p0005.werk": {
+     "node": "item-1",
+     "path": "items/item-1.json",
+     "full_dead": [
+      "item-1"
+     ],
+     "werkc_dead": [
+      "item-1"
+     ]
+    },
+    "p0006.werk": {
+     "node": "item-2",
+     "path": "items/item-2.json",
+     "full_dead": [
+      "item-2"
+     ],
+     "werkc_dead": [
+      "item-2"
+     ]
+    }
+   }
+  },
+  "raster-layers-v1.werk": {
+   "tally": {
+    "container_variants": 690,
+    "payload_variants": 13,
+    "agree": 699,
+    "reader_named_damage": 13,
+    "refused_by_all": 243
+   },
+   "disagreements": [
+    [
+     "c0031947.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "loader-python"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0041917.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "composite",
+         "layer-4",
+         "thumbnail"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0042914.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "composite",
+         "layer-2-pixels",
+         "thumbnail"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ],
+    [
+     "c0047899.werk",
+     [
+      [
+       "werkc",
+       [
+        1,
+        "absent",
+        [
+         "thumbnail"
+        ]
+       ],
+       [
+        0,
+        "absent",
+        []
+       ]
+      ]
+     ]
+    ]
+   ],
+   "disagreement_count": 4,
+   "payload_cases": {
+    "p0000.werk": {
+     "node": "document",
+     "path": "document/document.json",
+     "full_dead": [
+      "composite",
+      "document",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "document",
+      "thumbnail"
+     ]
+    },
+    "p0001.werk": {
+     "node": "composite",
+     "path": "preview/composite.png",
+     "full_dead": [
+      "composite"
+     ],
+     "werkc_dead": [
+      "composite"
+     ]
+    },
+    "p0002.werk": {
+     "node": "thumbnail",
+     "path": "preview/thumbnail.png",
+     "full_dead": [
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "thumbnail"
+     ]
+    },
+    "p0003.werk": {
+     "node": "layer-1",
+     "path": "layers/layer-1/layer.json",
+     "full_dead": [
+      "composite",
+      "layer-1",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-1",
+      "thumbnail"
+     ]
+    },
+    "p0004.werk": {
+     "node": "layer-2",
+     "path": "layers/layer-2/layer.json",
+     "full_dead": [
+      "composite",
+      "layer-2",
+      "layer-2-mask",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-2",
+      "layer-2-mask",
+      "thumbnail"
+     ]
+    },
+    "p0005.werk": {
+     "node": "layer-3",
+     "path": "layers/layer-3/layer.json",
+     "full_dead": [
+      "composite",
+      "layer-3",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-3",
+      "thumbnail"
+     ]
+    },
+    "p0006.werk": {
+     "node": "layer-4",
+     "path": "layers/layer-4/layer.json",
+     "full_dead": [
+      "composite",
+      "layer-4",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-4",
+      "thumbnail"
+     ]
+    },
+    "p0007.werk": {
+     "node": "layer-1-pixels",
+     "path": "surfaces/layer-1-pixels/surface.wkx",
+     "full_dead": [
+      "composite",
+      "layer-1-pixels",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-1-pixels",
+      "thumbnail"
+     ]
+    },
+    "p0008.werk": {
+     "node": "layer-1-pixels",
+     "path": "surfaces/layer-1-pixels/tiles-p0-p0.wkxz",
+     "full_dead": [
+      "composite",
+      "layer-1-pixels",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-1-pixels",
+      "thumbnail"
+     ]
+    },
+    "p0009.werk": {
+     "node": "layer-2-mask",
+     "path": "surfaces/layer-2-mask/surface.wkx",
+     "full_dead": [
+      "composite",
+      "layer-2-mask",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-2-mask",
+      "thumbnail"
+     ]
+    },
+    "p0010.werk": {
+     "node": "layer-2-mask",
+     "path": "surfaces/layer-2-mask/tiles-p0-p0.wkx",
+     "full_dead": [
+      "composite",
+      "layer-2-mask",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-2-mask",
+      "thumbnail"
+     ]
+    },
+    "p0011.werk": {
+     "node": "layer-2-pixels",
+     "path": "surfaces/layer-2-pixels/surface.wkx",
+     "full_dead": [
+      "composite",
+      "layer-2-pixels",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-2-pixels",
+      "thumbnail"
+     ]
+    },
+    "p0012.werk": {
+     "node": "layer-2-pixels",
+     "path": "surfaces/layer-2-pixels/tiles-p0-p0.wkx",
+     "full_dead": [
+      "composite",
+      "layer-2-pixels",
+      "thumbnail"
+     ],
+     "werkc_dead": [
+      "composite",
+      "layer-2-pixels",
+      "thumbnail"
+     ]
+    }
+   }
+  }
+ },
+ "disagreements_total": 15
+}

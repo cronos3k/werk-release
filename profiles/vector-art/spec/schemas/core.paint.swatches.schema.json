@@ -1,0 +1,627 @@
+{
+  "$defs": {
+    "affine": {
+      "description": "An affine transform as six numbers `[a, b, c, d, e, f]`: a point (x, y) maps to (a*x + c*y + e, b*x + d*y + f). `[1,0,0,1,0,0]` is the identity.",
+      "items": {
+        "description": "A coefficient.",
+        "type": "number"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "type": "array"
+    },
+    "color": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "rgb"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_rgb"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "cmyk"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_cmyk"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "gray"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_gray"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "lab"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_lab"
+          }
+        }
+      ],
+      "description": "A colour. Components are IEEE 754 binary32 values written in decimal.",
+      "properties": {
+        "model": {
+          "description": "The colour model. One of: `rgb` (red, green, blue); `cmyk` (cyan, magenta, yellow, black inks); `gray` (black ink only); `lab` (CIE L*a*b*).",
+          "enum": [
+            "rgb",
+            "cmyk",
+            "gray",
+            "lab"
+          ]
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "type": "object"
+    },
+    "color_cmyk": {
+      "additionalProperties": false,
+      "description": "A CMYK colour: ink amounts in the document's CMYK space.",
+      "properties": {
+        "c": {
+          "description": "Cyan ink, 0 to 1.",
+          "type": "number"
+        },
+        "k": {
+          "description": "Black ink, 0 to 1.",
+          "type": "number"
+        },
+        "m": {
+          "description": "Magenta ink, 0 to 1.",
+          "type": "number"
+        },
+        "model": {
+          "const": "cmyk"
+        },
+        "y": {
+          "description": "Yellow ink, 0 to 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "c",
+        "m",
+        "y",
+        "k"
+      ],
+      "type": "object"
+    },
+    "color_gray": {
+      "additionalProperties": false,
+      "description": "A gray: an amount of black ink.",
+      "properties": {
+        "k": {
+          "description": "Black, 0 (white) to 1 (black).",
+          "type": "number"
+        },
+        "model": {
+          "const": "gray"
+        }
+      },
+      "required": [
+        "model",
+        "k"
+      ],
+      "type": "object"
+    },
+    "color_lab": {
+      "additionalProperties": false,
+      "description": "A CIE L*a*b* colour, D50 white point (device independent; how spot colours are defined).",
+      "properties": {
+        "a": {
+          "description": "Green (negative) to red (positive), about -128 to 127.",
+          "type": "number"
+        },
+        "b": {
+          "description": "Blue (negative) to yellow (positive), about -128 to 127.",
+          "type": "number"
+        },
+        "l": {
+          "description": "Lightness, 0 to 100.",
+          "type": "number"
+        },
+        "model": {
+          "const": "lab"
+        }
+      },
+      "required": [
+        "model",
+        "l",
+        "a",
+        "b"
+      ],
+      "type": "object"
+    },
+    "color_rgb": {
+      "additionalProperties": false,
+      "description": "An RGB colour (sRGB unless the document names another RGB profile).",
+      "properties": {
+        "b": {
+          "description": "Blue, 0 to 1.",
+          "type": "number"
+        },
+        "g": {
+          "description": "Green, 0 to 1.",
+          "type": "number"
+        },
+        "model": {
+          "const": "rgb"
+        },
+        "r": {
+          "description": "Red, 0 to 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "r",
+        "g",
+        "b"
+      ],
+      "type": "object"
+    },
+    "freeform": {
+      "additionalProperties": false,
+      "description": "The points of a freeform gradient.",
+      "properties": {
+        "lines": {
+          "description": "Lines of colour. Absent: none.",
+          "items": {
+            "description": "One line: a smooth curve through these points, in order.",
+            "items": {
+              "description": "Index into `points`.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "mode": {
+          "description": "How the editor's Gradient tool adds points; it does not change the colours. One of: `points` (single points; the default when absent); `lines` (points joined into lines).",
+          "enum": [
+            "points",
+            "lines"
+          ]
+        },
+        "points": {
+          "description": "The colour points.",
+          "items": {
+            "$ref": "#/$defs/freeform_point"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "type": "object"
+    },
+    "freeform_point": {
+      "additionalProperties": false,
+      "description": "One colour point of a freeform gradient.",
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/point",
+          "description": "The point's position (document coordinates; text space for a run of type)."
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "The colour at the point."
+        },
+        "opacity": {
+          "description": "Opacity at the point, 0 to 1. Absent: 1.",
+          "type": "number"
+        },
+        "spread": {
+          "description": "Radius of the disc of pure colour around the point, 0 to 1 of the gradient's spread scale. Absent: 0.25.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "at",
+        "color"
+      ],
+      "type": "object"
+    },
+    "gradient": {
+      "additionalProperties": false,
+      "description": "A gradient: its kind and colour stops.",
+      "properties": {
+        "kind": {
+          "description": "The gradient's geometry. One of: `Linear` (colours change along the line from `geom.start` to `geom.end`); `Radial` (colours change with distance from the centre `geom.start` out to `geom.end`); `Freeform` (colours spread from the points and lines of `freeform`).",
+          "enum": [
+            "Linear",
+            "Radial",
+            "Freeform"
+          ]
+        },
+        "stops": {
+          "description": "The colour stops, by ascending `offset`.",
+          "items": {
+            "$ref": "#/$defs/gradient_stop"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "stops"
+      ],
+      "type": "object"
+    },
+    "gradient_geom": {
+      "additionalProperties": false,
+      "description": "Where a gradient lies, in document coordinates (text space for a run of type).",
+      "properties": {
+        "aspect": {
+          "description": "Radial only: the ellipse's height over its width, measured across and along the `start`-`end` direction. Absent: 1 (a circle).",
+          "type": "number"
+        },
+        "end": {
+          "$ref": "#/$defs/point",
+          "description": "Linear: where offset 1 is. Radial: a point on the outer edge (offset 1)."
+        },
+        "focal": {
+          "$ref": "#/$defs/point",
+          "description": "Radial only: where offset 0 sits when it is not the centre (inside the ellipse). Absent: the centre."
+        },
+        "start": {
+          "$ref": "#/$defs/point",
+          "description": "Linear: where offset 0 is. Radial: the centre."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    },
+    "gradient_stop": {
+      "additionalProperties": false,
+      "description": "One colour stop of a gradient.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "The stop's colour. With `swatch`, the linked swatch's colour at `tint`."
+        },
+        "midpoint": {
+          "description": "Where between this stop and the next the two colours mix half and half: 0.13 to 0.87 of the way. Absent: 0.5 (a linear ramp).",
+          "type": "number"
+        },
+        "offset": {
+          "description": "Where the stop sits along the gradient: 0 (start) to 1 (end).",
+          "type": "number"
+        },
+        "opacity": {
+          "description": "The stop's opacity, 0 (transparent) to 1 (opaque). Absent: 1.",
+          "type": "number"
+        },
+        "swatch": {
+          "description": "Name of the global or spot swatch (in the swatches node) this stop's colour is linked to. Absent: not linked.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tint": {
+          "description": "Tint of the linked swatch, 0 to 1. Absent: 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "offset",
+        "color"
+      ],
+      "type": "object"
+    },
+    "paint": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "none"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_none"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "solid"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_solid"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gradient"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_gradient"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pattern"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_pattern"
+          }
+        }
+      ],
+      "description": "A paint: what a fill, a stroke or a run of type is painted with.",
+      "properties": {
+        "type": {
+          "description": "The kind of paint. One of: `none` (nothing); `solid` (a flat colour); `gradient` (a gradient); `pattern` (a repeated pattern tile).",
+          "enum": [
+            "none",
+            "solid",
+            "gradient",
+            "pattern"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "paint_gradient": {
+      "additionalProperties": false,
+      "description": "A gradient.",
+      "properties": {
+        "angle": {
+          "description": "Direction of an unplaced gradient (no `geom`), in degrees, counter-clockwise as seen on screen from the positive x axis. Absent: 0.",
+          "type": "number"
+        },
+        "freeform": {
+          "$ref": "#/$defs/freeform",
+          "description": "The points of a `Freeform` gradient, in the space of `geom`. Absent: placed automatically on the object's box, coloured along the stops."
+        },
+        "geom": {
+          "$ref": "#/$defs/gradient_geom",
+          "description": "Where the gradient lies. Absent: fitted to the painted object's bounding box each time it is drawn, at `angle`: a linear gradient spans the box through its centre; a radial one is centred with radius half the box's larger side."
+        },
+        "gradient": {
+          "$ref": "#/$defs/gradient",
+          "description": "The colours."
+        },
+        "swatch": {
+          "description": "Name of the gradient swatch the paint is linked to. Absent: not linked.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": {
+          "const": "gradient"
+        }
+      },
+      "required": [
+        "type",
+        "gradient"
+      ],
+      "type": "object"
+    },
+    "paint_none": {
+      "additionalProperties": false,
+      "description": "No paint: nothing is drawn.",
+      "properties": {
+        "type": {
+          "const": "none"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "paint_pattern": {
+      "additionalProperties": false,
+      "description": "A pattern: the tile of a pattern definition repeated.",
+      "properties": {
+        "pattern": {
+          "description": "Name of the pattern (the `name` in a core.paint.pattern node; the structure node's `patterns` table says which node). A name the document does not have paints nothing.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": {
+          "const": "pattern"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps pattern space to the document. Absent: the identity (tiles anchored at the document origin)."
+        }
+      },
+      "required": [
+        "type",
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "paint_solid": {
+      "additionalProperties": false,
+      "description": "A flat colour.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "The colour painted. With `swatch`, the linked swatch's colour at `tint` (kept here so a reader need not resolve the link)."
+        },
+        "swatch": {
+          "description": "Name of the global or spot swatch (in the swatches node) the colour is linked to: editing the swatch recolours the paint. Absent: not linked.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tint": {
+          "description": "Tint of the linked swatch: 0 (none of it) to 1 (full strength); a spot tint prints this much of its plate. Absent: 1.",
+          "type": "number"
+        },
+        "type": {
+          "const": "solid"
+        }
+      },
+      "required": [
+        "type",
+        "color"
+      ],
+      "type": "object"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A point in the space the field's description names, in points (1/72 inch); x grows right, y grows down.",
+      "properties": {
+        "x": {
+          "description": "Horizontal coordinate.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Vertical coordinate (larger is lower).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "swatch": {
+      "additionalProperties": false,
+      "description": "A named paint.",
+      "properties": {
+        "global": {
+          "description": "True: every paint linked to the swatch follows edits to it. Absent: false.",
+          "type": "boolean"
+        },
+        "name": {
+          "description": "The swatch's name: what paints link to it by.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "paint": {
+          "$ref": "#/$defs/paint"
+        },
+        "spot": {
+          "description": "True: a spot colour, printed on a plate of its own. Absent: false.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "paint"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.paint.swatches.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The document's swatches: named paints, some of them in named groups.",
+  "properties": {
+    "groups": {
+      "description": "The swatch groups, in panel order. Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A named group of swatches.",
+        "properties": {
+          "name": {
+            "description": "The group's name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "swatches": {
+            "description": "Its swatches, in order.",
+            "items": {
+              "$ref": "#/$defs/swatch"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "swatches"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    },
+    "swatches": {
+      "description": "The swatches outside any group, in panel order. Absent: none.",
+      "items": {
+        "$ref": "#/$defs/swatch"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "core.paint.swatches - the swatch library of a vector-art/1 document",
+  "type": "object"
+}

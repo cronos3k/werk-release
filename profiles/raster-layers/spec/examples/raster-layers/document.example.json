@@ -1,0 +1,110 @@
+{
+  "app": {
+    "document_id": 1
+  },
+  "channels": [
+    "channel-1"
+  ],
+  "clipping_path": null,
+  "color_mode": "Rgb",
+  "color_space": null,
+  "color_table": null,
+  "duotone": null,
+  "file_encoding": {},
+  "fonts": [
+    {
+      "faceIndex": 0,
+      "family": "Inter",
+      "italic": false,
+      "node": null,
+      "postscript_name": null,
+      "status": "missing",
+      "style": "Bold",
+      "use": "text",
+      "weight": 700
+    },
+    {
+      "faceIndex": 0,
+      "family": "Inter",
+      "italic": false,
+      "node": null,
+      "postscript_name": null,
+      "status": "missing",
+      "style": "Regular",
+      "use": "text",
+      "weight": 400
+    }
+  ],
+  "global_light": {
+    "altitude": 30.0,
+    "angle": 120.0
+  },
+  "guides": {
+    "horizontal": [],
+    "vertical": []
+  },
+  "height": 480,
+  "icc_profile": null,
+  "last_applied_comp": null,
+  "last_document_state": null,
+  "layer_comps": [
+    "comp-1"
+  ],
+  "layers": [
+    {
+      "layer": "layer-1"
+    },
+    {
+      "children": [
+        {
+          "layer": "layer-2"
+        },
+        {
+          "layer": "layer-5"
+        }
+      ],
+      "layer": "layer-7"
+    },
+    {
+      "layer": "layer-3"
+    },
+    {
+      "layer": "layer-4"
+    }
+  ],
+  "measurement": {
+    "active_count_group": 0,
+    "count_groups": [],
+    "ruler": null,
+    "scale": {
+      "logical_length": 1.0,
+      "pixel_length": 1.0,
+      "units": "pixels"
+    }
+  },
+  "metadata": "metadata",
+  "name": "Poster",
+  "notes": [],
+  "paths": [
+    "path-1"
+  ],
+  "patterns": [
+    "pattern-1"
+  ],
+  "psd": null,
+  "quick_mask": null,
+  "quick_mask_unselected": false,
+  "resolution_dpi": 300.0,
+  "sample_type": "U8",
+  "schema_version": 1,
+  "selection": null,
+  "slices": {
+    "groupName": "",
+    "list": []
+  },
+  "text_styles": "text-styles",
+  "timeline": null,
+  "variables": "variables",
+  "width": 640,
+  "work_path": null
+}

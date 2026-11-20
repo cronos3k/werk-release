@@ -1,0 +1,839 @@
+{
+  "$defs": {
+    "color": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "rgb"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_rgb"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "cmyk"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_cmyk"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "gray"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_gray"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "lab"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_lab"
+          }
+        }
+      ],
+      "description": "A colour. Components are IEEE 754 binary32 values written in decimal.",
+      "properties": {
+        "model": {
+          "description": "The colour model. One of: `rgb` (red, green, blue); `cmyk` (cyan, magenta, yellow, black inks); `gray` (black ink only); `lab` (CIE L*a*b*).",
+          "enum": [
+            "rgb",
+            "cmyk",
+            "gray",
+            "lab"
+          ]
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "type": "object"
+    },
+    "color_cmyk": {
+      "additionalProperties": false,
+      "description": "A CMYK colour: ink amounts in the document's CMYK space.",
+      "properties": {
+        "c": {
+          "description": "Cyan ink, 0 to 1.",
+          "type": "number"
+        },
+        "k": {
+          "description": "Black ink, 0 to 1.",
+          "type": "number"
+        },
+        "m": {
+          "description": "Magenta ink, 0 to 1.",
+          "type": "number"
+        },
+        "model": {
+          "const": "cmyk"
+        },
+        "y": {
+          "description": "Yellow ink, 0 to 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "c",
+        "m",
+        "y",
+        "k"
+      ],
+      "type": "object"
+    },
+    "color_gray": {
+      "additionalProperties": false,
+      "description": "A gray: an amount of black ink.",
+      "properties": {
+        "k": {
+          "description": "Black, 0 (white) to 1 (black).",
+          "type": "number"
+        },
+        "model": {
+          "const": "gray"
+        }
+      },
+      "required": [
+        "model",
+        "k"
+      ],
+      "type": "object"
+    },
+    "color_lab": {
+      "additionalProperties": false,
+      "description": "A CIE L*a*b* colour, D50 white point (device independent; how spot colours are defined).",
+      "properties": {
+        "a": {
+          "description": "Green (negative) to red (positive), about -128 to 127.",
+          "type": "number"
+        },
+        "b": {
+          "description": "Blue (negative) to yellow (positive), about -128 to 127.",
+          "type": "number"
+        },
+        "l": {
+          "description": "Lightness, 0 to 100.",
+          "type": "number"
+        },
+        "model": {
+          "const": "lab"
+        }
+      },
+      "required": [
+        "model",
+        "l",
+        "a",
+        "b"
+      ],
+      "type": "object"
+    },
+    "color_rgb": {
+      "additionalProperties": false,
+      "description": "An RGB colour (sRGB unless the document names another RGB profile).",
+      "properties": {
+        "b": {
+          "description": "Blue, 0 to 1.",
+          "type": "number"
+        },
+        "g": {
+          "description": "Green, 0 to 1.",
+          "type": "number"
+        },
+        "model": {
+          "const": "rgb"
+        },
+        "r": {
+          "description": "Red, 0 to 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "r",
+        "g",
+        "b"
+      ],
+      "type": "object"
+    },
+    "node_id": {
+      "description": "The node_id of a node of this package.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "object_id": {
+      "description": "The `id` of an object in one of the document's layers.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A point in the space the field's description names, in points (1/72 inch); x grows right, y grows down.",
+      "properties": {
+        "x": {
+          "description": "Horizontal coordinate.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Vertical coordinate (larger is lower).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "script_metrics": {
+      "additionalProperties": false,
+      "description": "The size and position of superscript or subscript characters.",
+      "properties": {
+        "position": {
+          "description": "Baseline offset in percent of the font size: up for superscript, down for subscript.",
+          "type": "number"
+        },
+        "size": {
+          "description": "Glyph size in percent of the font size.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "size",
+        "position"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.vector.document.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The structure of the document: which nodes are its artboards and layers and in what order, the tables that name its other units, and the settings that belong to no unit. It carries no art.",
+  "properties": {
+    "artboards": {
+      "description": "The artboards, in order (the first is the one the preview shows).",
+      "items": {
+        "$ref": "#/$defs/node_id",
+        "description": "A core.vector.artboard node."
+      },
+      "type": "array"
+    },
+    "color_mode": {
+      "description": "The document's colour mode: the model new colours take and the space transparency is blended in. One of: `Rgb` (the default); `Cmyk`.",
+      "enum": [
+        "Rgb",
+        "Cmyk"
+      ]
+    },
+    "color_profiles": {
+      "additionalProperties": false,
+      "description": "The colour profiles the document is tagged with, by name. The ICC files themselves, when they could be embedded, are listed in the x.vectorcraft.embedded node.",
+      "properties": {
+        "cmyk": {
+          "description": "Name of the CMYK profile. Absent: the reader's working CMYK space.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "rgb": {
+          "description": "Name of the RGB profile. Absent: sRGB.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "fonts": {
+      "description": "The fonts of the document's type: one row per face the type uses, embedded or not. Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A font face the document's type is set in.",
+        "properties": {
+          "face_index": {
+            "description": "The face's index in its font file (a collection holds several). Absent: 0.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "family": {
+            "description": "Family name, as in `font_family` of a run.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "reason": {
+            "description": "Why the font is not embedded, in words (`status` says it for a program).",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/$defs/node_id",
+            "description": "The node with the font file (TrueType / OpenType), verbatim. Absent: the font is not embedded; `status` and `reason` say why."
+          },
+          "status": {
+            "description": "`embedded`: `source` names the node with the font file. Otherwise the font is not in the file: `restricted` (the Restricted License embedding bit of its OS/2 `fsType`, or its bitmap-only bit, forbids embedding), `missing` (it was not installed, as a TrueType / OpenType file, where the document was saved), `not-requested` (the writer was told not to embed fonts). Absent (a writer that does not say): `embedded` when `source` is present, unknown otherwise.",
+            "enum": [
+              "embedded",
+              "restricted",
+              "missing",
+              "not-requested"
+            ]
+          },
+          "style": {
+            "description": "Style name, as in `font_style`.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "version": {
+            "description": "Version string, as in `font_version`.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "family",
+          "style"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "fonts_not_embedded": {
+      "description": "True: the document was saved with font embedding turned off. Absent: false.",
+      "type": "boolean"
+    },
+    "graphic_styles": {
+      "$ref": "#/$defs/node_id",
+      "description": "The core.vector.styles node. Absent: no graphic styles."
+    },
+    "grid": {
+      "additionalProperties": false,
+      "description": "An editor's grid.",
+      "properties": {
+        "spacing": {
+          "description": "Distance between grid lines in points.",
+          "type": "number"
+        },
+        "subdivisions": {
+          "description": "Subdivisions between grid lines.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "spacing",
+        "subdivisions"
+      ],
+      "type": "object"
+    },
+    "guides": {
+      "description": "Ruler guides (shown in an editor, never printed). Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A ruler guide.",
+        "properties": {
+          "artboard": {
+            "description": "The `id` of the artboard the guide belongs to (it runs across that artboard only). Absent: across the whole canvas.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "layer": {
+            "$ref": "#/$defs/object_id",
+            "description": "The layer or sublayer the guide is on. Absent: on no layer."
+          },
+          "pos": {
+            "description": "The guide's coordinate in document points.",
+            "type": "number"
+          },
+          "vertical": {
+            "description": "True: a vertical guide at x = `pos`; false: a horizontal guide at y = `pos`.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "vertical",
+          "pos"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "icc_profiles": {
+      "description": "ICC profiles. Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "The ICC file of a profile the document is tagged with.",
+        "properties": {
+          "name": {
+            "description": "The profile's name, as in `color_profiles`.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/$defs/node_id",
+            "description": "The node with the ICC profile, verbatim."
+          }
+        },
+        "required": [
+          "name",
+          "source"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "images": {
+      "description": "The document's images: one entry per image key. Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One image of the document.",
+        "properties": {
+          "key": {
+            "description": "The key image objects and placed documents name the image by.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "mime": {
+            "description": "The media type of the image's own bytes. Absent: `image/png`.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/$defs/node_id",
+            "description": "The core.vector.image node: the image's pixels as a PNG, which any reader shows. Absent: the pixels could not be had (the image then draws nothing in a reader that cannot decode `original`)."
+          },
+          "original": {
+            "$ref": "#/$defs/node_id",
+            "description": "The node with the image's own bytes, verbatim, in the encoding its node type defines (JPEG, GIF, WebP, TIFF, BMP, or a placed document). The PNG of `node` was decoded from it. Absent: the image's own bytes are the PNG of `node`."
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "layers": {
+      "description": "The top-level layers, BOTTOM FIRST: each paints over the ones before it.",
+      "items": {
+        "$ref": "#/$defs/node_id",
+        "description": "A core.vector.layer node."
+      },
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": false,
+      "description": "File information.",
+      "properties": {
+        "author": {
+          "description": "The author's name.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "authorTitle": {
+          "description": "The author's position or job title.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "copyrightNotice": {
+          "description": "The copyright notice.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "copyrightStatus": {
+          "description": "Copyright status. One of: `unknown` (the default); `copyrighted`; `publicDomain`.",
+          "enum": [
+            "unknown",
+            "copyrighted",
+            "publicDomain"
+          ]
+        },
+        "copyrightUrl": {
+          "description": "Where to read more about the copyright.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "created": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "description": "Seconds since 1970-01-01T00:00:00Z.",
+              "type": "integer"
+            }
+          ],
+          "description": "When the document was created. Null: not recorded."
+        },
+        "description": {
+          "description": "A description of the document.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "keywords": {
+          "description": "Keywords, in the order they were added.",
+          "items": {
+            "description": "A keyword.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "modified": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "description": "Seconds since 1970-01-01T00:00:00Z.",
+              "type": "integer"
+            }
+          ],
+          "description": "When the document was last saved. Null: not recorded."
+        },
+        "rating": {
+          "description": "0 (unrated) to 5 stars.",
+          "maximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "model_version": {
+      "description": "The revision of VectorCraft's document model the payloads were written from: 1. Absent: 1.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "next_object_id": {
+      "description": "A number above every object id the document has ever used: the next object gets this id. Absent: one above the largest id in the layers.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "page_isolate": {
+      "description": "True: the page is an isolated transparency group (top-level blend modes do not blend with what is under the page). Absent: false.",
+      "type": "boolean"
+    },
+    "page_knockout": {
+      "description": "True: the page's top-level layers knock each other out. Absent: false.",
+      "type": "boolean"
+    },
+    "patterns": {
+      "description": "The document's patterns, in order. Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A pattern and the node that holds it.",
+        "properties": {
+          "name": {
+            "description": "The pattern's name, repeated from its node's payload so the list can be shown without opening the node.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/$defs/node_id",
+            "description": "The core.paint.pattern node."
+          }
+        },
+        "required": [
+          "name",
+          "node"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "raster_effects": {
+      "additionalProperties": false,
+      "description": "Settings for raster effects.",
+      "properties": {
+        "addAround": {
+          "description": "Extra room around the art in points. Absent: 36.",
+          "type": "number"
+        },
+        "antiAlias": {
+          "description": "Smooth the art's edges. Absent: true.",
+          "type": "boolean"
+        },
+        "background": {
+          "description": "What lies behind effect images. One of: `transparent` (they keep their transparency); `white` (they are opaque, on white; the default).",
+          "enum": [
+            "transparent",
+            "white"
+          ]
+        },
+        "clippingMask": {
+          "description": "Clip an effect image to the art's outline. Absent: false.",
+          "type": "boolean"
+        },
+        "colorModel": {
+          "description": "The colour model of effect images. One of: `document` (the document's colour mode; the default); `grayscale`; `bitmap` (black and white pixels only).",
+          "enum": [
+            "document",
+            "grayscale",
+            "bitmap"
+          ]
+        },
+        "preserveSpotColors": {
+          "description": "Keep spot colours in raster effects. Absent: true.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "raster_effects_ppi": {
+      "description": "Resolution at which raster effects (blurs, shadows) are computed, in pixels per inch. Absent: 72.",
+      "type": "number"
+    },
+    "ruler_origin": {
+      "$ref": "#/$defs/point",
+      "description": "The zero point of an editor's rulers, in document coordinates. Absent: (0, 0)."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    },
+    "setup": {
+      "additionalProperties": false,
+      "description": "Document setup.",
+      "properties": {
+        "background": {
+          "description": "The artboards' background. One of: `transparent` (the default); `white` (raster exports are opaque white there).",
+          "enum": [
+            "transparent",
+            "white"
+          ]
+        },
+        "bleed": {
+          "description": "Bleed beyond every artboard edge in points: top, bottom, left, right.",
+          "items": {
+            "description": "Points.",
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "discardWhiteOverprint": {
+          "description": "Discard overprint of white objects in output.",
+          "type": "boolean"
+        },
+        "exportText": {
+          "description": "How exports write type. One of: `editable` (as text; the default); `appearance` (as glyph outlines).",
+          "enum": [
+            "editable",
+            "appearance"
+          ]
+        },
+        "flattenerPreset": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "description": "Preset name.",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          ],
+          "description": "Name of the transparency flattener preset for output that cannot keep transparency. Null: the application's default."
+        },
+        "gridColors": {
+          "description": "The two colours of the transparency grid; the first is also the simulated paper colour.",
+          "items": {
+            "$ref": "#/$defs/color"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "gridSize": {
+          "description": "Cell size of the transparency grid an editor shows. One of: `small`; `medium` (the default); `large`.",
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ]
+        },
+        "highlightSubstitutedFonts": {
+          "description": "Editor: highlight type whose font is missing.",
+          "type": "boolean"
+        },
+        "highlightSubstitutedGlyphs": {
+          "description": "Editor: highlight glyphs the font lacks.",
+          "type": "boolean"
+        },
+        "language": {
+          "description": "The document's language, by the application's name for it (for example `English: USA`).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "outlineImages": {
+          "description": "Editor: show images in outline mode.",
+          "type": "boolean"
+        },
+        "quotes": {
+          "additionalProperties": false,
+          "description": "The typographer's quotes of the language.",
+          "properties": {
+            "double": {
+              "description": "Opening and closing double quote.",
+              "items": {
+                "description": "One character.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "single": {
+              "description": "Opening and closing single quote.",
+              "items": {
+                "description": "One character.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "double",
+            "single"
+          ],
+          "type": "object"
+        },
+        "simulatePaper": {
+          "description": "Editor: artboards show the paper colour and art is multiplied onto it.",
+          "type": "boolean"
+        },
+        "smallCapsSize": {
+          "description": "Size of synthesized small capitals, percent of the font size.",
+          "type": "number"
+        },
+        "subscript": {
+          "$ref": "#/$defs/script_metrics",
+          "description": "Size and position of subscript."
+        },
+        "superscript": {
+          "$ref": "#/$defs/script_metrics",
+          "description": "Size and position of superscript."
+        },
+        "typographersQuotes": {
+          "description": "Typed straight quotes become `quotes`.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "spot_use_lab": {
+      "description": "True: spot colours defined in Lab are shown from their Lab values; false: from their CMYK equivalents. Absent: true.",
+      "type": "boolean"
+    },
+    "swatches": {
+      "$ref": "#/$defs/node_id",
+      "description": "The core.paint.swatches node. Absent: the document has no swatches."
+    },
+    "symbols": {
+      "description": "The document's symbols, in panel order. Absent: none.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A symbol and the node that holds it.",
+        "properties": {
+          "name": {
+            "description": "The symbol's name, repeated from its node's payload so the list can be shown without opening the node.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/$defs/node_id",
+            "description": "The core.vector.symbol node."
+          }
+        },
+        "required": [
+          "name",
+          "node"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "template": {
+      "description": "True: the file is a template (opening it starts a new untitled document). Absent: false.",
+      "type": "boolean"
+    },
+    "text_styles": {
+      "$ref": "#/$defs/node_id",
+      "description": "The core.text.styles node. Absent: no text styles."
+    },
+    "text_threads": {
+      "description": "Threaded text: each entry is one story flowing through several frames. Absent: none.",
+      "items": {
+        "description": "The area type objects one story flows through, in order.",
+        "items": {
+          "$ref": "#/$defs/object_id"
+        },
+        "type": "array"
+      },
+      "type": "array"
+    },
+    "title": {
+      "description": "The document's title. Absent: empty.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "units": {
+      "description": "The unit an editor DISPLAYS measurements in. Every number in the file is in points regardless. One of: `Points` (1/72 inch); `Picas` (12 points); `Inches`; `Millimeters`; `Centimeters`; `Pixels` (1 pixel = 1 point); `FeetInches` (feet and inches); `Meters`; `Yards`; `Feet`.",
+      "enum": [
+        "Points",
+        "Picas",
+        "Inches",
+        "Millimeters",
+        "Centimeters",
+        "Pixels",
+        "FeetInches",
+        "Meters",
+        "Yards",
+        "Feet"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "artboards",
+    "layers"
+  ],
+  "title": "core.vector.document - the structure node of a vector-art/1 document",
+  "type": "object"
+}

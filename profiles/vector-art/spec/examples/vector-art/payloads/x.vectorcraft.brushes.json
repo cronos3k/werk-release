@@ -1,0 +1,40 @@
+{
+  "brushes": [
+    {
+      "angle": 30.0,
+      "name": "Corpus Calligraphic",
+      "roundness": 40.0,
+      "size": 9.0,
+      "type": "calligraphic",
+      "variation": [
+        1.0,
+        2.0,
+        3.0
+      ]
+    },
+    {
+      "art": [
+        {
+          "id": 9001,
+          "kind": {
+            "height": 3,
+            "key": "img-gif",
+            "type": "image",
+            "width": 3,
+            "xf": [
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      ],
+      "name": "Corpus Art",
+      "type": "art"
+    }
+  ],
+  "schema_version": 1
+}

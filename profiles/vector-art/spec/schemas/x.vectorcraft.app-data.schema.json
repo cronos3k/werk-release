@@ -1,0 +1,61 @@
+{
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Any JSON value, carried verbatim. Strings inside it are never references to other parts of the document."
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.app-data.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "JSON VectorCraft keeps with the document and carries through every save without interpreting it here.",
+  "properties": {
+    "extra": {
+      "additionalProperties": {
+        "$ref": "#/$defs/json"
+      },
+      "description": "Top-level members of VectorCraft's document model that this version of VectorCraft did not know when it read them (written by a newer version): kept so that saving does not lose them.",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    },
+    "unknown": {
+      "additionalProperties": {
+        "$ref": "#/$defs/json"
+      },
+      "description": "Application data by key: for example `currentBrush`, `currentSymbol`, `symbolSizes`, `perspectiveGrid`, and `foreign` (data an importer kept from another format).",
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "x.vectorcraft.app-data - open JSON VectorCraft keeps",
+  "type": "object"
+}

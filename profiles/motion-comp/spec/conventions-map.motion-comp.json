@@ -1,0 +1,463 @@
+{
+  "conventions": {
+    "alignment_bytes": {
+      "governs": [
+        "core.keyframe.tracks",
+        "core.expr.baked",
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Payload sections of envelope binaries start on this boundary.",
+      "scope": "node"
+    },
+    "angle_direction": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "A positive angle turns clockwise on screen (from +x towards +y, y being down).",
+      "scope": "node"
+    },
+    "angle_unit": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "Angles are in degrees.",
+      "scope": "node"
+    },
+    "baked_max_samples": {
+      "governs": [
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "A baked track has at most this many samples: frame_step is the smallest integer that keeps it so.",
+      "scope": "node"
+    },
+    "baked_sample_instant": {
+      "governs": [
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "Sample i of a baked track is the property's value at the start tick of composition frame first_frame + i * frame_step.",
+      "scope": "node"
+    },
+    "blend_lum_weights": {
+      "governs": [
+        "core.effect.catalog",
+        "core.motion.layer"
+      ],
+      "note": "Lum() of the Hue, Saturation, Color and Luminosity blend modes: 0.3 r + 0.59 g + 0.11 b.",
+      "scope": "node"
+    },
+    "color_value_encoding": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "A colour value is [r, g, b, a] in 0..1, straight (not premultiplied) alpha, in the working space's encoding as authored (sRGB-encoded when there is no working space).",
+      "scope": "node"
+    },
+    "compositing_space": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "Layers are composited as premultiplied RGBA, binary32, in the ENCODING of the working space (not linearised) unless the project's `linearize` or `blend_linear` says otherwise (profile document 6.8).",
+      "scope": "node"
+    },
+    "ease_default_influence": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "The influence of a Bezier side that has no stored ease: 1/6. (Profile timeline/1 uses 1/3 for its own, different, ease model.)",
+      "scope": "node"
+    },
+    "ease_default_speed": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "The speed of a Bezier side that has no stored ease: 0.",
+      "scope": "node"
+    },
+    "ease_influence_clamp": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "An ease influence is clamped to this range before use.",
+      "scope": "node"
+    },
+    "endianness": {
+      "governs": [
+        "core.keyframe.tracks",
+        "core.expr.baked",
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Every envelope binary is little-endian. MessagePack header integers inside an envelope are big-endian by MessagePack's own definition (spec/layouts/ENVELOPE.layout.txt section 4).",
+      "scope": "node"
+    },
+    "frame_index_rounding": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "The frame containing tick t is floor(t * num / (254016000000 * den)).",
+      "scope": "node"
+    },
+    "frame_start_rounding": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "Frame f of a rate num/den starts at tick ceil(f * 254016000000 * den / num).",
+      "scope": "node"
+    },
+    "handedness": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "3D space is left-handed: +x right, +y down, +z INTO the screen (away from the viewer).",
+      "scope": "node"
+    },
+    "hash_algorithm": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256.",
+      "scope": "container"
+    },
+    "id_case": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every id matches ^[a-z0-9]+(-[a-z0-9]+)*$.",
+      "scope": "container"
+    },
+    "json_binary32": {
+      "governs": [
+        "*"
+      ],
+      "note": "A binary32 quantity (a solid's colour, a gradient stop, a text fill) is written as the shortest decimal of the binary64 number equal to it; narrowing what is read to binary32 gives the exact value.",
+      "scope": "node"
+    },
+    "json_integer_width": {
+      "governs": [
+        "*"
+      ],
+      "note": "Integers in JSON payloads are exact and may need 64 bits (signed for times, unsigned for ids); a reader must not pass them through binary64.",
+      "scope": "node"
+    },
+    "json_spelling": {
+      "governs": [
+        "*"
+      ],
+      "note": "JSON payloads this writer makes are one line: keys sorted by their UTF-8 bytes, no whitespace, one line feed at the end. Any JSON spelling that satisfies the schemas is valid.",
+      "scope": "node"
+    },
+    "keyframe_extrapolation": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "Before the first keyframe a property has the first keyframe's value, after the last the last's.",
+      "scope": "node"
+    },
+    "keyframe_time": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "Keyframe times are LAYER time: composition time minus the layer's start_time, divided by stretch / 100 (profile document 6.2). The keyframes of a composition's own properties (the global light) are composition time.",
+      "scope": "node"
+    },
+    "layer_order": {
+      "governs": [
+        "core.motion.comp"
+      ],
+      "note": "`layers[0]` of a composition is the FRONT (top) layer; layers are composited from the last to the first.",
+      "scope": "node"
+    },
+    "layer_time_rounding": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "Layer time of a stretched layer: (t - start_time) * 100 / stretch computed in binary64 and truncated toward zero to an integer tick. With stretch exactly 100 it is the integer t - start_time.",
+      "scope": "node"
+    },
+    "linear_side_influence": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "A Linear side that meets a Bezier side in one segment acts as an ease along the straight segment with this influence (1/3).",
+      "scope": "node"
+    },
+    "luminance_weights": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "Luminance of a colour for mattes, stencils and effects: 0.2126 r + 0.7152 g + 0.0722 b (binary32).",
+      "scope": "node"
+    },
+    "mask_feather_sigma": {
+      "governs": [
+        "core.motion.layer"
+      ],
+      "note": "A Smooth mask feather of f pixels is a Gaussian blur of the coverage with standard deviation f / 2 per axis.",
+      "scope": "node"
+    },
+    "matte_luminance_of": {
+      "governs": [
+        "core.motion.layer"
+      ],
+      "note": "A luma matte takes the luminance of the matte layer's PREMULTIPLIED colour.",
+      "scope": "node"
+    },
+    "opacity_unit": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "Opacity values: 100 = opaque, 0 = transparent.",
+      "scope": "node"
+    },
+    "pixel_origin": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "Pixel coordinates have their origin at the top-left corner of the frame or picture; x grows to the right, y DOWNWARD. The centre of the top-left pixel is (0.5, 0.5).",
+      "scope": "node"
+    },
+    "poster_max_side": {
+      "governs": [
+        "core.preview.poster"
+      ],
+      "note": "The longer side of the poster is at most this many pixels.",
+      "scope": "node"
+    },
+    "preview_pixel_format": {
+      "governs": [
+        "core.preview.poster",
+        "core.preview.strip",
+        "core.preview.proxy"
+      ],
+      "note": "Preview pictures are 8-bit, opaque, in the project's output encoding (sRGB unless the project names another output space), composited over black; row 0 is the top row.",
+      "scope": "node"
+    },
+    "proxy_frame_height": {
+      "governs": [
+        "core.preview.proxy"
+      ],
+      "note": "Height of a preview proxy frame, pixels.",
+      "scope": "node"
+    },
+    "proxy_max_frames": {
+      "governs": [
+        "core.preview.proxy"
+      ],
+      "note": "The preview proxy holds at most this many frames.",
+      "scope": "node"
+    },
+    "quantization_levels_16bpc": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "In a 16 bits per channel project: the same with multiples of 1/32768. In a 32 bits per channel project nothing is clamped or rounded.",
+      "scope": "node"
+    },
+    "quantization_levels_8bpc": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "In an 8 bits per channel project: after a layer's source and masks, after each effect, and after each layer is blended, every pixel is clamped (alpha to 0..1, colour to 0..alpha) and each component rounded to a multiple of 1/255, halves up.",
+      "scope": "node"
+    },
+    "range_form": {
+      "governs": [
+        "core.motion.project",
+        "core.motion.item",
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.render-queue",
+        "core.keyframe.tracks",
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "A range [start, end) holds start and excludes its end: a layer is active for in_point <= t < out_point, a composition has frames for 0 <= t < duration.",
+      "scope": "node"
+    },
+    "scale_unit": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "Scale values: 100 = unscaled.",
+      "scope": "node"
+    },
+    "shutter_unit": {
+      "governs": [
+        "core.motion.comp"
+      ],
+      "note": "Shutter angle and phase are in degrees of one frame: 360 = one frame duration.",
+      "scope": "node"
+    },
+    "signature_algorithm": {
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state, not damage.",
+      "scope": "signature"
+    },
+    "spatial_arc_table_cells": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "Arc length along a spatial segment is tabulated at 96 equal parameter steps, each cell integrated by 5-point Gauss-Legendre quadrature (profile document 6.4).",
+      "scope": "node"
+    },
+    "spatial_auto_tangent_divisor": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "An automatic spatial tangent of key i is (value[i+1] - value[i-1]) / 6 (out) and its negative (in); an end key uses itself for the missing neighbour.",
+      "scope": "node"
+    },
+    "stretch_unit": {
+      "governs": [
+        "core.motion.layer"
+      ],
+      "note": "A layer's `stretch`: 100 = normal speed, 200 = half speed, negative = reversed.",
+      "scope": "node"
+    },
+    "strip_frame_height": {
+      "governs": [
+        "core.preview.strip"
+      ],
+      "note": "Height of a contact strip and of each of its frames, pixels.",
+      "scope": "node"
+    },
+    "strip_frames": {
+      "governs": [
+        "core.preview.strip"
+      ],
+      "note": "A contact strip holds this many frames, at times duration * (2 i + 1) / 16 for i = 0..7, left to right.",
+      "scope": "node"
+    },
+    "temporal_ease_model": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.keyframe.tracks"
+      ],
+      "note": "A Bezier side of a key is given by a speed (value units per second) and an influence (fraction of the segment's duration): profile document 6.3.",
+      "scope": "node"
+    },
+    "text_encoding": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every text and JSON payload, INCLUDING MANIFEST.json - which is why the scope is container.",
+      "scope": "container"
+    },
+    "text_index_unit": {
+      "governs": [
+        "core.motion.layer"
+      ],
+      "note": "Character counts of text runs count Unicode scalar values (code points), not bytes or UTF-16 units.",
+      "scope": "node"
+    },
+    "ticks_per_second": {
+      "governs": [
+        "core.motion.project",
+        "core.motion.item",
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.render-queue",
+        "core.keyframe.tracks",
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "Every instant and length is an integer count of ticks; 254 016 000 000 ticks are one second. One frame at num/den fps is 254016000000 * den / num ticks (exact for every broadcast rate).",
+      "scope": "node"
+    },
+    "time_origin": {
+      "governs": [
+        "core.motion.project",
+        "core.motion.item",
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.render-queue",
+        "core.keyframe.tracks",
+        "core.expr.baked",
+        "core.expr.baked-values"
+      ],
+      "note": "Tick 0 is the start of a composition (composition time), the layer's own zero (layer time) or the first frame of a medium (source time). Instants may be negative.",
+      "scope": "node"
+    },
+    "time_remap_unit": {
+      "governs": [
+        "core.motion.layer"
+      ],
+      "note": "The value of a layer's `timeRemap` property is source time in seconds (binary64); it is converted to ticks by round(seconds * 254016000000), halves away from zero.",
+      "scope": "node"
+    },
+    "transform_order": {
+      "governs": [
+        "core.motion.comp",
+        "core.motion.layer",
+        "core.motion.item",
+        "core.effect.catalog"
+      ],
+      "note": "A layer point p becomes parent-space P = T(position) * O(orientation) * Rz * Ry * Rx * S(scale / 100) * T(-anchor) * p; a 2D layer has only Rz (`rotation`), no orientation, and z scale 1 (profile document 6.7).",
+      "scope": "node"
+    }
+  },
+  "note": "The machine-readable convention to node-type map of profile motion-comp/1 (SPEC.md section 10.2, ruling S-17). The convention set is a property of the PROFILE, not of the reader (S-25): check these and no others.",
+  "profile": "motion-comp/1",
+  "schema_version": 1
+}

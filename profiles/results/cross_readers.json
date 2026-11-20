@@ -1,0 +1,75 @@
+{
+ "motion-comp": {
+  "agree": true,
+  "checks": {
+   "exit 0 for every property": true,
+   "values agree within 1e-9 (profile 6.3)": true
+  },
+  "info": {
+   "max_abs_difference": 2.4874680093489587e-10,
+   "values_compared": 250
+  }
+ },
+ "presentation": {
+  "agree": true,
+  "checks": {
+   "embedded files: sha256 per media id": true,
+   "exit 0": true,
+   "shape counts per slide": true,
+   "slide titles": true
+  },
+  "info": {
+   "slides": 3
+  }
+ },
+ "raster-layers": {
+  "agree": true,
+  "checks": {
+   "canvas": true,
+   "decoded layer pixels, sha256 per layer": true,
+   "top-level tree (id, name, kind, blend)": true
+  },
+  "info": {
+   "layers_compared": [
+    "layer-1",
+    "layer-2"
+   ]
+  }
+ },
+ "rich-document": {
+  "agree": true,
+  "checks": {
+   "exit 0": true,
+   "plain text identical": true,
+   "stored plain text equals recomputed (their reader)": true
+  },
+  "info": {
+   "chars": 384
+  }
+ },
+ "spreadsheet": {
+  "agree": true,
+  "checks": {
+   "every cell: value, formula, format index": true,
+   "exit 0": true,
+   "nothing lost": true
+  },
+  "info": {
+   "cells_compared": 33
+  }
+ },
+ "vector-art": {
+  "agree": true,
+  "checks": {
+   "exit 0": true,
+   "nothing lost": true,
+   "object ids in tree order": true,
+   "object types": true,
+   "text of text objects": true,
+   "title": true
+  },
+  "info": {
+   "objects": 12
+  }
+ }
+}

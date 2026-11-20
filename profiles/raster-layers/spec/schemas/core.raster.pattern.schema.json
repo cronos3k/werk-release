@@ -1,0 +1,52 @@
+{
+  "$defs": {},
+  "$id": "https://werk.format/spec/schemas/core.raster.pattern.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A pattern tile stored with the document, used by pattern fills and effects.",
+  "properties": {
+    "height": {
+      "description": "Tile height in pixels.",
+      "maximum": 30000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "id": {
+      "description": "The pattern's own id (usually a UUID). Fills and effects name the pattern by this string.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "name": {
+      "description": "The pattern's stored name.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "surface": {
+      "description": "The `core.raster.surface` node holding the tile: pixels x 0..width, y 0..height.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "width": {
+      "description": "Tile width in pixels.",
+      "maximum": 30000,
+      "minimum": 1,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "width",
+    "height",
+    "surface"
+  ],
+  "title": "core.raster.pattern — werk profile raster-layers/1",
+  "type": "object"
+}

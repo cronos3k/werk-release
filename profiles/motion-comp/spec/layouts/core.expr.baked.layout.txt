@@ -1,0 +1,171 @@
+werk baked expression values - layout grammar v1  (magic "WKX4")
+===============================================================
+
+Applies to: `core.expr.baked` (profile `motion-comp/1`) - the evaluated values
+of the expression-driven properties of ONE composition whose results are
+numbers, one sample per sampled composition frame.
+
+Read `spec/layouts/ENVELOPE.layout.txt` FIRST. Everything below is the
+WKX4-specific part. What an expression is, when these samples may be used and
+when they are stale: `spec/PROFILE-MOTION-COMP.md` section 6.18.
+
+--------------------------------------------------------------------------
+0. Why a binary at all
+--------------------------------------------------------------------------
+
+One number per property per frame: a ten-minute composition with twenty
+expressions is 300 000 numbers. As binary64 they are exactly what the
+writing application computed - a reader that evaluates the same expression
+can compare bit for bit - and they are 8 bytes each.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKX4"  = 57 4B 58 34
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  the one payload section (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.expr.baked"
+    "endianness"      = "le"
+    "payload_origin", "payload_size", "sections"
+
+  Mandatory WKX4 keys:
+
+  key                 type          meaning
+  ------------------  ------------  ------------------------------------------
+  "comp"              uint          id of the composition.
+  "ticks_per_second"  uint          254016000000.
+  "rate_num"          int           the composition's frame rate, numerator
+  "rate_den"          int           and denominator (frames per second).
+  "first_frame"       int           composition frame of sample 0.
+  "frame_step"        int           composition frames between two samples, >= 1.
+  "samples"           uint          S: samples per track.
+  "tracks"            array of map  one entry per sampled property.
+  "unbaked"           array of map  the expression-driven properties WITHOUT a
+                                    track: {"layer": uint, "uid": uint,
+                                    "reason": str}. Reasons: "per-character",
+                                    "evaluation-failed", "kind-changes",
+                                    "non-finite".
+
+  Each element of "tracks":
+
+  key            type  meaning
+  -------------  ----  ---------------------------------------------------
+  "layer"        uint  id of the layer the property is on.
+  "uid"          uint  uid of the property. (layer, uid) is the track's name.
+  "kind"         str   "scalar", "vec2", "vec3", "color", "bool" (each
+                       sample 0 or 1) or "enum" (each sample the 0-based
+                       index of the choice).
+  "components"   uint  numbers per sample: 1, 2, 3, 4, 1, 1.
+  "first_value"  uint  index in "value" of the first number of sample 0.
+
+  Sample i of a track is the property's value at the START of composition
+  frame first_frame + i * frame_step, i.e. at tick
+  ceil(frame * ticks_per_second * rate_den / rate_num), as the writing
+  application evaluated it: its keyframes, then its expression.
+
+--------------------------------------------------------------------------
+3. Payload section
+--------------------------------------------------------------------------
+
+  name      dtype  shape  stride  arithmetic that MUST hold
+  --------  -----  -----  ------  --------------------------------------
+  "value"   f64    [N]    8       size == 8 * N,
+                                  N == sum over tracks of S * components,
+                                  or N == 1 when there is no track
+
+  Little-endian IEEE-754 binary64, no NaN, no infinity. A track's numbers
+  are consecutive: sample i, component d is at
+  first_value + i * components + d. When "tracks" is empty (every
+  expression of the composition is listed in "unbaked") the section holds one
+  0.0 and means nothing.
+
+--------------------------------------------------------------------------
+4. A real file, byte by byte
+--------------------------------------------------------------------------
+
+  The file below is `spec/examples/motion-comp/stage.baked.wkx`: the baked
+  values of the example project's composition `Stage`, in which one property
+  has an expression - the layer `Card`'s `rotation`, `value + time * 30`
+  with the static value 20. 50 frames at 25 fps: sample i = 20 + (i / 25) * 30.
+
+  704 bytes, sha256 96b52c5ed3ec39070e9e77e903a70213816e836b2e434f8c447b80fbd3e66987
+
+  offset  bytes
+  000000  57 4B 58 34
+          magic "WKX4"
+  000004  01 00 00 00
+          version = 1
+  000008  21 01 00 00
+          header_len = 289
+  00000C  8E A4 63 6F 6D 70 6F AA 65 6E 64 69 61 6E 6E 65
+  00001C  73 73 A2 6C 65 AB 66 69 72 73 74 5F 66 72 61 6D
+  00002C  65 00 AA 66 72 61 6D 65 5F 73 74 65 70 01 A4 6B
+  00003C  69 6E 64 AF 63 6F 72 65 2E 65 78 70 72 2E 62 61
+  00004C  6B 65 64 AE 70 61 79 6C 6F 61 64 5F 6F 72 69 67
+  00005C  69 6E CD 01 30 AC 70 61 79 6C 6F 61 64 5F 73 69
+  00006C  7A 65 CD 01 90 A8 72 61 74 65 5F 64 65 6E 01 A8
+  00007C  72 61 74 65 5F 6E 75 6D 19 A7 73 61 6D 70 6C 65
+  00008C  73 32 A8 73 65 63 74 69 6F 6E 73 91 86 A5 64 74
+  00009C  79 70 65 A3 66 36 34 A4 6E 61 6D 65 A5 76 61 6C
+  0000AC  75 65 A6 6F 66 66 73 65 74 CD 01 30 A5 73 68 61
+  0000BC  70 65 91 32 A4 73 69 7A 65 CD 01 90 A6 73 74 72
+  0000CC  69 64 65 08 B0 74 69 63 6B 73 5F 70 65 72 5F 73
+  0000DC  65 63 6F 6E 64 CF 00 00 00 3B 24 88 90 00 A6 74
+  0000EC  72 61 63 6B 73 91 85 AA 63 6F 6D 70 6F 6E 65 6E
+  0000FC  74 73 01 AB 66 69 72 73 74 5F 76 61 6C 75 65 00
+  00010C  A4 6B 69 6E 64 A6 73 63 61 6C 61 72 A5 6C 61 79
+  00011C  65 72 3C A3 75 69 64 46 A7 75 6E 62 61 6B 65 64
+  00012C  90
+          the header: a MessagePack map of 14 keys, decoded:
+
+            "comp": 111
+            "endianness": "le"
+            "first_frame": 0
+            "frame_step": 1
+            "kind": "core.expr.baked"
+            "payload_origin": 304
+            "payload_size": 400
+            "rate_den": 1
+            "rate_num": 25
+            "samples": 50
+            "sections": [
+              {"dtype": "f64", "name": "value", "offset": 304, "shape": [50], "size": 400, "stride": 8}
+            ]
+            "ticks_per_second": 254016000000
+            "tracks": [
+              {"components": 1, "first_value": 0, "kind": "scalar", "layer": 60, "uid": 70}
+            ]
+            "unbaked": []
+
+          3 zero bytes of padding to offset 304 (payload_origin)
+
+  section "value": offset 304, size 400, dtype f64, shape [50], stride 8
+  000130  00 00 00 00 00 00 34 40 33 33 33 33 33 33 35 40
+  000140  66 66 66 66 66 66 36 40 9A 99 99 99 99 99 37 40
+  000150  CD CC CC CC CC CC 38 40 00 00 00 00 00 00 3A 40
+  000160  33 33 33 33 33 33 3B 40 66 66 66 66 66 66 3C 40
+  000170  9A 99 99 99 99 99 3D 40 CC CC CC CC CC CC 3E 40
+  000180  00 00 00 00 00 00 40 40 9A 99 99 99 99 99 40 40
+  ......  (304 more bytes)
+          =
+            20.0  21.2  22.4
+            23.6  24.8  26.0
+            27.2  28.4  29.6
+            30.799999999999997  32.0  33.2
+            34.4  35.6  36.8
+            38.0  39.2  40.400000000000006
+            41.599999999999994  42.8  44.0
+            45.2  46.4  47.6
+            ... (50 values in all)
+
+  end of file at offset 704 (payload_origin + payload_size)

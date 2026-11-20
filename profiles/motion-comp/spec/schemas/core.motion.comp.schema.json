@@ -1,0 +1,3439 @@
+{
+  "$defs": {
+    "char_style": {
+      "additionalProperties": false,
+      "description": "The formatting of a run of characters. Every field is optional; an absent field has the application default (font `Inter` Regular, size 72, opaque white fill, no stroke, scales 100, ligatures on).",
+      "properties": {
+        "all_caps": {
+          "description": "Shown in capitals.",
+          "type": "boolean"
+        },
+        "apply_fill": {
+          "description": "Glyphs are filled.",
+          "type": "boolean"
+        },
+        "apply_stroke": {
+          "description": "Glyphs are stroked.",
+          "type": "boolean"
+        },
+        "baseline": {
+          "description": "Baseline option. `Normal`: on the baseline; `Superscript`: raised and reduced; `Subscript`: lowered and reduced.",
+          "enum": [
+            "Normal",
+            "Superscript",
+            "Subscript"
+          ],
+          "type": "string"
+        },
+        "baseline_shift": {
+          "description": "Shift of the baseline in layer pixels, positive up.",
+          "type": "number"
+        },
+        "faux_bold": {
+          "description": "Synthetic bold.",
+          "type": "boolean"
+        },
+        "faux_italic": {
+          "description": "Synthetic slant.",
+          "type": "boolean"
+        },
+        "fill": {
+          "description": "Fill colour: straight RGBA 0..1, binary32, authored-colour encoding.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "font": {
+          "description": "Font family name (`Inter`). The font file is the node listed for (family, style) in the project node's `fonts`.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "h_scale": {
+          "description": "Horizontal glyph scale in percent: 100 = unscaled.",
+          "type": "number"
+        },
+        "kerning": {
+          "anyOf": [
+            {
+              "enum": [
+                "Metrics",
+                "Optical"
+              ],
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Manual": {
+                  "description": "Kerning after the character in 1/1000 em.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "Manual"
+              ],
+              "type": "object"
+            }
+          ],
+          "description": "Kerning: `Metrics` (the font's pairs), `Optical` (from glyph shapes), or {\"Manual\": n}."
+        },
+        "leading": {
+          "anyOf": [
+            {
+              "description": "Line advance in layer pixels; null: automatic (1.2 * size).",
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Line advance in layer pixels; null: automatic (1.2 * size)."
+        },
+        "ligatures": {
+          "description": "Standard ligatures (`liga`).",
+          "type": "boolean"
+        },
+        "opentype": {
+          "$ref": "#/$defs/opentype"
+        },
+        "size": {
+          "description": "Font size in layer pixels per em.",
+          "type": "number"
+        },
+        "small_caps": {
+          "description": "Lower-case letters shown as small capitals.",
+          "type": "boolean"
+        },
+        "stroke": {
+          "description": "Stroke colour: straight RGBA 0..1, binary32.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "stroke_width": {
+          "description": "Stroke width in layer pixels.",
+          "type": "number"
+        },
+        "style": {
+          "description": "Font style name (`Regular`, `Bold Italic`).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tate_chu_yoko": {
+          "description": "Horizontal-in-vertical setting of the run (vertical text).",
+          "type": "boolean"
+        },
+        "tracking": {
+          "description": "Extra advance after every character, in 1/1000 em.",
+          "type": "number"
+        },
+        "tsume": {
+          "description": "East Asian character tightening, 0..1.",
+          "type": "number"
+        },
+        "v_scale": {
+          "description": "Vertical glyph scale in percent: 100 = unscaled.",
+          "type": "number"
+        },
+        "variations": {
+          "description": "Variable-font axis settings. Default none.",
+          "items": {
+            "description": "[axis tag, value]: a variable-font axis (`wght`) and its setting (binary32).",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "vertical_roman_upright": {
+          "description": "Latin characters stand upright in vertical text.",
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "ease": {
+      "additionalProperties": false,
+      "description": "The temporal ease on one side of a key, for one dimension (profile document 6.3).",
+      "properties": {
+        "influence": {
+          "description": "How far the ease reaches into the adjacent segment, as a fraction of that segment's duration. Clamped to 0..1 when used.",
+          "type": "number"
+        },
+        "speed": {
+          "description": "The rate of change at the key on this side, in value units per second (for a spatial property: units of path length per second).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "speed",
+        "influence"
+      ],
+      "type": "object"
+    },
+    "eg_control": {
+      "additionalProperties": false,
+      "description": "One exposed control.",
+      "properties": {
+        "as_type": {
+          "description": "The kind of control the property is shown as, when it is not the natural one. `text`: text; `color`: colour; `slider`: slider; `checkbox`: checkbox; `point`: point; `angle`: angle; `dropdown`: dropdown; `media`: media; `font`: font; `scale`: scale.",
+          "enum": [
+            "text",
+            "color",
+            "slider",
+            "checkbox",
+            "point",
+            "angle",
+            "dropdown",
+            "media",
+            "font",
+            "scale"
+          ],
+          "type": "string"
+        },
+        "id": {
+          "description": "The control's id, unique in the project.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "kind": {
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "Property"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "a property of a layer of this composition",
+                "properties": {
+                  "layer": {
+                    "description": "The layer's id.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "links": {
+                    "description": "Further properties that take the control's value. Default none.",
+                    "items": {
+                      "additionalProperties": false,
+                      "description": "A further property the control drives.",
+                      "properties": {
+                        "layer": {
+                          "description": "Layer id.",
+                          "minimum": 0,
+                          "type": "integer"
+                        },
+                        "prop": {
+                          "description": "Property uid.",
+                          "minimum": 0,
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "layer",
+                        "prop"
+                      ],
+                      "type": "object"
+                    },
+                    "type": "array"
+                  },
+                  "prop": {
+                    "description": "The property's uid.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "type": {
+                    "const": "Property",
+                    "description": "a property of a layer of this composition"
+                  }
+                },
+                "required": [
+                  "type",
+                  "layer",
+                  "prop"
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "Mirror"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "the property of another control shown again",
+                "properties": {
+                  "of": {
+                    "description": "The other control's id.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "type": {
+                    "const": "Mirror",
+                    "description": "the property of another control shown again"
+                  }
+                },
+                "required": [
+                  "type",
+                  "of"
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "Media"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "the footage of a footage layer can be replaced per instance",
+                "properties": {
+                  "layer": {
+                    "description": "The layer's id.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "type": {
+                    "const": "Media",
+                    "description": "the footage of a footage layer can be replaced per instance"
+                  }
+                },
+                "required": [
+                  "type",
+                  "layer"
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "Comment"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "a note in the panel",
+                "properties": {
+                  "text": {
+                    "description": "The note.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "Comment",
+                    "description": "a note in the panel"
+                  }
+                },
+                "required": [
+                  "type",
+                  "text"
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "type": {
+                    "const": "Group"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "a named group of controls",
+                "properties": {
+                  "children": {
+                    "description": "The controls of the group. Default none.",
+                    "items": {
+                      "$ref": "#/$defs/eg_control"
+                    },
+                    "type": "array"
+                  },
+                  "type": {
+                    "const": "Group",
+                    "description": "a named group of controls"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            }
+          ],
+          "description": "What the control is. `type` says which: `Property`: a property of a layer of this composition; `Mirror`: the property of another control shown again; `Media`: the footage of a footage layer can be replaced per instance; `Comment`: a note in the panel; `Group`: a named group of controls.",
+          "properties": {
+            "type": {
+              "enum": [
+                "Property",
+                "Mirror",
+                "Media",
+                "Comment",
+                "Group"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        "name": {
+          "description": "The control's name.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "essential": {
+      "additionalProperties": false,
+      "description": "The controls this composition exposes to layers that use it as their source (Essential Graphics).",
+      "properties": {
+        "controls": {
+          "description": "The controls, in panel order. Default none.",
+          "items": {
+            "$ref": "#/$defs/eg_control"
+          },
+          "type": "array"
+        },
+        "name": {
+          "description": "The name of the control set. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "expression": {
+      "additionalProperties": false,
+      "description": "An expression attached to a property: program text in the expression language (node `expr-language`, profile document 6.18). It is CONTENT and is never run by opening the file.",
+      "properties": {
+        "enabled": {
+          "description": "False: the expression is kept and not evaluated; the property has its keyframed value.",
+          "type": "boolean"
+        },
+        "text": {
+          "description": "The source text, verbatim.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "enabled"
+      ],
+      "type": "object"
+    },
+    "feather_point": {
+      "additionalProperties": false,
+      "description": "A variable-width mask feather point on a path.",
+      "properties": {
+        "radius": {
+          "description": "Feather radius in layer pixels: positive feathers outward, negative inward.",
+          "type": "number"
+        },
+        "segment": {
+          "description": "Index of the path segment the point sits on: segment i runs from vertex i to vertex i + 1 (the closing segment of a closed path from the last vertex to vertex 0).",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "t": {
+          "description": "Bezier parameter of the point on that segment, 0..1.",
+          "type": "number"
+        },
+        "tension": {
+          "description": "0..1: 0 blends the radius smoothly to the neighbouring points, 1 linearly. Default 0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "segment",
+        "t",
+        "radius"
+      ],
+      "type": "object"
+    },
+    "file_ref": {
+      "additionalProperties": false,
+      "description": "A file an effect parameter names (a LUT, a colour configuration), carried in this package.",
+      "properties": {
+        "node": {
+          "anyOf": [
+            {
+              "description": "The node holding the file's bytes; null when the file could not be read when the document was saved (the effect then has no file).",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The node holding the file's bytes; null when the file could not be read when the document was saved (the effect then has no file)."
+        },
+        "origin": {
+          "description": "The path the parameter held when the file was embedded. A note for a person: no reader opens it.",
+          "format": "werk-provenance-note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node",
+        "origin"
+      ],
+      "type": "object"
+    },
+    "footage": {
+      "additionalProperties": false,
+      "description": "A footage item: how one medium is interpreted. The medium itself is the node `media.node`.",
+      "properties": {
+        "alpha": {
+          "description": "How the file's alpha channel is interpreted. `Straight`: colour is not multiplied by alpha; `Premultiplied`: colour is multiplied by alpha over `premul_color`; `Ignore`: alpha is ignored: the picture is opaque.",
+          "enum": [
+            "Straight",
+            "Premultiplied",
+            "Ignore"
+          ],
+          "type": "string"
+        },
+        "alphabetical": {
+          "description": "Image sequences: the files play one after another in name order and their numbering does not count (otherwise a gap in the numbering is a gap in time). Default false.",
+          "type": "boolean"
+        },
+        "codec": {
+          "description": "The codec or file-format name as the importing application reported it (`H.264`, `PNG`, `PSD`). A label; the format of the bytes is the media node's. Default empty.",
+          "type": "string"
+        },
+        "color_profile": {
+          "description": "The colour space of the file's values; absent: sRGB. `Srgb`: sRGB IEC 61966-2-1 (BT.709 primaries, D65, the sRGB curve); `Rec709`: BT.709 primaries, D65, a pure 2.4 power curve; `Rec2020`: BT.2020 primaries, D65, a pure 2.4 power curve; `DisplayP3`: P3 primaries, D65, the sRGB curve; `AcesCg`: ACEScg: AP1 primaries, ACES white, linear; `Aces2065`: ACES2065-1: AP0 primaries, ACES white, linear; `Rec2100Pq`: BT.2020 primaries, D65, SMPTE ST 2084 (PQ); `Rec2100Hlg`: BT.2020 primaries, D65, hybrid log-gamma.",
+          "enum": [
+            "Srgb",
+            "Rec709",
+            "Rec2020",
+            "DisplayP3",
+            "AcesCg",
+            "Aces2065",
+            "Rec2100Pq",
+            "Rec2100Hlg"
+          ],
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "description": "Data footage: the `core.motion.data` node that holds the file's text. Null or absent: none.",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Data footage: the `core.motion.data` node that holds the file's text. Null or absent: none."
+        },
+        "duration": {
+          "description": "Length of the footage at `frame_rate`; 0 for a still. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "fields": {
+          "description": "Field separation: each field becomes a frame at twice the rate. Default `Off`. `Off`: progressive frames; `UpperFirst`: interlaced; the upper field (even rows, 0-based) is first in time; `LowerFirst`: interlaced; the lower field is first.",
+          "enum": [
+            "Off",
+            "UpperFirst",
+            "LowerFirst"
+          ],
+          "type": "string"
+        },
+        "frame_rate": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/frame_rate"
+            }
+          ],
+          "description": "The rate the footage plays at (after `Conform to frame rate`)."
+        },
+        "has_audio": {
+          "description": "It has sound.",
+          "type": "boolean"
+        },
+        "has_video": {
+          "description": "It has a picture.",
+          "type": "boolean"
+        },
+        "height": {
+          "description": "Height of the picture in its stored pixels.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "invert_alpha": {
+          "description": "Alpha is inverted (1 - a) after decoding. Default false.",
+          "type": "boolean"
+        },
+        "kind": {
+          "description": "What the medium is used as. `Video`: a movie; `Still`: one picture; `Sequence`: numbered stills played as frames; `Audio`: sound only; `Model`: a 3D model; `Data`: a data file (JSON, CSV, TSV) read by expressions; no picture.",
+          "enum": [
+            "Video",
+            "Still",
+            "Sequence",
+            "Audio",
+            "Model",
+            "Data"
+          ],
+          "type": "string"
+        },
+        "layer": {
+          "additionalProperties": false,
+          "description": "The footage is ONE layer of a layered file (a Photoshop document, a PDF / Illustrator page) instead of its merged picture.",
+          "properties": {
+            "embedded": {
+              "description": "A Photoshop smart object: the unique id of its embedded file, which is the footage instead of the layer's pixels.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "index": {
+              "description": "Index of the layer record in the file; the bottom layer is 0.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "layer_size": {
+              "description": "True: the footage is the layer's own bounds; false: the document's size. Default false.",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "The layer's name in the file.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "placed": {
+              "description": "A smart object placed with a perspective quad or a warp: the footage is the embedded file as placed, over its placed bounds. Default false.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "index",
+            "name"
+          ],
+          "type": "object"
+        },
+        "linear_light": {
+          "description": "The file's values are linear light. Default false.",
+          "type": "boolean"
+        },
+        "loop_count": {
+          "description": "How many times the footage plays; 1 = once. Default 1.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "media": {
+          "$ref": "#/$defs/media_ref"
+        },
+        "missing": {
+          "description": "The application's own flag that the file could not be found when it last looked. Default false.",
+          "type": "boolean"
+        },
+        "native_rate": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/frame_rate"
+                }
+              ],
+              "description": "The file's own rate when `frame_rate` was conformed to another; null: not conformed."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The file's own rate when `frame_rate` was conformed to another; null: not conformed."
+        },
+        "page": {
+          "description": "PDF / Illustrator footage: the page shown, 0-based. Default 0.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "pixel_aspect": {
+          "description": "Pixel aspect ratio: width of one stored pixel / its height. 1 = square.",
+          "type": "number"
+        },
+        "premul_color": {
+          "description": "The matte colour premultiplied alpha is over: r, g, b 0..1 (binary32). Default black.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "preserve_rgb": {
+          "description": "The file's values enter the composition unconverted (no colour profile, no linear-light interpretation, no working-space conversion). Default false.",
+          "type": "boolean"
+        },
+        "start_timecode": {
+          "description": "The frame number (at `frame_rate`) the footage's timecode shows at its first frame; absent: 0. It only relabels source time.",
+          "type": "integer"
+        },
+        "width": {
+          "description": "Width of the picture in its stored pixels; 0 when there is none.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "media",
+        "kind",
+        "width",
+        "height",
+        "pixel_aspect",
+        "frame_rate",
+        "duration",
+        "has_video",
+        "has_audio",
+        "alpha"
+      ],
+      "type": "object"
+    },
+    "frame_rate": {
+      "additionalProperties": false,
+      "description": "A frame rate as an exact fraction: num / den frames per second (24000/1001, 25/1...). One frame lasts 254016000000 * den / num ticks.",
+      "properties": {
+        "den": {
+          "description": "Denominator, seconds. Positive.",
+          "type": "integer"
+        },
+        "num": {
+          "description": "Numerator, frames. Positive.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "num",
+        "den"
+      ],
+      "type": "object"
+    },
+    "gradient": {
+      "additionalProperties": false,
+      "description": "A gradient: colour stops and opacity stops along 0..1. Colour at position p: the two neighbouring colour stops mixed linearly per component (the first stop's colour before it, the last after it; no stops: opaque white); its alpha is then multiplied by the opacity found the same way from the opacity stops (no stops: 1).",
+      "properties": {
+        "colors": {
+          "description": "Colour stops in ascending position.",
+          "items": {
+            "description": "[position, [r, g, b, a]]: position 0..1; the colour is straight RGBA, 0..1, binary32, in the encoding of authored colours (profile document 6.8).",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 4,
+                  "minItems": 4,
+                  "type": "array"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "opacities": {
+          "description": "Opacity stops in ascending position.",
+          "items": {
+            "description": "[position, alpha]: position 0..1, alpha 0..1 (binary32).",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "colors",
+        "opacities"
+      ],
+      "type": "object"
+    },
+    "group_kind": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Plain"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "an ordinary group",
+            "properties": {
+              "kind": {
+                "const": "Plain",
+                "description": "an ordinary group"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Indexed"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "an item of a list the user orders (a shape item, a text animator, a selector, a layer style)",
+            "properties": {
+              "kind": {
+                "const": "Indexed",
+                "description": "an item of a list the user orders (a shape item, a text animator, a selector, a layer style)"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Mask"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "one mask of the layer (profile document 6.10)",
+            "properties": {
+              "color": {
+                "description": "The outline colour in the editor, 8-bit r, g, b. No effect on the picture.",
+                "items": {
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              "feather_falloff": {
+                "description": "The shape of the feather. Default `Smooth`. `Smooth`: a Gaussian ramp; `Linear`: a straight ramp.",
+                "enum": [
+                  "Smooth",
+                  "Linear"
+                ],
+                "type": "string"
+              },
+              "inverted": {
+                "description": "True: c = 1 - c before the mask opacity is applied.",
+                "type": "boolean"
+              },
+              "kind": {
+                "const": "Mask",
+                "description": "one mask of the layer (profile document 6.10)"
+              },
+              "locked": {
+                "description": "Locked in the editor. No effect on the picture.",
+                "type": "boolean"
+              },
+              "mode": {
+                "description": "How this mask's coverage c combines with the coverage A of the masks before it. `None`: the mask cuts nothing; it is a path for effects; `Add`: A = A + c - A * c; `Subtract`: A = A * (1 - c); `Intersect`: A = A * c; `Lighten`: A = max(A, c); `Darken`: A = min(A, c); `Difference`: A = |A - c|.",
+                "enum": [
+                  "None",
+                  "Add",
+                  "Subtract",
+                  "Intersect",
+                  "Lighten",
+                  "Darken",
+                  "Difference"
+                ],
+                "type": "string"
+              },
+              "motion_blur": {
+                "description": "Mask motion blur. Default `SameAsLayer`. `SameAsLayer`: blur an animated mask path when the layer's motion-blur switch is on; `On`: always; `Off`: never.",
+                "enum": [
+                  "SameAsLayer",
+                  "On",
+                  "Off"
+                ],
+                "type": "string"
+              },
+              "roto_bezier": {
+                "description": "The editor derives the tangents from the vertices. The stored tangents are what counts. Default false.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "kind",
+              "mode",
+              "inverted",
+              "color",
+              "locked"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Effect"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "one effect instance; its children are its parameters",
+            "properties": {
+              "effect": {
+                "description": "The effect id (`ec.blur.gaussian`). What it means is in the node `effect-catalog`.",
+                "type": "string"
+              },
+              "kind": {
+                "const": "Effect",
+                "description": "one effect instance; its children are its parameters"
+              }
+            },
+            "required": [
+              "kind",
+              "effect"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Tracker"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "one motion tracker",
+            "properties": {
+              "kind": {
+                "const": "Tracker",
+                "description": "one motion tracker"
+              },
+              "settings": {
+                "$ref": "#/$defs/tracker_settings"
+              }
+            },
+            "required": [
+              "kind",
+              "settings"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Essential"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "the Essential Properties of a layer whose source is a composition: one child per control the nested composition exposes",
+            "properties": {
+              "kind": {
+                "const": "Essential",
+                "description": "the Essential Properties of a layer whose source is a composition: one child per control the nested composition exposes"
+              },
+              "overridden": {
+                "description": "The children whose values this layer overrides in its instance of the nested composition. Default empty.",
+                "items": {
+                  "description": "uid of a child.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "description": "What a group is, with the data of it that does not animate. `kind` says which: `Plain`: an ordinary group; `Indexed`: an item of a list the user orders (a shape item, a text animator, a selector, a layer style); `Mask`: one mask of the layer (profile document 6.10); `Effect`: one effect instance; its children are its parameters; `Tracker`: one motion tracker; `Essential`: the Essential Properties of a layer whose source is a composition: one child per control the nested composition exposes.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "Plain",
+            "Indexed",
+            "Mask",
+            "Effect",
+            "Tracker",
+            "Essential"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "keyframe": {
+      "additionalProperties": false,
+      "description": "One keyframe. Its time is LAYER time (profile document 6.2).",
+      "properties": {
+        "auto_bezier": {
+          "description": "True: the key's eases are NOT taken from in_ease / out_ease when it has a key on both sides; they are derived from its neighbours (profile document 6.3). Default false.",
+          "type": "boolean"
+        },
+        "continuous": {
+          "description": "The two eases are kept equal by the editor (a display flag; evaluation uses the stored eases). Default false.",
+          "type": "boolean"
+        },
+        "in_ease": {
+          "description": "Eases of the arriving side: one per dimension of the value, or one for a spatial property or a value without dimensions; dimension d uses entry d, else entry 0, else speed 0 and influence 1/6. Default empty.",
+          "items": {
+            "$ref": "#/$defs/ease"
+          },
+          "type": "array"
+        },
+        "in_interp": {
+          "description": "Interpolation of the side ARRIVING at the key. Default `Linear`. `Linear`: this side of the key is a straight segment; `Bezier`: this side is a Bezier ease given by the key's ease on this side; `Hold`: as an OUT side: the value stays the key's value until the next key; as an IN side: like Linear.",
+          "enum": [
+            "Linear",
+            "Bezier",
+            "Hold"
+          ],
+          "type": "string"
+        },
+        "label": {
+          "description": "A colour label for the key in the editor: 0 = none, 1..16 index the label list (Red...DarkGreen). Default 0.",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "out_ease": {
+          "description": "Eases of the leaving side, as `in_ease`. Default empty.",
+          "items": {
+            "$ref": "#/$defs/ease"
+          },
+          "type": "array"
+        },
+        "out_interp": {
+          "description": "Interpolation of the side LEAVING the key. Default `Linear`. `Linear`: this side of the key is a straight segment; `Bezier`: this side is a Bezier ease given by the key's ease on this side; `Hold`: as an OUT side: the value stays the key's value until the next key; as an IN side: like Linear.",
+          "enum": [
+            "Linear",
+            "Bezier",
+            "Hold"
+          ],
+          "type": "string"
+        },
+        "roving": {
+          "description": "The key's time was computed by the editor so that speed along the path is constant between the neighbouring non-roving keys. The stored `time` is already that time; a reader evaluates it like any key. Default false.",
+          "type": "boolean"
+        },
+        "spatial_auto": {
+          "description": "True: the spatial tangents are derived from the neighbouring keys (profile document 6.4) and `spatial_in` / `spatial_out` are ignored. Default TRUE.",
+          "type": "boolean"
+        },
+        "spatial_continuous": {
+          "description": "The two spatial tangents are kept collinear by the editor (a display flag). Default false.",
+          "type": "boolean"
+        },
+        "spatial_in": {
+          "description": "Spatial tangent of the motion path arriving at the key, relative to the key's value (x, y, z). Used only by spatial properties with `spatial_auto` false. Default [0, 0, 0].",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "spatial_out": {
+          "description": "Spatial tangent of the motion path leaving the key, relative to the key's value. Default [0, 0, 0].",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "time": {
+          "description": "When the key is, in the layer's time. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "value": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/value"
+            }
+          ],
+          "description": "The value at the key. Every key of a property has the same kind as the property's `value`."
+        }
+      },
+      "required": [
+        "time",
+        "value"
+      ],
+      "type": "object"
+    },
+    "marker": {
+      "additionalProperties": false,
+      "description": "A marker on a composition's or a layer's time ruler.",
+      "properties": {
+        "chapter": {
+          "description": "Chapter name (for exports that have chapters). Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "comment": {
+          "description": "The marker's text. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "cue_point": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "description": "A cue point.",
+              "properties": {
+                "name": {
+                  "description": "Its name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "navigation": {
+                  "description": "True: a navigation cue point; false: an event. Default false.",
+                  "type": "boolean"
+                },
+                "params": {
+                  "description": "Parameters. Default empty.",
+                  "items": {
+                    "description": "[name, value].",
+                    "items": {
+                      "description": "A string.",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A cue point."
+        },
+        "duration": {
+          "description": "Length of the marked span; 0 = a point. Default 0. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "frame_target": {
+          "description": "Web link frame target. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "label": {
+          "description": "Default `Red`. A colour label: a display aid with no effect on the picture.",
+          "enum": [
+            "None",
+            "Red",
+            "Yellow",
+            "Aqua",
+            "Pink",
+            "Lavender",
+            "Peach",
+            "SeaFoam",
+            "Blue",
+            "Green",
+            "Purple",
+            "Orange",
+            "Brown",
+            "Fuchsia",
+            "Cyan",
+            "Sandstone",
+            "DarkGreen"
+          ],
+          "type": "string"
+        },
+        "protected": {
+          "description": "Composition markers: the span is a protected region - a time-stretched layer whose source is this composition plays it at its original speed (profile document 6.2). Default false.",
+          "type": "boolean"
+        },
+        "time": {
+          "description": "Where the marker is: composition time for a composition marker, LAYER time for a layer marker. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "url": {
+          "description": "A web link attached to the marker: content, never opened by a reader. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "time"
+      ],
+      "type": "object"
+    },
+    "media_ref": {
+      "additionalProperties": false,
+      "description": "Where the bytes of a footage file are: in this package, or nowhere.",
+      "properties": {
+        "frame_origins": {
+          "description": "Image sequences: the paths of the frames in playing order, as they were imported (notes). With a node, frame i is the node's file number i (profile document 3.6). Default empty.",
+          "items": {
+            "description": "The path one frame was imported from.",
+            "format": "werk-provenance-note",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "node": {
+          "anyOf": [
+            {
+              "description": "The media node (`core.media.source`, `core.media.png`, `core.media.text` or `x.effectcraft.media`) that holds the file - for an image sequence, every frame. Null: the bytes are NOT in this package (the file was missing when the document was saved, or the footage never had one); the footage is offline.",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The media node (`core.media.source`, `core.media.png`, `core.media.text` or `x.effectcraft.media`) that holds the file - for an image sequence, every frame. Null: the bytes are NOT in this package (the file was missing when the document was saved, or the footage never had one); the footage is offline."
+        },
+        "origin": {
+          "description": "The path the footage was imported from: a note of where the file WAS. It is not part of the package and no reader may treat it as a place to read from; an editing application shows it for an offline item so the user can find the file again. Empty when there was none.",
+          "format": "werk-provenance-note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node",
+        "origin"
+      ],
+      "type": "object"
+    },
+    "node": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "node": {
+                "const": "Prop"
+              }
+            },
+            "required": [
+              "node"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a property",
+            "properties": {
+              "expr": {
+                "$ref": "#/$defs/expression"
+              },
+              "hold_only": {
+                "description": "The editor creates only Hold keys for it. Default false.",
+                "type": "boolean"
+              },
+              "keys": {
+                "description": "The keyframes in ascending time, no two at the same time, when they are NOT stored in the owner's keyframe-tracks node (profile document 6.5). Absent or empty: no inline keyframes.",
+                "items": {
+                  "$ref": "#/$defs/keyframe"
+                },
+                "type": "array"
+              },
+              "match": {
+                "description": "What the property IS within its group (`position`, `opacity`, an effect parameter's id): the name a reader goes by. Not unique among siblings of an indexed list.",
+                "type": "string"
+              },
+              "name": {
+                "description": "The display name.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "node": {
+                "const": "Prop",
+                "description": "a property"
+              },
+              "shown_dims": {
+                "description": "How many dimensions the editor shows (2 for a 2D position stored as Vec3); 0 = all. Default 0.",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "spatial": {
+                "description": "True: a 2D or 3D value moves along a motion path between keys (profile document 6.4). Default false.",
+                "type": "boolean"
+              },
+              "static_only": {
+                "description": "The property cannot be animated. Default false.",
+                "type": "boolean"
+              },
+              "three_d_only": {
+                "description": "The property applies only when its layer is 3D. Default false.",
+                "type": "boolean"
+              },
+              "track": {
+                "description": "Index of this property's keyframe track in the owner's `core.keyframe.tracks` node (the payload's `tracks` field names the node). Never present together with a non-empty `keys`.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "two_d_only": {
+                "description": "The property applies only when its layer is 2D. Default false.",
+                "type": "boolean"
+              },
+              "ui": {
+                "$ref": "#/$defs/param_ui"
+              },
+              "uid": {
+                "description": "The property's id: unique in the project, never reused, unchanged by rename and reorder.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "value": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/value"
+                  }
+                ],
+                "description": "The static value: the property's value when it has no keyframes."
+              }
+            },
+            "required": [
+              "node",
+              "uid",
+              "match",
+              "name",
+              "value"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "node": {
+                "const": "Group"
+              }
+            },
+            "required": [
+              "node"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a group of nodes",
+            "properties": {
+              "children": {
+                "description": "The nodes of the group, in order. Default empty.",
+                "items": {
+                  "$ref": "#/$defs/node"
+                },
+                "type": "array"
+              },
+              "enabled": {
+                "description": "False: the group does nothing (an effect that is switched off, a hidden shape item). Default true.",
+                "type": "boolean"
+              },
+              "kind": {
+                "$ref": "#/$defs/group_kind"
+              },
+              "match": {
+                "description": "What the group IS within its parent (`transform`, `masks`, `effects`, a shape item's kind...).",
+                "type": "string"
+              },
+              "name": {
+                "description": "The display name.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "node": {
+                "const": "Group",
+                "description": "a group of nodes"
+              },
+              "uid": {
+                "description": "The group's id: unique in the project, never reused.",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "node",
+              "uid",
+              "match",
+              "name"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "description": "A node of a property tree. `node` says which: `Prop`: a property; `Group`: a group of nodes.",
+      "properties": {
+        "node": {
+          "enum": [
+            "Prop",
+            "Group"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "node"
+      ],
+      "type": "object"
+    },
+    "opentype": {
+      "additionalProperties": false,
+      "description": "OpenType features asked for. All optional, default off.",
+      "properties": {
+        "all_small_caps": {
+          "description": "Features `c2sc` and `smcp`.",
+          "type": "boolean"
+        },
+        "contextual_alternates": {
+          "description": "Feature `calt`.",
+          "type": "boolean"
+        },
+        "discretionary_ligatures": {
+          "description": "Feature `dlig`.",
+          "type": "boolean"
+        },
+        "figure_style": {
+          "description": "Figure style. `Default`: the font's default; `Lining`: `lnum`; `OldStyle`: `onum`.",
+          "enum": [
+            "Default",
+            "Lining",
+            "OldStyle"
+          ],
+          "type": "string"
+        },
+        "figure_width": {
+          "description": "Figure width. `Default`: the font's default; `Proportional`: `pnum`; `Tabular`: `tnum`.",
+          "enum": [
+            "Default",
+            "Proportional",
+            "Tabular"
+          ],
+          "type": "string"
+        },
+        "fractions": {
+          "description": "Feature `frac`.",
+          "type": "boolean"
+        },
+        "ordinals": {
+          "description": "Feature `ordn`.",
+          "type": "boolean"
+        },
+        "stylistic_alternates": {
+          "description": "Feature `salt`.",
+          "type": "boolean"
+        },
+        "stylistic_sets": {
+          "description": "Bit i (value 2^i) asks for stylistic set i + 1 (`ss01`...`ss20`).",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "swash": {
+          "description": "Feature `swsh`.",
+          "type": "boolean"
+        },
+        "titling": {
+          "description": "Feature `titl`.",
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "param_ui": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Number"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a plain number",
+            "properties": {
+              "kind": {
+                "const": "Number",
+                "description": "a plain number"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Percent"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a percentage (100 = 100 %)",
+            "properties": {
+              "kind": {
+                "const": "Percent",
+                "description": "a percentage (100 = 100 %)"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Angle"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "an angle in degrees, shown as revolutions + degrees",
+            "properties": {
+              "kind": {
+                "const": "Angle",
+                "description": "an angle in degrees, shown as revolutions + degrees"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Pixels"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a length in pixels",
+            "properties": {
+              "kind": {
+                "const": "Pixels",
+                "description": "a length in pixels"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Point"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a 2D point",
+            "properties": {
+              "kind": {
+                "const": "Point",
+                "description": "a 2D point"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Point3"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a 3D point",
+            "properties": {
+              "kind": {
+                "const": "Point3",
+                "description": "a 3D point"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Color"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a colour",
+            "properties": {
+              "kind": {
+                "const": "Color",
+                "description": "a colour"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Checkbox"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a switch",
+            "properties": {
+              "kind": {
+                "const": "Checkbox",
+                "description": "a switch"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Layer"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a layer of the composition",
+            "properties": {
+              "kind": {
+                "const": "Layer",
+                "description": "a layer of the composition"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Mask"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a mask of the property's own layer: a Scalar holding its 1-based position among the layer's masks, 0 = none",
+            "properties": {
+              "kind": {
+                "const": "Mask",
+                "description": "a mask of the property's own layer: a Scalar holding its 1-based position among the layer's masks, 0 = none"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Path"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a Bezier path",
+            "properties": {
+              "kind": {
+                "const": "Path",
+                "description": "a Bezier path"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Text"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "text",
+            "properties": {
+              "kind": {
+                "const": "Text",
+                "description": "text"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Gradient"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a gradient",
+            "properties": {
+              "kind": {
+                "const": "Gradient",
+                "description": "a gradient"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Hidden"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "internal data, not shown",
+            "properties": {
+              "kind": {
+                "const": "Hidden",
+                "description": "internal data, not shown"
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Slider"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a number with a valid range and a (narrower) slider range",
+            "properties": {
+              "decimals": {
+                "description": "Decimal places shown.",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "kind": {
+                "const": "Slider",
+                "description": "a number with a valid range and a (narrower) slider range"
+              },
+              "max": {
+                "description": "Largest valid value.",
+                "type": "number"
+              },
+              "min": {
+                "description": "Smallest valid value.",
+                "type": "number"
+              },
+              "slider_max": {
+                "description": "Right end of the slider.",
+                "type": "number"
+              },
+              "slider_min": {
+                "description": "Left end of the slider.",
+                "type": "number"
+              }
+            },
+            "required": [
+              "kind",
+              "min",
+              "max",
+              "slider_min",
+              "slider_max",
+              "decimals"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "Popup"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a choice from a list; the value is an Enum index into `options`",
+            "properties": {
+              "kind": {
+                "const": "Popup",
+                "description": "a choice from a list; the value is an Enum index into `options`"
+              },
+              "options": {
+                "description": "The options, in order.",
+                "items": {
+                  "description": "An option's name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "kind",
+              "options"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "File"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a file; the value is `File` (in this package) - in the application's memory a path string",
+            "properties": {
+              "filters": {
+                "description": "The extensions the editor offers.",
+                "items": {
+                  "description": "A file-name extension without the dot, lower case.",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "kind": {
+                "const": "File",
+                "description": "a file; the value is `File` (in this package) - in the application's memory a path string"
+              }
+            },
+            "required": [
+              "kind",
+              "filters"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "description": "How a property is presented and edited. It never changes what the value means. `kind` says which: `Number`: a plain number; `Percent`: a percentage (100 = 100 %); `Angle`: an angle in degrees, shown as revolutions + degrees; `Pixels`: a length in pixels; `Point`: a 2D point; `Point3`: a 3D point; `Color`: a colour; `Checkbox`: a switch; `Layer`: a layer of the composition; `Mask`: a mask of the property's own layer: a Scalar holding its 1-based position among the layer's masks, 0 = none; `Path`: a Bezier path; `Text`: text; `Gradient`: a gradient; `Hidden`: internal data, not shown; `Slider`: a number with a valid range and a (narrower) slider range; `Popup`: a choice from a list; the value is an Enum index into `options`; `File`: a file; the value is `File` (in this package) - in the application's memory a path string.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "Number",
+            "Percent",
+            "Angle",
+            "Pixels",
+            "Point",
+            "Point3",
+            "Color",
+            "Checkbox",
+            "Layer",
+            "Mask",
+            "Path",
+            "Text",
+            "Gradient",
+            "Hidden",
+            "Slider",
+            "Popup",
+            "File"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "property": {
+      "additionalProperties": false,
+      "description": "One property: a value, optionally animated by keyframes, optionally driven by an expression.",
+      "properties": {
+        "expr": {
+          "$ref": "#/$defs/expression"
+        },
+        "hold_only": {
+          "description": "The editor creates only Hold keys for it. Default false.",
+          "type": "boolean"
+        },
+        "keys": {
+          "description": "The keyframes in ascending time, no two at the same time, when they are NOT stored in the owner's keyframe-tracks node (profile document 6.5). Absent or empty: no inline keyframes.",
+          "items": {
+            "$ref": "#/$defs/keyframe"
+          },
+          "type": "array"
+        },
+        "match": {
+          "description": "What the property IS within its group (`position`, `opacity`, an effect parameter's id): the name a reader goes by. Not unique among siblings of an indexed list.",
+          "type": "string"
+        },
+        "name": {
+          "description": "The display name.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "shown_dims": {
+          "description": "How many dimensions the editor shows (2 for a 2D position stored as Vec3); 0 = all. Default 0.",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "spatial": {
+          "description": "True: a 2D or 3D value moves along a motion path between keys (profile document 6.4). Default false.",
+          "type": "boolean"
+        },
+        "static_only": {
+          "description": "The property cannot be animated. Default false.",
+          "type": "boolean"
+        },
+        "three_d_only": {
+          "description": "The property applies only when its layer is 3D. Default false.",
+          "type": "boolean"
+        },
+        "track": {
+          "description": "Index of this property's keyframe track in the owner's `core.keyframe.tracks` node (the payload's `tracks` field names the node). Never present together with a non-empty `keys`.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "two_d_only": {
+          "description": "The property applies only when its layer is 2D. Default false.",
+          "type": "boolean"
+        },
+        "ui": {
+          "$ref": "#/$defs/param_ui"
+        },
+        "uid": {
+          "description": "The property's id: unique in the project, never reused, unchanged by rename and reorder.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "value": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/value"
+            }
+          ],
+          "description": "The static value: the property's value when it has no keyframes."
+        }
+      },
+      "required": [
+        "uid",
+        "match",
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "proxy": {
+      "additionalProperties": false,
+      "description": "A proxy: a stand-in medium used instead of the item when `enabled` is true and the render allows proxies.",
+      "properties": {
+        "enabled": {
+          "description": "Use the proxy. Default true.",
+          "type": "boolean"
+        },
+        "footage": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/footage"
+            }
+          ],
+          "description": "The stand-in, interpreted like any footage. Its medium is a file the user attached: an imported original, stamped `authored` (nothing records whether or how it was made from the item)."
+        }
+      },
+      "required": [
+        "footage"
+      ],
+      "type": "object"
+    },
+    "shape_path": {
+      "additionalProperties": false,
+      "description": "A Bezier path: vertices with tangents RELATIVE to their vertex. Segment i is the cubic from vertices[i] with control points vertices[i] + out_tangents[i] and vertices[i+1] + in_tangents[i+1] to vertices[i+1]. Coordinates are layer pixels (masks) or the shape's own space (shape layers); x to the right, y down.",
+      "properties": {
+        "closed": {
+          "description": "True: a last segment joins the last vertex to the first. An open mask path cuts nothing out.",
+          "type": "boolean"
+        },
+        "feather": {
+          "description": "Variable-width feather points. Absent means none.",
+          "items": {
+            "$ref": "#/$defs/feather_point"
+          },
+          "type": "array"
+        },
+        "in_tangents": {
+          "description": "One per vertex: the control point of the segment ARRIVING at the vertex, relative to it.",
+          "items": {
+            "description": "dx, dy.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "out_tangents": {
+          "description": "One per vertex: the control point of the segment LEAVING the vertex, relative to it.",
+          "items": {
+            "description": "dx, dy.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "vertices": {
+          "description": "The vertices, in drawing order.",
+          "items": {
+            "description": "x, y.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "vertices",
+        "in_tangents",
+        "out_tangents",
+        "closed"
+      ],
+      "type": "object"
+    },
+    "text_doc": {
+      "additionalProperties": false,
+      "description": "A text document: characters with document-wide formatting and optional per-run and per-paragraph formatting. Every field is optional with the application default. Character counts are Unicode scalar values.",
+      "properties": {
+        "all_caps": {
+          "description": "Shown in capitals.",
+          "type": "boolean"
+        },
+        "apply_fill": {
+          "description": "Glyphs are filled.",
+          "type": "boolean"
+        },
+        "apply_stroke": {
+          "description": "Glyphs are stroked.",
+          "type": "boolean"
+        },
+        "baseline": {
+          "description": "Baseline option. `Normal`: on the baseline; `Superscript`: raised and reduced; `Subscript`: lowered and reduced.",
+          "enum": [
+            "Normal",
+            "Superscript",
+            "Subscript"
+          ],
+          "type": "string"
+        },
+        "baseline_shift": {
+          "description": "Shift of the baseline in layer pixels, positive up.",
+          "type": "number"
+        },
+        "box_pos": {
+          "description": "Paragraph text: the centre of the text box relative to the layer origin, layer pixels.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "box_size": {
+          "anyOf": [
+            {
+              "description": "Paragraph text: the size of the text box in layer pixels (width, height); null: point text.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Paragraph text: the size of the text box in layer pixels (width, height); null: point text."
+        },
+        "composer": {
+          "description": "Line-breaking method. Absent: `SingleLine`. `EveryLine`: line breaks chosen for the whole paragraph; `SingleLine`: line by line.",
+          "enum": [
+            "EveryLine",
+            "SingleLine"
+          ],
+          "type": "string"
+        },
+        "direction": {
+          "description": "Base direction. `Ltr`: left to right; `Rtl`: right to left.",
+          "enum": [
+            "Ltr",
+            "Rtl"
+          ],
+          "type": "string"
+        },
+        "faux_bold": {
+          "description": "Synthetic bold.",
+          "type": "boolean"
+        },
+        "faux_italic": {
+          "description": "Synthetic slant.",
+          "type": "boolean"
+        },
+        "fill": {
+          "description": "Fill colour: straight RGBA 0..1, binary32, authored-colour encoding.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "font": {
+          "description": "Font family name (`Inter`). The font file is the node listed for (family, style) in the project node's `fonts`.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "h_scale": {
+          "description": "Horizontal glyph scale in percent: 100 = unscaled.",
+          "type": "number"
+        },
+        "hanging_punctuation": {
+          "description": "Punctuation may hang outside the text box.",
+          "type": "boolean"
+        },
+        "indent_first": {
+          "description": "First-line indent, layer pixels.",
+          "type": "number"
+        },
+        "indent_left": {
+          "description": "Left indent, layer pixels.",
+          "type": "number"
+        },
+        "indent_right": {
+          "description": "Right indent, layer pixels.",
+          "type": "number"
+        },
+        "justify": {
+          "description": "Paragraph alignment. `Left`: lines start at the anchor; `Center`: lines are centred on the anchor; `Right`: lines end at the anchor; `JustifyLastLeft`: justified, the last line left (paragraph text); `JustifyLastCenter`: justified, the last line centred; `JustifyLastRight`: justified, the last line right; `JustifyAll`: justified including the last line.",
+          "enum": [
+            "Left",
+            "Center",
+            "Right",
+            "JustifyLastLeft",
+            "JustifyLastCenter",
+            "JustifyLastRight",
+            "JustifyAll"
+          ],
+          "type": "string"
+        },
+        "kerning": {
+          "anyOf": [
+            {
+              "enum": [
+                "Metrics",
+                "Optical"
+              ],
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Manual": {
+                  "description": "Kerning after the character in 1/1000 em.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "Manual"
+              ],
+              "type": "object"
+            }
+          ],
+          "description": "Kerning: `Metrics` (the font's pairs), `Optical` (from glyph shapes), or {\"Manual\": n}."
+        },
+        "leading": {
+          "anyOf": [
+            {
+              "description": "Line advance in layer pixels; null: automatic (1.2 * size).",
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Line advance in layer pixels; null: automatic (1.2 * size)."
+        },
+        "ligatures": {
+          "description": "Standard ligatures (`liga`).",
+          "type": "boolean"
+        },
+        "opentype": {
+          "$ref": "#/$defs/opentype"
+        },
+        "paragraphs": {
+          "description": "Per-paragraph formatting, one entry per paragraph in order; paragraphs past the last entry, and all when absent, use the document's own.",
+          "items": {
+            "additionalProperties": false,
+            "description": "The formatting of one paragraph. Fields as on the document; all optional.",
+            "properties": {
+              "composer": {
+                "description": "Line-breaking method. `EveryLine`: whole paragraph; `SingleLine`: line by line.",
+                "enum": [
+                  "EveryLine",
+                  "SingleLine"
+                ],
+                "type": "string"
+              },
+              "direction": {
+                "description": "Base direction. `Ltr`: left to right; `Rtl`: right to left.",
+                "enum": [
+                  "Ltr",
+                  "Rtl"
+                ],
+                "type": "string"
+              },
+              "hanging_punctuation": {
+                "description": "Punctuation may hang.",
+                "type": "boolean"
+              },
+              "indent_first": {
+                "description": "First-line indent, layer pixels.",
+                "type": "number"
+              },
+              "indent_left": {
+                "description": "Left indent, layer pixels.",
+                "type": "number"
+              },
+              "indent_right": {
+                "description": "Right indent, layer pixels.",
+                "type": "number"
+              },
+              "justify": {
+                "description": "Alignment. `Left`: lines start at the anchor; `Center`: lines are centred on the anchor; `Right`: lines end at the anchor; `JustifyLastLeft`: justified, the last line left (paragraph text); `JustifyLastCenter`: justified, the last line centred; `JustifyLastRight`: justified, the last line right; `JustifyAll`: justified including the last line.",
+                "enum": [
+                  "Left",
+                  "Center",
+                  "Right",
+                  "JustifyLastLeft",
+                  "JustifyLastCenter",
+                  "JustifyLastRight",
+                  "JustifyAll"
+                ],
+                "type": "string"
+              },
+              "space_after": {
+                "description": "Space after, layer pixels.",
+                "type": "number"
+              },
+              "space_before": {
+                "description": "Space before, layer pixels.",
+                "type": "number"
+              }
+            },
+            "required": [],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "runs": {
+          "description": "Per-character formatting: consecutive runs covering the text from its start. Characters past the last run, and all of them when this is absent, have the document's own formatting (the fields above).",
+          "items": {
+            "additionalProperties": false,
+            "description": "A run.",
+            "properties": {
+              "len": {
+                "description": "Length of the run in Unicode scalar values (code points).",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "style": {
+                "$ref": "#/$defs/char_style"
+              }
+            },
+            "required": [
+              "len",
+              "style"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "size": {
+          "description": "Font size in layer pixels per em.",
+          "type": "number"
+        },
+        "small_caps": {
+          "description": "Lower-case letters shown as small capitals.",
+          "type": "boolean"
+        },
+        "space_after": {
+          "description": "Space after each paragraph, layer pixels.",
+          "type": "number"
+        },
+        "space_before": {
+          "description": "Space before each paragraph, layer pixels.",
+          "type": "number"
+        },
+        "stroke": {
+          "description": "Stroke colour: straight RGBA 0..1, binary32.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "stroke_over_fill": {
+          "description": "True: the stroke is drawn over the fill; false: under it.",
+          "type": "boolean"
+        },
+        "stroke_width": {
+          "description": "Stroke width in layer pixels.",
+          "type": "number"
+        },
+        "style": {
+          "description": "Font style name (`Regular`, `Bold Italic`).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tate_chu_yoko": {
+          "description": "Horizontal-in-vertical setting of the run (vertical text).",
+          "type": "boolean"
+        },
+        "text": {
+          "description": "The characters. Lines are separated by U+000D or U+000A.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tracking": {
+          "description": "Extra advance after every character, in 1/1000 em.",
+          "type": "number"
+        },
+        "tsume": {
+          "description": "East Asian character tightening, 0..1.",
+          "type": "number"
+        },
+        "v_scale": {
+          "description": "Vertical glyph scale in percent: 100 = unscaled.",
+          "type": "number"
+        },
+        "variations": {
+          "description": "Variable-font axis settings. Default none.",
+          "items": {
+            "description": "[axis tag, value]: a variable-font axis (`wght`) and its setting (binary32).",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "number"
+                }
+              ]
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "vertical": {
+          "description": "Vertical text: lines run top to bottom, columns right to left.",
+          "type": "boolean"
+        },
+        "vertical_roman_upright": {
+          "description": "Latin characters stand upright in vertical text.",
+          "type": "boolean"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "tracker_settings": {
+      "additionalProperties": false,
+      "description": "The settings of one motion tracker (its track points are child groups of the tracker group). All optional; defaults as given.",
+      "properties": {
+        "kind": {
+          "description": "Track type. Default `transform`. `stabilize`: stabilise the tracked layer itself; `transform`: apply position / rotation / scale to the target layer; `affine`: parallel corner pin (three points); `perspective`: perspective corner pin (four points); `raw`: track only; apply nothing.",
+          "enum": [
+            "stabilize",
+            "transform",
+            "affine",
+            "perspective",
+            "raw"
+          ],
+          "type": "string"
+        },
+        "options": {
+          "additionalProperties": false,
+          "description": "Analysis options.",
+          "properties": {
+            "action": {
+              "description": "What happens when confidence is below `threshold`. Default `adapt`. `continue`: go on; `stop`: stop tracking; `extrapolate`: extrapolate the motion; `adapt`: take a new feature image.",
+              "enum": [
+                "continue",
+                "stop",
+                "extrapolate",
+                "adapt"
+              ],
+              "type": "string"
+            },
+            "adaptEveryFrame": {
+              "description": "Take a new feature image every frame. Default false.",
+              "type": "boolean"
+            },
+            "blur": {
+              "description": "Blur before matching, pixels. Default 0.",
+              "type": "number"
+            },
+            "channel": {
+              "description": "What is compared. Default `luminance`. `rgb`: all three channels; `luminance`: luminance; `saturation`: saturation.",
+              "enum": [
+                "rgb",
+                "luminance",
+                "saturation"
+              ],
+              "type": "string"
+            },
+            "enhance": {
+              "description": "Enhance edges before matching. Default false.",
+              "type": "boolean"
+            },
+            "subpixel": {
+              "description": "Sub-pixel positioning. Default true.",
+              "type": "boolean"
+            },
+            "threshold": {
+              "description": "Confidence below which `action` applies, percent 0..100. Default 80.",
+              "type": "number"
+            },
+            "trackShape": {
+              "description": "Deform the feature region with the motion. Default true.",
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "position": {
+          "description": "Track position. Default false.",
+          "type": "boolean"
+        },
+        "rotation": {
+          "description": "Track rotation (two points). Default false.",
+          "type": "boolean"
+        },
+        "scale": {
+          "description": "Track scale (two points). Default false.",
+          "type": "boolean"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "description": "Id of the layer the motion is applied to; null: none chosen.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Id of the layer the motion is applied to; null: none chosen."
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "value": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Scalar"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "one number",
+            "properties": {
+              "t": {
+                "const": "Scalar"
+              },
+              "v": {
+                "description": "The number.",
+                "type": "number"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Vec2"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "two numbers (x, y)",
+            "properties": {
+              "t": {
+                "const": "Vec2"
+              },
+              "v": {
+                "description": "x, y.",
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Vec3"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "three numbers (x, y, z)",
+            "properties": {
+              "t": {
+                "const": "Vec3"
+              },
+              "v": {
+                "description": "x, y, z.",
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Color"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a colour: straight (not premultiplied) RGBA",
+            "properties": {
+              "t": {
+                "const": "Color"
+              },
+              "v": {
+                "description": "r, g, b, a: 0..1 nominal (values outside are kept), in the encoding of authored colours (profile document 6.8).",
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 4,
+                "minItems": 4,
+                "type": "array"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Bool"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a switch",
+            "properties": {
+              "t": {
+                "const": "Bool"
+              },
+              "v": {
+                "description": "On or off.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Enum"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a choice",
+            "properties": {
+              "t": {
+                "const": "Enum"
+              },
+              "v": {
+                "description": "0-based index into the property's `ui.options`.",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Path"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a Bezier path",
+            "properties": {
+              "t": {
+                "const": "Path"
+              },
+              "v": {
+                "$ref": "#/$defs/shape_path"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Text"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a text document: the characters and their formatting",
+            "properties": {
+              "t": {
+                "const": "Text"
+              },
+              "v": {
+                "$ref": "#/$defs/text_doc"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Layer"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a reference to a layer of the same composition",
+            "properties": {
+              "t": {
+                "const": "Layer"
+              },
+              "v": {
+                "anyOf": [
+                  {
+                    "description": "The layer's id; null: none.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "The layer's id; null: none."
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Gradient"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a gradient",
+            "properties": {
+              "t": {
+                "const": "Gradient"
+              },
+              "v": {
+                "$ref": "#/$defs/gradient"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "Str"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a string",
+            "properties": {
+              "t": {
+                "const": "Str"
+              },
+              "v": {
+                "description": "The string.",
+                "format": "werk-content-text",
+                "type": "string"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "t": {
+                "const": "File"
+              }
+            },
+            "required": [
+              "t"
+            ]
+          },
+          "then": {
+            "additionalProperties": false,
+            "description": "a file carried in this package: the value of a parameter that names a file - one whose `ui.kind` is `File`, or a text parameter the writing application reads a file name from (a text parameter that holds the content itself stays `Str`)",
+            "properties": {
+              "t": {
+                "const": "File"
+              },
+              "v": {
+                "$ref": "#/$defs/file_ref"
+              }
+            },
+            "required": [
+              "t",
+              "v"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "description": "A property value: `t` names its kind and `v` holds it. `Scalar`: one number; `Vec2`: two numbers (x, y); `Vec3`: three numbers (x, y, z); `Color`: a colour: straight (not premultiplied) RGBA; `Bool`: a switch; `Enum`: a choice; `Path`: a Bezier path; `Text`: a text document: the characters and their formatting; `Layer`: a reference to a layer of the same composition; `Gradient`: a gradient; `Str`: a string; `File`: a file carried in this package: the value of a parameter that names a file - one whose `ui.kind` is `File`, or a text parameter the writing application reads a file name from (a text parameter that holds the content itself stays `Str`). Scalar, Vec2, Vec3, Color, Path and Gradient interpolate between keyframes; the others step (profile document 6.3).",
+      "properties": {
+        "t": {
+          "enum": [
+            "Scalar",
+            "Vec2",
+            "Vec3",
+            "Color",
+            "Bool",
+            "Enum",
+            "Path",
+            "Text",
+            "Layer",
+            "Gradient",
+            "Str",
+            "File"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "t",
+        "v"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One composition: its settings and markers, and its layers by node id. The layers themselves are `core.motion.layer` nodes.",
+  "properties": {
+    "comment": {
+      "description": "A comment. Default empty.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "comp": {
+      "additionalProperties": false,
+      "description": "The composition's settings.",
+      "properties": {
+        "background": {
+          "description": "The colour the EDITOR shows behind the frame: r, g, b 0..1 (binary32). It is not part of the picture: a rendered frame is transparent where no layer covers it.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "display_start": {
+          "description": "The time the editor shows at composition time 0. A label only. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "draft_3d": {
+          "description": "The editor's draft 3D mode. Default false.",
+          "type": "boolean"
+        },
+        "duration": {
+          "description": "Length of the composition. Composition time runs from 0 to duration (exclusive). Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "enable_frame_blending": {
+          "description": "Frame blending is rendered for layers whose switch asks for it. Default true.",
+          "type": "boolean"
+        },
+        "enable_motion_blur": {
+          "description": "Motion blur is rendered for layers whose switch is on. Default true.",
+          "type": "boolean"
+        },
+        "essential": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/essential"
+                }
+              ],
+              "description": "The controls the composition exposes; null or absent: none."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The controls the composition exposes; null or absent: none."
+        },
+        "frame_rate": {
+          "$ref": "#/$defs/frame_rate"
+        },
+        "global_light": {
+          "additionalProperties": false,
+          "description": "The global light of layer styles: two properties (they can be animated).",
+          "properties": {
+            "altitude": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/property"
+                }
+              ],
+              "description": "Altitude in degrees. Default 30."
+            },
+            "angle": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/property"
+                }
+              ],
+              "description": "Angle in degrees. Default 120."
+            }
+          },
+          "required": [
+            "angle",
+            "altitude"
+          ],
+          "type": "object"
+        },
+        "guides": {
+          "description": "Editor guides. No effect on the picture. Default none.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A guide line of the editor.",
+            "properties": {
+              "position": {
+                "description": "Composition pixels.",
+                "type": "number"
+              },
+              "vertical": {
+                "description": "True: a vertical line at x = position; false: horizontal at y = position.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "vertical",
+              "position"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "height": {
+          "description": "Frame height in pixels.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "hide_shy": {
+          "description": "The editor hides shy layers in the layer list. No effect on the picture. Default false.",
+          "type": "boolean"
+        },
+        "markers": {
+          "description": "Composition markers, in ascending time. Default none.",
+          "items": {
+            "$ref": "#/$defs/marker"
+          },
+          "type": "array"
+        },
+        "motion_blur_adaptive_limit": {
+          "description": "The most sub-samples a 2D layer gets. Default 128.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "motion_blur_samples": {
+          "description": "Samples per frame: the least number of motion-blur sub-samples, and the number for 3D layers and for shape / text content.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "pixel_aspect": {
+          "description": "Pixel aspect ratio of the frame; 1 = square.",
+          "type": "number"
+        },
+        "poster_time": {
+          "description": "The time of the frame the project panel shows as thumbnail. Default 0. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "preserve_frame_rate": {
+          "description": "Nested in another composition, or rendered at another rate, the composition shows only its own frames: the time it is asked for is floored to its frame grid. Default false.",
+          "type": "boolean"
+        },
+        "preserve_resolution": {
+          "description": "Nested in a composition rendered at reduced resolution, it still renders at full size. Default false.",
+          "type": "boolean"
+        },
+        "renderer": {
+          "description": "The 3D renderer. Default `Classic3D`. `Classic3D`: 3D layers are planes, depth-sorted; `Advanced3D`: a mesh renderer with models, extrusion and image-based light.",
+          "enum": [
+            "Classic3D",
+            "Advanced3D"
+          ],
+          "type": "string"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "enum": [
+                "Auto",
+                "Full",
+                "Half",
+                "Third",
+                "Quarter"
+              ],
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "Custom": {
+                  "description": "Every n-th pixel in each direction.",
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "Custom"
+              ],
+              "type": "object"
+            }
+          ],
+          "description": "The resolution the EDITOR previews at: `Auto`, `Full`, `Half`, `Third`, `Quarter`, or {\"Custom\": n} (every n-th pixel, 2..40). No effect on the document. Default `Auto`."
+        },
+        "shutter_angle": {
+          "description": "Motion-blur shutter angle in degrees: 360 = open for a whole frame (profile document 6.6).",
+          "type": "number"
+        },
+        "shutter_phase": {
+          "description": "Motion-blur shutter phase in degrees: where the shutter opens relative to the frame time, 360 = one frame later; negative = earlier.",
+          "type": "number"
+        },
+        "width": {
+          "description": "Frame width in pixels.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "work_area": {
+          "description": "The work area: [start, end] in ticks of composition time.",
+          "items": {
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        }
+      },
+      "required": [
+        "width",
+        "height",
+        "pixel_aspect",
+        "frame_rate",
+        "duration",
+        "display_start",
+        "background",
+        "work_area",
+        "shutter_angle",
+        "shutter_phase",
+        "motion_blur_samples"
+      ],
+      "type": "object"
+    },
+    "id": {
+      "description": "The item's id: unique in the project, never reused.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "label": {
+      "description": "The item's label. A colour label: a display aid with no effect on the picture.",
+      "enum": [
+        "None",
+        "Red",
+        "Yellow",
+        "Aqua",
+        "Pink",
+        "Lavender",
+        "Peach",
+        "SeaFoam",
+        "Blue",
+        "Green",
+        "Purple",
+        "Orange",
+        "Brown",
+        "Fuchsia",
+        "Cyan",
+        "Sandstone",
+        "DarkGreen"
+      ],
+      "type": "string"
+    },
+    "layers": {
+      "description": "The layers from the TOP of the stack (drawn last, in front) to the bottom (drawn first). The position in this list is the layer's index (1 = first) in the editor and in expressions.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One layer and the node that holds it.",
+        "properties": {
+          "id": {
+            "description": "The layer's id.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "node": {
+            "description": "The `core.motion.layer` node.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "node"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "name": {
+      "description": "The item's name.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "parent": {
+      "anyOf": [
+        {
+          "description": "Id of the folder the item is in; null: the project's root.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id of the folder the item is in; null: the project's root."
+    },
+    "proxy": {
+      "anyOf": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/$defs/proxy"
+            }
+          ],
+          "description": "The item's proxy; null or absent: none."
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The item's proxy; null or absent: none."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "tracks": {
+      "anyOf": [
+        {
+          "description": "The `core.keyframe.tracks` node holding the keyframes of this payload's properties that carry `track` (the global light). Null or absent: none.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The `core.keyframe.tracks` node holding the keyframes of this payload's properties that carry `track` (the global light). Null or absent: none."
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "label",
+    "comp",
+    "layers"
+  ],
+  "title": "core.motion.comp",
+  "type": "object"
+}

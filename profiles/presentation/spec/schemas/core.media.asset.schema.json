@@ -1,0 +1,27 @@
+{
+"$schema":"https://json-schema.org/draft/2020-12/schema",
+"additionalProperties":false,
+"description":"One embedded file (a picture, a sound, a video, a font, an embedded document). This JSON is the node's payload; the file itself is the ONE other file of the node, the one with role `media`, byte-for-byte as it was embedded.",
+"properties":{
+"content_type":{"description":"The media type the source declared for the file, e.g. `image/png`, `video/mp4`. May be empty or wrong; `encoding` is what the writer found in the bytes.","format":"werk-content-text","type":"string"},
+"definition":{"description":"Where a definition of `encoding` sufficient to build a decoder is: `base` = spec/MINI-SPECS.md (PNG, WAV); `formats` = the document MANIFEST.json `formats[encoding]` names, and the node's meta.file_formats.media equals `encoding`; `pending` = NOT in this package (the bytes are carried verbatim; the format is a public standard this profile's library does not define yet); `none` = there are no bytes.","enum":["base","formats","pending","none"],"type":"string"},
+"embedded":{"description":"true: the node has a file with role `media`. false: the document names this item but has no bytes for it (see `link`).","type":"boolean"},
+"encoding":{"description":"What the bytes are, as recognised from their first bytes by the writer: `png`, `wav`, a format id of MANIFEST.json `formats` when `definition` is `formats` (`jpeg`, `gif`, `bmp`, `tiff`, `webp`, `sfnt`, `emf-wmf`, `pdf`, `zip`, `isobmff`, `matroska`, `ogg`, `mp3`, `flac`, `aiff`, `aac`), or the name of an encoding this package does not define when `definition` is `pending` (any of the last seven of those, or `caf`, `asf`, `rf64`, `svg`, `unknown`); `none` when `embedded` is false.","format":"werk-content-text","type":"string"},
+"id":{"description":"The media id: what the rest of the document names this file by.","maximum":4294967295,"minimum":0,"type":"integer"},
+"link":{"anyOf":[{"format":"werk-provenance-note","type":"string"},{"type":"null"}],"description":"Where a linked (not embedded) item pointed when the document was made. It is a note about an origin: a reader NEVER follows it. null = the item was embedded."},
+"name":{"description":"The file's original name, e.g. `image1.png`. It is a label: nothing is looked up by it.","format":"werk-content-text","type":"string"},
+"schema_version":{"const":1,"description":"The revision of this payload's schema. Always 1."}
+},
+"required":[
+"schema_version",
+"id",
+"name",
+"content_type",
+"embedded",
+"link",
+"encoding",
+"definition"
+],
+"title":"core.media.asset",
+"type":"object"
+}

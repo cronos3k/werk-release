@@ -1,0 +1,3492 @@
+{
+  "$defs": {
+    "affine": {
+      "description": "An affine transform as six numbers `[a, b, c, d, e, f]`: a point (x, y) maps to (a*x + c*y + e, b*x + d*y + f). `[1,0,0,1,0,0]` is the identity.",
+      "items": {
+        "description": "A coefficient.",
+        "type": "number"
+      },
+      "maxItems": 6,
+      "minItems": 6,
+      "type": "array"
+    },
+    "anchor": {
+      "additionalProperties": false,
+      "description": "One anchor point of a path.",
+      "properties": {
+        "in": {
+          "$ref": "#/$defs/pair",
+          "description": "The incoming Bezier handle `[x, y]`, an absolute position (the second control point of the segment that ends at this anchor). Absent: equal to `p` (no handle: that end of the segment is straight)."
+        },
+        "kind": {
+          "description": "How an editor moves the handles; it does not change the curve. One of: `Corner` (the handles move independently; the default when absent); `Smooth` (the handles stay collinear through `p`).",
+          "enum": [
+            "Corner",
+            "Smooth"
+          ]
+        },
+        "out": {
+          "$ref": "#/$defs/pair",
+          "description": "The outgoing Bezier handle `[x, y]`, an absolute position (the first control point of the segment that starts at this anchor). Absent: equal to `p`."
+        },
+        "p": {
+          "$ref": "#/$defs/pair",
+          "description": "The anchor's position `[x, y]`."
+        }
+      },
+      "required": [
+        "p"
+      ],
+      "type": "object"
+    },
+    "appearance": {
+      "additionalProperties": false,
+      "description": "How an object is painted: a stack of fills and strokes, and effects on the whole object.",
+      "properties": {
+        "contents_index": {
+          "description": "Groups, layers and type only: how many of `items` paint BELOW the object's contents (its members, or the characters of type); the rest paint above. Absent: every item paints above the contents.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "effects": {
+          "description": "Live effects applied to the object as a whole, in order. Absent: none.",
+          "items": {
+            "$ref": "#/$defs/effect"
+          },
+          "type": "array"
+        },
+        "items": {
+          "description": "The fills and strokes, bottom first: each paints over the ones before it. Absent: none (the object paints nothing of its own).",
+          "items": {
+            "$ref": "#/$defs/appearance_item"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "appearance_item": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "fill"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/fill_item"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "stroke"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/stroke_item"
+          }
+        }
+      ],
+      "description": "One fill or stroke of an appearance.",
+      "properties": {
+        "kind": {
+          "description": "Which. One of: `fill` (a fill); `stroke` (a stroke).",
+          "enum": [
+            "fill",
+            "stroke"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "area_fit": {
+      "description": "How an area type frame and its text fit each other. One of: `\"none\"` (the frame keeps its size; text that does not fit overflows), `\"autoHeight\"` (the frame's height follows the text), or `{\"shrinkText\": {\"minPercent\": n}}` (text that overflows is scaled down, to no less than n percent, until it fits).",
+      "oneOf": [
+        {
+          "enum": [
+            "none",
+            "autoHeight"
+          ]
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shrinkText": {
+              "additionalProperties": false,
+              "properties": {
+                "minPercent": {
+                  "description": "The smallest scale, in percent. Absent: 50.",
+                  "type": "number"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "required": [
+            "shrinkText"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "area_options": {
+      "additionalProperties": false,
+      "description": "Options of area type.",
+      "properties": {
+        "columns": {
+          "description": "Number of columns. Absent: 1.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "firstBaseline": {
+          "description": "Where the first line's baseline sits below the frame's top. One of: `ascent` (the tallest glyph touches the top; the default); `capHeight` (capitals touch the top); `xHeight` (the x-height touches the top); `leading` (one leading below the top); `fixed` (exactly `firstBaselineMin` below the top).",
+          "enum": [
+            "ascent",
+            "capHeight",
+            "xHeight",
+            "leading",
+            "fixed"
+          ]
+        },
+        "firstBaselineMin": {
+          "description": "Smallest offset of the first baseline, in points. Absent: 0.",
+          "type": "number"
+        },
+        "fit": {
+          "$ref": "#/$defs/area_fit",
+          "description": "Auto size or shrink to fit. Absent: none."
+        },
+        "gutter": {
+          "description": "Space between rows and between columns, in points. Absent: 18.",
+          "type": "number"
+        },
+        "inset": {
+          "description": "Inset of the text from the frame's edges, in points. Absent: 0.",
+          "type": "number"
+        },
+        "rows": {
+          "description": "Number of rows the frame is divided into. Absent: 1.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "verticalAlign": {
+          "description": "Vertical alignment of the lines in each row or column. One of: `top` (from the top; the default); `center` (centred); `bottom` (the last line's descent touches the bottom); `justify` (first line at the top, last at the bottom, the space shared between lines).",
+          "enum": [
+            "top",
+            "center",
+            "bottom",
+            "justify"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "arrowhead": {
+      "description": "The shape of an arrowhead, by name; the shape is drawn by the reader (a reader that has no drawing for a name draws none). `...Open` is the outlined form of a shape; `HalfArrowLeft` / `HalfArrowRight` have one barb, on the left / right of the direction the head points. One of: `Triangle`, `TriangleOpen`, `Circle`, `CircleOpen`, `Square`, `SquareOpen`, `Bar`, `Diamond`, `Arrow`, `ArrowOpen`, `Barbed`, `HalfArrowLeft`, `HalfArrowRight`, `Concave`, `DoubleBar`, `Feather`, `DotOnBar`, `Chevron`, `DoubleArrow`, `Target`, `Star`, `Cross`, `Plus`, `Hexagon`, `HexagonOpen`, `Tag`, `TagOpen`, `HalfCircle`, `Drop`, `Slash`, `DoubleSlash`, `DiamondOpen`, `TriangleReverse`, `Swallowtail`, `Bracket`, `Fork`, `Leaf`, `Kite`, `TriangleBar`, `Oval`.",
+      "enum": [
+        "Triangle",
+        "TriangleOpen",
+        "Circle",
+        "CircleOpen",
+        "Square",
+        "SquareOpen",
+        "Bar",
+        "Diamond",
+        "Arrow",
+        "ArrowOpen",
+        "Barbed",
+        "HalfArrowLeft",
+        "HalfArrowRight",
+        "Concave",
+        "DoubleBar",
+        "Feather",
+        "DotOnBar",
+        "Chevron",
+        "DoubleArrow",
+        "Target",
+        "Star",
+        "Cross",
+        "Plus",
+        "Hexagon",
+        "HexagonOpen",
+        "Tag",
+        "TagOpen",
+        "HalfCircle",
+        "Drop",
+        "Slash",
+        "DoubleSlash",
+        "DiamondOpen",
+        "TriangleReverse",
+        "Swallowtail",
+        "Bracket",
+        "Fork",
+        "Leaf",
+        "Kite",
+        "TriangleBar",
+        "Oval"
+      ]
+    },
+    "attrs": {
+      "additionalProperties": false,
+      "description": "Attributes of an object that do not change how it prints.",
+      "properties": {
+        "data": {
+          "description": "The object's own data, in order: SVG `data-*` attributes (`data-pivot=\"100,180\"` is `[\"pivot\", \"100,180\"]`). Absent: none.",
+          "items": {
+            "description": "`[name, value]`.",
+            "items": {
+              "description": "Name, then value.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "imageMap": {
+          "description": "The clickable area `url` covers in web output. One of: `none` (none; the default); `rectangle` (the object's bounding box); `polygon` (the object's outline).",
+          "enum": [
+            "none",
+            "rectangle",
+            "polygon"
+          ]
+        },
+        "note": {
+          "description": "A free-text note.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "showCenter": {
+          "description": "Whether an editor shows the object's centre point. Absent: the object kind's default.",
+          "type": "boolean"
+        },
+        "url": {
+          "description": "The URL the object links to in web output (SVG `<a href>`). Absent: none.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "blend_mode": {
+      "description": "How the painted colour (source) combines with what is below it (backdrop), per colour channel on values 0 to 1, as the separable and non-separable blend modes of PDF 1.4 / W3C Compositing and Blending Level 1 define them. One of: `Normal` (result = source; the default when absent); `Darken` (min(backdrop, source) per channel); `Multiply` (backdrop * source); `ColorBurn` (1 - min(1, (1 - backdrop) / source), 0 where source is 0); `Lighten` (max(backdrop, source)); `Screen` (backdrop + source - backdrop * source); `ColorDodge` (min(1, backdrop / (1 - source)), 1 where source is 1); `Overlay` (HardLight with backdrop and source swapped); `SoftLight` (the W3C compositing soft-light formula); `HardLight` (Multiply(backdrop, 2*source) where source <= 0.5, else Screen(backdrop, 2*source - 1)); `Difference` (|backdrop - source|); `Exclusion` (backdrop + source - 2 * backdrop * source); `Hue` (hue of the source, saturation and luminosity of the backdrop); `Saturation` (saturation of the source, hue and luminosity of the backdrop); `Color` (hue and saturation of the source, luminosity of the backdrop); `Luminosity` (luminosity of the source, hue and saturation of the backdrop).",
+      "enum": [
+        "Normal",
+        "Darken",
+        "Multiply",
+        "ColorBurn",
+        "Lighten",
+        "Screen",
+        "ColorDodge",
+        "Overlay",
+        "SoftLight",
+        "HardLight",
+        "Difference",
+        "Exclusion",
+        "Hue",
+        "Saturation",
+        "Color",
+        "Luminosity"
+      ]
+    },
+    "blend_spec": {
+      "additionalProperties": false,
+      "description": "The options of a blend.",
+      "properties": {
+        "keyAnchors": {
+          "description": "For each key object, the anchor of the spine's first contour it sits on. Absent: the key objects are spread evenly along the spine.",
+          "items": {
+            "description": "Anchor index.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "orientation": {
+          "description": "How the steps are oriented. One of: `alignToPage` (upright; the default); `alignToPath` (turned to follow the spine).",
+          "enum": [
+            "alignToPage",
+            "alignToPath"
+          ]
+        },
+        "spacing": {
+          "description": "How many steps lie between each pair of key objects: `\"smoothColor\"` (chosen from the colour difference; the default), `{\"steps\": n}` (n steps, 1 to 1000) or `{\"distance\": d}` (a step every d points).",
+          "oneOf": [
+            {
+              "const": "smoothColor"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "steps": {
+                  "description": "Number of steps.",
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "steps"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "distance": {
+                  "description": "Distance between steps in points.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "distance"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "spine": {
+          "$ref": "#/$defs/path",
+          "description": "The path the steps are placed along. Absent: straight lines between the key objects' centres."
+        },
+        "starts": {
+          "description": "For each key object, the anchor of its first contour the blend starts from, or null (chosen so closed shapes do not twist). Absent: all null.",
+          "items": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "description": "Anchor index.",
+                "minimum": 0,
+                "type": "integer"
+              }
+            ]
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "char_position": {
+      "additionalProperties": false,
+      "description": "Whether characters are set as superscript or subscript.",
+      "properties": {
+        "kind": {
+          "description": "The position. One of: `normal` (on the baseline); `superscript` (raised and reduced by `size` and `position`); `subscript` (lowered and reduced by `size` and `position`).",
+          "enum": [
+            "normal",
+            "superscript",
+            "subscript"
+          ]
+        },
+        "position": {
+          "description": "superscript and subscript only: baseline offset in percent of the font size.",
+          "type": "number"
+        },
+        "size": {
+          "description": "superscript and subscript only: glyph size in percent of the font size.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "char_style": {
+      "additionalProperties": false,
+      "description": "The character attributes of a run of type.",
+      "properties": {
+        "all_caps": {
+          "description": "Drawn in capitals whatever was typed. Absent: false.",
+          "type": "boolean"
+        },
+        "baseline_shift": {
+          "description": "Raise (positive) of the characters above the baseline, in points. Absent: 0.",
+          "type": "number"
+        },
+        "charAlign": {
+          "description": "Where characters smaller than the largest on their line align with it. One of: `romanBaseline` (on the roman baseline; the default when absent); `emBoxTop` (top of the em box); `emBoxCenter` (centre of the em box); `emBoxBottom` (bottom of the em box); `icfTop` (top of the ideographic character face); `icfBottom` (bottom of the ideographic character face).",
+          "enum": [
+            "romanBaseline",
+            "emBoxTop",
+            "emBoxCenter",
+            "emBoxBottom",
+            "icfTop",
+            "icfBottom"
+          ]
+        },
+        "digits": {
+          "description": "The numeral system digits are drawn in, whatever digits were typed. One of: `default` (as typed; the default when absent); `arabic` (Western digits 0-9); `hindi` (Arabic-Indic digits U+0660-U+0669); `farsi` (Eastern Arabic-Indic digits U+06F0-U+06F9).",
+          "enum": [
+            "default",
+            "arabic",
+            "hindi",
+            "farsi"
+          ]
+        },
+        "features": {
+          "description": "OpenType features that differ from the font's defaults. Absent: none.",
+          "items": {
+            "description": "An OpenType feature tag; a leading `-` turns the feature off (`dlig` on, `-liga` off).",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "fill": {
+          "$ref": "#/$defs/paint",
+          "description": "What the characters are filled with."
+        },
+        "font_family": {
+          "description": "The font's typographic family name (for example `Source Sans 3`). The font file itself, when it could be embedded, is listed in the x.vectorcraft.embedded node.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "font_style": {
+          "description": "The font's style name within the family (for example `Regular`, `Bold Italic`). Absent: `Regular`.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "font_version": {
+          "description": "The font's version string (name table id 5) when several versions of the family and style may be installed. Absent: whichever version the family and style pick.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "h_scale": {
+          "description": "Horizontal scale of the glyphs in percent. Absent: 100.",
+          "type": "number"
+        },
+        "kerning": {
+          "description": "Manual kerning before this run's characters, in 1/1000 em. Absent: the font's own kerning.",
+          "type": "number"
+        },
+        "leading": {
+          "description": "Line spacing in points. Absent: automatic, 120% of `size`.",
+          "type": "number"
+        },
+        "overprint_fill": {
+          "description": "Overprint the fill of these characters. Absent: false.",
+          "type": "boolean"
+        },
+        "overprint_stroke": {
+          "description": "Overprint the stroke of these characters. Absent: false.",
+          "type": "boolean"
+        },
+        "position": {
+          "$ref": "#/$defs/char_position",
+          "description": "Superscript or subscript. Absent: normal."
+        },
+        "proportionalMetrics": {
+          "description": "True: full-width East Asian glyphs take the font's proportional widths (OpenType `palt`; `vpal` in vertical type). Absent: false.",
+          "type": "boolean"
+        },
+        "rotation": {
+          "description": "Rotation of each character about its own origin, in degrees, counter-clockwise as seen on screen. Absent: 0.",
+          "type": "number"
+        },
+        "size": {
+          "description": "Font size in points.",
+          "type": "number"
+        },
+        "small_caps": {
+          "description": "Small capitals: lowercase letters are drawn as capitals at this percentage of the size. Absent: off.",
+          "type": "number"
+        },
+        "strikethrough": {
+          "description": "Struck through. Absent: false.",
+          "type": "boolean"
+        },
+        "stroke": {
+          "$ref": "#/$defs/paint",
+          "description": "What the characters' outlines are stroked with. Absent: none."
+        },
+        "stroke_cap": {
+          "description": "The shape of the stroke's open ends. One of: `Butt` (cut square at the end point; the default when absent); `Round` (a semicircle of diameter `width`); `Square` (a square extending half the width past the end point).",
+          "enum": [
+            "Butt",
+            "Round",
+            "Square"
+          ]
+        },
+        "stroke_dash": {
+          "$ref": "#/$defs/dash",
+          "description": "Dash pattern of the character stroke. Absent: solid."
+        },
+        "stroke_join": {
+          "description": "The shape of the stroke's corners. One of: `Miter` (extended to a point while within `miter_limit`, else bevelled; the default when absent); `Round` (rounded with radius half the width); `Bevel` (cut straight across).",
+          "enum": [
+            "Miter",
+            "Round",
+            "Bevel"
+          ]
+        },
+        "stroke_miter_limit": {
+          "description": "Miter limit of the character stroke. Absent: 10.",
+          "type": "number"
+        },
+        "stroke_width": {
+          "description": "Width of the character stroke in points. Absent: 0.",
+          "type": "number"
+        },
+        "style_name": {
+          "description": "Name of the character style (in the core.text.styles node) these attributes come from. Absent: the normal character style.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tracking": {
+          "description": "Extra spacing after every character, in 1/1000 em. Absent: 0.",
+          "type": "number"
+        },
+        "underline": {
+          "description": "Underlined. Absent: false.",
+          "type": "boolean"
+        },
+        "v_scale": {
+          "description": "Vertical scale of the glyphs in percent. Absent: 100.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "font_family",
+        "size",
+        "fill"
+      ],
+      "type": "object"
+    },
+    "color": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "rgb"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_rgb"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "cmyk"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_cmyk"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "gray"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_gray"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "model": {
+                "const": "lab"
+              }
+            },
+            "required": [
+              "model"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/color_lab"
+          }
+        }
+      ],
+      "description": "A colour. Components are IEEE 754 binary32 values written in decimal.",
+      "properties": {
+        "model": {
+          "description": "The colour model. One of: `rgb` (red, green, blue); `cmyk` (cyan, magenta, yellow, black inks); `gray` (black ink only); `lab` (CIE L*a*b*).",
+          "enum": [
+            "rgb",
+            "cmyk",
+            "gray",
+            "lab"
+          ]
+        }
+      },
+      "required": [
+        "model"
+      ],
+      "type": "object"
+    },
+    "color_cmyk": {
+      "additionalProperties": false,
+      "description": "A CMYK colour: ink amounts in the document's CMYK space.",
+      "properties": {
+        "c": {
+          "description": "Cyan ink, 0 to 1.",
+          "type": "number"
+        },
+        "k": {
+          "description": "Black ink, 0 to 1.",
+          "type": "number"
+        },
+        "m": {
+          "description": "Magenta ink, 0 to 1.",
+          "type": "number"
+        },
+        "model": {
+          "const": "cmyk"
+        },
+        "y": {
+          "description": "Yellow ink, 0 to 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "c",
+        "m",
+        "y",
+        "k"
+      ],
+      "type": "object"
+    },
+    "color_gray": {
+      "additionalProperties": false,
+      "description": "A gray: an amount of black ink.",
+      "properties": {
+        "k": {
+          "description": "Black, 0 (white) to 1 (black).",
+          "type": "number"
+        },
+        "model": {
+          "const": "gray"
+        }
+      },
+      "required": [
+        "model",
+        "k"
+      ],
+      "type": "object"
+    },
+    "color_lab": {
+      "additionalProperties": false,
+      "description": "A CIE L*a*b* colour, D50 white point (device independent; how spot colours are defined).",
+      "properties": {
+        "a": {
+          "description": "Green (negative) to red (positive), about -128 to 127.",
+          "type": "number"
+        },
+        "b": {
+          "description": "Blue (negative) to yellow (positive), about -128 to 127.",
+          "type": "number"
+        },
+        "l": {
+          "description": "Lightness, 0 to 100.",
+          "type": "number"
+        },
+        "model": {
+          "const": "lab"
+        }
+      },
+      "required": [
+        "model",
+        "l",
+        "a",
+        "b"
+      ],
+      "type": "object"
+    },
+    "color_rgb": {
+      "additionalProperties": false,
+      "description": "An RGB colour (sRGB unless the document names another RGB profile).",
+      "properties": {
+        "b": {
+          "description": "Blue, 0 to 1.",
+          "type": "number"
+        },
+        "g": {
+          "description": "Green, 0 to 1.",
+          "type": "number"
+        },
+        "model": {
+          "const": "rgb"
+        },
+        "r": {
+          "description": "Red, 0 to 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "model",
+        "r",
+        "g",
+        "b"
+      ],
+      "type": "object"
+    },
+    "corner_kind": {
+      "description": "The shape of a live corner. One of: `round` (a quarter circle bulging outwards; the default); `invertedRound` (a quarter circle cut into the shape); `chamfer` (a straight bevel).",
+      "enum": [
+        "round",
+        "invertedRound",
+        "chamfer"
+      ]
+    },
+    "dash": {
+      "additionalProperties": false,
+      "description": "A dash pattern.",
+      "properties": {
+        "align_corners": {
+          "description": "True: dashes are adjusted in length so that they sit on corners and path ends. Absent: false.",
+          "type": "boolean"
+        },
+        "offset": {
+          "description": "Distance into the pattern at which the stroke starts, in points. Absent: 0.",
+          "type": "number"
+        },
+        "pattern": {
+          "description": "Dash, gap, dash, gap ... lengths in points, repeated along the stroke.",
+          "items": {
+            "description": "A length in points.",
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "effect": {
+      "additionalProperties": false,
+      "description": "A live effect: a named operation applied to the art when it is drawn, leaving the object's own geometry unchanged. The vocabulary of ids is open: a reader draws the object WITHOUT an effect whose id it does not implement and keeps the effect when it writes the object back. `spec/examples/vector-art/effects.md` lists the ids VectorCraft writes.",
+      "properties": {
+        "id": {
+          "description": "The effect's id, `<family>.<name>` (for example `stylize.dropShadow`, `distort.roughen`, `path.offsetPath`, `warp.arc`, `3d.revolve`).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/$defs/json",
+          "description": "The effect's parameters: a JSON value whose members the effect id defines. Absent: null."
+        },
+        "visible": {
+          "description": "False: the effect is kept but not applied. Absent: true.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "envelope_kind": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "warp"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/envelope_warp"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mesh"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/envelope_mesh"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "topObject"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/envelope_top"
+          }
+        }
+      ],
+      "description": "What an envelope distorts its content with.",
+      "properties": {
+        "type": {
+          "description": "The kind of envelope. One of: `warp` (a preset warp); `mesh` (a mesh); `topObject` (the outline of a path).",
+          "enum": [
+            "warp",
+            "mesh",
+            "topObject"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "envelope_mesh": {
+      "additionalProperties": false,
+      "description": "A mesh the content's bounding box is mapped onto.",
+      "properties": {
+        "cols": {
+          "description": "Number of columns of patches.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "handles": {
+          "description": "Bezier handles of each point, in the order of `points`. Absent: a smooth (Catmull-Rom) mesh through the points.",
+          "items": {
+            "description": "The four handles of one point, as offsets from it: towards the next column, the previous column, the next row, the previous row.",
+            "items": {
+              "$ref": "#/$defs/vec2"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "points": {
+          "description": "The (rows+1) x (cols+1) mesh points, row by row.",
+          "items": {
+            "$ref": "#/$defs/point"
+          },
+          "type": "array"
+        },
+        "rows": {
+          "description": "Number of rows of patches.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "type": {
+          "const": "mesh"
+        }
+      },
+      "required": [
+        "type",
+        "rows",
+        "cols",
+        "points"
+      ],
+      "type": "object"
+    },
+    "envelope_options": {
+      "additionalProperties": false,
+      "description": "Envelope options.",
+      "properties": {
+        "antiAlias": {
+          "description": "Smooth rasters when they are distorted. Absent: true.",
+          "type": "boolean"
+        },
+        "distortAppearance": {
+          "description": "True: strokes and effects are applied before the distortion and bend with the art. Absent: true.",
+          "type": "boolean"
+        },
+        "distortLinearGradients": {
+          "description": "With distortAppearance: gradients bend with the art. Absent: false.",
+          "type": "boolean"
+        },
+        "distortPatternFills": {
+          "description": "With distortAppearance: pattern tiles bend with the art. Absent: false.",
+          "type": "boolean"
+        },
+        "preserveShape": {
+          "description": "How distorted rasters keep their shape. One of: `clippingMask` (a clipping mask; the default); `transparency` (an alpha channel).",
+          "enum": [
+            "clippingMask",
+            "transparency"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "envelope_top": {
+      "additionalProperties": false,
+      "description": "The content's bounding box is mapped onto the outline of a path.",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path",
+          "description": "The path."
+        },
+        "type": {
+          "const": "topObject"
+        }
+      },
+      "required": [
+        "type",
+        "path"
+      ],
+      "type": "object"
+    },
+    "envelope_warp": {
+      "additionalProperties": false,
+      "description": "A preset warp.",
+      "properties": {
+        "bend": {
+          "description": "Amount of bend, -100 to 100 percent. Absent: 0.",
+          "type": "number"
+        },
+        "h": {
+          "description": "Horizontal distortion, -100 to 100 percent. Absent: 0.",
+          "type": "number"
+        },
+        "horizontal": {
+          "description": "True: the bend is applied along the horizontal axis; false: along the vertical. Absent: true.",
+          "type": "boolean"
+        },
+        "style": {
+          "description": "The warp's name. VectorCraft writes one of: arc, arcLower, arcUpper, arch, bulge, shellLower, shellUpper, flag, wave, fish, rise, fisheye, inflate, squeeze, twist.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": {
+          "const": "warp"
+        },
+        "v": {
+          "description": "Vertical distortion, -100 to 100 percent. Absent: 0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "style"
+      ],
+      "type": "object"
+    },
+    "fill_item": {
+      "additionalProperties": false,
+      "description": "A fill: the object's shape painted.",
+      "properties": {
+        "blend": {
+          "$ref": "#/$defs/blend_mode",
+          "description": "Blend mode of this fill or stroke alone. Absent: `Normal`."
+        },
+        "effects": {
+          "description": "Live effects applied to this fill or stroke alone, in order. Absent: none.",
+          "items": {
+            "$ref": "#/$defs/effect"
+          },
+          "type": "array"
+        },
+        "kind": {
+          "const": "fill"
+        },
+        "opacity": {
+          "description": "Opacity of this fill or stroke alone, 0 to 1. Absent: 1.",
+          "type": "number"
+        },
+        "overprint": {
+          "description": "True: on press, the inks of this fill or stroke print over the inks below instead of knocking them out. Absent: false.",
+          "type": "boolean"
+        },
+        "paint": {
+          "$ref": "#/$defs/paint",
+          "description": "What the fill is painted with."
+        },
+        "visible": {
+          "description": "False: kept but not painted. Absent: true.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind",
+        "paint"
+      ],
+      "type": "object"
+    },
+    "fill_rule": {
+      "description": "Which regions of self-overlapping contours are inside. One of: `NonZero` (the non-zero winding rule; the default when absent); `EvenOdd` (the even-odd rule).",
+      "enum": [
+        "NonZero",
+        "EvenOdd"
+      ]
+    },
+    "freeform": {
+      "additionalProperties": false,
+      "description": "The points of a freeform gradient.",
+      "properties": {
+        "lines": {
+          "description": "Lines of colour. Absent: none.",
+          "items": {
+            "description": "One line: a smooth curve through these points, in order.",
+            "items": {
+              "description": "Index into `points`.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "mode": {
+          "description": "How the editor's Gradient tool adds points; it does not change the colours. One of: `points` (single points; the default when absent); `lines` (points joined into lines).",
+          "enum": [
+            "points",
+            "lines"
+          ]
+        },
+        "points": {
+          "description": "The colour points.",
+          "items": {
+            "$ref": "#/$defs/freeform_point"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "type": "object"
+    },
+    "freeform_point": {
+      "additionalProperties": false,
+      "description": "One colour point of a freeform gradient.",
+      "properties": {
+        "at": {
+          "$ref": "#/$defs/point",
+          "description": "The point's position (document coordinates; text space for a run of type)."
+        },
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "The colour at the point."
+        },
+        "opacity": {
+          "description": "Opacity at the point, 0 to 1. Absent: 1.",
+          "type": "number"
+        },
+        "spread": {
+          "description": "Radius of the disc of pure colour around the point, 0 to 1 of the gradient's spread scale. Absent: 0.25.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "at",
+        "color"
+      ],
+      "type": "object"
+    },
+    "gradient": {
+      "additionalProperties": false,
+      "description": "A gradient: its kind and colour stops.",
+      "properties": {
+        "kind": {
+          "description": "The gradient's geometry. One of: `Linear` (colours change along the line from `geom.start` to `geom.end`); `Radial` (colours change with distance from the centre `geom.start` out to `geom.end`); `Freeform` (colours spread from the points and lines of `freeform`).",
+          "enum": [
+            "Linear",
+            "Radial",
+            "Freeform"
+          ]
+        },
+        "stops": {
+          "description": "The colour stops, by ascending `offset`.",
+          "items": {
+            "$ref": "#/$defs/gradient_stop"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "stops"
+      ],
+      "type": "object"
+    },
+    "gradient_geom": {
+      "additionalProperties": false,
+      "description": "Where a gradient lies, in document coordinates (text space for a run of type).",
+      "properties": {
+        "aspect": {
+          "description": "Radial only: the ellipse's height over its width, measured across and along the `start`-`end` direction. Absent: 1 (a circle).",
+          "type": "number"
+        },
+        "end": {
+          "$ref": "#/$defs/point",
+          "description": "Linear: where offset 1 is. Radial: a point on the outer edge (offset 1)."
+        },
+        "focal": {
+          "$ref": "#/$defs/point",
+          "description": "Radial only: where offset 0 sits when it is not the centre (inside the ellipse). Absent: the centre."
+        },
+        "start": {
+          "$ref": "#/$defs/point",
+          "description": "Linear: where offset 0 is. Radial: the centre."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    },
+    "gradient_stop": {
+      "additionalProperties": false,
+      "description": "One colour stop of a gradient.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "The stop's colour. With `swatch`, the linked swatch's colour at `tint`."
+        },
+        "midpoint": {
+          "description": "Where between this stop and the next the two colours mix half and half: 0.13 to 0.87 of the way. Absent: 0.5 (a linear ramp).",
+          "type": "number"
+        },
+        "offset": {
+          "description": "Where the stop sits along the gradient: 0 (start) to 1 (end).",
+          "type": "number"
+        },
+        "opacity": {
+          "description": "The stop's opacity, 0 (transparent) to 1 (opaque). Absent: 1.",
+          "type": "number"
+        },
+        "swatch": {
+          "description": "Name of the global or spot swatch (in the swatches node) this stop's colour is linked to. Absent: not linked.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tint": {
+          "description": "Tint of the linked swatch, 0 to 1. Absent: 1.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "offset",
+        "color"
+      ],
+      "type": "object"
+    },
+    "inline_art": {
+      "additionalProperties": false,
+      "description": "An inline graphic: the run is one U+FFFC character drawn as a symbol that flows with the text like a glyph.",
+      "properties": {
+        "baseline_shift": {
+          "description": "Extra raise in points (positive is up). Absent: 0.",
+          "type": "number"
+        },
+        "scale": {
+          "description": "Height of the art as a multiple of the run's font size. Absent: 1.",
+          "type": "number"
+        },
+        "symbol": {
+          "description": "Name of the symbol drawn (the `name` in a core.vector.symbol node).",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "type": "object"
+    },
+    "json": {
+      "anyOf": [
+        {
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Any JSON value, carried verbatim. Strings inside it are never references to other parts of the document."
+    },
+    "kind_blend": {
+      "additionalProperties": false,
+      "description": "A live blend: the key objects, between which a reader interpolates intermediate steps (shape and paint).",
+      "properties": {
+        "children": {
+          "description": "The key objects, bottom first.",
+          "items": {
+            "$ref": "#/$defs/object"
+          },
+          "type": "array"
+        },
+        "spec": {
+          "$ref": "#/$defs/blend_spec",
+          "description": "The blend's options. Absent: defaults."
+        },
+        "type": {
+          "const": "blend"
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ],
+      "type": "object"
+    },
+    "kind_compound": {
+      "additionalProperties": false,
+      "description": "A compound path: its members are paths painted as ONE shape with the compound's own appearance (overlaps make holes by `rule`).",
+      "properties": {
+        "children": {
+          "description": "The members, bottom first: each paints over the ones before it.",
+          "items": {
+            "$ref": "#/$defs/object"
+          },
+          "type": "array"
+        },
+        "rule": {
+          "$ref": "#/$defs/fill_rule"
+        },
+        "type": {
+          "const": "compound"
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ],
+      "type": "object"
+    },
+    "kind_envelope": {
+      "additionalProperties": false,
+      "description": "A live envelope distortion of its content.",
+      "properties": {
+        "content": {
+          "description": "The art distorted, undistorted, bottom first.",
+          "items": {
+            "$ref": "#/$defs/object"
+          },
+          "type": "array"
+        },
+        "editing": {
+          "description": "True: an editor is editing the content rather than the envelope. Absent: false.",
+          "type": "boolean"
+        },
+        "fidelity": {
+          "description": "How closely the distorted art follows the envelope, 0 to 100. Absent: 50.",
+          "type": "number"
+        },
+        "frame": {
+          "$ref": "#/$defs/affine",
+          "description": "The envelope's own axes mapped into the document (rotation, shear or reflection it took since it was made). Absent: the identity."
+        },
+        "kind": {
+          "$ref": "#/$defs/envelope_kind"
+        },
+        "options": {
+          "$ref": "#/$defs/envelope_options",
+          "description": "Absent: defaults."
+        },
+        "type": {
+          "const": "envelope"
+        }
+      },
+      "required": [
+        "type",
+        "content",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "kind_group": {
+      "additionalProperties": false,
+      "description": "A group. With `clip`, a clip group.",
+      "properties": {
+        "children": {
+          "description": "The members, bottom first: each paints over the ones before it.",
+          "items": {
+            "$ref": "#/$defs/object"
+          },
+          "type": "array"
+        },
+        "clip": {
+          "description": "True: the first (bottom-most) member is the clipping path: the others show only inside its outline. Absent: false.",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "group"
+        }
+      },
+      "required": [
+        "type",
+        "children"
+      ],
+      "type": "object"
+    },
+    "kind_image": {
+      "additionalProperties": false,
+      "description": "A raster image.",
+      "properties": {
+        "height": {
+          "description": "Height of the image in pixels.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "key": {
+          "description": "The image's key: the structure node's `images` table maps it to the core.vector.image node holding its pixels. A key the table does not have draws nothing.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/link"
+            }
+          ],
+          "description": "The file a linked image shows. Absent or null: an embedded image."
+        },
+        "placement": {
+          "$ref": "#/$defs/placement",
+          "description": "Placement options. Absent: defaults."
+        },
+        "type": {
+          "const": "image"
+        },
+        "width": {
+          "description": "Width of the image in pixels.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps pixel space (0,0) to (width,height), origin at the image's top-left corner, into the document."
+        }
+      },
+      "required": [
+        "type",
+        "key",
+        "width",
+        "height",
+        "xf"
+      ],
+      "type": "object"
+    },
+    "kind_layer": {
+      "additionalProperties": false,
+      "description": "A layer or sublayer: a named container.",
+      "properties": {
+        "children": {
+          "description": "The members, bottom first: each paints over the ones before it.",
+          "items": {
+            "$ref": "#/$defs/object"
+          },
+          "type": "array"
+        },
+        "clip": {
+          "description": "True: the first (bottom-most) member is a clipping path for the others. Absent: false.",
+          "type": "boolean"
+        },
+        "color": {
+          "$ref": "#/$defs/layer_color"
+        },
+        "dim_images": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "description": "Percent, 0 to 100.",
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "description": "An editor shows images on the layer faded to this percentage. Absent or null: not dimmed."
+        },
+        "preview": {
+          "description": "False: an editor shows the layer's art in outline. Absent: true.",
+          "type": "boolean"
+        },
+        "printable": {
+          "description": "False: the layer is not printed or exported. Absent: true.",
+          "type": "boolean"
+        },
+        "template": {
+          "description": "True: a template layer (shown dimmed, never printed). Absent: false.",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "layer"
+        }
+      },
+      "required": [
+        "type",
+        "color",
+        "children"
+      ],
+      "type": "object"
+    },
+    "kind_mesh": {
+      "additionalProperties": false,
+      "description": "A gradient mesh: a grid of coloured points; colour is interpolated smoothly across each patch.",
+      "properties": {
+        "cols": {
+          "description": "Number of columns of patches.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "points": {
+          "description": "The (rows+1) x (cols+1) points, row by row.",
+          "items": {
+            "$ref": "#/$defs/mesh_point"
+          },
+          "type": "array"
+        },
+        "rows": {
+          "description": "Number of rows of patches.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "type": {
+          "const": "mesh"
+        }
+      },
+      "required": [
+        "type",
+        "rows",
+        "cols",
+        "points"
+      ],
+      "type": "object"
+    },
+    "kind_path": {
+      "additionalProperties": false,
+      "description": "A path: geometry painted by the object's appearance.",
+      "properties": {
+        "clipping": {
+          "description": "True: this path acts as the clipping path of the clip group it is in. Absent: false.",
+          "type": "boolean"
+        },
+        "guide": {
+          "description": "True: a guide path (shown in an editor, never printed). Absent: false.",
+          "type": "boolean"
+        },
+        "live": {
+          "$ref": "#/$defs/live_shape",
+          "description": "The shape the path was generated from. Absent: a plain path."
+        },
+        "path": {
+          "$ref": "#/$defs/path",
+          "description": "The outline, in document coordinates."
+        },
+        "rule": {
+          "$ref": "#/$defs/fill_rule"
+        },
+        "type": {
+          "const": "path"
+        }
+      },
+      "required": [
+        "type",
+        "path"
+      ],
+      "type": "object"
+    },
+    "kind_placeddocument": {
+      "additionalProperties": false,
+      "description": "A placed document: one artboard of another document, shown as one locked object. Its pixels (a preview rendering) are in the core.vector.image node the structure node's `images` table gives for `key`; the placed file itself, when the application had it, is in an x.vectorcraft.source.vectorcraft node (see the x.vectorcraft.embedded node).",
+      "properties": {
+        "bounding": {
+          "description": "True: the box is the bounds of the placed art rather than its artboard. Absent: false.",
+          "type": "boolean"
+        },
+        "height": {
+          "description": "Height of the box at 100%, in points.",
+          "type": "number"
+        },
+        "key": {
+          "description": "The key of the placed file in the structure node's `images` table.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "link": {
+          "$ref": "#/$defs/link",
+          "description": "Where the placed file came from (`page`: the artboard shown, 1-based)."
+        },
+        "placement": {
+          "$ref": "#/$defs/placement",
+          "description": "Absent: defaults."
+        },
+        "type": {
+          "const": "placeddocument"
+        },
+        "width": {
+          "description": "Width of the box at 100%, in points.",
+          "type": "number"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps the box (0,0) to (width,height) into the document."
+        }
+      },
+      "required": [
+        "type",
+        "link",
+        "key",
+        "width",
+        "height",
+        "xf"
+      ],
+      "type": "object"
+    },
+    "kind_repeat": {
+      "additionalProperties": false,
+      "description": "A live repeat: its source art drawn several times.",
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/repeat_kind"
+        },
+        "source": {
+          "description": "The source art, bottom first.",
+          "items": {
+            "$ref": "#/$defs/object"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "repeat"
+        }
+      },
+      "required": [
+        "type",
+        "kind",
+        "source"
+      ],
+      "type": "object"
+    },
+    "kind_symbolinstance": {
+      "additionalProperties": false,
+      "description": "An instance of a symbol: the symbol's art drawn through a transform.",
+      "properties": {
+        "symbol": {
+          "description": "Name of the symbol (the `name` in a core.vector.symbol node; the structure node's `symbols` table says which node). A name the document does not have draws nothing.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": {
+          "const": "symbolinstance"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps the symbol's coordinates into the document."
+        }
+      },
+      "required": [
+        "type",
+        "symbol",
+        "xf"
+      ],
+      "type": "object"
+    },
+    "kind_text": {
+      "additionalProperties": false,
+      "description": "Type.",
+      "properties": {
+        "area": {
+          "$ref": "#/$defs/area_options",
+          "description": "Area type options. Absent: defaults."
+        },
+        "kind": {
+          "$ref": "#/$defs/text_kind",
+          "description": "Point type, area type or type on a path."
+        },
+        "para": {
+          "$ref": "#/$defs/para_style",
+          "description": "The attributes of every paragraph, unless `paras` gives each its own. Absent: all defaults."
+        },
+        "paras": {
+          "description": "Per-paragraph attributes, one entry per paragraph in order. Absent: every paragraph uses `para`.",
+          "items": {
+            "$ref": "#/$defs/para_style"
+          },
+          "type": "array"
+        },
+        "pathAlign": {
+          "description": "Type on a path: which line of the font sits on the path. One of: `baseline` (the baseline; the default); `ascender` (the font's top edge); `descender` (the font's bottom edge); `center` (halfway between).",
+          "enum": [
+            "baseline",
+            "ascender",
+            "descender",
+            "center"
+          ]
+        },
+        "pathEffect": {
+          "description": "Type on a path: how glyphs are oriented. One of: `rainbow` (glyphs rotate with the path; the default); `skew` (vertical edges stay vertical); `3dRibbon` (horizontal edges stay horizontal); `stairStep` (no rotation: each glyph's baseline start sits on the path); `gravity` (glyphs point away from the path's centre).",
+          "enum": [
+            "rainbow",
+            "skew",
+            "3dRibbon",
+            "stairStep",
+            "gravity"
+          ]
+        },
+        "pathSpacing": {
+          "description": "Type on a path: glyphs are spaced as if set this many points above the path. Absent: 0.",
+          "type": "number"
+        },
+        "runs": {
+          "description": "The text, as runs of uniformly styled characters, in reading order.",
+          "items": {
+            "$ref": "#/$defs/text_run"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "text"
+        },
+        "vertical": {
+          "description": "True: lines run top to bottom and follow each other right to left. Absent: false.",
+          "type": "boolean"
+        },
+        "wrap": {
+          "description": "The shapes this area type flows around. Absent: none.",
+          "items": {
+            "$ref": "#/$defs/wrap_shape"
+          },
+          "type": "array"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps text space into the document. Point type: the origin of text space is the start of the first baseline."
+        }
+      },
+      "required": [
+        "type",
+        "kind",
+        "xf",
+        "runs"
+      ],
+      "type": "object"
+    },
+    "layer_color": {
+      "description": "The colour an editor uses for a layer's selection outlines: `{\"Preset\": n}`, the n-th colour of the application's fixed list, or `{\"Custom\": [r, g, b]}` with components 0 to 255.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Preset": {
+              "description": "Index into the application's list of layer colours.",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Preset"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Custom": {
+              "description": "Red, green, blue.",
+              "items": {
+                "description": "0 to 255.",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "Custom"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "link": {
+      "additionalProperties": false,
+      "description": "Where a placed file came from. The file's content is embedded in this package (the structure node's `images` table and the x.vectorcraft.embedded node); these fields are a record of its origin and are never followed by a reader of this package.",
+      "properties": {
+        "hash": {
+          "description": "VectorCraft's own fingerprint of the file's bytes when last read (`img` then 16 hex digits of a 64-bit FNV-1a hash).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "modified": {
+          "description": "The file's modification time when it was last read, in milliseconds since 1970-01-01T00:00:00Z.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "page": {
+          "description": "For a linked document: the page (artboard) shown, 1-based.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "path": {
+          "description": "The absolute path the file had on the computer where it was placed.",
+          "format": "werk-provenance-note",
+          "type": "string"
+        },
+        "relative": {
+          "description": "That path relative to the folder the document was saved in, with `/` separators.",
+          "format": "werk-provenance-note",
+          "type": "string"
+        },
+        "size": {
+          "description": "The file's size when it was last read, in bytes.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    },
+    "live_ellipse": {
+      "additionalProperties": false,
+      "description": "A live ellipse or pie.",
+      "properties": {
+        "h": {
+          "description": "Untransformed height in points.",
+          "type": "number"
+        },
+        "pie": {
+          "description": "Pie start and end angles in degrees; `[0, 360]` is the full ellipse.",
+          "items": {
+            "description": "An angle in degrees.",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "shape": {
+          "const": "ellipse"
+        },
+        "w": {
+          "description": "Untransformed width in points.",
+          "type": "number"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps the untransformed ellipse (origin at the top-left corner of its box) into the document."
+        }
+      },
+      "required": [
+        "shape",
+        "w",
+        "h",
+        "pie",
+        "xf"
+      ],
+      "type": "object"
+    },
+    "live_line": {
+      "additionalProperties": false,
+      "description": "A live line segment.",
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/point",
+          "description": "Start point, document coordinates."
+        },
+        "b": {
+          "$ref": "#/$defs/point",
+          "description": "End point, document coordinates."
+        },
+        "shape": {
+          "const": "line"
+        }
+      },
+      "required": [
+        "shape",
+        "a",
+        "b"
+      ],
+      "type": "object"
+    },
+    "live_path": {
+      "additionalProperties": false,
+      "description": "Any other path whose corners were cut: it keeps its uncut outline so the corners stay editable.",
+      "properties": {
+        "base": {
+          "$ref": "#/$defs/path",
+          "description": "The path with its corners uncut, in document coordinates."
+        },
+        "kinds": {
+          "description": "Corner shapes, in the same order. Absent: round.",
+          "items": {
+            "$ref": "#/$defs/corner_kind"
+          },
+          "type": "array"
+        },
+        "radii": {
+          "description": "Corner radii by anchor index of `base`, counting every contour's anchors in order. Absent: sharp.",
+          "items": {
+            "description": "A radius in points.",
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "shape": {
+          "const": "path"
+        }
+      },
+      "required": [
+        "shape",
+        "base"
+      ],
+      "type": "object"
+    },
+    "live_polygon": {
+      "additionalProperties": false,
+      "description": "A live regular polygon.",
+      "properties": {
+        "kinds": {
+          "description": "Corner shapes, in the order of `radii`. Absent: round.",
+          "items": {
+            "$ref": "#/$defs/corner_kind"
+          },
+          "type": "array"
+        },
+        "radii": {
+          "description": "Corner radii by vertex. Absent: sharp.",
+          "items": {
+            "description": "A radius in points.",
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "radius": {
+          "description": "Distance from the centre to each vertex, in points.",
+          "type": "number"
+        },
+        "shape": {
+          "const": "polygon"
+        },
+        "sides": {
+          "description": "Number of sides.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps the untransformed polygon (centred on the origin) into the document."
+        }
+      },
+      "required": [
+        "shape",
+        "radius",
+        "sides",
+        "xf"
+      ],
+      "type": "object"
+    },
+    "live_rectangle": {
+      "additionalProperties": false,
+      "description": "A live rectangle.",
+      "properties": {
+        "h": {
+          "description": "Untransformed height in points.",
+          "type": "number"
+        },
+        "kinds": {
+          "description": "Corner shapes, in the order of `radii`. Absent: all round.",
+          "items": {
+            "$ref": "#/$defs/corner_kind"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "radii": {
+          "description": "Corner radii: top-left, top-right, bottom-right, bottom-left.",
+          "items": {
+            "description": "A radius in points.",
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "shape": {
+          "const": "rectangle"
+        },
+        "w": {
+          "description": "Untransformed width in points.",
+          "type": "number"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps the untransformed rectangle (origin at its top-left corner) into the document."
+        }
+      },
+      "required": [
+        "shape",
+        "w",
+        "h",
+        "radii",
+        "xf"
+      ],
+      "type": "object"
+    },
+    "live_shape": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "shape": {
+                "const": "rectangle"
+              }
+            },
+            "required": [
+              "shape"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/live_rectangle"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "shape": {
+                "const": "ellipse"
+              }
+            },
+            "required": [
+              "shape"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/live_ellipse"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "shape": {
+                "const": "polygon"
+              }
+            },
+            "required": [
+              "shape"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/live_polygon"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "shape": {
+                "const": "line"
+              }
+            },
+            "required": [
+              "shape"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/live_line"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "shape": {
+                "const": "path"
+              }
+            },
+            "required": [
+              "shape"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/live_path"
+          }
+        }
+      ],
+      "description": "The parameters a path was generated from (a shape drawn with a shape tool), kept so the shape stays editable as a shape. The object's `path` already holds the resulting outline: a reader that only draws may ignore this.",
+      "properties": {
+        "shape": {
+          "description": "The kind of shape. One of: `rectangle` (a rectangle with corner radii); `ellipse` (an ellipse or pie); `polygon` (a regular polygon); `line` (a line segment); `path` (a path with live corners).",
+          "enum": [
+            "rectangle",
+            "ellipse",
+            "polygon",
+            "line",
+            "path"
+          ]
+        }
+      },
+      "required": [
+        "shape"
+      ],
+      "type": "object"
+    },
+    "mask": {
+      "additionalProperties": false,
+      "description": "An opacity mask: the luminance of the mask art scales the object's opacity (white shows the object, black hides it).",
+      "properties": {
+        "art": {
+          "$ref": "#/$defs/object",
+          "description": "The mask art, in document coordinates."
+        },
+        "clip": {
+          "description": "True: outside the mask art the object is hidden; false: outside it the object stays visible. Absent: true.",
+          "type": "boolean"
+        },
+        "disabled": {
+          "description": "True: the mask is kept but not applied. Absent: false.",
+          "type": "boolean"
+        },
+        "invert": {
+          "description": "True: the mask's luminance is inverted. Absent: false.",
+          "type": "boolean"
+        },
+        "linked": {
+          "description": "True: the mask moves with the object. Absent: true.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "art"
+      ],
+      "type": "object"
+    },
+    "mesh_point": {
+      "additionalProperties": false,
+      "description": "One point of a gradient mesh.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "Colour at the point."
+        },
+        "handles": {
+          "description": "Tangent handles as offsets from `p`: towards the next column, the previous column, the next row, the previous row. Absent: all zero.",
+          "items": {
+            "$ref": "#/$defs/vec2"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "opacity": {
+          "description": "Opacity at the point, 0 to 1. Absent: 1.",
+          "type": "number"
+        },
+        "p": {
+          "$ref": "#/$defs/point",
+          "description": "Position, document coordinates."
+        }
+      },
+      "required": [
+        "p",
+        "color"
+      ],
+      "type": "object"
+    },
+    "object": {
+      "additionalProperties": false,
+      "description": "One object of the document: a layer, a group, a path, type, an image ... Objects form a tree; an object's position among its siblings is its paint order (first is bottom).",
+      "properties": {
+        "appearance": {
+          "$ref": "#/$defs/appearance",
+          "description": "How the object is painted. Absent: nothing of its own (containers paint their members)."
+        },
+        "attrs": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/attrs"
+            }
+          ],
+          "description": "Attributes. Absent or null: defaults."
+        },
+        "bbox_angle": {
+          "description": "The angle of the object's own axes, in degrees, counter-clockwise as seen on screen (its bounding box and handles stand at this angle in an editor). Absent: 0.",
+          "type": "number"
+        },
+        "blend": {
+          "$ref": "#/$defs/blend_mode",
+          "description": "How the object as a whole blends with what is below. Absent: `Normal`."
+        },
+        "graphic_style": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "description": "Style id.",
+              "minimum": 0,
+              "type": "integer"
+            }
+          ],
+          "description": "The `id` of the graphic style (in the core.vector.styles node) last applied to the object and still matching it. Absent or null: none."
+        },
+        "id": {
+          "description": "The object's id: an unsigned 64-bit integer, unique among the objects of the document's layers and never reused. Other parts of the document name an object by it. Read it as an integer, not as a binary64.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "isolate": {
+          "description": "True: blend modes inside the object do not reach below the object (an isolated transparency group). Absent: false.",
+          "type": "boolean"
+        },
+        "kind": {
+          "$ref": "#/$defs/object_kind"
+        },
+        "knockout": {
+          "description": "Containers: whether the members knock each other out (each shows the backdrop of the group, not the members below it). One of: `neutral` (as the enclosing group says; the default); `on` (they do); `off` (they do not).",
+          "enum": [
+            "neutral",
+            "on",
+            "off"
+          ]
+        },
+        "knockout_shape": {
+          "description": "True: inside a knockout group, the object's opacity and opacity mask scale how much it knocks out. Absent: false.",
+          "type": "boolean"
+        },
+        "locked": {
+          "description": "True: an editor does not let the object be selected or changed. Absent: false.",
+          "type": "boolean"
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/mask"
+            }
+          ],
+          "description": "An opacity mask. Absent or null: none."
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "description": "The name.",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          ],
+          "description": "The object's name as the user gave it. Absent or null: unnamed."
+        },
+        "opacity": {
+          "description": "Opacity of the object as a whole, 0 (transparent) to 1 (opaque), applied to the composite of everything it paints. Absent: 1.",
+          "type": "number"
+        },
+        "visible": {
+          "description": "False: hidden (not drawn, not printed). Absent: true.",
+          "type": "boolean"
+        },
+        "wrap": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/text_wrap"
+            }
+          ],
+          "description": "Text wrap: area type below this object flows around it. Absent or null: none."
+        }
+      },
+      "required": [
+        "id",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "object_kind": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "layer"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_layer"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "group"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_group"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "path"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_path"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "compound"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_compound"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "text"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_text"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "image"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_image"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "symbolinstance"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_symbolinstance"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "blend"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_blend"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "envelope"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_envelope"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mesh"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_mesh"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "repeat"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_repeat"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "placeddocument"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/kind_placeddocument"
+          }
+        }
+      ],
+      "description": "What an object is, with the data of that kind. A reader that meets a `type` it does not know draws nothing for the object and keeps it.",
+      "properties": {
+        "type": {
+          "description": "The kind of object. One of: `layer` (a layer or sublayer); `group` (a group or clip group); `path` (a path); `compound` (a compound path); `text` (type); `image` (a raster image); `symbolinstance` (an instance of a symbol); `blend` (a live blend); `envelope` (a live envelope distortion); `mesh` (a gradient mesh); `repeat` (a live repeat); `placeddocument` (a placed document).",
+          "enum": [
+            "layer",
+            "group",
+            "path",
+            "compound",
+            "text",
+            "image",
+            "symbolinstance",
+            "blend",
+            "envelope",
+            "mesh",
+            "repeat",
+            "placeddocument"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "paint": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "none"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_none"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "solid"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_solid"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gradient"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_gradient"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pattern"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/paint_pattern"
+          }
+        }
+      ],
+      "description": "A paint: what a fill, a stroke or a run of type is painted with.",
+      "properties": {
+        "type": {
+          "description": "The kind of paint. One of: `none` (nothing); `solid` (a flat colour); `gradient` (a gradient); `pattern` (a repeated pattern tile).",
+          "enum": [
+            "none",
+            "solid",
+            "gradient",
+            "pattern"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "paint_gradient": {
+      "additionalProperties": false,
+      "description": "A gradient.",
+      "properties": {
+        "angle": {
+          "description": "Direction of an unplaced gradient (no `geom`), in degrees, counter-clockwise as seen on screen from the positive x axis. Absent: 0.",
+          "type": "number"
+        },
+        "freeform": {
+          "$ref": "#/$defs/freeform",
+          "description": "The points of a `Freeform` gradient, in the space of `geom`. Absent: placed automatically on the object's box, coloured along the stops."
+        },
+        "geom": {
+          "$ref": "#/$defs/gradient_geom",
+          "description": "Where the gradient lies. Absent: fitted to the painted object's bounding box each time it is drawn, at `angle`: a linear gradient spans the box through its centre; a radial one is centred with radius half the box's larger side."
+        },
+        "gradient": {
+          "$ref": "#/$defs/gradient",
+          "description": "The colours."
+        },
+        "swatch": {
+          "description": "Name of the gradient swatch the paint is linked to. Absent: not linked.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": {
+          "const": "gradient"
+        }
+      },
+      "required": [
+        "type",
+        "gradient"
+      ],
+      "type": "object"
+    },
+    "paint_none": {
+      "additionalProperties": false,
+      "description": "No paint: nothing is drawn.",
+      "properties": {
+        "type": {
+          "const": "none"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "paint_pattern": {
+      "additionalProperties": false,
+      "description": "A pattern: the tile of a pattern definition repeated.",
+      "properties": {
+        "pattern": {
+          "description": "Name of the pattern (the `name` in a core.paint.pattern node; the structure node's `patterns` table says which node). A name the document does not have paints nothing.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "type": {
+          "const": "pattern"
+        },
+        "xf": {
+          "$ref": "#/$defs/affine",
+          "description": "Maps pattern space to the document. Absent: the identity (tiles anchored at the document origin)."
+        }
+      },
+      "required": [
+        "type",
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "paint_solid": {
+      "additionalProperties": false,
+      "description": "A flat colour.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "The colour painted. With `swatch`, the linked swatch's colour at `tint` (kept here so a reader need not resolve the link)."
+        },
+        "swatch": {
+          "description": "Name of the global or spot swatch (in the swatches node) the colour is linked to: editing the swatch recolours the paint. Absent: not linked.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tint": {
+          "description": "Tint of the linked swatch: 0 (none of it) to 1 (full strength); a spot tint prints this much of its plate. Absent: 1.",
+          "type": "number"
+        },
+        "type": {
+          "const": "solid"
+        }
+      },
+      "required": [
+        "type",
+        "color"
+      ],
+      "type": "object"
+    },
+    "pair": {
+      "description": "A point written as `[x, y]`.",
+      "items": {
+        "description": "A coordinate.",
+        "type": "number"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "para_style": {
+      "additionalProperties": false,
+      "description": "The attributes of a paragraph.",
+      "properties": {
+        "burasagari": {
+          "description": "Hanging punctuation. One of: `none` (none; the default when absent); `standard` (a comma or full stop that does not fit hangs outside the line); `forced` (a comma or full stop ending a line always hangs).",
+          "enum": [
+            "none",
+            "standard",
+            "forced"
+          ]
+        },
+        "composer": {
+          "description": "How lines are broken. One of: `everyLine` (the breaks of the whole paragraph are chosen together for even spacing; the default when absent); `singleLine` (each line is broken as soon as it is full).",
+          "enum": [
+            "everyLine",
+            "singleLine"
+          ]
+        },
+        "direction": {
+          "description": "The paragraph's base direction for bidirectional text (Unicode UAX #9). Absent: from its first strong character. One of: `leftToRight`; `rightToLeft`.",
+          "enum": [
+            "leftToRight",
+            "rightToLeft"
+          ]
+        },
+        "first_line_indent": {
+          "description": "Extra indent of the first line, in points (negative: a hanging indent). Absent: 0.",
+          "type": "number"
+        },
+        "hyphenate": {
+          "description": "Words may be hyphenated at line ends. Absent: false.",
+          "type": "boolean"
+        },
+        "justify": {
+          "description": "Alignment of the paragraph's lines. One of: `Left` (flush left; the default when absent); `Center` (centred); `Right` (flush right); `JustifyLeft` (justified, last line flush left); `JustifyCenter` (justified, last line centred); `JustifyRight` (justified, last line flush right); `JustifyAll` (justified, last line too).",
+          "enum": [
+            "Left",
+            "Center",
+            "Right",
+            "JustifyLeft",
+            "JustifyCenter",
+            "JustifyRight",
+            "JustifyAll"
+          ]
+        },
+        "justify_auto": {
+          "description": "True: aligned to the start of the paragraph's direction (left for left-to-right text, right for right-to-left); `justify` is then written as `Left` and ignored. Absent: false.",
+          "type": "boolean"
+        },
+        "kinsoku": {
+          "description": "Which Japanese characters may not start or end a line. One of: `hard` (closing brackets, commas, full stops, small kana and the like do not start a line, opening brackets do not end one; the default when absent); `soft` (as hard, but iteration marks, the prolonged sound mark and small kana may start a line); `none` (no restriction).",
+          "enum": [
+            "hard",
+            "soft",
+            "none"
+          ]
+        },
+        "leading_model": {
+          "description": "How leading is measured. One of: `romanBaseline` (from one baseline to the next; the default when absent); `emBoxTop` (from the top of one line's em box to the next's).",
+          "enum": [
+            "romanBaseline",
+            "emBoxTop"
+          ]
+        },
+        "left_indent": {
+          "description": "Indent of every line from the left edge, in points. Absent: 0.",
+          "type": "number"
+        },
+        "mojikumi": {
+          "description": "Japanese composition: the spacing of punctuation. One of: `none` (every character takes its full advance; the default when absent); `lineEndHalf` (consecutive punctuation shares one half-em space, and closing punctuation ending a line is set half width).",
+          "enum": [
+            "none",
+            "lineEndHalf"
+          ]
+        },
+        "right_indent": {
+          "description": "Indent of every line from the right edge, in points. Absent: 0.",
+          "type": "number"
+        },
+        "space_after": {
+          "description": "Space below the paragraph, in points. Absent: 0.",
+          "type": "number"
+        },
+        "space_before": {
+          "description": "Space above the paragraph, in points. Absent: 0.",
+          "type": "number"
+        },
+        "style_name": {
+          "description": "Name of the paragraph style (in the core.text.styles node) these attributes come from. Absent: the normal paragraph style.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "tabs": {
+          "description": "Tab stops, by ascending position. Absent: none.",
+          "items": {
+            "$ref": "#/$defs/tab_stop"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "path": {
+      "additionalProperties": false,
+      "description": "Path geometry: one or more contours, painted together under one fill rule.",
+      "properties": {
+        "subpaths": {
+          "description": "The contours, in order.",
+          "items": {
+            "$ref": "#/$defs/subpath"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "subpaths"
+      ],
+      "type": "object"
+    },
+    "placement": {
+      "additionalProperties": false,
+      "description": "How a file read again takes the place of the art it replaces (used by the application when a link is updated).",
+      "properties": {
+        "align": {
+          "description": "Where the new art sits in the old bounds. One of: `center` (the default); `topLeft`; `top`; `topRight`; `left`; `right`; `bottomLeft`; `bottom`; `bottomRight`.",
+          "enum": [
+            "center",
+            "topLeft",
+            "top",
+            "topRight",
+            "left",
+            "right",
+            "bottomLeft",
+            "bottom",
+            "bottomRight"
+          ]
+        },
+        "clip": {
+          "description": "True: the new art is clipped to the old bounds where it is larger. Absent: false.",
+          "type": "boolean"
+        },
+        "preserve": {
+          "description": "What is kept. One of: `bounds` (the art's bounds: the new art is stretched into them; the default); `transforms` (its scale, rotation and position); `fileDimensions` (only its position: the new art at 100%, unrotated); `fit` (its bounds: the new art scaled proportionally to fit inside); `fill` (its bounds: the new art scaled proportionally to fill them).",
+          "enum": [
+            "bounds",
+            "transforms",
+            "fileDimensions",
+            "fit",
+            "fill"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A point in the space the field's description names, in points (1/72 inch); x grows right, y grows down.",
+      "properties": {
+        "x": {
+          "description": "Horizontal coordinate.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Vertical coordinate (larger is lower).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "pressure_profile": {
+      "additionalProperties": false,
+      "description": "Pen pressure recorded along a stroke.",
+      "properties": {
+        "points": {
+          "description": "The samples, by ascending position.",
+          "items": {
+            "description": "`[position, pressure]`: position 0 to 1 along the path's length, pressure 0 to 1.",
+            "items": {
+              "description": "A value.",
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "type": "object"
+    },
+    "repeat_grid": {
+      "additionalProperties": false,
+      "description": "Copies of the source on a grid (tile = the source's bounds grown by the spacing).",
+      "properties": {
+        "cols": {
+          "description": "Number of columns. Absent: 3.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "flipCols": {
+          "description": "True: alternate columns are flipped horizontally. Absent: false.",
+          "type": "boolean"
+        },
+        "flipRows": {
+          "description": "True: alternate rows are flipped vertically. Absent: false.",
+          "type": "boolean"
+        },
+        "gridType": {
+          "$ref": "#/$defs/tile_type",
+          "description": "Absent: a plain grid."
+        },
+        "hSpacing": {
+          "description": "Horizontal gap between copies in points.",
+          "type": "number"
+        },
+        "rows": {
+          "description": "Number of rows. Absent: 3.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "type": {
+          "const": "grid"
+        },
+        "vSpacing": {
+          "description": "Vertical gap between copies in points.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "type",
+        "hSpacing",
+        "vSpacing"
+      ],
+      "type": "object"
+    },
+    "repeat_kind": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "radial"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/repeat_radial"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "grid"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/repeat_grid"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "mirror"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/repeat_mirror"
+          }
+        }
+      ],
+      "description": "How a repeat places its copies.",
+      "properties": {
+        "type": {
+          "description": "The kind of repeat. One of: `radial` (around a centre); `grid` (on a grid); `mirror` (mirrored across an axis).",
+          "enum": [
+            "radial",
+            "grid",
+            "mirror"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "repeat_mirror": {
+      "additionalProperties": false,
+      "description": "The source and its reflection.",
+      "properties": {
+        "angle": {
+          "description": "Angle of the mirror axis in degrees (90: a vertical axis).",
+          "type": "number"
+        },
+        "center": {
+          "$ref": "#/$defs/point",
+          "description": "A point the axis passes through, document coordinates."
+        },
+        "type": {
+          "const": "mirror"
+        }
+      },
+      "required": [
+        "type",
+        "angle",
+        "center"
+      ],
+      "type": "object"
+    },
+    "repeat_radial": {
+      "additionalProperties": false,
+      "description": "Copies of the source rotated around a centre.",
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/point",
+          "description": "The centre, document coordinates."
+        },
+        "endAngle": {
+          "description": "Angle at which the copies end, in degrees. Absent: 360.",
+          "type": "number"
+        },
+        "instances": {
+          "description": "Number of copies, the source included.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "radius": {
+          "description": "Distance of the source's centre from `center`, in points.",
+          "type": "number"
+        },
+        "reverseOverlap": {
+          "description": "True: later copies paint below earlier ones. Absent: false.",
+          "type": "boolean"
+        },
+        "startAngle": {
+          "description": "Angle of the first copy in degrees. Absent: 0.",
+          "type": "number"
+        },
+        "type": {
+          "const": "radial"
+        }
+      },
+      "required": [
+        "type",
+        "instances",
+        "radius",
+        "center"
+      ],
+      "type": "object"
+    },
+    "stroke_item": {
+      "additionalProperties": false,
+      "description": "A stroke: the object's outline painted.",
+      "properties": {
+        "align": {
+          "description": "Where the stroke lies relative to a closed path. One of: `Center` (half on each side; the default when absent); `Inside` (entirely inside the shape); `Outside` (entirely outside the shape).",
+          "enum": [
+            "Center",
+            "Inside",
+            "Outside"
+          ]
+        },
+        "arrow_align": {
+          "description": "Where an arrowhead sits. One of: `Extend` (its tip extends past the path's end point; the default when absent); `Tip` (its tip sits on the end point).",
+          "enum": [
+            "Extend",
+            "Tip"
+          ]
+        },
+        "arrow_scale": {
+          "description": "Size of the start and end arrowheads, in percent of their natural size at this stroke width: `[start, end]`. Absent: `[100, 100]`.",
+          "items": {
+            "description": "Percent.",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "blend": {
+          "$ref": "#/$defs/blend_mode",
+          "description": "Blend mode of this fill or stroke alone. Absent: `Normal`."
+        },
+        "brush": {
+          "description": "Name of the brush applied to the stroke (defined in the x.vectorcraft.brushes node). A reader without that node, or without the name, draws the plain stroke. Absent: no brush.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "cap": {
+          "description": "The shape of the stroke's open ends. One of: `Butt` (cut square at the end point; the default when absent); `Round` (a semicircle of diameter `width`); `Square` (a square extending half the width past the end point).",
+          "enum": [
+            "Butt",
+            "Round",
+            "Square"
+          ]
+        },
+        "dash": {
+          "$ref": "#/$defs/dash",
+          "description": "The dash pattern. Absent: a solid line."
+        },
+        "effects": {
+          "description": "Live effects applied to this fill or stroke alone, in order. Absent: none.",
+          "items": {
+            "$ref": "#/$defs/effect"
+          },
+          "type": "array"
+        },
+        "end_arrow": {
+          "$ref": "#/$defs/arrowhead",
+          "description": "Arrowhead at the path's end. Absent: none."
+        },
+        "gradient_mode": {
+          "description": "How a gradient paint maps onto the stroke. One of: `Within` (placed on the page like a fill's gradient and seen through the stroke; the default when absent); `Along` (from the start of each contour to its end, following the path); `Across` (from the stroke's left edge to its right edge, all along it).",
+          "enum": [
+            "Within",
+            "Along",
+            "Across"
+          ]
+        },
+        "join": {
+          "description": "The shape of the stroke's corners. One of: `Miter` (extended to a point while within `miter_limit`, else bevelled; the default when absent); `Round` (rounded with radius half the width); `Bevel` (cut straight across).",
+          "enum": [
+            "Miter",
+            "Round",
+            "Bevel"
+          ]
+        },
+        "kind": {
+          "const": "stroke"
+        },
+        "miter_limit": {
+          "description": "The largest ratio of miter length to stroke width a `Miter` join may have before it is bevelled (as in SVG and PDF). Absent: 10.",
+          "type": "number"
+        },
+        "opacity": {
+          "description": "Opacity of this fill or stroke alone, 0 to 1. Absent: 1.",
+          "type": "number"
+        },
+        "overprint": {
+          "description": "True: on press, the inks of this fill or stroke print over the inks below instead of knocking them out. Absent: false.",
+          "type": "boolean"
+        },
+        "paint": {
+          "$ref": "#/$defs/paint",
+          "description": "What the stroke is painted with."
+        },
+        "pressure": {
+          "$ref": "#/$defs/pressure_profile",
+          "description": "The pen pressure the stroke was drawn with; pressure-sensitive brushes vary with it. Absent: none."
+        },
+        "profile": {
+          "$ref": "#/$defs/width_profile",
+          "description": "A variable-width profile. Absent: uniform width."
+        },
+        "start_arrow": {
+          "$ref": "#/$defs/arrowhead",
+          "description": "Arrowhead at the path's start. Absent: none."
+        },
+        "visible": {
+          "description": "False: kept but not painted. Absent: true.",
+          "type": "boolean"
+        },
+        "width": {
+          "description": "Stroke width in points.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "paint",
+        "width"
+      ],
+      "type": "object"
+    },
+    "subpath": {
+      "additionalProperties": false,
+      "description": "One contour: its anchors in order. The segment from anchor i to anchor i+1 is the cubic Bezier (p_i, out_i, in_{i+1}, p_{i+1}); a closed contour also has the segment from the last anchor back to the first.",
+      "properties": {
+        "anchors": {
+          "description": "The anchors, in drawing order. May be empty.",
+          "items": {
+            "$ref": "#/$defs/anchor"
+          },
+          "type": "array"
+        },
+        "closed": {
+          "description": "True: the contour is closed (last anchor joined to the first). Absent: false.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "anchors"
+      ],
+      "type": "object"
+    },
+    "tab_stop": {
+      "additionalProperties": false,
+      "description": "A tab stop.",
+      "properties": {
+        "align": {
+          "description": "How text after the tab aligns to the stop. One of: `left` (starts at the stop; the default when absent); `center` (is centred on it); `right` (ends at it); `decimal` (aligns its first `alignOn` character on it).",
+          "enum": [
+            "left",
+            "center",
+            "right",
+            "decimal"
+          ]
+        },
+        "alignOn": {
+          "description": "Decimal tabs align on this character (one character). Absent: `.`.",
+          "format": "werk-content-text",
+          "minLength": 1,
+          "type": "string"
+        },
+        "leader": {
+          "description": "Characters repeated across the tab's gap (for example `. `). Absent: none.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "position": {
+          "description": "Distance from the frame's left edge in points.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "position"
+      ],
+      "type": "object"
+    },
+    "text_kind": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "point"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/text_kind_point"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "area"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/text_kind_area"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "onpath"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "$ref": "#/$defs/text_kind_onpath"
+          }
+        }
+      ],
+      "description": "How type is laid out.",
+      "properties": {
+        "kind": {
+          "description": "The kind of type. One of: `point` (point type); `area` (area type in a frame); `onpath` (type on a path).",
+          "enum": [
+            "point",
+            "area",
+            "onpath"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "text_kind_area": {
+      "additionalProperties": false,
+      "description": "Area type: text flowed inside a frame.",
+      "properties": {
+        "frame": {
+          "$ref": "#/$defs/path",
+          "description": "The frame's outline, in text space."
+        },
+        "kind": {
+          "const": "area"
+        }
+      },
+      "required": [
+        "kind",
+        "frame"
+      ],
+      "type": "object"
+    },
+    "text_kind_onpath": {
+      "additionalProperties": false,
+      "description": "Type on a path: the baseline follows a path.",
+      "properties": {
+        "end": {
+          "description": "Where the text ends, as a fraction of the path's length. Absent: the end of the path (once round, for a closed path).",
+          "type": "number"
+        },
+        "kind": {
+          "const": "onpath"
+        },
+        "path": {
+          "$ref": "#/$defs/path",
+          "description": "The path, in text space."
+        },
+        "start": {
+          "description": "Where the text starts, as a fraction 0 to 1 of the path's length.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "path",
+        "start"
+      ],
+      "type": "object"
+    },
+    "text_kind_point": {
+      "additionalProperties": false,
+      "description": "Point type: lines start at the origin of text space and run until a line break.",
+      "properties": {
+        "kind": {
+          "const": "point"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
+    },
+    "text_run": {
+      "additionalProperties": false,
+      "description": "A run of characters with one set of character attributes.",
+      "properties": {
+        "inline": {
+          "$ref": "#/$defs/inline_art",
+          "description": "The run is an inline graphic. Absent: ordinary characters."
+        },
+        "style": {
+          "$ref": "#/$defs/char_style",
+          "description": "Their attributes."
+        },
+        "text": {
+          "description": "The characters. U+000A ends a paragraph; U+0009 is a tab.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "style"
+      ],
+      "type": "object"
+    },
+    "text_wrap": {
+      "additionalProperties": false,
+      "description": "Text wrap options.",
+      "properties": {
+        "invert": {
+          "description": "True: text flows inside the object instead of around it. Absent: false.",
+          "type": "boolean"
+        },
+        "offset": {
+          "description": "Distance kept between the text and the object, in points. Absent: 6.",
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "tile_type": {
+      "additionalProperties": false,
+      "description": "How tiles are arranged.",
+      "properties": {
+        "offset": {
+          "description": "brickByRow and brickByColumn only: the shift, as a fraction of the tile. Absent: 0.5.",
+          "type": "number"
+        },
+        "type": {
+          "description": "The arrangement. One of: `grid` (rows and columns); `brickByRow` (each row shifted horizontally by `offset` tile widths against the one above); `brickByColumn` (each column shifted vertically by `offset` tile heights); `hexByColumn` (hexagonal tiles in columns 3/4 of a tile width apart, odd columns shifted half a tile down); `hexByRow` (hexagonal tiles in rows 3/4 of a tile height apart, odd rows shifted half a tile right).",
+          "enum": [
+            "grid",
+            "brickByRow",
+            "brickByColumn",
+            "hexByColumn",
+            "hexByRow"
+          ]
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "vec2": {
+      "additionalProperties": false,
+      "description": "A displacement: the same units and axes as a point.",
+      "properties": {
+        "x": {
+          "description": "Horizontal offset.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Vertical offset (positive is down).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "width_profile": {
+      "additionalProperties": false,
+      "description": "A variable-width profile of a stroke.",
+      "properties": {
+        "points": {
+          "description": "The profile's points by ascending position; widths are linear between them. Two points at one position make a step: the first is the width just before it, the second just after.",
+          "items": {
+            "description": "`[position, left, right]`: `position` 0 (start) to 1 (end) along the path's length; `left` and `right` are factors of half the stroke width on the left and right of the path's direction.",
+            "items": {
+              "description": "A value.",
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "type": "object"
+    },
+    "wrap_shape": {
+      "additionalProperties": false,
+      "description": "A shape area type flows around: the outline of a wrap object above the type, in text space. Derived from the document's wrap objects by the application each time they change; a reader may recompute it.",
+      "properties": {
+        "invert": {
+          "description": "True: text flows inside the outline. Absent: false.",
+          "type": "boolean"
+        },
+        "offset": {
+          "description": "Distance kept from the outline, in points. Absent: 6.",
+          "type": "number"
+        },
+        "path": {
+          "$ref": "#/$defs/path",
+          "description": "The outline, in text space."
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.graph-design.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A graph design: named art that VectorCraft's graphs draw in place of their default columns and markers. Only VectorCraft's graph generator uses it; the marks a graph drew are ordinary objects in its layer.",
+  "properties": {
+    "art": {
+      "$ref": "#/$defs/object",
+      "description": "The design's art."
+    },
+    "name": {
+      "description": "The design's name: what a graph's `seriesMarkers` name it by.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "art"
+  ],
+  "title": "x.vectorcraft.graph-design - art a VectorCraft graph draws its marks with",
+  "type": "object"
+}

@@ -1,0 +1,276 @@
+{
+  "conventions": {
+    "affine_layout": {
+      "governs": [
+        "core.raster.layer"
+      ],
+      "note": "An affine transform [a, b, c, d, e, f] maps (x, y) to (a*x + c*y + e, b*x + d*y + f).",
+      "scope": "node"
+    },
+    "alignment_bytes": {
+      "governs": [
+        "core.raster.surface",
+        "core.raster.lut3d",
+        "x.photocraft.psd-blocks",
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Payload sections of envelope binaries start on this boundary.",
+      "scope": "node"
+    },
+    "alpha_mode": {
+      "governs": [
+        "core.raster.surface",
+        "core.raster.preview"
+      ],
+      "note": "Colour samples are NOT premultiplied by alpha.",
+      "scope": "node"
+    },
+    "angle_direction": {
+      "governs": [
+        "core.raster.layer",
+        "core.raster.document",
+        "core.raster.comp"
+      ],
+      "note": "Angles grow counter-clockwise as seen on screen (towards 12 o'clock), although y grows downward.",
+      "scope": "node"
+    },
+    "angle_unit": {
+      "governs": [
+        "core.raster.layer",
+        "core.raster.document",
+        "core.raster.comp"
+      ],
+      "note": "Every angle is in degrees.",
+      "scope": "node"
+    },
+    "angle_zero": {
+      "governs": [
+        "core.raster.layer",
+        "core.raster.document",
+        "core.raster.comp"
+      ],
+      "note": "Angle 0 points along the positive x axis (3 o'clock).",
+      "scope": "node"
+    },
+    "cmyk_zero": {
+      "governs": [
+        "core.raster.surface",
+        "core.raster.layer",
+        "core.raster.document"
+      ],
+      "note": "CMYK components are ink amounts: 0.0 is no ink, 1.0 is full ink.",
+      "scope": "node"
+    },
+    "endianness": {
+      "governs": [
+        "core.raster.surface",
+        "core.raster.lut3d",
+        "x.photocraft.psd-blocks",
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Every envelope binary is little-endian. MessagePack header integers inside an envelope are big-endian by MessagePack's own definition (spec/layouts/ENVELOPE.layout.txt section 4).",
+      "scope": "node"
+    },
+    "float_format": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "32-bit samples are IEEE-754 binary32, little-endian, whatever the section's dtype label says.",
+      "scope": "node"
+    },
+    "gray_zero": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "A gray sample of 0.0 is black, 1.0 is white.",
+      "scope": "node"
+    },
+    "hash_algorithm": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256.",
+      "scope": "container"
+    },
+    "id_case": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every id matches ^[a-z0-9]+(-[a-z0-9]+)*$.",
+      "scope": "container"
+    },
+    "lab_ab_offset": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "See lab_ab_scale.",
+      "scope": "node"
+    },
+    "lab_ab_scale": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "Lab a and b: a* = 255 * value - 128 (and b* likewise).",
+      "scope": "node"
+    },
+    "lab_l_scale": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "Lab lightness: L* = 100 * value.",
+      "scope": "node"
+    },
+    "layer_order": {
+      "governs": [
+        "core.raster.document"
+      ],
+      "note": "Entry 0 of a layer list is the bottom layer, drawn first.",
+      "scope": "node"
+    },
+    "length_unit": {
+      "governs": [
+        "core.raster.document",
+        "core.raster.layer",
+        "core.raster.path",
+        "core.raster.surface",
+        "core.raster.comp",
+        "core.raster.pattern"
+      ],
+      "note": "Every length and position is in document pixels unless a field name ends in _pt.",
+      "scope": "node"
+    },
+    "mask_zero": {
+      "governs": [
+        "core.raster.surface",
+        "core.raster.layer",
+        "core.raster.channel"
+      ],
+      "note": "A mask, selection or channel value of 0.0 hides / is unselected, 1.0 reveals / is selected.",
+      "scope": "node"
+    },
+    "pixel_origin": {
+      "governs": [
+        "core.raster.document",
+        "core.raster.layer",
+        "core.raster.path",
+        "core.raster.surface",
+        "core.raster.comp",
+        "core.raster.pattern"
+      ],
+      "note": "Pixel (0, 0) is the canvas's top-left pixel; integer coordinate (x, y) names the pixel whose top-left corner is at (x, y).",
+      "scope": "node"
+    },
+    "points_per_inch": {
+      "governs": [
+        "core.raster.layer",
+        "core.raster.text-styles"
+      ],
+      "note": "Fields ending in _pt are typographic points: pixels = points * resolution_dpi / 72.",
+      "scope": "node"
+    },
+    "preview_color_space": {
+      "governs": [
+        "core.raster.preview"
+      ],
+      "note": "Preview PNGs are 8-bit sRGB with straight alpha.",
+      "scope": "node"
+    },
+    "resolution_unit": {
+      "governs": [
+        "core.raster.document"
+      ],
+      "note": "The unit of resolution_dpi.",
+      "scope": "node"
+    },
+    "sample_layout": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "The samples of one pixel are stored together, in the order of the header's `channels`.",
+      "scope": "node"
+    },
+    "signature_algorithm": {
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state, not damage.",
+      "scope": "signature"
+    },
+    "text_encoding": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every text and JSON payload, INCLUDING MANIFEST.json - which is why the scope is container.",
+      "scope": "container"
+    },
+    "text_run_unit": {
+      "governs": [
+        "core.raster.layer"
+      ],
+      "note": "Text run lengths count UTF-8 bytes of the layer's text.",
+      "scope": "node"
+    },
+    "tile_scan_order": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "Inside a tile, rows run top to bottom and pixels left to right.",
+      "scope": "node"
+    },
+    "tile_size_px": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "A tile is 256 x 256 pixels. Tile (tx, ty) covers x in [256*tx, 256*tx + 256), y in [256*ty, 256*ty + 256); tx and ty may be negative.",
+      "scope": "node"
+    },
+    "white_f32": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "32-bit float samples are the value itself: 1.0 is white, values outside 0..1 are legal.",
+      "scope": "node"
+    },
+    "white_u16": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "16-bit samples: 0 is 0.0, 65535 is 1.0; value = sample / 65535.",
+      "scope": "node"
+    },
+    "white_u8": {
+      "governs": [
+        "core.raster.surface"
+      ],
+      "note": "8-bit samples: 0 is 0.0, 255 is 1.0; value = sample / 255.",
+      "scope": "node"
+    },
+    "x_axis": {
+      "governs": [
+        "core.raster.document",
+        "core.raster.layer",
+        "core.raster.path",
+        "core.raster.surface",
+        "core.raster.comp",
+        "core.raster.pattern"
+      ],
+      "note": "x grows to the right.",
+      "scope": "node"
+    },
+    "y_axis": {
+      "governs": [
+        "core.raster.document",
+        "core.raster.layer",
+        "core.raster.path",
+        "core.raster.surface",
+        "core.raster.comp",
+        "core.raster.pattern"
+      ],
+      "note": "y grows DOWNWARD. Row 0 of a tile is its top row.",
+      "scope": "node"
+    }
+  },
+  "note": "The machine-readable convention to node-type map of profile raster-layers/1 (SPEC.md section 10.2, ruling S-17). The convention set is a property of the PROFILE, not of the reader (S-25): check these and no others.",
+  "profile": "raster-layers/1",
+  "schema_version": 1
+}

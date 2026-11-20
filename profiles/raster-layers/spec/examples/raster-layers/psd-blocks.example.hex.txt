@@ -1,0 +1,86 @@
+psd-blocks.example.wkx - annotated hex dump
+===========================================
+
+An x.photocraft.psd-blocks pack (spec/layouts/x.photocraft.psd-blocks.layout.txt): two verbatim layer blocks,
+keys "lyvr" and "shmd", four bytes each.
+
+File size: 352 bytes. sha256: b3a442434d0b4ae3d50887547288a1dd8e615695f876c7a9b14f90c199059010.
+Offsets are hexadecimal, from the start of the file. Read spec/layouts/ENVELOPE.layout.txt
+first: the fixed prefix and the payload are LITTLE-endian, the MessagePack header BIG-endian.
+
+--- fixed prefix -----------------------------------------------------------
+  000000  57 4b 58 32                            magic "WKX2"
+  000004  01 00 00 00                            version = 1 (u32 little-endian)
+  000008  32 01 00 00                            header_len = 306 (u32 little-endian)
+
+--- header: one MessagePack map, bytes 0x00000c .. 0x00013e ------------------
+  00000c  86                                     map, 6 pair(s)
+  00000d  a6 62 6c 6f 63 6b 73                     key "blocks"
+  000014  92                                         = array, 2 element(s)
+  000015  84                                           map, 4 pair(s)
+  000016  a3 6b 65 79                                    key "key"
+  00001a  a8 36 63 37 39 37 36 37 32                       = fixstr(8) "6c797672"
+  000023  a8 6b 65 79 5f 74 65 78 74                     key "key_text"
+  00002c  a4 6c 79 76 72                                   = fixstr(4) "lyvr"
+  000031  a7 73 65 63 74 69 6f 6e                        key "section"
+  000039  a2 62 30                                         = fixstr(2) "b0"
+  00003c  a4 73 6c 6f 74                                 key "slot"
+  000041  ab 6c 61 79 65 72 2d 62 6c 6f 63 6b              = fixstr(11) "layer-block"
+  00004d  84                                           map, 4 pair(s)
+  00004e  a3 6b 65 79                                    key "key"
+  000052  a8 37 33 36 38 36 64 36 34                       = fixstr(8) "73686d64"
+  00005b  a8 6b 65 79 5f 74 65 78 74                     key "key_text"
+  000064  a4 73 68 6d 64                                   = fixstr(4) "shmd"
+  000069  a7 73 65 63 74 69 6f 6e                        key "section"
+  000071  a2 62 31                                         = fixstr(2) "b1"
+  000074  a4 73 6c 6f 74                                 key "slot"
+  000079  ab 6c 61 79 65 72 2d 62 6c 6f 63 6b              = fixstr(11) "layer-block"
+  000085  aa 65 6e 64 69 61 6e 6e 65 73 73         key "endianness"
+  000090  a2 6c 65                                   = fixstr(2) "le"
+  000093  a4 6b 69 6e 64                           key "kind"
+  000098  b7 78 2e 70 68 6f 74 6f 63 72 61 66 ..     = fixstr(23) "x.photocraft.psd-blocks"
+  0000b0  ae 70 61 79 6c 6f 61 64 5f 6f 72 69 ..   key "payload_origin"
+  0000bf  cd 01 40                                   = uint16 320 (big-endian)
+  0000c2  ac 70 61 79 6c 6f 61 64 5f 73 69 7a ..   key "payload_size"
+  0000cf  20                                         = uint 32
+  0000d0  a8 73 65 63 74 69 6f 6e 73               key "sections"
+  0000d9  92                                         = array, 2 element(s)
+  0000da  86                                           map, 6 pair(s)
+  0000db  a5 64 74 79 70 65                              key "dtype"
+  0000e1  a2 75 38                                         = fixstr(2) "u8"
+  0000e4  a4 6e 61 6d 65                                 key "name"
+  0000e9  a2 62 30                                         = fixstr(2) "b0"
+  0000ec  a6 6f 66 66 73 65 74                           key "offset"
+  0000f3  cd 01 40                                         = uint16 320 (big-endian)
+  0000f6  a5 73 68 61 70 65                              key "shape"
+  0000fc  91                                               = array, 1 element(s)
+  0000fd  04                                                 uint 4
+  0000fe  a4 73 69 7a 65                                 key "size"
+  000103  04                                               = uint 4
+  000104  a6 73 74 72 69 64 65                           key "stride"
+  00010b  01                                               = uint 1
+  00010c  86                                           map, 6 pair(s)
+  00010d  a5 64 74 79 70 65                              key "dtype"
+  000113  a2 75 38                                         = fixstr(2) "u8"
+  000116  a4 6e 61 6d 65                                 key "name"
+  00011b  a2 62 31                                         = fixstr(2) "b1"
+  00011e  a6 6f 66 66 73 65 74                           key "offset"
+  000125  cd 01 50                                         = uint16 336 (big-endian)
+  000128  a5 73 68 61 70 65                              key "shape"
+  00012e  91                                               = array, 1 element(s)
+  00012f  04                                                 uint 4
+  000130  a4 73 69 7a 65                                 key "size"
+  000135  04                                               = uint 4
+  000136  a6 73 74 72 69 64 65                           key "stride"
+  00013d  01                                               = uint 1
+
+--- padding ----------------------------------------------------------------
+  00013e  00 00                                  2 zero byte(s) up to payload_origin = 320 (0x140), the next multiple of 16
+
+--- section "b0": dtype u8, shape [4], stride 1, bytes 0x000140 .. 0x000144 (4 bytes)
+  000140  00 00 00 46                            0, 0, 0, 70
+  000144  00 00 00 00 00 00 00 00 00 00 00 00    zero padding to the next multiple of 16
+
+--- section "b1": dtype u8, shape [4], stride 1, bytes 0x000150 .. 0x000154 (4 bytes)
+  000150  00 00 00 00                            0, 0, 0, 0
+  000154  00 00 00 00 00 00 00 00 00 00 00 00    zero padding to the next multiple of 16

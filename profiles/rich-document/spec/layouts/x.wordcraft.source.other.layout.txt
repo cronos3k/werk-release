@@ -1,0 +1,50 @@
+x.wordcraft.source.other - the ORIGINAL bytes of a picture in an encoding without a definition
+==========================================================================================
+
+EXTENSION node of the WordCraft application (profile rich-document/1). Safe to skip: see
+spec/PROFILE-RICH-DOCUMENT.md section 3.9.
+
+Why this is an extension node: this package carries no DEFINITION of the encoding of these
+bytes (a document from which a decoder can be built). Pictures in an encoding that has one -
+JPEG, GIF, BMP, TIFF, WebP, EMF, WMF - are core nodes of type core.media.original instead.
+
+What it is
+----------
+The picture's bytes exactly as the author supplied them, in an encoding this application did
+not recognise - or recognised by other means than the leading bytes its definition names (the
+descriptor's `mediaType` then says what the application took it for). The bytes are opaque to
+this profile: they are never parsed, re-encoded or altered by a Save, and their sha256 in
+MANIFEST.json covers them.
+
+Files of the node (resolve them through the node's files[] in MANIFEST.json)
+-----------------------------------------------------------------------------
+x/wordcraft/source/<node_id>/original.<ext>    role `payload` (the node's payload_file):
+    the original bytes, byte for byte. <ext> is `bin`, or the usual extension of `mediaType`.
+x/wordcraft/source/<node_id>/descriptor.json   role `descriptor`: UTF-8 JSON, one object:
+    {"schema_version": 1,                       integer, the constant 1
+     "mediaKey": "unknown.bin",                string: the `key` of the entry of the document
+                                                 node's `media` list this original belongs to
+     "mediaType": "application/octet-stream",  string: what the application took the bytes for
+     "size": 23,                                integer: length of the original in bytes
+     "sha256": "<64 hex digits>"}             string: SHA-256 of the original
+
+node_id: `x-source-` + the handle of the media key (spec/PROFILE-RICH-DOCUMENT.md section 3).
+
+How it relates to the core nodes
+--------------------------------
+The entry of the document node's `media` list with the same key says what a reader that
+skips this node gets. `imageIs: rendition` - a `core.media.image` node holds the picture as a
+PNG decoded from these bytes (8 bits per channel, RGBA, straight alpha, sRGB assumed; first
+frame of an animation); that node is stamped `measured` with this file as its one input.
+`imageIs: none` - the bytes could not be decoded, so the picture exists only here, and a
+reader that skips extensions shows an empty frame of the object's size.
+
+A writer needs no node of this type.
+
+Worked example
+--------------
+spec/examples/rich-document/source-descriptor.example.json is the descriptor of a node whose
+original.bin is these 23 bytes (hex, then ASCII with `.` for bytes outside 0x20..0x7e):
+
+    00 01 6e 6f 74 20 61 20 70 69 63 74 75 72 65 20    ..not a picture
+    61 74 20 61 6c 6c ff                               at all.

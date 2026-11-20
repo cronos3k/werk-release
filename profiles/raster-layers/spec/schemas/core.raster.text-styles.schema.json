@@ -1,0 +1,132 @@
+{
+  "$defs": {},
+  "$id": "https://werk.format/spec/schemas/core.raster.text-styles.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The document's named character and paragraph styles. Text layers keep fully resolved attributes in their runs; a run names the style it was made from by id.",
+  "properties": {
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "styles": {
+      "additionalProperties": false,
+      "description": "The style lists.",
+      "properties": {
+        "basic": {
+          "additionalProperties": false,
+          "description": "The basic paragraph style (id 0). Empty attribute sets mean the defaults.",
+          "properties": {
+            "char_attrs": {
+              "description": "The character attributes this style sets: a subset of the keys of a character style (`font_family`, `size_pt`, `color`, ...).",
+              "type": "object"
+            },
+            "id": {
+              "description": "Stable id; 0 is the basic paragraph style.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": {
+              "description": "Style name.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "para_attrs": {
+              "description": "The paragraph attributes this style sets: a subset of the keys of a paragraph style (`align`, `first_line_indent_pt`, ...), with values of the same form as in a `core.raster.layer` text paragraph.",
+              "type": "object"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "para_attrs",
+            "char_attrs"
+          ],
+          "type": "object"
+        },
+        "character": {
+          "description": "Character styles in panel order.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A named character style.",
+            "properties": {
+              "attrs": {
+                "description": "The character attributes this style sets: a subset of the keys of a character style.",
+                "type": "object"
+              },
+              "id": {
+                "description": "Stable id, 1 or more.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "name": {
+                "description": "Style name.",
+                "format": "werk-content-text",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "attrs"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "paragraph": {
+          "description": "Paragraph styles in panel order.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A named paragraph style.",
+            "properties": {
+              "char_attrs": {
+                "description": "The character attributes this style sets: a subset of the keys of a character style (`font_family`, `size_pt`, `color`, ...).",
+                "type": "object"
+              },
+              "id": {
+                "description": "Stable id; 0 is the basic paragraph style.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "name": {
+                "description": "Style name.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "para_attrs": {
+                "description": "The paragraph attributes this style sets: a subset of the keys of a paragraph style (`align`, `first_line_indent_pt`, ...), with values of the same form as in a `core.raster.layer` text paragraph.",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "para_attrs",
+              "char_attrs"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "psd_raw": {
+          "description": "The style sheets of the PSD text engine this document was read from, as JSON, kept so data PhotoCraft does not map survives. Opaque; null when there is none."
+        }
+      },
+      "required": [
+        "character",
+        "paragraph",
+        "basic",
+        "psd_raw"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "styles"
+  ],
+  "title": "core.raster.text-styles — werk profile raster-layers/1",
+  "type": "object"
+}

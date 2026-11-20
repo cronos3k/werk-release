@@ -1,0 +1,25 @@
+{
+  "fragments": {
+    "c5b5dfa36b215515": {
+      "format": "docx",
+      "role": "inline",
+      "xml": [
+        "<w:r xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"><w:ptab w:relativeTo=\"margin\" w:alignment=\"right\" w:leader=\"none\"/></w:r>"
+      ]
+    }
+  },
+  "objects": {
+    "69497532ba3ed5a4": {
+      "refs": [
+        {
+          "external": false,
+          "id": "rId5",
+          "kind": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart",
+          "target": "word/charts/chart1.xml"
+        }
+      ],
+      "xml": "<a:graphic xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"><a:graphicData uri=\"http://schemas.openxmlformats.org/drawingml/2006/chart\"><c:chart xmlns:c=\"http://schemas.openxmlformats.org/drawingml/2006/chart\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"rId5\"/></a:graphicData></a:graphic>"
+    }
+  },
+  "schema_version": 1
+}

@@ -1,0 +1,274 @@
+{
+  "$defs": {},
+  "$id": "https://werk.format/spec/schemas/core.raster.variables.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Data-driven graphics: variables bound to layers, and named data sets of values for them.",
+  "properties": {
+    "active": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Index into `data_sets` of the set applied last. Null: none."
+    },
+    "data_sets": {
+      "description": "Data sets.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A named row of values.",
+        "properties": {
+          "name": {
+            "description": "Data set name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "values": {
+            "description": "One value per variable; a variable without one keeps the document's current value.",
+            "items": {
+              "description": "One variable's value. `kind` selects the form.",
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "description": "For a visibility variable.",
+                  "properties": {
+                    "kind": {
+                      "const": "visibility",
+                      "type": "string"
+                    },
+                    "variable": {
+                      "description": "The variable's `name`.",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    },
+                    "visible": {
+                      "description": "The layer's visibility.",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "variable",
+                    "kind",
+                    "visible"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "description": "For a text variable.",
+                  "properties": {
+                    "kind": {
+                      "const": "text",
+                      "type": "string"
+                    },
+                    "text": {
+                      "description": "The replacement text.",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    },
+                    "variable": {
+                      "description": "The variable's `name`.",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "variable",
+                    "kind",
+                    "text"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "description": "For a pixel variable.",
+                  "properties": {
+                    "embedded": {
+                      "anyOf": [
+                        {
+                          "description": "A `core.raster.source`, `core.raster.source-svg` or `x.photocraft.source.<format>` node carrying the replacement image.",
+                          "format": "werk-node-ref",
+                          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "Null: the image file is not in this package."
+                    },
+                    "kind": {
+                      "const": "pixels",
+                      "type": "string"
+                    },
+                    "origin_note": {
+                      "description": "Free text ABOUT an origin: the path or name by which the application referred to a file outside the document when it was saved. It is a note for a person and is NEVER followed: a reader that wants the file reads the node `embedded` names, and when `embedded` is null the file is not in this package.",
+                      "format": "werk-provenance-note",
+                      "type": "string"
+                    },
+                    "variable": {
+                      "description": "The variable's `name`.",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "variable",
+                    "kind",
+                    "origin_note",
+                    "embedded"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "values"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "defs": {
+      "description": "Variable definitions.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One variable.",
+        "properties": {
+          "kind": {
+            "description": "What the variable controls. `type` selects the form.",
+            "oneOf": [
+              {
+                "additionalProperties": false,
+                "description": "Shows or hides the layer.",
+                "properties": {
+                  "type": {
+                    "const": "visibility",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "description": "Replaces a text layer's text.",
+                "properties": {
+                  "type": {
+                    "const": "textReplacement",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              {
+                "additionalProperties": false,
+                "description": "Replaces a pixel layer's content with an image.",
+                "properties": {
+                  "align": {
+                    "description": "Where the image sits within the bounds.",
+                    "enum": [
+                      "topLeft",
+                      "topCenter",
+                      "topRight",
+                      "centerLeft",
+                      "center",
+                      "centerRight",
+                      "bottomLeft",
+                      "bottomCenter",
+                      "bottomRight"
+                    ],
+                    "type": "string"
+                  },
+                  "clip": {
+                    "description": "True: the image is clipped to the layer's bounds.",
+                    "type": "boolean"
+                  },
+                  "method": {
+                    "description": "How the image is scaled into the layer's bounds: inside, keeping aspect; covering, keeping aspect; original size; stretched.",
+                    "enum": [
+                      "fit",
+                      "fill",
+                      "asIs",
+                      "conform"
+                    ],
+                    "type": "string"
+                  },
+                  "type": {
+                    "const": "pixelReplacement",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type",
+                  "method",
+                  "align",
+                  "clip"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "layer": {
+            "anyOf": [
+              {
+                "description": "The `core.raster.layer` node the variable drives.",
+                "format": "werk-node-ref",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null: the layer no longer exists (see `layer_gone`)."
+          },
+          "layer_gone": {
+            "description": "The number of a deleted layer this variable still remembers. Only present when `layer` is null.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "name": {
+            "description": "Unique variable name.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "layer",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "defs",
+    "data_sets",
+    "active"
+  ],
+  "title": "core.raster.variables — werk profile raster-layers/1",
+  "type": "object"
+}

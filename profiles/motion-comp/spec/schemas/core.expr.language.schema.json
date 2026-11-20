@@ -1,0 +1,136 @@
+{
+  "$defs": {},
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The expression language as the writing application implements it: the host language, the rewriting applied to the text before it runs, the object model, the evaluation rules and limits, and test vectors. Profile document section 8 is the narrative; this payload is the list.",
+  "properties": {
+    "coverage": {
+      "description": "Exactly what this definition covers and what it does not.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "evaluation": {
+      "description": "When an expression runs, with what inputs, what its result is, and how the result becomes the property's value.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "host_language": {
+      "description": "The language the text is written in.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "language": {
+      "description": "The id of this definition: `effectcraft-expression/1`.",
+      "type": "string"
+    },
+    "names": {
+      "description": "The names of the object model the writing application defines.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One name of the object model.",
+        "properties": {
+          "kind": {
+            "description": "What it is. `value`: a value; `function`: a function; `object`: an object with members of its own.",
+            "enum": [
+              "value",
+              "function",
+              "object"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "description": "The name as an expression writes it.",
+            "type": "string"
+          },
+          "on": {
+            "description": "What it is a member of: `global`, `comp`, `layer`, `property`, `key`, `marker`, `footage`, `text`, `path`, `camera`, `light`.",
+            "type": "string"
+          },
+          "semantics": {
+            "description": "What it yields.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "signature": {
+            "description": "How it is written, with its arguments.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "on",
+          "kind",
+          "signature",
+          "semantics"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "rewriting": {
+      "description": "How the text is changed before it is run (array arithmetic).",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "sandbox": {
+      "description": "What an expression can and cannot reach, the limits on its work, and what the application does on its own when a file is opened.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "test_vectors": {
+      "description": "Test vectors, each computed by the writing application's engine when the file was saved.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A test vector: an expression, where it is evaluated, and the value it yields in the writing application.",
+        "properties": {
+          "context": {
+            "description": "Where it runs: `time` (seconds of composition time), `value` (the property's keyframed value: a number or an array), and the facts of the layer and composition the expression reads (`index`, `width`, `height`, `frame_duration`...).",
+            "type": "object"
+          },
+          "expression": {
+            "description": "The expression text.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "id": {
+            "description": "The vector's id.",
+            "type": "string"
+          },
+          "result": {
+            "description": "The value: a number, an array of numbers, a boolean or a string."
+          },
+          "tolerance": {
+            "description": "The largest difference per number a conformant engine may have.",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "expression",
+          "context",
+          "result",
+          "tolerance"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "language",
+    "host_language",
+    "coverage",
+    "rewriting",
+    "evaluation",
+    "sandbox",
+    "names",
+    "test_vectors"
+  ],
+  "title": "core.expr.language",
+  "type": "object"
+}

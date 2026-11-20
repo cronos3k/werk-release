@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "knot": {
+      "additionalProperties": false,
+      "description": "A Bezier knot.",
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/point"
+        },
+        "in_ctrl": {
+          "$ref": "#/$defs/point",
+          "description": "Control point of the segment ARRIVING at this knot."
+        },
+        "out_ctrl": {
+          "$ref": "#/$defs/point",
+          "description": "Control point of the segment LEAVING this knot."
+        },
+        "smooth": {
+          "description": "True: an editor keeps both handles collinear. No effect on the curve itself.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "anchor",
+        "in_ctrl",
+        "out_ctrl",
+        "smooth"
+      ],
+      "type": "object"
+    },
+    "path": {
+      "additionalProperties": false,
+      "description": "A vector path of cubic Bezier subpaths, in document pixels (y down). Segment i of a subpath runs from knots[i].anchor via knots[i].out_ctrl and knots[i+1].in_ctrl to knots[i+1].anchor; a closed subpath adds the segment from the last knot back to the first. Each subpath is filled on its own with `fill_rule` and folded into the result, in order, with its `op`; the first subpath always acts as Combine.",
+      "properties": {
+        "fill_rule": {
+          "description": "Winding rule for filling each subpath.",
+          "enum": [
+            "NonZero",
+            "EvenOdd"
+          ],
+          "type": "string"
+        },
+        "inverted": {
+          "description": "True: the final area is inverted.",
+          "type": "boolean"
+        },
+        "subpaths": {
+          "description": "The subpaths.",
+          "items": {
+            "additionalProperties": false,
+            "description": "One subpath.",
+            "properties": {
+              "closed": {
+                "description": "True: closed.",
+                "type": "boolean"
+              },
+              "knots": {
+                "description": "The knots in order.",
+                "items": {
+                  "$ref": "#/$defs/knot"
+                },
+                "type": "array"
+              },
+              "op": {
+                "description": "How this subpath's area combines with the area so far: union; minus; intersection; exclusive-or; Join = it belongs to the previous subpath's shape and is filled together with it (holes).",
+                "enum": [
+                  "Combine",
+                  "Subtract",
+                  "Intersect",
+                  "Exclude",
+                  "Join"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "closed",
+              "knots",
+              "op"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "subpaths",
+        "fill_rule",
+        "inverted"
+      ],
+      "type": "object"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A position in document pixels: x to the right, y DOWN, origin at the canvas's top-left corner.",
+      "properties": {
+        "x": {
+          "description": "Pixels.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Pixels.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.raster.path.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A saved vector path of the document.",
+  "properties": {
+    "name": {
+      "description": "The path's name.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "path": {
+      "$ref": "#/$defs/path"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "path"
+  ],
+  "title": "core.raster.path — werk profile raster-layers/1",
+  "type": "object"
+}

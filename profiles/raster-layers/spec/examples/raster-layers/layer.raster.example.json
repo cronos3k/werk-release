@@ -1,0 +1,80 @@
+{
+  "advanced": {
+    "blendClipped": true,
+    "blendInterior": false,
+    "knockout": "none",
+    "layerMaskHidesEffects": false,
+    "transparencyShapes": true,
+    "vectorMaskHidesEffects": false
+  },
+  "blend": "Normal",
+  "blend_if": {
+    "ranges": []
+  },
+  "clipped": false,
+  "content": {
+    "kind": "raster",
+    "pixels": "layer-1-pixels"
+  },
+  "effects": {
+    "enabled": true,
+    "items": [
+      {
+        "DropShadow": {
+          "angle": 120.0,
+          "anti_alias": false,
+          "color": {
+            "alpha": 1.0,
+            "c": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "mode": "Rgb"
+          },
+          "common": {
+            "blend": "Multiply",
+            "enabled": true,
+            "opacity": 0.75
+          },
+          "contour": "Linear",
+          "distance": 5.0,
+          "knocks_out": true,
+          "noise": 0.0,
+          "size": 5.0,
+          "spread": 0.0,
+          "use_global_light": true
+        }
+      }
+    ],
+    "reference": null
+  },
+  "excluded_channels": 0,
+  "fill_cache": null,
+  "fill_opacity": 1.0,
+  "label": "None",
+  "link_group": null,
+  "locks": {
+    "all": false,
+    "artboard": false,
+    "pixels": false,
+    "position": false,
+    "transparency": false
+  },
+  "mask": {
+    "density": 1.0,
+    "enabled": true,
+    "feather": 0.0,
+    "linked": true,
+    "surface": "layer-1-mask"
+  },
+  "name": "Background",
+  "opacity": 1.0,
+  "psd": "layer-1-psd",
+  "psd_id": null,
+  "schema_version": 1,
+  "vector_mask": null,
+  "video": null,
+  "visible": true
+}

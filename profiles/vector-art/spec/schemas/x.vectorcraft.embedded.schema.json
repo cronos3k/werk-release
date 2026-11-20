@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "node_id": {
+      "description": "The node_id of a node of this package.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "proxy": {
+      "additionalProperties": false,
+      "description": "Where the image's low-resolution preview is.",
+      "properties": {
+        "is": {
+          "description": "Which bytes are the preview. One of: `original` (the image's own bytes ARE the preview: the linked file had not been read when the document was saved); `pixels` (the bytes of the image's pixels node); `node` (the payload of the node named by `node`).",
+          "enum": [
+            "original",
+            "pixels",
+            "node"
+          ]
+        },
+        "node": {
+          "$ref": "#/$defs/node_id",
+          "description": "`is: node` only: the x.vectorcraft.proxy node."
+        }
+      },
+      "required": [
+        "is"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.embedded.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What VectorCraft keeps of some images beside what the structure node says: the low-resolution preview a linked image shows while its file cannot be read, and the bytes of images in an encoding VectorCraft did not recognise.",
+  "properties": {
+    "images": {
+      "description": "Images.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One image.",
+        "properties": {
+          "key": {
+            "description": "The image key (as in the structure node's `images` table and in image objects).",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "mime": {
+            "description": "With `original`: the media type VectorCraft holds for those bytes.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "original": {
+            "$ref": "#/$defs/node_id",
+            "description": "The x.vectorcraft.source.other node with the image's own bytes, in an encoding VectorCraft did not recognise."
+          },
+          "proxy": {
+            "$ref": "#/$defs/proxy",
+            "description": "The image's preview. Absent: it has none."
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "x.vectorcraft.embedded - previews of linked images, and images in unrecognised encodings",
+  "type": "object"
+}

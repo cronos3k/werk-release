@@ -1,0 +1,21 @@
+{
+  "band_format": "zlib-deflate",
+  "band_rows": 4096,
+  "bands": [
+    {
+      "entry_count": 3,
+      "first_row": 0,
+      "inflated_sha256": "b7a74499486837948876ed443a4118265eb69439a0d9973d980c80fa8a2b7d8c",
+      "inflated_size": 1072,
+      "path": "sheets/sheet-1/computed/rows-0000000.wkx.zlib",
+      "row_count": 4096,
+      "stored_sha256": "2a73b5f1e98001b8e67e39fc7694f84e18bb5390cf1f5485ae67271a9374d128",
+      "stored_size": 402
+    }
+  ],
+  "entry_count": 3,
+  "inflated_layout": "spec/layouts/core.sheet.computed.layout.txt",
+  "schema_version": 1,
+  "sheet_uid": 1,
+  "store": "computed"
+}

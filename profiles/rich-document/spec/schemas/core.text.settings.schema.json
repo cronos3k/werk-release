@@ -1,0 +1,523 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.settings.schema.json",
+ "title": "core.text.settings — document-wide settings",
+ "description": "Settings that apply to the whole document: hyphenation, theme fonts and colours, note numbering, editing restrictions, layout compatibility. spec/PROFILE-RICH-DOCUMENT.md section 3. Lengths are points (1/72 inch).",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "trackChanges": {
+   "description": "true: change tracking is on, so an editing application records further edits as tracked changes. (This is the document's track-changes switch; it has nothing to do with the saved versions of the file.)",
+   "default": false,
+   "type": "boolean"
+  },
+  "defaultTab": {
+   "description": "Distance between the default tab stops used where a paragraph has no stop of its own, points (1/72 inch).",
+   "default": 36.0,
+   "type": "number"
+  },
+  "evenOddHeaders": {
+   "description": "true: even and odd pages have different headers and footers (a section's `even` stories are used on even pages).",
+   "default": false,
+   "type": "boolean"
+  },
+  "mirrorMargins": {
+   "description": "true: facing pages mirror their margins, so a section's left margin is the inside margin and its right margin the outside one.",
+   "default": false,
+   "type": "boolean"
+  },
+  "autoHyphenation": {
+   "description": "true: text is hyphenated automatically at line ends.",
+   "default": false,
+   "type": "boolean"
+  },
+  "hyphenationZone": {
+   "description": "Hyphenation zone, points (1/72 inch): a line is hyphenated only when breaking it at a word boundary would leave more than this much empty at its end.",
+   "default": 18.0,
+   "type": "number"
+  },
+  "hyphenateCaps": {
+   "description": "true: words written in capitals may be hyphenated.",
+   "default": true,
+   "type": "boolean"
+  },
+  "consecutiveHyphenLimit": {
+   "description": "The largest number of consecutive lines that may end with a hyphen; 0 = no limit.",
+   "default": 0,
+   "type": "integer",
+   "minimum": 0,
+   "maximum": 4294967295
+  },
+  "pageColor": {
+   "description": "Background colour of every page, `[red, green, blue]`, each an integer 0..255, sRGB. Null: none (white paper).",
+   "default": null,
+   "anyOf": [
+    {
+     "$ref": "#/$defs/Rgb"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "watermark": {
+   "description": "A text watermark behind the text of every page. Null: none.",
+   "default": null,
+   "anyOf": [
+    {
+     "$ref": "#/$defs/Watermark"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "majorFont": {
+   "description": "Theme font for headings: a font family name (a name only; see character formatting's `font`).",
+   "default": "Aptos Display",
+   "type": "string",
+   "format": "werk-content-text"
+  },
+  "minorFont": {
+   "description": "Theme font for body text: a font family name.",
+   "default": "Aptos",
+   "type": "string",
+   "format": "werk-content-text"
+  },
+  "themeColors": {
+   "description": "The theme's twelve colours, each `[red, green, blue]`, each an integer 0..255, sRGB, in this order: dark 1, light 1, dark 2, light 2, accent 1, accent 2, accent 3, accent 4, accent 5, accent 6, hyperlink, followed hyperlink.",
+   "default": [
+    [
+     0,
+     0,
+     0
+    ],
+    [
+     255,
+     255,
+     255
+    ],
+    [
+     14,
+     40,
+     65
+    ],
+    [
+     232,
+     232,
+     232
+    ],
+    [
+     21,
+     96,
+     130
+    ],
+    [
+     233,
+     113,
+     50
+    ],
+    [
+     25,
+     107,
+     36
+    ],
+    [
+     15,
+     158,
+     213
+    ],
+    [
+     160,
+     43,
+     147
+    ],
+    [
+     78,
+     167,
+     46
+    ],
+    [
+     70,
+     120,
+     134
+    ],
+    [
+     150,
+     96,
+     125
+    ]
+   ],
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/Rgb"
+   }
+  },
+  "themeName": {
+   "description": "Name of the document's theme (colour and font set); informational.",
+   "default": "Craft",
+   "type": "string",
+   "format": "werk-content-text"
+  },
+  "footnoteFormat": {
+   "description": "How footnote numbers are written.",
+   "default": "decimal",
+   "$ref": "#/$defs/NumFormat"
+  },
+  "endnoteFormat": {
+   "description": "How endnote numbers are written.",
+   "default": "lowerRoman",
+   "$ref": "#/$defs/NumFormat"
+  },
+  "footnotePr": {
+   "description": "The document's footnote placement, start number and restart rule; sections may override. Absent: all unset (footnotes at the bottom of the page, numbered from 1 through the document).",
+   "default": {},
+   "$ref": "#/$defs/NoteProps"
+  },
+  "endnotePr": {
+   "description": "The document's endnote placement, start number and restart rule; sections may override. Absent: all unset (endnotes at the end of the document, numbered from 1 through the document).",
+   "default": {},
+   "$ref": "#/$defs/NoteProps"
+  },
+  "protection": {
+   "description": "Editing restriction in force: `readOnly` (no changes), `comments` (only comments may be added), `trackedChanges` (changes are always tracked), `forms` (only form fields may be filled in), or `none` (only formatting is restricted, see `protectFormatting`). Null: the document is not protected.",
+   "default": null,
+   "anyOf": [
+    {
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "protectFormatting": {
+   "description": "true: formatting is restricted: only styles that are not `locked` may be applied and direct formatting is not allowed.",
+   "default": false,
+   "type": "boolean"
+  },
+  "protectHash": {
+   "description": "The hash of the editing-restriction password, as `[name, value]` pairs: either (`w:algorithmName`, `w:hashValue`, `w:saltValue`, `w:spinCount`) or the older (`w:cryptProviderType`, `w:cryptAlgorithmClass`, `w:cryptAlgorithmType`, `w:cryptAlgorithmSid`, `w:cryptSpinCount`, `w:hash`, `w:salt`), names and base64 values exactly as ISO/IEC 29500-1 section 17.15.1.29 defines them. A reader that does not enforce the restriction ignores it. Absent or empty: no password.",
+   "default": [],
+   "type": "array",
+   "items": {
+    "type": "array",
+    "items": {
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "minItems": 2,
+    "maxItems": 2
+   }
+  },
+  "compatMode": {
+   "description": "Layout compatibility level: 15 = current rules (a table's border stands at the margin, justified lines may shrink their spaces); 12, 14 = the older rules of documents written for those application generations (a table's TEXT stands at the margin).",
+   "default": 15,
+   "type": "integer",
+   "minimum": 0,
+   "maximum": 4294967295
+  },
+  "gridH": {
+   "description": "Horizontal spacing of the drawing grid objects snap to, points (1/72 inch).",
+   "default": 9.0,
+   "type": "number"
+  },
+  "gridV": {
+   "description": "Vertical spacing of the drawing grid, points (1/72 inch).",
+   "default": 9.0,
+   "type": "number"
+  },
+  "math": {
+   "description": "Document-wide equation options. Null or absent: break before a binary operator, continuation lines indented 72 points, not right-aligned.",
+   "default": null,
+   "anyOf": [
+    {
+     "$ref": "#/$defs/MathProps"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "bibStyle": {
+   "description": "Name of the citation and bibliography style the document uses (for example `APA`). Null or absent: not recorded.",
+   "default": null,
+   "anyOf": [
+    {
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "attachedTemplate": {
+   "description": "A NOTE of where the template the document was attached to lived when it was last saved by its original application: a file path or URL, as text. It is provenance only: the document's styles are complete in the stylesheet node, and a reader MUST NOT follow this value. Null or absent: none.",
+   "default": null,
+   "anyOf": [
+    {
+     "type": "string",
+     "format": "werk-provenance-note"
+    },
+    {
+     "type": "null"
+    }
+   ]
+  },
+  "linkStyles": {
+   "description": "true: the original application was asked to refresh the document's styles from its attached template when opening. A reader of this format ignores it (see `attachedTemplate`).",
+   "default": false,
+   "type": "boolean"
+  }
+ },
+ "$defs": {
+  "BrkBin": {
+   "description": "Where a display equation too wide for its line breaks at a binary operator. Values: `before`: Before the operator: the operator starts the next line; `after`: After the operator: the operator ends the line; `repeat`: The operator ends the line and is repeated at the start of the next.",
+   "type": "string",
+   "enum": [
+    "before",
+    "after",
+    "repeat"
+   ]
+  },
+  "BrkBinSub": {
+   "description": "How a minus sign repeats across a line break when the settings' `brkBin` is `repeat`: the sign ending the line, then the sign starting the next. Values: `minusMinus`: minus, then minus (- -); `minusPlus`: minus, then plus (- +); `plusMinus`: plus, then minus (+ -).",
+   "type": "string",
+   "enum": [
+    "minusMinus",
+    "minusPlus",
+    "plusMinus"
+   ]
+  },
+  "MathProps": {
+   "description": "Document-wide equation options: how a display equation too long for its line wraps.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "brkBin": {
+     "description": "Where a display equation too wide for its line breaks at a binary operator.",
+     "default": "before",
+     "$ref": "#/$defs/BrkBin"
+    },
+    "brkBinSub": {
+     "description": "How a minus sign is repeated across such a break when `brkBin` is `repeat`.",
+     "default": "minusMinus",
+     "$ref": "#/$defs/BrkBinSub"
+    },
+    "wrapIndent": {
+     "description": "Indent of a wrapped equation's continuation lines, points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "wrapRight": {
+     "description": "true: continuation lines are right-aligned instead of indented.",
+     "default": false,
+     "type": "boolean"
+    }
+   }
+  },
+  "NotePos": {
+   "description": "Where footnotes or endnotes are placed. Values: `pageBottom`: Footnotes: at the bottom of the page; `beneathText`: Footnotes: directly below the page's last line of text; `sectEnd`: Endnotes: at the end of each section; `docEnd`: Endnotes: at the end of the document.",
+   "type": "string",
+   "enum": [
+    "pageBottom",
+    "beneathText",
+    "sectEnd",
+    "docEnd"
+   ]
+  },
+  "NoteProps": {
+   "description": "Footnote or endnote options as stated at one level (the document, or one section). A field that is null or absent is not set at this level and comes from the level above: a section's from the document's (the settings node's `footnotePr` / `endnotePr`), the document's from the fixed defaults (footnotes at the bottom of the page, endnotes at the end of the document, numbered from 1, never restarting). The document's number FORMAT is the settings node's `footnoteFormat` / `endnoteFormat`, so `numFmt` is only ever set on a section.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "pos": {
+     "description": "Where the notes are placed. Null or absent: not set at this level.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NotePos"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numFmt": {
+     "description": "How note numbers are written. Null or absent: not set at this level.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumFormat"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numStart": {
+     "description": "The first note number, 1..32767. Null or absent: not set at this level (default 1).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numRestart": {
+     "description": "When note numbering starts again. Null or absent: not set at this level (default `continuous`).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NoteRestart"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "NoteRestart": {
+   "description": "When note numbering starts again. Values: `continuous`: Numbered on through the whole document; `eachSect`: Numbering starts again in each section; `eachPage`: Numbering starts again on each page.",
+   "type": "string",
+   "enum": [
+    "continuous",
+    "eachSect",
+    "eachPage"
+   ]
+  },
+  "NumFormat": {
+   "description": "How a number (a list number, a page number, a note number) is written. For a value a reader cannot write, plain decimal is an acceptable fallback. Values: `decimal`: 1, 2, 3; `upperRoman`: I, II, III; `lowerRoman`: i, ii, iii; `upperLetter`: A, B, C … Z, AA, BB; `lowerLetter`: a, b, c … z, aa, bb; `ordinal`: 1st, 2nd, 3rd (in the text's language); `cardinalText`: One, Two, Three (in the text's language); `ordinalText`: First, Second, Third (in the text's language); `decimalZero`: 01, 02 … 09, 10, 11; `bullet`: no number: the level's `text` is a bullet character; `none`: no number and no label; `hex`: hexadecimal: 1 … 9, A … F, 10; `chicago`: footnote symbols * † ‡ §, then doubled (**, ††), tripled, and so on; `ideographDigital`: Chinese numerals written digit by digit: 一, 二, 三 … 一〇; `japaneseCounting`: Japanese counting numerals: 一, 二, 三 … 十, 十一; `aiueo`: half-width katakana in a-i-u-e-o order: ｱ, ｲ, ｳ; `iroha`: half-width katakana in iroha order: ｲ, ﾛ, ﾊ; `decimalFullWidth`: full-width digits: １, ２, ３; `decimalHalfWidth`: half-width digits: 1, 2, 3; `japaneseLegal`: Japanese legal (daiji) numerals: 壱, 弐, 参; `japaneseDigitalTenThousand`: Japanese numerals digit by digit with myriad grouping: 一, 二, 三; `decimalEnclosedCircle`: circled numbers: ①, ②, ③ (plain decimal above 20); `decimalFullWidth2`: full-width digits, second variant: １, ２, ３; `aiueoFullWidth`: full-width katakana in a-i-u-e-o order: ア, イ, ウ; `irohaFullWidth`: full-width katakana in iroha order: イ, ロ, ハ; `ganada`: Korean syllables: 가, 나, 다; `chosung`: Korean consonants: ㄱ, ㄴ, ㄷ; `decimalEnclosedFullstop`: numbers followed by a full stop in one character: ⒈, ⒉, ⒊ (plain decimal above 20); `decimalEnclosedParen`: parenthesised numbers in one character: ⑴, ⑵, ⑶ (plain decimal above 20); `decimalEnclosedCircleChinese`: circled numbers, Chinese typography: ①, ②, ③ (plain decimal above 10); `ideographEnclosedCircle`: circled ideographs: ㈠, ㈡, ㈢ (plain decimal above 10); `ideographTraditional`: the ten heavenly stems: 甲, 乙, 丙, 丁; `ideographZodiac`: the twelve earthly branches: 子, 丑, 寅, 卯; `ideographZodiacTraditional`: the sexagenary cycle (stem plus branch): 甲子, 乙丑, 丙寅; `taiwaneseCounting`: Chinese counting numerals, Taiwan: 一, 二, 三 … 十, 十一; `ideographLegalTraditional`: traditional Chinese legal numerals: 壹, 貳, 參; `taiwaneseCountingThousand`: Chinese counting numerals with thousands, Taiwan: 一, 二, 三; `taiwaneseDigital`: Chinese numerals digit by digit, Taiwan: 一, 二, 三 … 一○; `chineseCounting`: Chinese counting numerals: 一, 二, 三 … 十, 十一; `chineseLegalSimplified`: simplified Chinese legal numerals: 壹, 贰, 叁; `chineseCountingThousand`: Chinese counting numerals with thousands: 一, 二, 三; `koreanDigital`: Sino-Korean numerals digit by digit: 일, 이, 삼; `koreanCounting`: native Korean counting: 하나, 둘, 셋; `koreanLegal`: Sino-Korean legal numerals: 일, 이, 삼 … 십; `koreanDigital2`: Chinese numerals digit by digit, Korean typography: 一, 二, 三; `vietnameseCounting`: Vietnamese number words: một, hai, ba; `russianLower`: lower-case Cyrillic letters: а, б, в; `russianUpper`: upper-case Cyrillic letters: А, Б, В; `numberInDash`: decimal between dashes: - 1 -, - 2 -, - 3 -; `hebrew1`: Hebrew numerals: א, ב, ג … י, יא; `hebrew2`: Hebrew alphabet letters: א, ב, ג … ת, then repeated; `arabicAlpha`: Arabic letters in alphabetical (hija'i) order: أ, ب, ت; `arabicAbjad`: Arabic letters in abjad order: أ, ب, ج; `hindiVowels`: Devanagari vowels: अ, आ, इ; `hindiConsonants`: Devanagari consonants: क, ख, ग; `hindiNumbers`: Devanagari digits: १, २, ३; `hindiCounting`: Hindi number words: एक, दो, तीन; `thaiLetters`: Thai letters: ก, ข, ค; `thaiNumbers`: Thai digits: ๑, ๒, ๓; `thaiCounting`: Thai number words: หนึ่ง, สอง, สาม; `bahtText`: the number as an amount in Thai baht, in words; `dollarText`: the number as an amount in dollars, in English words.",
+   "type": "string",
+   "enum": [
+    "decimal",
+    "upperRoman",
+    "lowerRoman",
+    "upperLetter",
+    "lowerLetter",
+    "ordinal",
+    "cardinalText",
+    "ordinalText",
+    "decimalZero",
+    "bullet",
+    "none",
+    "hex",
+    "chicago",
+    "ideographDigital",
+    "japaneseCounting",
+    "aiueo",
+    "iroha",
+    "decimalFullWidth",
+    "decimalHalfWidth",
+    "japaneseLegal",
+    "japaneseDigitalTenThousand",
+    "decimalEnclosedCircle",
+    "decimalFullWidth2",
+    "aiueoFullWidth",
+    "irohaFullWidth",
+    "ganada",
+    "chosung",
+    "decimalEnclosedFullstop",
+    "decimalEnclosedParen",
+    "decimalEnclosedCircleChinese",
+    "ideographEnclosedCircle",
+    "ideographTraditional",
+    "ideographZodiac",
+    "ideographZodiacTraditional",
+    "taiwaneseCounting",
+    "ideographLegalTraditional",
+    "taiwaneseCountingThousand",
+    "taiwaneseDigital",
+    "chineseCounting",
+    "chineseLegalSimplified",
+    "chineseCountingThousand",
+    "koreanDigital",
+    "koreanCounting",
+    "koreanLegal",
+    "koreanDigital2",
+    "vietnameseCounting",
+    "russianLower",
+    "russianUpper",
+    "numberInDash",
+    "hebrew1",
+    "hebrew2",
+    "arabicAlpha",
+    "arabicAbjad",
+    "hindiVowels",
+    "hindiConsonants",
+    "hindiNumbers",
+    "hindiCounting",
+    "thaiLetters",
+    "thaiNumbers",
+    "thaiCounting",
+    "bahtText",
+    "dollarText"
+   ]
+  },
+  "Rgb": {
+   "description": "A colour: `[red, green, blue]`, each an integer 0..255, sRGB (IEC 61966-2-1), no alpha.",
+   "type": "array",
+   "items": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 255
+   },
+   "minItems": 3,
+   "maxItems": 3
+  },
+  "Watermark": {
+   "description": "A text watermark drawn behind the text of every page.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "text": {
+     "description": "The watermark's text.",
+     "default": "DRAFT",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "font": {
+     "description": "Font family name of the watermark.",
+     "default": "Aptos",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "color": {
+     "description": "Colour of the watermark, `[red, green, blue]`, each an integer 0..255, sRGB.",
+     "default": [
+      192,
+      192,
+      192
+     ],
+     "$ref": "#/$defs/Rgb"
+    },
+    "diagonal": {
+     "description": "true: the text runs along the page's diagonal, from the bottom-left corner towards the top-right; false: horizontal, centred on the page.",
+     "default": true,
+     "type": "boolean"
+    },
+    "semitransparent": {
+     "description": "true: drawn faintly (35 percent opacity); false: drawn strongly (80 percent opacity).",
+     "default": true,
+     "type": "boolean"
+    }
+   }
+  }
+ }
+}

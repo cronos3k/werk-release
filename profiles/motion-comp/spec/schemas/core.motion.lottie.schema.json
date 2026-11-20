@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "One composition exported as a Lottie animation (the open JSON animation format of the Lottie Animation Community, lottie.github.io). Derived (`measured`) from the composition and its layers; a second master for players that read Lottie. This schema constrains only the outermost keys; the format itself is NOT defined in this package, and nothing of the document depends on this node.",
+  "properties": {
+    "fr": {
+      "description": "Frames per second.",
+      "type": "number"
+    },
+    "h": {
+      "description": "Height, pixels.",
+      "type": "number"
+    },
+    "ip": {
+      "description": "In point, frames.",
+      "type": "number"
+    },
+    "layers": {
+      "description": "The layers, as Lottie defines them.",
+      "type": "array"
+    },
+    "op": {
+      "description": "Out point, frames.",
+      "type": "number"
+    },
+    "v": {
+      "description": "Lottie format version string.",
+      "type": "string"
+    },
+    "w": {
+      "description": "Width, pixels.",
+      "type": "number"
+    }
+  },
+  "required": [
+    "v",
+    "fr",
+    "ip",
+    "op",
+    "w",
+    "h",
+    "layers"
+  ],
+  "title": "core.motion.lottie",
+  "type": "object"
+}

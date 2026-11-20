@@ -1,0 +1,53 @@
+{
+ "edits": [
+  {
+   "file": "raster-layers/spec/schemas/manifest.raster-layers.schema.json",
+   "edit": "loader-capabilities",
+   "reason": "core.loader capabilities: the release loaders declare `summarize-points` and `summarize-gsplat` (release spec/schemas/manifest.schema.json $defs/loaderMeta); the ArtCraft schemas predate them and refused the release loader nodes (found by W5a/W5b/W5c).",
+   "sha256_before": "989adb3485ab55059ca233795631cc899e8acb504720a2d6ab1ccaa7034758cd",
+   "sha256_after": "7a6bdb5859f9958b1a5c33b2c6525f5c4b401f066a2a5529a3b6b2f8832d7f01"
+  },
+  {
+   "file": "vector-art/spec/schemas/manifest.vector-art.schema.json",
+   "edit": "loader-capabilities",
+   "reason": "core.loader capabilities: the release loaders declare `summarize-points` and `summarize-gsplat` (release spec/schemas/manifest.schema.json $defs/loaderMeta); the ArtCraft schemas predate them and refused the release loader nodes (found by W5a/W5b/W5c).",
+   "sha256_before": "6665bec43c5da3124267ac9a1cbaafdac917d7c9aabcdf767ecf286870d049b1",
+   "sha256_after": "cb30148fed13204722fef4e3ced5876f7b2891859906c1191d4c155bbade9a94"
+  },
+  {
+   "file": "motion-comp/spec/schemas/manifest.motion-comp.schema.json",
+   "edit": "loader-capabilities",
+   "reason": "core.loader capabilities: the release loaders declare `summarize-points` and `summarize-gsplat` (release spec/schemas/manifest.schema.json $defs/loaderMeta); the ArtCraft schemas predate them and refused the release loader nodes (found by W5a/W5b/W5c).",
+   "sha256_before": "8f8c3746a241fcef2115f5b8c41d1d3952517e546f497ffd2ce82994ecf86d36",
+   "sha256_after": "9ac77bd6f0846ef09a4d98a671f637a4141c34a31228cdf7615b45430c5c52bc"
+  },
+  {
+   "file": "rich-document/spec/schemas/manifest.rich-document.schema.json",
+   "edit": "loader-capabilities",
+   "reason": "core.loader capabilities: the release loaders declare `summarize-points` and `summarize-gsplat` (release spec/schemas/manifest.schema.json $defs/loaderMeta); the ArtCraft schemas predate them and refused the release loader nodes (found by W5a/W5b/W5c).",
+   "sha256_before": "b130a479a78fd51ccb1a5ac4e190ec6545a5a85689d143c8e246d0a918fe4f07",
+   "sha256_after": "4d0ffdd837a500b1fb4a34574ac2d2b85545d225d8c8de93e90dbb2bf1f61b52"
+  },
+  {
+   "file": "spreadsheet/spec/schemas/manifest.spreadsheet.schema.json",
+   "edit": "loader-capabilities",
+   "reason": "core.loader capabilities: the release loaders declare `summarize-points` and `summarize-gsplat` (release spec/schemas/manifest.schema.json $defs/loaderMeta); the ArtCraft schemas predate them and refused the release loader nodes (found by W5a/W5b/W5c).",
+   "sha256_before": "a312df57d1a164e39d5ba24a529481aa8dc7bb9d73d3405e79a4d55bb66c536f",
+   "sha256_after": "51c528c93a01ec304d890d35ba2d7308936b0b42fd953374f5cd9245f52d3440"
+  },
+  {
+   "file": "presentation/spec/schemas/manifest.presentation.schema.json",
+   "edit": "loader-capabilities",
+   "reason": "core.loader capabilities: the release loaders declare `summarize-points` and `summarize-gsplat` (release spec/schemas/manifest.schema.json $defs/loaderMeta); the ArtCraft schemas predate them and refused the release loader nodes (found by W5a/W5b/W5c).",
+   "sha256_before": "38795c452fb87b49053ece5728fbb1d2a7569b94f66967fb0dca9fdff75c9666",
+   "sha256_after": "205c230f498ec6c2ffe567c7b6fbfea69e285d822a4cb3b71dcba5881fa037c4"
+  },
+  {
+   "file": "raster-layers/HOW-TO-READ.md",
+   "edit": "writer-neutral",
+   "reason": "The guide said the file was saved by PhotoCraft; a package written by another writer (the release builder) must not say so.",
+   "sha256_before": "9af0f0566869a9f1a4a734da6dc1cce3400964db02a78aaa470fd161e3953124",
+   "sha256_after": "a108c1f6c8fb281bd76104ede9a0dc3375d9e7cee87ee5802ace16cf32df4ed7"
+  }
+ ]
+}

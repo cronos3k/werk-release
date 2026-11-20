@@ -20,6 +20,7 @@ the author's private lineage; `RELEASE-ASSEMBLY.md` says from what and how.
 | [MANIFESTO.md](MANIFESTO.md) | The twelve laws. Read this first. |
 | [spec/](spec/) | The specification: `SPEC.md`, `MINI-SPECS.md`, the JSON schemas, the byte layouts, format definitions, writing walkthroughs. Every package carries a copy. |
 | [SPEC-3D-ENTITY.md](SPEC-3D-ENTITY.md), [WHITEPAPER.md](WHITEPAPER.md) | Profile overview and the short argument. |
+| [profiles/](profiles/) | Six more profiles, each defined by documents that travel in its packages (SPEC §2.2): definitions, reference readers, builders, fixtures. |
 | [loaders/](loaders/) | Single-file, dependency-free readers: `werk_read.py`, `werk_read.rs`, `werk_read.c`. |
 | [core/](core/) | The reference core (Rust, `werk-core`): a C ABI (`include/werk.h`), the `werkc` CLI, conformance tests. |
 | [bindings/python/](bindings/python/) | Python over the core's C ABI (ctypes, no pip dependencies). |
@@ -34,6 +35,23 @@ the author's private lineage; `RELEASE-ASSEMBLY.md` says from what and how.
 | [results/](results/), [docs/](docs/) | Per-stage result ledgers and the rulings. |
 | [paper/](paper/) | The paper drafts. |
 | [RELEASE-ASSETS.md](RELEASE-ASSETS.md) | Files kept out of git (large fixtures, scans), hash-pinned. |
+
+## Profiles
+
+Built into the reference readers: `3d-entity/1` and `image/1` (`spec/`). Carried in their own
+packages, with no change to `spec/` (SPEC §2.2, §3.17, §3.18), from the ArtCraft applications:
+
+| profile | what | folder |
+|---|---|---|
+| `raster-layers/1` | layered raster images (layers, masks, adjustments) | [profiles/raster-layers/](profiles/raster-layers/) |
+| `vector-art/1` | vector illustrations (paths, gradients, type) | [profiles/vector-art/](profiles/vector-art/) |
+| `motion-comp/1` | motion-graphics compositions (layers, keyframes) | [profiles/motion-comp/](profiles/motion-comp/) |
+| `rich-document/1` | styled text documents (paragraphs, tables, pictures) | [profiles/rich-document/](profiles/rich-document/) |
+| `spreadsheet/1` | workbooks (cells, formulas, cached results) | [profiles/spreadsheet/](profiles/spreadsheet/) |
+| `presentation/1` | slide decks that embed other files by content | [profiles/presentation/](profiles/presentation/) |
+
+Each folder holds the profile's definition files, a `PROFILE.md`, a reference reader and a
+builder; the fixtures and their pins are in `profiles/fixtures/` and `profiles/PINS.md`.
 
 ## Build and test
 

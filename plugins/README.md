@@ -46,6 +46,12 @@ motion-comp/1, office profiles). Those capsules are not part of this
 repository; point `WERK_ARTCRAFT_SAMPLES` (or Office's `--samples`) at a
 folder holding them. Without it, those tasks cannot run.
 
+**Release profiles.** The definitions of raster-layers/1, vector-art/1,
+motion-comp/1, rich-document/1, spreadsheet/1 and presentation/1, with one
+fixture each, are now in [`../profiles/`](../profiles/). The gates above ran
+against the ArtCraft sample capsules (which carry earlier copies of those
+definitions), not against `profiles/fixtures/`; they have not been re-run.
+
 **Paths.** Each plug-in's `tools/werk_paths.py` finds the repository and
 `libs/` from its own location (`<repo>/plugins/<host>/`); override with
 `WERK_REPO` and `WERK_LIBS`.

@@ -1,0 +1,61 @@
+{
+  "name": "Triangle",
+  "path": {
+    "fill_rule": "NonZero",
+    "inverted": false,
+    "subpaths": [
+      {
+        "closed": true,
+        "knots": [
+          {
+            "anchor": {
+              "x": 10.0,
+              "y": 10.0
+            },
+            "in_ctrl": {
+              "x": 10.0,
+              "y": 10.0
+            },
+            "out_ctrl": {
+              "x": 10.0,
+              "y": 10.0
+            },
+            "smooth": false
+          },
+          {
+            "anchor": {
+              "x": 110.0,
+              "y": 10.0
+            },
+            "in_ctrl": {
+              "x": 110.0,
+              "y": 10.0
+            },
+            "out_ctrl": {
+              "x": 110.0,
+              "y": 10.0
+            },
+            "smooth": false
+          },
+          {
+            "anchor": {
+              "x": 60.0,
+              "y": 96.5
+            },
+            "in_ctrl": {
+              "x": 60.0,
+              "y": 96.5
+            },
+            "out_ctrl": {
+              "x": 60.0,
+              "y": 96.5
+            },
+            "smooth": false
+          }
+        ],
+        "op": "Combine"
+      }
+    ]
+  },
+  "schema_version": 1
+}

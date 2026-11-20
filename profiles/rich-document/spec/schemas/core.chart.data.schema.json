@@ -1,0 +1,118 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.chart.data.schema.json",
+ "title": "core.chart.data — the data of charts read from another format",
+ "description": "Derived (`measured`): the series, category labels and values that the preserved chart parts of the document hold, read out so that a reader needs neither that format nor an extension node to know what a chart plots. A chart made in the application is not listed here: its `graphic` object carries the same information in `chart`. The values are the ones the source file CACHED for display (a chart linked to a workbook shows them until it is refreshed). The procedure is named `drawingml-chart-cache-1` in the node's `input_params`; its inputs are the chart parts.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "charts"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "charts": {
+   "description": "One entry per chart whose data could be read, in ascending order of `source`, then of `part`.",
+   "type": "array",
+   "items": {
+    "description": "The data of one chart.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "source",
+     "part",
+     "type",
+     "series"
+    ],
+    "properties": {
+     "source": {
+      "description": "Which chart: the value of the `ooxmlSource` property of the chart's `graphic` object in the blocks (16 hexadecimal digits). A reader matches the two strings; it needs no extension node for that.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$"
+     },
+     "part": {
+      "description": "The name of the preserved package part the data was read from (an entry of the structure node's `packageParts`), for example `word/charts/chart1.xml`. A name, not a path.",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "type": {
+      "description": "The kind of the chart's first plot, as the source names it without the word Chart: `bar` (bars or columns, see `barDirection`), `line`, `pie`, `area`, `scatter`, `doughnut`, `radar`, `bubble`, `stock`, `surface`, `ofPie`, and the three-dimensional forms `bar3D`, `line3D`, `pie3D`, `area3D`, `surface3D`. A chart that combines plots has the others in its series' `plot`.",
+      "type": "string"
+     },
+     "title": {
+      "description": "The chart's title, when it has one of its own text. Absent: no title, or one the source computes.",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "barDirection": {
+      "description": "For bars: `col` (vertical columns) or `bar` (horizontal bars). Absent for other charts.",
+      "type": "string",
+      "enum": [
+       "bar",
+       "col"
+      ]
+     },
+     "series": {
+      "description": "The data series, in the order of the source.",
+      "type": "array",
+      "items": {
+       "description": "One series.",
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "plot",
+        "name",
+        "categories",
+        "values"
+       ],
+       "properties": {
+        "plot": {
+         "description": "The kind of plot this series belongs to (the same vocabulary as the chart's `type`).",
+         "type": "string"
+        },
+        "name": {
+         "description": "The series' name as the legend shows it. Empty: unnamed.",
+         "type": "string",
+         "format": "werk-content-text"
+        },
+        "categories": {
+         "description": "The category label of each point, as text; for a scatter or bubble plot the x value of each point, as the text the source cached. Null: the source has no label for that point. Empty: the series has no categories of its own.",
+         "type": "array",
+         "items": {
+          "anyOf": [
+           {
+            "type": "string",
+            "format": "werk-content-text"
+           },
+           {
+            "type": "null"
+           }
+          ]
+         }
+        },
+        "values": {
+         "description": "The plotted value of each point (for a scatter or bubble plot: the y value), IEEE 754 binary64. Null: a gap (the source has no number for that point). Entry i belongs to `categories[i]`.",
+         "type": "array",
+         "items": {
+          "anyOf": [
+           {
+            "type": "number"
+           },
+           {
+            "type": "null"
+           }
+          ]
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,83 @@
+{
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Any JSON value, carried verbatim. Strings inside it are never references to other parts of the document."
+    },
+    "text_style": {
+      "additionalProperties": false,
+      "description": "A named text style.",
+      "properties": {
+        "attrs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "description": "The attributes the style sets, by VectorCraft's command parameter names (for example `size`, `fontFamily`, `leading`, `fill`, `justify`, `spaceBefore`, `tabs`), each with the value the style gives it; an attribute that is not listed is left as it is. The attributes a run or paragraph actually has are always spelled out on the run or paragraph itself, so a reader that only draws need not resolve styles. Absent: no attributes.",
+          "type": "object"
+        },
+        "name": {
+          "description": "The style's name: what `style_name` of a run or paragraph names it by.",
+          "format": "werk-content-text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.text.styles.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The document's named text styles.",
+  "properties": {
+    "character": {
+      "description": "Character styles, in panel order. Absent: none.",
+      "items": {
+        "$ref": "#/$defs/text_style"
+      },
+      "type": "array"
+    },
+    "paragraph": {
+      "description": "Paragraph styles, in panel order. Absent: none.",
+      "items": {
+        "$ref": "#/$defs/text_style"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "core.text.styles - the character and paragraph styles of a vector-art/1 document",
+  "type": "object"
+}

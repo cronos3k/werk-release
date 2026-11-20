@@ -1,0 +1,39 @@
+{
+  "$defs": {},
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What was open in the editor when the file was saved. Application-private and safe to ignore: it changes nothing about the document.",
+  "properties": {
+    "active_comp": {
+      "anyOf": [
+        {
+          "description": "Id of the composition shown in the viewer and the timeline.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Id of the composition shown in the viewer and the timeline."
+    },
+    "open_comps": {
+      "description": "The open composition tabs, in tab order. Default none.",
+      "items": {
+        "description": "A composition's id.",
+        "minimum": 0,
+        "type": "integer"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "x.effectcraft.view",
+  "type": "object"
+}

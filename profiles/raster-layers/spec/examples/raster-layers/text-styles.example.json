@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "styles": {
+    "basic": {
+      "char_attrs": {},
+      "id": 0,
+      "name": "Basic Paragraph",
+      "para_attrs": {}
+    },
+    "character": [
+      {
+        "attrs": {
+          "font_style": "Bold",
+          "weight": 700
+        },
+        "id": 1,
+        "name": "Emphasis"
+      }
+    ],
+    "paragraph": [
+      {
+        "char_attrs": {},
+        "id": 1,
+        "name": "Centered",
+        "para_attrs": {
+          "align": "Center"
+        }
+      }
+    ],
+    "psd_raw": null
+  }
+}

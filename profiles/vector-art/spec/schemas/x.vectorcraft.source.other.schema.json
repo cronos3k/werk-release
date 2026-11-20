@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.source.other.schema.json",
+  "title": "x.vectorcraft.source.other - bytes VectorCraft did not recognise (when they happen to be JSON)",
+  "description": "Any JSON value: the bytes are carried verbatim and are not interpreted."
+}

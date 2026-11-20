@@ -1,0 +1,265 @@
+{
+  "assets": [
+    {
+      "id": 118,
+      "name": "Hero asset",
+      "nodes": [
+        94,
+        4
+      ]
+    }
+  ],
+  "graph_designs": [
+    {
+      "name": "Marker Star",
+      "node": "x-graph-design-1"
+    },
+    {
+      "name": "Bar Design",
+      "node": "x-graph-design-2"
+    }
+  ],
+  "pattern_edit": {
+    "layer": 96,
+    "original": {
+      "art": [
+        {
+          "appearance": {
+            "items": [
+              {
+                "kind": "fill",
+                "paint": {
+                  "color": {
+                    "b": 1.0,
+                    "g": 1.0,
+                    "model": "rgb",
+                    "r": 1.0
+                  },
+                  "type": "solid"
+                }
+              },
+              {
+                "kind": "stroke",
+                "paint": {
+                  "color": {
+                    "b": 0.0,
+                    "g": 0.0,
+                    "model": "rgb",
+                    "r": 0.0
+                  },
+                  "type": "solid"
+                },
+                "width": 1.0
+              }
+            ]
+          },
+          "id": 106,
+          "kind": {
+            "path": {
+              "subpaths": [
+                {
+                  "anchors": [
+                    {
+                      "p": [
+                        0.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        20.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        20.0,
+                        25.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        0.0,
+                        25.0
+                      ]
+                    }
+                  ],
+                  "closed": true
+                }
+              ]
+            },
+            "type": "path"
+          }
+        },
+        {
+          "appearance": {
+            "items": [
+              {
+                "kind": "fill",
+                "paint": {
+                  "color": {
+                    "b": 1.0,
+                    "g": 1.0,
+                    "model": "rgb",
+                    "r": 1.0
+                  },
+                  "type": "solid"
+                }
+              },
+              {
+                "kind": "stroke",
+                "paint": {
+                  "color": {
+                    "b": 0.0,
+                    "g": 0.0,
+                    "model": "rgb",
+                    "r": 0.0
+                  },
+                  "type": "solid"
+                },
+                "width": 1.0
+              }
+            ]
+          },
+          "id": 105,
+          "kind": {
+            "path": {
+              "subpaths": [
+                {
+                  "anchors": [
+                    {
+                      "p": [
+                        2.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        22.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        22.0,
+                        25.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        2.0,
+                        25.0
+                      ]
+                    }
+                  ],
+                  "closed": true
+                }
+              ]
+            },
+            "type": "path"
+          },
+          "trace": {
+            "preset": "logo"
+          }
+        }
+      ],
+      "copies": 7,
+      "dimCopies": 55.5,
+      "hSpacing": 1.5,
+      "name": "Bricks",
+      "overlap": {
+        "bottomInFront": true,
+        "rightInFront": false
+      },
+      "showSwatchBounds": true,
+      "showTileEdge": false,
+      "sizeTileToArt": true,
+      "tile": {
+        "x0": 0.0,
+        "x1": 21.0,
+        "y0": 0.0,
+        "y1": 15.0
+      },
+      "tileType": {
+        "offset": 0.5,
+        "type": "brickByRow"
+      },
+      "vSpacing": 2.5
+    },
+    "pattern": "Bricks"
+  },
+  "schema_version": 1,
+  "slices": [
+    {
+      "id": 117,
+      "options": {
+        "alt": "Alternative",
+        "background": "#aabbcc",
+        "message": "status",
+        "name": "hero-slice",
+        "target": "_blank",
+        "text": "<b>cell</b>",
+        "url": "https://example.org/"
+      },
+      "rect": {
+        "x0": 10.0,
+        "x1": 110.0,
+        "y0": 10.0,
+        "y1": 60.0
+      }
+    },
+    {
+      "id": 1117,
+      "rect": {
+        "x0": 0.0,
+        "x1": 1.0,
+        "y0": 0.0,
+        "y1": 1.0
+      }
+    }
+  ],
+  "slices_clip_to_artboard": false,
+  "variables": {
+    "active_dataset": "Row 1",
+    "bindings": {
+      "4": [
+        "Badge",
+        "Title"
+      ],
+      "94": [
+        "Badge"
+      ]
+    },
+    "datasets": [
+      {
+        "name": "Row 1",
+        "values": {
+          "Badge": {
+            "visible": true
+          },
+          "Title": {
+            "text": "Ünï \"q\" \\ \u0007 é́ עברית 日本語 🎨"
+          }
+        }
+      },
+      {
+        "name": "Row 2",
+        "values": {
+          "Title": {
+            "text": "C:\\Users\\someone\\Desktop\\logo.ai"
+          }
+        }
+      }
+    ],
+    "variables": [
+      {
+        "kind": "text",
+        "name": "Title"
+      },
+      {
+        "kind": "visibility",
+        "name": "Badge"
+      }
+    ]
+  }
+}

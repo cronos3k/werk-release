@@ -1,0 +1,315 @@
+{
+  "conventions": {
+    "alignment_bytes": {
+      "governs": [
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Payload sections of envelope binaries start on this boundary.",
+      "scope": "node"
+    },
+    "angle_direction": {
+      "governs": [
+        "core.text.blocks",
+        "core.style.sheet",
+        "core.style.numbering"
+      ],
+      "note": "A positive angle turns clockwise as seen on the page (y down).",
+      "scope": "node"
+    },
+    "angle_unit": {
+      "governs": [
+        "core.text.blocks",
+        "core.style.sheet",
+        "core.style.numbering"
+      ],
+      "note": "Rotations, shadow and gradient directions.",
+      "scope": "node"
+    },
+    "axis_x": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "x grows to the right.",
+      "scope": "node"
+    },
+    "axis_y": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "y grows downwards.",
+      "scope": "node"
+    },
+    "char_pitch_units_per_point": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "Unit of a document grid's `charSpace`: 1/4096 point.",
+      "scope": "node"
+    },
+    "color_component_max": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "Colour components are integers 0..255.",
+      "scope": "node"
+    },
+    "color_model": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "A colour is [red, green, blue], sRGB (IEC 61966-2-1), no alpha.",
+      "scope": "node"
+    },
+    "column_break_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+000E in a paragraph's text is a column break.",
+      "scope": "node"
+    },
+    "coordinate_origin": {
+      "governs": [
+        "core.text.blocks",
+        "core.media.image",
+        "core.media.original",
+        "core.preview.page"
+      ],
+      "note": "Offsets, drawing items and pixels are measured from the top-left corner.",
+      "scope": "node"
+    },
+    "date_format": {
+      "governs": [
+        "core.text.properties",
+        "core.text.comments",
+        "core.text.tracked-changes",
+        "core.text.blocks"
+      ],
+      "note": "Dates and times are ISO 8601 text (2026-03-01T10:15:00Z).",
+      "scope": "node"
+    },
+    "emu_per_inch": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "The one EMU-valued field: a text box story's `textBody.inset`.",
+      "scope": "node"
+    },
+    "endianness": {
+      "governs": [
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Every envelope binary is little-endian. MessagePack header integers inside an envelope are big-endian by MessagePack's own definition (spec/layouts/ENVELOPE.layout.txt section 4).",
+      "scope": "node"
+    },
+    "hash_algorithm": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256.",
+      "scope": "container"
+    },
+    "id_case": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every id matches ^[a-z0-9]+(-[a-z0-9]+)*$.",
+      "scope": "container"
+    },
+    "image_alpha_mode": {
+      "governs": [
+        "core.media.image",
+        "core.preview.page"
+      ],
+      "note": "Alpha is not premultiplied.",
+      "scope": "node"
+    },
+    "image_bit_depth": {
+      "governs": [
+        "core.media.image",
+        "core.preview.page"
+      ],
+      "note": "A rendition and the page preview are 8 bits per channel RGBA; an original PNG is whatever its own header says.",
+      "scope": "node"
+    },
+    "image_color_space": {
+      "governs": [
+        "core.media.image",
+        "core.preview.page"
+      ],
+      "note": "Renditions and the preview are sRGB; an original PNG's own colour chunks win.",
+      "scope": "node"
+    },
+    "language_tags": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "Languages are BCP 47 tags (en-US, ja-JP).",
+      "scope": "node"
+    },
+    "length_unit": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "Every length is in points unless its schema description names another unit.",
+      "scope": "node"
+    },
+    "line_break_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+000A in a paragraph's text is a manual line break within the paragraph.",
+      "scope": "node"
+    },
+    "line_ending": {
+      "governs": [
+        "core.preview.text"
+      ],
+      "note": "The plain-text derivative ends every paragraph and table row with U+000A.",
+      "scope": "node"
+    },
+    "nonbreaking_hyphen_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+2011 is a hyphen no line breaks at.",
+      "scope": "node"
+    },
+    "nonbreaking_space_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+00A0 is a space no line breaks at.",
+      "scope": "node"
+    },
+    "number_precision": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "Non-integer numbers are IEEE 754 binary32 values written in the shortest decimal form that reads back to the same binary32 (chart values: binary64).",
+      "scope": "node"
+    },
+    "object_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+FFFC in a paragraph's text marks an inline object: the k-th one is objects[k].",
+      "scope": "node"
+    },
+    "page_break_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+000C in a paragraph's text is a page break.",
+      "scope": "node"
+    },
+    "percent_scale": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "A value described as a percentage runs 0..100 (not 0..1), unless its description says fraction.",
+      "scope": "node"
+    },
+    "points_per_inch": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "1 point = 1/72 inch = 20 twips = 12700 EMU = 0.352777... mm.",
+      "scope": "node"
+    },
+    "preview_pixels_per_point": {
+      "governs": [
+        "core.preview.page"
+      ],
+      "note": "The page preview is rendered at 1 pixel per point (72 dpi): a US Letter page is 612 x 792 pixels.",
+      "scope": "node"
+    },
+    "signature_algorithm": {
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state, not damage.",
+      "scope": "signature"
+    },
+    "soft_hyphen_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+00AD is an optional hyphen: shown only where a line breaks at it.",
+      "scope": "node"
+    },
+    "tab_char": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "U+0009 in a paragraph's text is a tab.",
+      "scope": "node"
+    },
+    "text_encoding": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every text and JSON payload, INCLUDING MANIFEST.json - which is why the scope is container.",
+      "scope": "container"
+    },
+    "text_normalization": {
+      "governs": [
+        "core.text.blocks",
+        "core.text.document",
+        "core.style.sheet",
+        "core.style.numbering",
+        "core.text.settings"
+      ],
+      "note": "Text is stored as authored; no Unicode normalisation is applied or assumed.",
+      "scope": "node"
+    },
+    "text_offset_unit": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "A run's `len` counts bytes of the paragraph text's UTF-8 encoding.",
+      "scope": "node"
+    },
+    "wrap_polygon_extent": {
+      "governs": [
+        "core.text.blocks"
+      ],
+      "note": "A wrap polygon's coordinate space: 21600 units span the object's width, and its height.",
+      "scope": "node"
+    }
+  },
+  "note": "The machine-readable convention to node-type map of profile rich-document/1 (SPEC.md section 10.2, ruling S-17). The convention set is a property of the PROFILE, not of the reader (S-25): check these and no others.",
+  "profile": "rich-document/1",
+  "schema_version": 1
+}

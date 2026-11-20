@@ -1,0 +1,2 @@
+mirror edits: craft-libs/crates/werk/Cargo.toml werk-core path -> mirror/werk/core (release fdc388b core); photocraft/crates/werk/Cargo.toml dev werk-core path likewise; craft-libs/crates/werk/src/signature.rs: map release SignatureState::Unverified; added photocraft/crates/werk/examples/w19_roundtrip.rs
+effectcraft: craft-libs-all -> craft-libs (same commit 8631f6e as W6); added crates/werk/examples/w19_schemas.rs

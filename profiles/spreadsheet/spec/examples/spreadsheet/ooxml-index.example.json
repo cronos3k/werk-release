@@ -1,0 +1,37 @@
+{
+  "elements": [
+    {
+      "slot": "externalReferences",
+      "xml": "<externalReferences><externalReference r:id=\"rId3\"/></externalReferences>"
+    }
+  ],
+  "owner": "workbook",
+  "package_rels": [],
+  "parts": [
+    {
+      "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml",
+      "file_name": "part-0001.bin",
+      "name": "xl/externalLinks/externalLink1.xml",
+      "rels": [
+        {
+          "external": true,
+          "id": "rId1",
+          "rel_type": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLinkPath",
+          "target": "file:///C:/somewhere/else/Rates.xlsx"
+        }
+      ],
+      "sha256": "9969528d6e4d2019e55becdeecb26ed4d9c4e2e92102b211d3210642c668f436",
+      "size": 434
+    }
+  ],
+  "rels": [
+    {
+      "external": false,
+      "id": "rId3",
+      "rel_type": "http://schemas.openxmlformats.org/officeDocument/2006/relationships/externalLink",
+      "target": "xl/externalLinks/externalLink1.xml"
+    }
+  ],
+  "schema_version": 1,
+  "vml": null
+}

@@ -1,0 +1,18 @@
+{
+  "names": [
+    {
+      "comment": "VAT",
+      "formula": "0.07",
+      "hidden": false,
+      "name": "TaxRate"
+    },
+    {
+      "comment": "",
+      "formula": "Prices!$A$2:$A$3",
+      "hidden": false,
+      "name": "Items",
+      "scope_sheet": "sheet-1"
+    }
+  ],
+  "schema_version": 1
+}

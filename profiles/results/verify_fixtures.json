@@ -1,0 +1,158 @@
+{
+ "motion-comp": {
+  "es3": 0,
+  "js": 0,
+  "loader_py_strict": {
+   "exit": 0,
+   "verified": "123/123 files verified"
+  },
+  "ok": true,
+  "pin": true,
+  "py": 0,
+  "py_strict": 1,
+  "reference_reader": {
+   "dead": 0,
+   "exit": 0,
+   "files_verified": 123
+  },
+  "werkc": {
+   "census": "15 nodes: 8 alive, 7 skipped, 0 dead",
+   "envelopes": "7 validated structurally",
+   "errors": 0,
+   "exit": 0,
+   "formats": "0 definition(s) read, 0 printed test-vector input(s) re-hashed",
+   "payloads": "8 JSON payload(s) validated against the package's own schemas",
+   "validated": "package-own-schema"
+  }
+ },
+ "presentation": {
+  "es3": 0,
+  "js": 0,
+  "loader_py_strict": {
+   "exit": 0,
+   "verified": "116/116 files verified"
+  },
+  "ok": true,
+  "pin": true,
+  "py": 0,
+  "py_strict": 1,
+  "reference_reader": {
+   "dead": 0,
+   "exit": 0,
+   "files_verified": 116
+  },
+  "werkc": {
+   "census": "21 nodes: 10 alive, 11 skipped, 0 dead",
+   "envelopes": "3 validated structurally",
+   "errors": 0,
+   "exit": 0,
+   "formats": "2 definition(s) read, 11 printed test-vector input(s) re-hashed",
+   "payloads": "13 JSON payload(s) validated against the package's own schemas",
+   "validated": "package-own-schema"
+  }
+ },
+ "raster-layers": {
+  "es3": 0,
+  "js": 0,
+  "loader_py_strict": {
+   "exit": 0,
+   "verified": "143/143 files verified"
+  },
+  "ok": true,
+  "pin": true,
+  "py": 0,
+  "py_strict": 1,
+  "reference_reader": {
+   "dead": 0,
+   "exit": 0,
+   "files_verified": 143
+  },
+  "werkc": {
+   "census": "19 nodes: 9 alive, 10 skipped, 0 dead",
+   "envelopes": "11 validated structurally",
+   "errors": 0,
+   "exit": 0,
+   "formats": "1 definition(s) read, 5 printed test-vector input(s) re-hashed",
+   "payloads": "8 JSON payload(s) validated against the package's own schemas",
+   "validated": "package-own-schema"
+  }
+ },
+ "rich-document": {
+  "es3": 0,
+  "js": 0,
+  "loader_py_strict": {
+   "exit": 0,
+   "verified": "124/124 files verified"
+  },
+  "ok": true,
+  "pin": true,
+  "py": 0,
+  "py_strict": 1,
+  "reference_reader": {
+   "dead": 0,
+   "exit": 0,
+   "files_verified": 124
+  },
+  "werkc": {
+   "census": "15 nodes: 9 alive, 6 skipped, 0 dead",
+   "envelopes": "3 validated structurally",
+   "errors": 0,
+   "exit": 0,
+   "formats": "1 definition(s) read, 5 printed test-vector input(s) re-hashed",
+   "payloads": "7 JSON payload(s) validated against the package's own schemas",
+   "validated": "package-own-schema"
+  }
+ },
+ "spreadsheet": {
+  "es3": 0,
+  "js": 0,
+  "loader_py_strict": {
+   "exit": 0,
+   "verified": "131/131 files verified"
+  },
+  "ok": true,
+  "pin": true,
+  "py": 0,
+  "py_strict": 1,
+  "reference_reader": {
+   "dead": 0,
+   "exit": 0,
+   "files_verified": 131
+  },
+  "werkc": {
+   "census": "18 nodes: 9 alive, 9 skipped, 0 dead",
+   "envelopes": "5 validated structurally",
+   "errors": 0,
+   "exit": 0,
+   "formats": "1 definition(s) read, 5 printed test-vector input(s) re-hashed",
+   "payloads": "12 JSON payload(s) validated against the package's own schemas",
+   "validated": "package-own-schema"
+  }
+ },
+ "vector-art": {
+  "es3": 0,
+  "js": 0,
+  "loader_py_strict": {
+   "exit": 0,
+   "verified": "126/126 files verified"
+  },
+  "ok": true,
+  "pin": true,
+  "py": 0,
+  "py_strict": 1,
+  "reference_reader": {
+   "dead": 0,
+   "exit": 0,
+   "files_verified": 126
+  },
+  "werkc": {
+   "census": "14 nodes: 8 alive, 6 skipped, 0 dead",
+   "envelopes": "3 validated structurally",
+   "errors": 0,
+   "exit": 0,
+   "formats": "0 definition(s) read, 0 printed test-vector input(s) re-hashed",
+   "payloads": "7 JSON payload(s) validated against the package's own schemas",
+   "validated": "package-own-schema"
+  }
+ }
+}

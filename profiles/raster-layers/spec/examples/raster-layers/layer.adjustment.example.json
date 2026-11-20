@@ -1,0 +1,97 @@
+{
+  "advanced": {
+    "blendClipped": true,
+    "blendInterior": false,
+    "knockout": "none",
+    "layerMaskHidesEffects": false,
+    "transparencyShapes": true,
+    "vectorMaskHidesEffects": false
+  },
+  "blend": "Normal",
+  "blend_if": {
+    "ranges": []
+  },
+  "clipped": false,
+  "content": {
+    "adjustment": {
+      "Curves": {
+        "black": [],
+        "master": [
+          {
+            "input": 0.0,
+            "output": 0.0
+          },
+          {
+            "input": 0.5,
+            "output": 0.625
+          },
+          {
+            "input": 1.0,
+            "output": 1.0
+          }
+        ],
+        "pencil": false,
+        "per_channel": [
+          [
+            {
+              "input": 0.0,
+              "output": 0.0
+            },
+            {
+              "input": 1.0,
+              "output": 1.0
+            }
+          ],
+          [
+            {
+              "input": 0.0,
+              "output": 0.0
+            },
+            {
+              "input": 1.0,
+              "output": 1.0
+            }
+          ],
+          [
+            {
+              "input": 0.0,
+              "output": 0.0625
+            },
+            {
+              "input": 1.0,
+              "output": 1.0
+            }
+          ]
+        ],
+        "space": "Rgb"
+      }
+    },
+    "kind": "adjustment"
+  },
+  "effects": {
+    "enabled": true,
+    "items": [],
+    "reference": null
+  },
+  "excluded_channels": 0,
+  "fill_cache": null,
+  "fill_opacity": 1.0,
+  "label": "None",
+  "link_group": null,
+  "locks": {
+    "all": false,
+    "artboard": false,
+    "pixels": false,
+    "position": false,
+    "transparency": false
+  },
+  "mask": null,
+  "name": "Curves 1",
+  "opacity": 1.0,
+  "psd": null,
+  "psd_id": null,
+  "schema_version": 1,
+  "vector_mask": null,
+  "video": null,
+  "visible": true
+}

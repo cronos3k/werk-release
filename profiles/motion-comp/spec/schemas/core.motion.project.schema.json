@@ -1,0 +1,661 @@
+{
+  "$defs": {
+    "footage": {
+      "additionalProperties": false,
+      "description": "A footage item: how one medium is interpreted. The medium itself is the node `media.node`.",
+      "properties": {
+        "alpha": {
+          "description": "How the file's alpha channel is interpreted. `Straight`: colour is not multiplied by alpha; `Premultiplied`: colour is multiplied by alpha over `premul_color`; `Ignore`: alpha is ignored: the picture is opaque.",
+          "enum": [
+            "Straight",
+            "Premultiplied",
+            "Ignore"
+          ],
+          "type": "string"
+        },
+        "alphabetical": {
+          "description": "Image sequences: the files play one after another in name order and their numbering does not count (otherwise a gap in the numbering is a gap in time). Default false.",
+          "type": "boolean"
+        },
+        "codec": {
+          "description": "The codec or file-format name as the importing application reported it (`H.264`, `PNG`, `PSD`). A label; the format of the bytes is the media node's. Default empty.",
+          "type": "string"
+        },
+        "color_profile": {
+          "description": "The colour space of the file's values; absent: sRGB. `Srgb`: sRGB IEC 61966-2-1 (BT.709 primaries, D65, the sRGB curve); `Rec709`: BT.709 primaries, D65, a pure 2.4 power curve; `Rec2020`: BT.2020 primaries, D65, a pure 2.4 power curve; `DisplayP3`: P3 primaries, D65, the sRGB curve; `AcesCg`: ACEScg: AP1 primaries, ACES white, linear; `Aces2065`: ACES2065-1: AP0 primaries, ACES white, linear; `Rec2100Pq`: BT.2020 primaries, D65, SMPTE ST 2084 (PQ); `Rec2100Hlg`: BT.2020 primaries, D65, hybrid log-gamma.",
+          "enum": [
+            "Srgb",
+            "Rec709",
+            "Rec2020",
+            "DisplayP3",
+            "AcesCg",
+            "Aces2065",
+            "Rec2100Pq",
+            "Rec2100Hlg"
+          ],
+          "type": "string"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "description": "Data footage: the `core.motion.data` node that holds the file's text. Null or absent: none.",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Data footage: the `core.motion.data` node that holds the file's text. Null or absent: none."
+        },
+        "duration": {
+          "description": "Length of the footage at `frame_rate`; 0 for a still. Ticks: 254016000000 per second.",
+          "type": "integer"
+        },
+        "fields": {
+          "description": "Field separation: each field becomes a frame at twice the rate. Default `Off`. `Off`: progressive frames; `UpperFirst`: interlaced; the upper field (even rows, 0-based) is first in time; `LowerFirst`: interlaced; the lower field is first.",
+          "enum": [
+            "Off",
+            "UpperFirst",
+            "LowerFirst"
+          ],
+          "type": "string"
+        },
+        "frame_rate": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/frame_rate"
+            }
+          ],
+          "description": "The rate the footage plays at (after `Conform to frame rate`)."
+        },
+        "has_audio": {
+          "description": "It has sound.",
+          "type": "boolean"
+        },
+        "has_video": {
+          "description": "It has a picture.",
+          "type": "boolean"
+        },
+        "height": {
+          "description": "Height of the picture in its stored pixels.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "invert_alpha": {
+          "description": "Alpha is inverted (1 - a) after decoding. Default false.",
+          "type": "boolean"
+        },
+        "kind": {
+          "description": "What the medium is used as. `Video`: a movie; `Still`: one picture; `Sequence`: numbered stills played as frames; `Audio`: sound only; `Model`: a 3D model; `Data`: a data file (JSON, CSV, TSV) read by expressions; no picture.",
+          "enum": [
+            "Video",
+            "Still",
+            "Sequence",
+            "Audio",
+            "Model",
+            "Data"
+          ],
+          "type": "string"
+        },
+        "layer": {
+          "additionalProperties": false,
+          "description": "The footage is ONE layer of a layered file (a Photoshop document, a PDF / Illustrator page) instead of its merged picture.",
+          "properties": {
+            "embedded": {
+              "description": "A Photoshop smart object: the unique id of its embedded file, which is the footage instead of the layer's pixels.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "index": {
+              "description": "Index of the layer record in the file; the bottom layer is 0.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "layer_size": {
+              "description": "True: the footage is the layer's own bounds; false: the document's size. Default false.",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "The layer's name in the file.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "placed": {
+              "description": "A smart object placed with a perspective quad or a warp: the footage is the embedded file as placed, over its placed bounds. Default false.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "index",
+            "name"
+          ],
+          "type": "object"
+        },
+        "linear_light": {
+          "description": "The file's values are linear light. Default false.",
+          "type": "boolean"
+        },
+        "loop_count": {
+          "description": "How many times the footage plays; 1 = once. Default 1.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "media": {
+          "$ref": "#/$defs/media_ref"
+        },
+        "missing": {
+          "description": "The application's own flag that the file could not be found when it last looked. Default false.",
+          "type": "boolean"
+        },
+        "native_rate": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/frame_rate"
+                }
+              ],
+              "description": "The file's own rate when `frame_rate` was conformed to another; null: not conformed."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The file's own rate when `frame_rate` was conformed to another; null: not conformed."
+        },
+        "page": {
+          "description": "PDF / Illustrator footage: the page shown, 0-based. Default 0.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "pixel_aspect": {
+          "description": "Pixel aspect ratio: width of one stored pixel / its height. 1 = square.",
+          "type": "number"
+        },
+        "premul_color": {
+          "description": "The matte colour premultiplied alpha is over: r, g, b 0..1 (binary32). Default black.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "preserve_rgb": {
+          "description": "The file's values enter the composition unconverted (no colour profile, no linear-light interpretation, no working-space conversion). Default false.",
+          "type": "boolean"
+        },
+        "start_timecode": {
+          "description": "The frame number (at `frame_rate`) the footage's timecode shows at its first frame; absent: 0. It only relabels source time.",
+          "type": "integer"
+        },
+        "width": {
+          "description": "Width of the picture in its stored pixels; 0 when there is none.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "media",
+        "kind",
+        "width",
+        "height",
+        "pixel_aspect",
+        "frame_rate",
+        "duration",
+        "has_video",
+        "has_audio",
+        "alpha"
+      ],
+      "type": "object"
+    },
+    "frame_rate": {
+      "additionalProperties": false,
+      "description": "A frame rate as an exact fraction: num / den frames per second (24000/1001, 25/1...). One frame lasts 254016000000 * den / num ticks.",
+      "properties": {
+        "den": {
+          "description": "Denominator, seconds. Positive.",
+          "type": "integer"
+        },
+        "num": {
+          "description": "Numerator, frames. Positive.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "num",
+        "den"
+      ],
+      "type": "object"
+    },
+    "media_ref": {
+      "additionalProperties": false,
+      "description": "Where the bytes of a footage file are: in this package, or nowhere.",
+      "properties": {
+        "frame_origins": {
+          "description": "Image sequences: the paths of the frames in playing order, as they were imported (notes). With a node, frame i is the node's file number i (profile document 3.6). Default empty.",
+          "items": {
+            "description": "The path one frame was imported from.",
+            "format": "werk-provenance-note",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "node": {
+          "anyOf": [
+            {
+              "description": "The media node (`core.media.source`, `core.media.png`, `core.media.text` or `x.effectcraft.media`) that holds the file - for an image sequence, every frame. Null: the bytes are NOT in this package (the file was missing when the document was saved, or the footage never had one); the footage is offline.",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The media node (`core.media.source`, `core.media.png`, `core.media.text` or `x.effectcraft.media`) that holds the file - for an image sequence, every frame. Null: the bytes are NOT in this package (the file was missing when the document was saved, or the footage never had one); the footage is offline."
+        },
+        "origin": {
+          "description": "The path the footage was imported from: a note of where the file WAS. It is not part of the package and no reader may treat it as a place to read from; an editing application shows it for an offline item so the user can find the file again. Empty when there was none.",
+          "format": "werk-provenance-note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node",
+        "origin"
+      ],
+      "type": "object"
+    },
+    "proxy": {
+      "additionalProperties": false,
+      "description": "A proxy: a stand-in medium used instead of the item when `enabled` is true and the render allows proxies.",
+      "properties": {
+        "enabled": {
+          "description": "Use the proxy. Default true.",
+          "type": "boolean"
+        },
+        "footage": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/footage"
+            }
+          ],
+          "description": "The stand-in, interpreted like any footage. Its medium is a file the user attached: an imported original, stamped `authored` (nothing records whether or how it was made from the item)."
+        }
+      },
+      "required": [
+        "footage"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The structure node of a motion-comp/1 document: the project's settings, its folders, and the node of every other item. It carries none of their content.",
+  "properties": {
+    "app_schema": {
+      "description": "The meaning of effect positions on layers without a source rectangle (shape, text): 2 = measured from the top-left corner of a composition-sized rectangle centred on the layer origin (effect space, profile document 6.12); 1 = measured from the layer origin.",
+      "maximum": 2,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "effect_catalog": {
+      "anyOf": [
+        {
+          "description": "The `core.effect.catalog` node: what the effect ids of this document mean.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The `core.effect.catalog` node: what the effect ids of this document mean."
+    },
+    "expression_language": {
+      "anyOf": [
+        {
+          "description": "The `core.expr.language` node: the language the expressions of this document are written in.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The `core.expr.language` node: the language the expressions of this document are written in."
+    },
+    "folders": {
+      "description": "The folders, in ascending id.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A folder of the project panel. Folders hold items and folders through the items' `parent`.",
+        "properties": {
+          "comment": {
+            "description": "A comment. Default empty.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "id": {
+            "description": "The item's id: unique in the project, never reused.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "label": {
+            "description": "The item's label. A colour label: a display aid with no effect on the picture.",
+            "enum": [
+              "None",
+              "Red",
+              "Yellow",
+              "Aqua",
+              "Pink",
+              "Lavender",
+              "Peach",
+              "SeaFoam",
+              "Blue",
+              "Green",
+              "Purple",
+              "Orange",
+              "Brown",
+              "Fuchsia",
+              "Cyan",
+              "Sandstone",
+              "DarkGreen"
+            ],
+            "type": "string"
+          },
+          "name": {
+            "description": "The item's name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "description": "Id of the folder the item is in; null: the project's root.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Id of the folder the item is in; null: the project's root."
+          },
+          "proxy": {
+            "anyOf": [
+              {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/proxy"
+                  }
+                ],
+                "description": "The item's proxy; null or absent: none."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The item's proxy; null or absent: none."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "label"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "fonts": {
+      "description": "Every face (family and style) that a text layer of the document names, in ascending (family, style). A face that is not `embedded` is drawn by a reader with a substitute, and the reader says so.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One face that a text layer names, and what became of its font file.",
+        "properties": {
+          "family": {
+            "description": "Family name a text layer asks for.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "node": {
+            "anyOf": [
+              {
+                "description": "The `core.text.font` node holding the font file; null when `status` is not `embedded`.",
+                "format": "werk-node-ref",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The `core.text.font` node holding the font file; null when `status` is not `embedded`."
+          },
+          "status": {
+            "description": "What became of the font file. `embedded`: the font file is in this package; `restricted`: the saving computer had the font and its licence bits (OS/2 fsType) forbid passing the file on; `missing`: the saving program had no font file for the face.",
+            "enum": [
+              "embedded",
+              "restricted",
+              "missing"
+            ],
+            "type": "string"
+          },
+          "style": {
+            "description": "Style name it asks for.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "family",
+          "style",
+          "node",
+          "status"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "items": {
+      "description": "Every item that is not a folder, in ascending id. THIS list, not a naming pattern, says which node holds which item.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One item and the node that holds it.",
+        "properties": {
+          "id": {
+            "description": "The item's id.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "kind": {
+            "description": "What the item is. `comp`: a composition; `footage`: a footage item; `solid`: a solid.",
+            "enum": [
+              "comp",
+              "footage",
+              "solid"
+            ],
+            "type": "string"
+          },
+          "node": {
+            "description": "The node holding the item: a `core.motion.comp` node when `kind` is `comp`, a `core.motion.item` node otherwise.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "node",
+          "kind"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "next_id": {
+      "description": "The next id the project hands out. Items, layers, properties and groups share this one counter; every id in the document is below it.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "render_queue": {
+      "anyOf": [
+        {
+          "description": "The `core.motion.render-queue` node; null or absent: the queue is empty and the templates and preferences are the defaults.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The `core.motion.render-queue` node; null or absent: the queue is empty and the templates and preferences are the defaults."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "settings": {
+      "additionalProperties": false,
+      "description": "Project settings.",
+      "properties": {
+        "audio_sample_rate": {
+          "description": "Sample rate of the project's sound, Hz.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "bit_depth": {
+          "description": "The depth pixels are computed in (profile document 6.8). `Bpc8`: 8 bits per channel: pixels are quantised to multiples of 1/255; `Bpc16`: 16 bits per channel: multiples of 1/32768; `Bpc32`: 32-bit float: not quantised.",
+          "enum": [
+            "Bpc8",
+            "Bpc16",
+            "Bpc32"
+          ],
+          "type": "string"
+        },
+        "blend_linear": {
+          "description": "Layers are BLENDED in linear light while sources and effects stay in the working space's encoding. Default false.",
+          "type": "boolean"
+        },
+        "color_engine": {
+          "description": "Colour engine. Default `Adobe`. `Adobe`: built-in colour management; `Ocio`: the built-in OCIO configuration (ACES working spaces).",
+          "enum": [
+            "Adobe",
+            "Ocio"
+          ],
+          "type": "string"
+        },
+        "comment": {
+          "description": "The project's comment. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "frame_start": {
+          "description": "The number the editor gives the first frame (0 or 1).",
+          "type": "integer"
+        },
+        "gpu_acceleration": {
+          "description": "The editor's renderer choice. No effect on the document. Default true.",
+          "type": "boolean"
+        },
+        "hdr": {
+          "description": "How over-range values reach a standard-dynamic-range output. Default `Clip`. `Clip`: values above 1 clip; `Compand`: an exponential knee from 0.8; `ToneMap`: extended Reinhard on luminance, white at 4.",
+          "enum": [
+            "Clip",
+            "Compand",
+            "ToneMap"
+          ],
+          "type": "string"
+        },
+        "linearize": {
+          "description": "The working space is linear light for everything (sources, effects, blending). Has an effect only with a `working_space`.",
+          "type": "boolean"
+        },
+        "output_space": {
+          "anyOf": [
+            {
+              "description": "The colour space of the top-level composition's output. Null: sRGB. `Srgb`: sRGB IEC 61966-2-1 (BT.709 primaries, D65, the sRGB curve); `Rec709`: BT.709 primaries, D65, a pure 2.4 power curve; `Rec2020`: BT.2020 primaries, D65, a pure 2.4 power curve; `DisplayP3`: P3 primaries, D65, the sRGB curve; `AcesCg`: ACEScg: AP1 primaries, ACES white, linear; `Aces2065`: ACES2065-1: AP0 primaries, ACES white, linear; `Rec2100Pq`: BT.2020 primaries, D65, SMPTE ST 2084 (PQ); `Rec2100Hlg`: BT.2020 primaries, D65, hybrid log-gamma.",
+              "enum": [
+                "Srgb",
+                "Rec709",
+                "Rec2020",
+                "DisplayP3",
+                "AcesCg",
+                "Aces2065",
+                "Rec2100Pq",
+                "Rec2100Hlg"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The colour space of the top-level composition's output. Null: sRGB. `Srgb`: sRGB IEC 61966-2-1 (BT.709 primaries, D65, the sRGB curve); `Rec709`: BT.709 primaries, D65, a pure 2.4 power curve; `Rec2020`: BT.2020 primaries, D65, a pure 2.4 power curve; `DisplayP3`: P3 primaries, D65, the sRGB curve; `AcesCg`: ACEScg: AP1 primaries, ACES white, linear; `Aces2065`: ACES2065-1: AP0 primaries, ACES white, linear; `Rec2100Pq`: BT.2020 primaries, D65, SMPTE ST 2084 (PQ); `Rec2100Hlg`: BT.2020 primaries, D65, hybrid log-gamma."
+        },
+        "time_display": {
+          "description": "How the editor shows time. No effect on the document. `Timecode`: timecode; `Frames`: frame numbers; `Feet35`: feet + frames, 16 frames per foot; `Feet16`: feet + frames, 40 frames per foot.",
+          "enum": [
+            "Timecode",
+            "Frames",
+            "Feet35",
+            "Feet16"
+          ],
+          "type": "string"
+        },
+        "working_gamma": {
+          "description": "2.2 or 2.4. Without a working space: the curve linear blending uses (the sRGB curve at 2.2, a pure 2.4 power at 2.4). Default 2.2.",
+          "type": "number"
+        },
+        "working_space": {
+          "anyOf": [
+            {
+              "description": "The colour space pixels are computed in. Null: no colour management (values are used as stored). `Srgb`: sRGB IEC 61966-2-1 (BT.709 primaries, D65, the sRGB curve); `Rec709`: BT.709 primaries, D65, a pure 2.4 power curve; `Rec2020`: BT.2020 primaries, D65, a pure 2.4 power curve; `DisplayP3`: P3 primaries, D65, the sRGB curve; `AcesCg`: ACEScg: AP1 primaries, ACES white, linear; `Aces2065`: ACES2065-1: AP0 primaries, ACES white, linear; `Rec2100Pq`: BT.2020 primaries, D65, SMPTE ST 2084 (PQ); `Rec2100Hlg`: BT.2020 primaries, D65, hybrid log-gamma.",
+              "enum": [
+                "Srgb",
+                "Rec709",
+                "Rec2020",
+                "DisplayP3",
+                "AcesCg",
+                "Aces2065",
+                "Rec2100Pq",
+                "Rec2100Hlg"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The colour space pixels are computed in. Null: no colour management (values are used as stored). `Srgb`: sRGB IEC 61966-2-1 (BT.709 primaries, D65, the sRGB curve); `Rec709`: BT.709 primaries, D65, a pure 2.4 power curve; `Rec2020`: BT.2020 primaries, D65, a pure 2.4 power curve; `DisplayP3`: P3 primaries, D65, the sRGB curve; `AcesCg`: ACEScg: AP1 primaries, ACES white, linear; `Aces2065`: ACES2065-1: AP0 primaries, ACES white, linear; `Rec2100Pq`: BT.2020 primaries, D65, SMPTE ST 2084 (PQ); `Rec2100Hlg`: BT.2020 primaries, D65, hybrid log-gamma."
+        }
+      },
+      "required": [
+        "bit_depth",
+        "linearize",
+        "time_display",
+        "frame_start",
+        "audio_sample_rate"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "app_schema",
+    "settings",
+    "next_id",
+    "folders",
+    "items",
+    "fonts"
+  ],
+  "title": "core.motion.project",
+  "type": "object"
+}

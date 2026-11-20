@@ -1,0 +1,278 @@
+computed.example.wkx — 1072 bytes — annotated hex dump
+sha256 b7a74499486837948876ed443a4118265eb69439a0d9973d980c80fa8a2b7d8c
+
+The one band of the core.sheet.computed store of the same sheet, INFLATED: the cached results
+of its two formula cells and the one value a dynamic array spilled. Stored as a zlib stream
+(computed.rows-0000000.example.wkx.zlib; index: computed.example.json). Grammar: spec/layouts/core.sheet.computed.layout.txt.
+
+Offsets are hexadecimal, from the start of the file. Integers and floats in the SECTIONS are
+little-endian; inside the MessagePack header they are big-endian (ENVELOPE.layout.txt section 4).
+
+--- fixed prefix -------------------------------------------------------------
+  000000  57 4b 58 31 01 00 00 00 82 03 00 00              WKX1........
+  [0..4)   magic       = "WKX1"
+  [4..8)   version     = 1          (u32 LE)
+  [8..12)  header_len  = 898        (u32 LE)
+
+--- header: 898 bytes of MessagePack at [12..910) ---------------------------
+  00000c  8b ab 61 72 72 61 79 5f 63 6f 75 6e 74 00 ad 65  ..array_count..e
+  00001c  6c 65 6d 65 6e 74 5f 63 6f 75 6e 74 00 aa 65 6e  lement_count..en
+  00002c  64 69 61 6e 6e 65 73 73 a2 6c 65 ab 65 6e 74 72  dianness.le.entr
+  00003c  79 5f 63 6f 75 6e 74 03 a4 6b 69 6e 64 b3 63 6f  y_count..kind.co
+  00004c  72 65 2e 73 68 65 65 74 2e 63 6f 6d 70 75 74 65  re.sheet.compute
+  00005c  64 ae 70 61 79 6c 6f 61 64 5f 6f 72 69 67 69 6e  d.payload_origin
+  00006c  cd 03 90 ac 70 61 79 6c 6f 61 64 5f 73 69 7a 65  ....payload_size
+  00007c  cc a0 a8 73 65 63 74 69 6f 6e 73 9d 86 a5 64 74  ...sections...dt
+  00008c  79 70 65 a3 75 33 32 a4 6e 61 6d 65 a3 72 6f 77  ype.u32.name.row
+  00009c  a6 6f 66 66 73 65 74 cd 03 90 a5 73 68 61 70 65  .offset....shape
+  0000ac  91 03 a4 73 69 7a 65 0c a6 73 74 72 69 64 65 04  ...size..stride.
+  0000bc  86 a5 64 74 79 70 65 a3 75 33 32 a4 6e 61 6d 65  ..dtype.u32.name
+  0000cc  a3 63 6f 6c a6 6f 66 66 73 65 74 cd 03 a0 a5 73  .col.offset....s
+  0000dc  68 61 70 65 91 03 a4 73 69 7a 65 0c a6 73 74 72  hape...size..str
+  0000ec  69 64 65 04 86 a5 64 74 79 70 65 a2 75 38 a4 6e  ide...dtype.u8.n
+  0000fc  61 6d 65 a6 73 6f 75 72 63 65 a6 6f 66 66 73 65  ame.source.offse
+  00010c  74 cd 03 b0 a5 73 68 61 70 65 91 03 a4 73 69 7a  t....shape...siz
+  00011c  65 03 a6 73 74 72 69 64 65 01 86 a5 64 74 79 70  e..stride...dtyp
+  00012c  65 a2 75 38 a4 6e 61 6d 65 a4 6b 69 6e 64 a6 6f  e.u8.name.kind.o
+  00013c  66 66 73 65 74 cd 03 c0 a5 73 68 61 70 65 91 03  ffset....shape..
+  00014c  a4 73 69 7a 65 03 a6 73 74 72 69 64 65 01 86 a5  .size..stride...
+  00015c  64 74 79 70 65 a3 66 36 34 a4 6e 61 6d 65 a6 6e  dtype.f64.name.n
+  00016c  75 6d 62 65 72 a6 6f 66 66 73 65 74 cd 03 d0 a5  umber.offset....
+  00017c  73 68 61 70 65 91 03 a4 73 69 7a 65 18 a6 73 74  shape...size..st
+  00018c  72 69 64 65 08 86 a5 64 74 79 70 65 a3 75 33 32  ride...dtype.u32
+  00019c  a4 6e 61 6d 65 a3 72 65 66 a6 6f 66 66 73 65 74  .name.ref.offset
+  0001ac  cd 03 f0 a5 73 68 61 70 65 91 03 a4 73 69 7a 65  ....shape...size
+  0001bc  0c a6 73 74 72 69 64 65 04 86 a5 64 74 79 70 65  ..stride...dtype
+  0001cc  a3 75 36 34 a4 6e 61 6d 65 ac 74 65 78 74 2d 6f  .u64.name.text-o
+  0001dc  66 66 73 65 74 73 a6 6f 66 66 73 65 74 cd 04 00  ffsets.offset...
+  0001ec  a5 73 68 61 70 65 91 01 a4 73 69 7a 65 08 a6 73  .shape...size..s
+  0001fc  74 72 69 64 65 08 86 a5 64 74 79 70 65 a2 75 38  tride...dtype.u8
+  00020c  a4 6e 61 6d 65 aa 74 65 78 74 2d 62 79 74 65 73  .name.text-bytes
+  00021c  a6 6f 66 66 73 65 74 cd 04 10 a5 73 68 61 70 65  .offset....shape
+  00022c  91 00 a4 73 69 7a 65 00 a6 73 74 72 69 64 65 01  ...size..stride.
+  00023c  86 a5 64 74 79 70 65 a3 75 33 32 a4 6e 61 6d 65  ..dtype.u32.name
+  00024c  aa 61 72 72 61 79 2d 64 69 6d 73 a6 6f 66 66 73  .array-dims.offs
+  00025c  65 74 cd 04 10 a5 73 68 61 70 65 92 00 04 a4 73  et....shape....s
+  00026c  69 7a 65 00 a6 73 74 72 69 64 65 10 86 a5 64 74  ize..stride...dt
+  00027c  79 70 65 a2 75 38 a4 6e 61 6d 65 a9 65 6c 65 6d  ype.u8.name.elem
+  00028c  2d 6b 69 6e 64 a6 6f 66 66 73 65 74 cd 04 10 a5  -kind.offset....
+  00029c  73 68 61 70 65 91 00 a4 73 69 7a 65 00 a6 73 74  shape...size..st
+  0002ac  72 69 64 65 01 86 a5 64 74 79 70 65 a3 66 36 34  ride...dtype.f64
+  0002bc  a4 6e 61 6d 65 ab 65 6c 65 6d 2d 6e 75 6d 62 65  .name.elem-numbe
+  0002cc  72 a6 6f 66 66 73 65 74 cd 04 10 a5 73 68 61 70  r.offset....shap
+  0002dc  65 91 00 a4 73 69 7a 65 00 a6 73 74 72 69 64 65  e...size..stride
+  0002ec  08 86 a5 64 74 79 70 65 a3 75 33 32 a4 6e 61 6d  ...dtype.u32.nam
+  0002fc  65 a8 65 6c 65 6d 2d 72 65 66 a6 6f 66 66 73 65  e.elem-ref.offse
+  00030c  74 cd 04 10 a5 73 68 61 70 65 91 00 a4 73 69 7a  t....shape...siz
+  00031c  65 00 a6 73 74 72 69 64 65 04 86 a5 64 74 79 70  e..stride...dtyp
+  00032c  65 a3 75 33 32 a4 6e 61 6d 65 ac 73 70 69 6c 6c  e.u32.name.spill
+  00033c  2d 72 61 6e 67 65 73 a6 6f 66 66 73 65 74 cd 04  -ranges.offset..
+  00034c  10 a5 73 68 61 70 65 92 01 06 a4 73 69 7a 65 18  ..shape....size.
+  00035c  a6 73 74 72 69 64 65 18 a9 73 68 65 65 74 5f 75  .stride..sheet_u
+  00036c  69 64 01 b1 73 70 69 6c 6c 5f 72 61 6e 67 65 5f  id..spill_range_
+  00037c  63 6f 75 6e 74 01 aa 74 65 78 74 5f 63 6f 75 6e  count..text_coun
+  00038c  74 00                                            t.
+  decoded (keys in their stored order, which is sorted by UTF-8 bytes):
+    {
+      "array_count": 0,
+      "element_count": 0,
+      "endianness": "le",
+      "entry_count": 3,
+      "kind": "core.sheet.computed",
+      "payload_origin": 912,
+      "payload_size": 160,
+      "sections": [
+        {
+          "dtype": "u32",
+          "name": "row",
+          "offset": 912,
+          "shape": [
+            3
+          ],
+          "size": 12,
+          "stride": 4
+        },
+        {
+          "dtype": "u32",
+          "name": "col",
+          "offset": 928,
+          "shape": [
+            3
+          ],
+          "size": 12,
+          "stride": 4
+        },
+        {
+          "dtype": "u8",
+          "name": "source",
+          "offset": 944,
+          "shape": [
+            3
+          ],
+          "size": 3,
+          "stride": 1
+        },
+        {
+          "dtype": "u8",
+          "name": "kind",
+          "offset": 960,
+          "shape": [
+            3
+          ],
+          "size": 3,
+          "stride": 1
+        },
+        {
+          "dtype": "f64",
+          "name": "number",
+          "offset": 976,
+          "shape": [
+            3
+          ],
+          "size": 24,
+          "stride": 8
+        },
+        {
+          "dtype": "u32",
+          "name": "ref",
+          "offset": 1008,
+          "shape": [
+            3
+          ],
+          "size": 12,
+          "stride": 4
+        },
+        {
+          "dtype": "u64",
+          "name": "text-offsets",
+          "offset": 1024,
+          "shape": [
+            1
+          ],
+          "size": 8,
+          "stride": 8
+        },
+        {
+          "dtype": "u8",
+          "name": "text-bytes",
+          "offset": 1040,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 1
+        },
+        {
+          "dtype": "u32",
+          "name": "array-dims",
+          "offset": 1040,
+          "shape": [
+            0,
+            4
+          ],
+          "size": 0,
+          "stride": 16
+        },
+        {
+          "dtype": "u8",
+          "name": "elem-kind",
+          "offset": 1040,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 1
+        },
+        {
+          "dtype": "f64",
+          "name": "elem-number",
+          "offset": 1040,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 8
+        },
+        {
+          "dtype": "u32",
+          "name": "elem-ref",
+          "offset": 1040,
+          "shape": [
+            0
+          ],
+          "size": 0,
+          "stride": 4
+        },
+        {
+          "dtype": "u32",
+          "name": "spill-ranges",
+          "offset": 1040,
+          "shape": [
+            1,
+            6
+          ],
+          "size": 24,
+          "stride": 24
+        }
+      ],
+      "sheet_uid": 1,
+      "spill_range_count": 1,
+      "text_count": 0
+    }
+
+  payload_origin = 16 * ceil((12 + 898) / 16) = 912; bytes [910..912) are zero padding.
+
+--- section `row`: offset 912 (0x390), size 12, dtype u32, shape [3], stride 4 ---
+  000390  00 00 00 00 01 00 00 00 03 00 00 00              ............
+  = 0, 1, 3
+
+--- section `col`: offset 928 (0x3a0), size 12, dtype u32, shape [3], stride 4 ---
+  0003a0  03 00 00 00 03 00 00 00 01 00 00 00              ............
+  = 3, 3, 1
+
+--- section `source`: offset 944 (0x3b0), size 3, dtype u8, shape [3], stride 1 ---
+  0003b0  00 01 00                                         ...
+  = 0, 1, 0
+
+--- section `kind`: offset 960 (0x3c0), size 3, dtype u8, shape [3], stride 1 ---
+  0003c0  01 01 01                                         ...
+  = 1, 1, 1
+
+--- section `number`: offset 976 (0x3d0), size 24, dtype f64, shape [3], stride 8 ---
+  0003d0  00 00 00 00 00 00 f0 3f 00 00 00 00 00 00 00 40  .......?.......@
+  0003e0  00 00 00 00 00 00 1e 40                          .......@
+  = 1.0, 2.0, 7.5
+
+--- section `ref`: offset 1008 (0x3f0), size 12, dtype u32, shape [3], stride 4 ---
+  0003f0  00 00 00 00 00 00 00 00 00 00 00 00              ............
+  = 0, 0, 0
+
+--- section `text-offsets`: offset 1024 (0x400), size 8, dtype u64, shape [1], stride 8 ---
+  000400  00 00 00 00 00 00 00 00                          ........
+  = 0
+
+--- section `text-bytes`: offset 1040 (0x410), size 0, dtype u8, shape [0], stride 1 ---
+  (empty)
+
+--- section `array-dims`: offset 1040 (0x410), size 0, dtype u32, shape [0, 4], stride 16 ---
+  (empty)
+
+--- section `elem-kind`: offset 1040 (0x410), size 0, dtype u8, shape [0], stride 1 ---
+  (empty)
+
+--- section `elem-number`: offset 1040 (0x410), size 0, dtype f64, shape [0], stride 8 ---
+  (empty)
+
+--- section `elem-ref`: offset 1040 (0x410), size 0, dtype u32, shape [0], stride 4 ---
+  (empty)
+
+--- section `spill-ranges`: offset 1040 (0x410), size 24, dtype u32, shape [1, 6], stride 24 ---
+  000410  00 00 00 00 03 00 00 00 00 00 00 00 03 00 00 00  ................
+  000420  01 00 00 00 03 00 00 00                          ........
+  = 0, 3, 0, 3, 1, 3
+
+--- what it decodes to -------------------------------------------------------
+  D1  row 0 col 3  source 0 (formula result)  1 number 1.0    the anchor of =SEQUENCE(2)
+  D2  row 1 col 3  source 1 (spilled value)   1 number 2.0
+  B4  row 3 col 1  source 0 (formula result)  1 number 7.5    =SUM(B2:B3)
+  spill-ranges: the formula in D1 (row 0, col 3) fills rows 0..1, columns 3..3.

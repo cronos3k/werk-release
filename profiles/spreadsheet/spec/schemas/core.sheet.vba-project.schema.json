@@ -1,0 +1,49 @@
+{
+  "$id": "https://werk.format/spec/schemas/core.sheet.vba-project.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Descriptor of a VBA macro project preserved verbatim (node type core.sheet.vba-project). The project is the file of this node with role `project` (`vbaProject.bin`), byte for byte as it was in the source .xlsm file: a Compound File Binary container holding the VBA project storage. Both are DEFINED in this package: `meta.file_formats.project` of this node is `ovba`, and `formats.ovba` / `formats.cfb` in MANIFEST.json give the paths of the definitions (spec/formats/ovba.md, which builds on spec/formats/cfb.md). From them a reader can list the modules and recover the source text of every module; a reference reader travels as the tool node `format-ovba-reference`. GridCraft does not run macros; the project is kept so that saving a macro-enabled workbook does not destroy its macros.",
+  "properties": {
+    "file_name": {
+      "const": "vbaProject.bin",
+      "description": "The file of this node that holds the project: the one whose path ends in `/vbaProject.bin`.",
+      "type": "string"
+    },
+    "format": {
+      "const": "ovba",
+      "description": "The format id of `vbaProject.bin`: a key of the `formats` map in MANIFEST.json.",
+      "type": "string"
+    },
+    "never_auto_execute": {
+      "const": true,
+      "description": "ALWAYS true, and not a switch: this node carries EMBEDDED CODE. A consumer MUST NOT execute, load, compile or interpret it automatically - not on open, not on preview, not on any event. Reading it as data (listing modules, showing source text) is not executing it. Running it is a deliberate act of a person who has inspected it, outside this format.",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "sha256": {
+      "description": "Lowercase hex sha256 of the project's bytes.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "size": {
+      "description": "Size of the project in bytes.",
+      "maximum": 9007199254740991,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "never_auto_execute",
+    "format",
+    "file_name",
+    "size",
+    "sha256"
+  ],
+  "title": "core.sheet.vba-project - a VBA project preserved verbatim, never executed",
+  "type": "object"
+}

@@ -1,0 +1,60 @@
+lut3d.example.wkx - annotated hex dump
+======================================
+
+A core.raster.lut3d table (spec/layouts/core.raster.lut3d.layout.txt): the identity on a 2 x 2 x 2 grid.
+Entry (r, g, b) starts at value index ((b * 2 + g) * 2 + r) * 3 and holds (r, g, b).
+
+File size: 288 bytes. sha256: 192c72be720155007730ed82967f6a2f91cfdfe455cc77ac028fa553f2c6f03a.
+Offsets are hexadecimal, from the start of the file. Read spec/layouts/ENVELOPE.layout.txt
+first: the fixed prefix and the payload are LITTLE-endian, the MessagePack header BIG-endian.
+
+--- fixed prefix -----------------------------------------------------------
+  000000  57 4b 58 31                            magic "WKX1"
+  000004  01 00 00 00                            version = 1 (u32 little-endian)
+  000008  a7 00 00 00                            header_len = 167 (u32 little-endian)
+
+--- header: one MessagePack map, bytes 0x00000c .. 0x0000b3 ------------------
+  00000c  88                                     map, 8 pair(s)
+  00000d  aa 63 6f 6d 70 6f 6e 65 6e 74 73         key "components"
+  000018  03                                         = uint 3
+  000019  aa 65 6e 64 69 61 6e 6e 65 73 73         key "endianness"
+  000024  a2 6c 65                                   = fixstr(2) "le"
+  000027  ac 66 61 73 74 65 73 74 5f 61 78 69 ..   key "fastest_axis"
+  000034  a3 72 65 64                                = fixstr(3) "red"
+  000038  a4 6b 69 6e 64                           key "kind"
+  00003d  b1 63 6f 72 65 2e 72 61 73 74 65 72 ..     = fixstr(17) "core.raster.lut3d"
+  00004f  ae 70 61 79 6c 6f 61 64 5f 6f 72 69 ..   key "payload_origin"
+  00005e  cc c0                                      = uint8 192 (big-endian)
+  000060  ac 70 61 79 6c 6f 61 64 5f 73 69 7a ..   key "payload_size"
+  00006d  60                                         = uint 96
+  00006e  a8 73 65 63 74 69 6f 6e 73               key "sections"
+  000077  91                                         = array, 1 element(s)
+  000078  86                                           map, 6 pair(s)
+  000079  a5 64 74 79 70 65                              key "dtype"
+  00007f  a3 66 33 32                                      = fixstr(3) "f32"
+  000083  a4 6e 61 6d 65                                 key "name"
+  000088  a5 74 61 62 6c 65                                = fixstr(5) "table"
+  00008e  a6 6f 66 66 73 65 74                           key "offset"
+  000095  cc c0                                            = uint8 192 (big-endian)
+  000097  a5 73 68 61 70 65                              key "shape"
+  00009d  91                                               = array, 1 element(s)
+  00009e  18                                                 uint 24
+  00009f  a4 73 69 7a 65                                 key "size"
+  0000a4  60                                               = uint 96
+  0000a5  a6 73 74 72 69 64 65                           key "stride"
+  0000ac  04                                               = uint 4
+  0000ad  a4 73 69 7a 65                           key "size"
+  0000b2  02                                         = uint 2
+
+--- padding ----------------------------------------------------------------
+  0000b3  00 00 00 00 00 00 00 00 00 00 00 00 .. 13 zero byte(s) up to payload_origin = 192 (0xc0), the next multiple of 16
+
+--- section "table": dtype f32, shape [24], stride 4, bytes 0x0000c0 .. 0x000120 (96 bytes)
+  0000c0  00 00 00 00 00 00 00 00 00 00 00 00    0.0, 0.0, 0.0
+  0000cc  00 00 80 3f 00 00 00 00 00 00 00 00    1.0, 0.0, 0.0
+  0000d8  00 00 00 00 00 00 80 3f 00 00 00 00    0.0, 1.0, 0.0
+  0000e4  00 00 80 3f 00 00 80 3f 00 00 00 00    1.0, 1.0, 0.0
+  0000f0  00 00 00 00 00 00 00 00 00 00 80 3f    0.0, 0.0, 1.0
+  0000fc  00 00 80 3f 00 00 00 00 00 00 80 3f    1.0, 0.0, 1.0
+  000108  00 00 00 00 00 00 80 3f 00 00 80 3f    0.0, 1.0, 1.0
+  000114  00 00 80 3f 00 00 80 3f 00 00 80 3f    1.0, 1.0, 1.0

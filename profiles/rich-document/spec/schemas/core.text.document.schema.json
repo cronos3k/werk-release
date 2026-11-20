@@ -1,0 +1,966 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.document.schema.json",
+ "title": "core.text.document — the structure of a rich-text document",
+ "description": "The one structure node of a rich-document/1 capsule (`primary.document`): the order of the body's block nodes, the secondary stories, the pictures, and which nodes hold the stylesheet, numbering, settings, properties, comments, tracked changes and bibliography. It carries no text. Every node_id in it is a node of this package. spec/PROFILE-RICH-DOCUMENT.md section 3.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "body",
+  "bodyNextId",
+  "finalSection",
+  "stories",
+  "noteSeparators",
+  "media"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "body": {
+   "description": "The document's main text: the node_ids of the `core.text.blocks` nodes (story kind `body`) whose `blocks`, concatenated in THIS order, are the body. The order of this array is the reading order; the numbers in the node ids say nothing about order.",
+   "type": "array",
+   "items": {
+    "description": "node_id of a `core.text.blocks` node whose story kind is `body`.",
+    "type": "string",
+    "format": "werk-node-ref",
+    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+   }
+  },
+  "bodyNextId": {
+   "description": "The number the next NEW body node will take (`body-` followed by this number, at least six digits, zero-padded). It only grows, so a body node id is never reused for other content: a body node keeps its id for as long as any of its blocks survive, across every Save.",
+   "type": "integer",
+   "minimum": 1
+  },
+  "finalSection": {
+   "description": "Page setup of the document's LAST section (earlier sections carry theirs on the paragraph that ends them, see a paragraph's `section`). A document with one section has only this.",
+   "$ref": "#/$defs/SectionProps"
+  },
+  "stories": {
+   "description": "The secondary stories (headers, footers, footnotes, endnotes, comments, text boxes): the node_ids of their `core.text.blocks` nodes, in ascending order of story id. Each node's `story.id` is the number other payloads refer to it by.",
+   "type": "array",
+   "items": {
+    "description": "node_id of a `core.text.blocks` node whose story kind is one of header, footer, footnote, endnote, comment, textBox.",
+    "type": "string",
+    "format": "werk-node-ref",
+    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+   }
+  },
+  "noteSeparators": {
+   "description": "The document's own footnote and endnote separators: the node_ids of `core.text.blocks` nodes whose story kind is `noteSeparator`. At most one per (`notes`, `role`) pair. Empty: the defaults apply (a short rule above the notes, a rule across the column above continued notes, no continuation notice).",
+   "type": "array",
+   "items": {
+    "description": "node_id of a `core.text.blocks` node whose story kind is `noteSeparator`.",
+    "type": "string",
+    "format": "werk-node-ref",
+    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+   }
+  },
+  "media": {
+   "description": "The pictures the document uses, in ascending order of `key` (UTF-8 bytes). Objects refer to an entry by its `key`.",
+   "type": "array",
+   "items": {
+    "description": "One picture.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "key",
+     "mediaType",
+     "original",
+     "image",
+     "imageIs"
+    ],
+    "properties": {
+     "key": {
+      "description": "The name objects use for this picture (an `image` object's `media`). Unique in the document. It looks like a file name (`image1.png`) and is only a name: it is not a path and names no file.",
+      "type": "string",
+      "format": "werk-content-text",
+      "minLength": 1
+     },
+     "mediaType": {
+      "description": "The media type of the picture's ORIGINAL encoding, as the author supplied it: `image/png`, `image/jpeg`, `image/gif`, `image/bmp`, `image/tiff`, `image/webp`, `image/x-emf`, `image/x-wmf`, or `application/octet-stream` for bytes of an unrecognised encoding.",
+      "type": "string"
+     },
+     "original": {
+      "description": "node_id of the `core.media.original` node that holds the picture's original bytes verbatim, in the encoding `mediaType` names (JPEG, GIF, BMP, TIFF, WebP, EMF, WMF: an encoding whose definition travels in the package, see that node's `meta.payload_format` and the manifest's `formats`). Null when the original is a PNG (then `image` holds it, `imageIs` is `original`) or when its bytes are in no defined encoding (then an `x.wordcraft.source.other` extension node carries them).",
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "image": {
+      "description": "node_id of the `core.media.image` node that holds the picture as a PNG, or null when no PNG exists (`imageIs` is `none`).",
+      "anyOf": [
+       {
+        "type": "string",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "imageIs": {
+      "description": "What the PNG in `image` is. `original`: the picture's original bytes (the original encoding IS PNG), byte for byte. `rendition`: a PNG decoded from the original (8 bits per channel RGBA, the original's pixel size; for an animated original its first frame; for a vector original a rasterisation), written where the definition of the original's encoding in this package does not give its pixels (a WebP, a metafile, a file outside what its definition covers). The original itself is in the node `original` names, or, when that is null, in an `x.wordcraft.source.other` extension node. `none`: no PNG exists - the ordinary state of a JPEG, GIF, BMP or TIFF, whose definition in this package decodes the pixels: the picture is the node `original` names. Also `none` when the original could not be decoded by the application that saved the file; a reader that can use neither `original` nor an extension node shows an empty frame of the object's size.",
+      "type": "string",
+      "enum": [
+       "original",
+       "rendition",
+       "none"
+      ]
+     }
+    }
+   }
+  },
+  "plainText": {
+   "description": "The body's plain text, for search and for readers that want no formatting: one entry per entry of `body`, in the same order. Entry i is the node_id of the `core.preview.text` node derived from the blocks node `body[i]` (UTF-8, one line per paragraph or table row, procedure in spec/PROFILE-RICH-DOCUMENT.md section 3.11), or null when that node has no text to store. The body's whole plain text is the concatenation of these nodes' payloads in this order. Absent: no plain text was derived.",
+   "type": "array",
+   "items": {
+    "anyOf": [
+     {
+      "description": "node_id of a `core.preview.text` node.",
+      "type": "string",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+     },
+     {
+      "type": "null"
+     }
+    ]
+   }
+  },
+  "fonts": {
+   "description": "Every font face the document names or is drawn with, sorted by family, then style. The FILES of the faces whose `status` is `embedded` are in this package (`core.text.font` nodes): a reader that does not have those fonts takes them from here and lays the text out with the faces it was written with. A face that is only named (`restricted`, `missing`) is one a reader substitutes. Absent: no fonts were recorded, and a reader uses the fonts it has.",
+   "type": "array",
+   "items": {
+    "description": "One font face the document names or draws with.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "family",
+     "style",
+     "status",
+     "use"
+    ],
+    "properties": {
+     "family": {
+      "description": "The font's family name, as formatting names it (`font`, `fontCs`, `fontEa`), for example `Source Serif 4`.",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "style": {
+      "description": "The face's style name within the family, for example `Regular`, `Bold`, `Italic`, `Bold Italic`.",
+      "type": "string",
+      "format": "werk-content-text"
+     },
+     "status": {
+      "description": "Whether the package carries the font. `embedded`: the font file is in the package and `node` names it. `restricted`: the font's own licence bits forbid passing it on (its OS/2 `fsType` has the Restricted License bit, 0x0002, and neither Preview & Print, 0x0004, nor Editable, 0x0008), so it is named only. `missing`: the application that saved the file did not have the font, so it is named only. For the last two a reader substitutes a font.",
+      "type": "string",
+      "enum": [
+       "embedded",
+       "restricted",
+       "missing"
+      ]
+     },
+     "use": {
+      "description": "Why the font is listed. `text`: text of the document is set in it. `style`: only a style, a list definition or the document's theme names it; no text is drawn with it now. `fallback`: nothing names it: the saving application drew characters with it that the named font lacks, or in place of a font it did not have.",
+      "type": "string",
+      "enum": [
+       "text",
+       "style",
+       "fallback"
+      ]
+     },
+     "node": {
+      "description": "For `embedded`: node_id of the `core.text.font` node that holds the font file (a TrueType / OpenType font or collection, verbatim; its format definition is `sfnt`). Absent otherwise.",
+      "type": "string",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+     },
+     "faceIndex": {
+      "description": "For a face inside a font collection (a `.ttc` file): its index in the collection, counting from 0. Absent: 0.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295
+     }
+    }
+   }
+  },
+  "packageParts": {
+   "description": "The parts of the package the document was read from (a WordprocessingML .docx) that are kept verbatim so that writing that format again reproduces them: the data and style parts of charts and diagrams, embedded objects and workbooks, a macro project, custom XML. Sorted by `name` (UTF-8 bytes). What these parts SHOW is already in the blocks (a chart's values and drawing, an embedded object's picture); a reader that does not write .docx files may ignore this table. Absent or empty: none.",
+   "type": "array",
+   "items": {
+    "description": "One preserved part.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "name",
+     "role",
+     "node"
+    ],
+    "properties": {
+     "name": {
+      "description": "For `package-part`: the part's name inside the original package, without a leading slash (`word/charts/chart1.xml`, `word/embeddings/oleObject1.bin`, `word/vbaProject.bin`). It is a name that says where the bytes go when a .docx is written; it is not a path in this package and names no file. For `bookkeeping`: a name starting with `wordcraft:` (see `role`).",
+      "type": "string",
+      "format": "werk-content-text",
+      "minLength": 1
+     },
+     "role": {
+      "description": "`package-part`: a part of the original package, byte for byte. `bookkeeping`: a small text table the application wrote itself, saying how the preserved parts were wired into the package (content types and relationships); its three line formats are given in spec/layouts/x.wordcraft.ooxml.part.layout.txt.",
+      "type": "string",
+      "enum": [
+       "package-part",
+       "bookkeeping"
+      ]
+     },
+     "node": {
+      "description": "node_id of the node that holds the bytes: a `core.package.binary` node (a compound file, a VBA project, a ZIP or OPC package: its `meta.payload_format` names the format definition), a `core.package.text` node (UTF-8 text, usually XML), or an `x.wordcraft.ooxml.part` extension node (bytes in no defined encoding).",
+      "type": "string",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+     }
+    }
+   }
+  },
+  "chartData": {
+   "description": "node_id of the `core.chart.data` node: the series, category labels and values of the charts that were read from another format, read out of their preserved chart parts. Absent: the document has no such chart (a chart made in the application carries its data in its own `chart` object).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "styles": {
+   "description": "node_id of the `core.style.sheet` node: the document's styles and formatting defaults. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "numbering": {
+   "description": "node_id of the `core.style.numbering` node: the list definitions. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "settings": {
+   "description": "node_id of the `core.text.settings` node: document-wide settings. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "properties": {
+   "description": "node_id of the `core.text.properties` node: title, author and other metadata. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "comments": {
+   "description": "node_id of the `core.text.comments` node: the comments' authors and dates. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "trackedChanges": {
+   "description": "node_id of the `core.text.tracked-changes` node: the table of tracked changes that text and formatting refer to. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  },
+  "bibliography": {
+   "description": "node_id of the `core.text.bibliography` node: the bibliography sources. Absent: the document has none, and a reader uses the defaults the profile document states (section 3).",
+   "type": "string",
+   "format": "werk-node-ref",
+   "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+  }
+ },
+ "$defs": {
+  "Border": {
+   "description": "One border line.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "style": {
+     "description": "The kind of line.",
+     "default": "none",
+     "$ref": "#/$defs/BorderStyle"
+    },
+    "width": {
+     "description": "Line width, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "color": {
+     "description": "Line colour, `[red, green, blue]`, each an integer 0..255, sRGB. Null: automatic (black on a light background).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Rgb"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "space": {
+     "description": "Distance between the border and the content it surrounds, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    }
+   }
+  },
+  "BorderStyle": {
+   "description": "The kind of line a border is drawn with. Values: `none`: no line (explicitly none: it overrides an inherited border); `single`: one solid line; `double`: two parallel solid lines; `dotted`: a line of dots; `dashed`: a line of dashes; `thick`: one heavy solid line; `triple`: three parallel solid lines; `dotDash`: alternating dots and dashes; `wave`: a wavy line.",
+   "type": "string",
+   "enum": [
+    "none",
+    "single",
+    "double",
+    "dotted",
+    "dashed",
+    "thick",
+    "triple",
+    "dotDash",
+    "wave"
+   ]
+  },
+  "Borders": {
+   "description": "Borders on the four sides, plus the inner borders of tables and of runs of bordered paragraphs. A side that is null is not set here.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "top": {
+     "description": "The top border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "left": {
+     "description": "The left border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "bottom": {
+     "description": "The bottom border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "right": {
+     "description": "The right border. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "between": {
+     "description": "Between consecutive paragraphs (paragraph borders), or between rows: the inside horizontal lines (table borders). Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "inside_v": {
+     "description": "Between columns: the inside vertical lines of a table. Null: not set.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Border"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "Columns": {
+   "description": "The text columns of a section.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "count": {
+     "description": "Number of columns, at least 1.",
+     "default": 1,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "space": {
+     "description": "Space between columns when they are equal (`widths` empty), points (1/72 inch).",
+     "default": 36.0,
+     "type": "number"
+    },
+    "separator": {
+     "description": "true: a vertical line is drawn between columns.",
+     "default": false,
+     "type": "boolean"
+    },
+    "widths": {
+     "description": "Unequal columns: one `[width, space after]` pair per column, points (1/72 inch), left to right. Empty: `count` equal columns separated by `space`.",
+     "default": [],
+     "type": "array",
+     "items": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+     }
+    }
+   }
+  },
+  "DocGrid": {
+   "description": "The document grid: a line pitch that line heights snap to and, optionally, a character pitch.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "description": "The kind of grid.",
+     "default": "default",
+     "$ref": "#/$defs/DocGridType"
+    },
+    "linePitch": {
+     "description": "Distance between consecutive grid lines, points (1/72 inch) (used between 1 and 1584).",
+     "default": 18.0,
+     "type": "number"
+    },
+    "charSpace": {
+     "description": "The character pitch is the default font size plus this value; unit 1/4096 point; range -6488064 .. 6488064.",
+     "default": 0,
+     "type": "integer",
+     "minimum": -2147483648,
+     "maximum": 2147483647
+    }
+   }
+  },
+  "DocGridType": {
+   "description": "The kind of document grid. Values: `default`: No grid; `lines`: A line grid only: line heights snap to the line pitch; `linesAndChars`: A line and character grid: East Asian characters advance by the character pitch; `snapToChars`: A line grid, and all text snaps to the character grid.",
+   "type": "string",
+   "enum": [
+    "default",
+    "lines",
+    "linesAndChars",
+    "snapToChars"
+   ]
+  },
+  "HeaderSet": {
+   "description": "The header (or footer) stories a section uses. Each value is the `story.id` of a `core.text.blocks` node listed in the document node's `stories`, of kind `header` (or `footer`). Null: the section names none of its own for that case and continues the previous section's (the first section then has none).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "default": {
+     "description": "The story for ordinary pages (odd pages when the settings node's `evenOddHeaders` is true). Null: continue the previous section's.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "first": {
+     "description": "The story for the section's first page, used when the section's `titlePage` is true. Null: continue the previous section's.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "even": {
+     "description": "The story for even pages, used when the settings node's `evenOddHeaders` is true. Null: continue the previous section's.",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "LineNumberRestart": {
+   "description": "When line numbering starts again. Values: `page`: on each page; `section`: in each section; `continuous`: never: numbered through the document.",
+   "type": "string",
+   "enum": [
+    "page",
+    "section",
+    "continuous"
+   ]
+  },
+  "LineNumbering": {
+   "description": "Line numbers printed in the margin beside the text.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "countBy": {
+     "description": "Print a number on every n-th line (1 = every line).",
+     "default": 1,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "start": {
+     "description": "The number of the first line.",
+     "default": 1,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "distance": {
+     "description": "Distance between the line numbers and the text, points (1/72 inch); 0 = automatic.",
+     "default": 0.0,
+     "type": "number"
+    },
+    "restart": {
+     "description": "When the numbering starts again.",
+     "default": "page",
+     "$ref": "#/$defs/LineNumberRestart"
+    }
+   }
+  },
+  "NotePos": {
+   "description": "Where footnotes or endnotes are placed. Values: `pageBottom`: Footnotes: at the bottom of the page; `beneathText`: Footnotes: directly below the page's last line of text; `sectEnd`: Endnotes: at the end of each section; `docEnd`: Endnotes: at the end of the document.",
+   "type": "string",
+   "enum": [
+    "pageBottom",
+    "beneathText",
+    "sectEnd",
+    "docEnd"
+   ]
+  },
+  "NoteProps": {
+   "description": "Footnote or endnote options as stated at one level (the document, or one section). A field that is null or absent is not set at this level and comes from the level above: a section's from the document's (the settings node's `footnotePr` / `endnotePr`), the document's from the fixed defaults (footnotes at the bottom of the page, endnotes at the end of the document, numbered from 1, never restarting). The document's number FORMAT is the settings node's `footnoteFormat` / `endnoteFormat`, so `numFmt` is only ever set on a section.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "pos": {
+     "description": "Where the notes are placed. Null or absent: not set at this level.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NotePos"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numFmt": {
+     "description": "How note numbers are written. Null or absent: not set at this level.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NumFormat"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numStart": {
+     "description": "The first note number, 1..32767. Null or absent: not set at this level (default 1).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "numRestart": {
+     "description": "When note numbering starts again. Null or absent: not set at this level (default `continuous`).",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/NoteRestart"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    }
+   }
+  },
+  "NoteRestart": {
+   "description": "When note numbering starts again. Values: `continuous`: Numbered on through the whole document; `eachSect`: Numbering starts again in each section; `eachPage`: Numbering starts again on each page.",
+   "type": "string",
+   "enum": [
+    "continuous",
+    "eachSect",
+    "eachPage"
+   ]
+  },
+  "NumFormat": {
+   "description": "How a number (a list number, a page number, a note number) is written. For a value a reader cannot write, plain decimal is an acceptable fallback. Values: `decimal`: 1, 2, 3; `upperRoman`: I, II, III; `lowerRoman`: i, ii, iii; `upperLetter`: A, B, C … Z, AA, BB; `lowerLetter`: a, b, c … z, aa, bb; `ordinal`: 1st, 2nd, 3rd (in the text's language); `cardinalText`: One, Two, Three (in the text's language); `ordinalText`: First, Second, Third (in the text's language); `decimalZero`: 01, 02 … 09, 10, 11; `bullet`: no number: the level's `text` is a bullet character; `none`: no number and no label; `hex`: hexadecimal: 1 … 9, A … F, 10; `chicago`: footnote symbols * † ‡ §, then doubled (**, ††), tripled, and so on; `ideographDigital`: Chinese numerals written digit by digit: 一, 二, 三 … 一〇; `japaneseCounting`: Japanese counting numerals: 一, 二, 三 … 十, 十一; `aiueo`: half-width katakana in a-i-u-e-o order: ｱ, ｲ, ｳ; `iroha`: half-width katakana in iroha order: ｲ, ﾛ, ﾊ; `decimalFullWidth`: full-width digits: １, ２, ３; `decimalHalfWidth`: half-width digits: 1, 2, 3; `japaneseLegal`: Japanese legal (daiji) numerals: 壱, 弐, 参; `japaneseDigitalTenThousand`: Japanese numerals digit by digit with myriad grouping: 一, 二, 三; `decimalEnclosedCircle`: circled numbers: ①, ②, ③ (plain decimal above 20); `decimalFullWidth2`: full-width digits, second variant: １, ２, ３; `aiueoFullWidth`: full-width katakana in a-i-u-e-o order: ア, イ, ウ; `irohaFullWidth`: full-width katakana in iroha order: イ, ロ, ハ; `ganada`: Korean syllables: 가, 나, 다; `chosung`: Korean consonants: ㄱ, ㄴ, ㄷ; `decimalEnclosedFullstop`: numbers followed by a full stop in one character: ⒈, ⒉, ⒊ (plain decimal above 20); `decimalEnclosedParen`: parenthesised numbers in one character: ⑴, ⑵, ⑶ (plain decimal above 20); `decimalEnclosedCircleChinese`: circled numbers, Chinese typography: ①, ②, ③ (plain decimal above 10); `ideographEnclosedCircle`: circled ideographs: ㈠, ㈡, ㈢ (plain decimal above 10); `ideographTraditional`: the ten heavenly stems: 甲, 乙, 丙, 丁; `ideographZodiac`: the twelve earthly branches: 子, 丑, 寅, 卯; `ideographZodiacTraditional`: the sexagenary cycle (stem plus branch): 甲子, 乙丑, 丙寅; `taiwaneseCounting`: Chinese counting numerals, Taiwan: 一, 二, 三 … 十, 十一; `ideographLegalTraditional`: traditional Chinese legal numerals: 壹, 貳, 參; `taiwaneseCountingThousand`: Chinese counting numerals with thousands, Taiwan: 一, 二, 三; `taiwaneseDigital`: Chinese numerals digit by digit, Taiwan: 一, 二, 三 … 一○; `chineseCounting`: Chinese counting numerals: 一, 二, 三 … 十, 十一; `chineseLegalSimplified`: simplified Chinese legal numerals: 壹, 贰, 叁; `chineseCountingThousand`: Chinese counting numerals with thousands: 一, 二, 三; `koreanDigital`: Sino-Korean numerals digit by digit: 일, 이, 삼; `koreanCounting`: native Korean counting: 하나, 둘, 셋; `koreanLegal`: Sino-Korean legal numerals: 일, 이, 삼 … 십; `koreanDigital2`: Chinese numerals digit by digit, Korean typography: 一, 二, 三; `vietnameseCounting`: Vietnamese number words: một, hai, ba; `russianLower`: lower-case Cyrillic letters: а, б, в; `russianUpper`: upper-case Cyrillic letters: А, Б, В; `numberInDash`: decimal between dashes: - 1 -, - 2 -, - 3 -; `hebrew1`: Hebrew numerals: א, ב, ג … י, יא; `hebrew2`: Hebrew alphabet letters: א, ב, ג … ת, then repeated; `arabicAlpha`: Arabic letters in alphabetical (hija'i) order: أ, ب, ت; `arabicAbjad`: Arabic letters in abjad order: أ, ب, ج; `hindiVowels`: Devanagari vowels: अ, आ, इ; `hindiConsonants`: Devanagari consonants: क, ख, ग; `hindiNumbers`: Devanagari digits: १, २, ३; `hindiCounting`: Hindi number words: एक, दो, तीन; `thaiLetters`: Thai letters: ก, ข, ค; `thaiNumbers`: Thai digits: ๑, ๒, ๓; `thaiCounting`: Thai number words: หนึ่ง, สอง, สาม; `bahtText`: the number as an amount in Thai baht, in words; `dollarText`: the number as an amount in dollars, in English words.",
+   "type": "string",
+   "enum": [
+    "decimal",
+    "upperRoman",
+    "lowerRoman",
+    "upperLetter",
+    "lowerLetter",
+    "ordinal",
+    "cardinalText",
+    "ordinalText",
+    "decimalZero",
+    "bullet",
+    "none",
+    "hex",
+    "chicago",
+    "ideographDigital",
+    "japaneseCounting",
+    "aiueo",
+    "iroha",
+    "decimalFullWidth",
+    "decimalHalfWidth",
+    "japaneseLegal",
+    "japaneseDigitalTenThousand",
+    "decimalEnclosedCircle",
+    "decimalFullWidth2",
+    "aiueoFullWidth",
+    "irohaFullWidth",
+    "ganada",
+    "chosung",
+    "decimalEnclosedFullstop",
+    "decimalEnclosedParen",
+    "decimalEnclosedCircleChinese",
+    "ideographEnclosedCircle",
+    "ideographTraditional",
+    "ideographZodiac",
+    "ideographZodiacTraditional",
+    "taiwaneseCounting",
+    "ideographLegalTraditional",
+    "taiwaneseCountingThousand",
+    "taiwaneseDigital",
+    "chineseCounting",
+    "chineseLegalSimplified",
+    "chineseCountingThousand",
+    "koreanDigital",
+    "koreanCounting",
+    "koreanLegal",
+    "koreanDigital2",
+    "vietnameseCounting",
+    "russianLower",
+    "russianUpper",
+    "numberInDash",
+    "hebrew1",
+    "hebrew2",
+    "arabicAlpha",
+    "arabicAbjad",
+    "hindiVowels",
+    "hindiConsonants",
+    "hindiNumbers",
+    "hindiCounting",
+    "thaiLetters",
+    "thaiNumbers",
+    "thaiCounting",
+    "bahtText",
+    "dollarText"
+   ]
+  },
+  "PropChange_SectionProps": {
+   "description": "A tracked formatting change: the properties as they were BEFORE the change, and who changed them. The properties after the change are the ones the owner carries now.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rev",
+    "old"
+   ],
+   "properties": {
+    "rev": {
+     "description": "The change was made by the `id` of an entry of the `core.text.tracked-changes` node's `changes` (of kind `format`).",
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    },
+    "old": {
+     "description": "The properties before the change (formatting only).",
+     "$ref": "#/$defs/SectionProps"
+    }
+   }
+  },
+  "Rgb": {
+   "description": "A colour: `[red, green, blue]`, each an integer 0..255, sRGB (IEC 61966-2-1), no alpha.",
+   "type": "array",
+   "items": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 255
+   },
+   "minItems": 3,
+   "maxItems": 3
+  },
+  "SectionProps": {
+   "description": "Page setup and section-level settings. Lengths are points (1/72 inch).",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "start": {
+     "description": "Where the section begins relative to the previous one.",
+     "default": "nextPage",
+     "$ref": "#/$defs/SectionStart"
+    },
+    "pageW": {
+     "description": "Page width, points (1/72 inch), already swapped for landscape (so it is the horizontal extent as read).",
+     "default": 612.0,
+     "type": "number"
+    },
+    "pageH": {
+     "description": "Page height, points (1/72 inch), already swapped for landscape (so it is the vertical extent as read).",
+     "default": 792.0,
+     "type": "number"
+    },
+    "landscape": {
+     "description": "true: landscape orientation. Informational for a reader: `pageW` and `pageH` are already the horizontal and vertical extents.",
+     "default": false,
+     "type": "boolean"
+    },
+    "marginTop": {
+     "description": "Top margin: distance from the page's top edge to the text area, points (1/72 inch). Negative: the header may not push the text down.",
+     "default": 72.0,
+     "type": "number"
+    },
+    "marginBottom": {
+     "description": "Bottom margin: distance from the text area to the page's bottom edge, points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "marginLeft": {
+     "description": "Left margin (the inside margin when the settings node's `mirrorMargins` is true), points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "marginRight": {
+     "description": "Right margin (the outside margin when `mirrorMargins` is true), points (1/72 inch).",
+     "default": 72.0,
+     "type": "number"
+    },
+    "header": {
+     "description": "Distance from the page's top edge to the top of the header, points (1/72 inch).",
+     "default": 36.0,
+     "type": "number"
+    },
+    "footer": {
+     "description": "Distance from the page's bottom edge to the bottom of the footer, points (1/72 inch).",
+     "default": 36.0,
+     "type": "number"
+    },
+    "gutter": {
+     "description": "Extra room added to the binding-side margin, points (1/72 inch).",
+     "default": 0.0,
+     "type": "number"
+    },
+    "columns": {
+     "description": "The text columns of the section.",
+     "default": {
+      "count": 1,
+      "separator": false,
+      "space": 36.0,
+      "widths": []
+     },
+     "$ref": "#/$defs/Columns"
+    },
+    "headers": {
+     "description": "The header stories of the section.",
+     "default": {
+      "default": null,
+      "even": null,
+      "first": null
+     },
+     "$ref": "#/$defs/HeaderSet"
+    },
+    "footers": {
+     "description": "The footer stories of the section.",
+     "default": {
+      "default": null,
+      "even": null,
+      "first": null
+     },
+     "$ref": "#/$defs/HeaderSet"
+    },
+    "titlePage": {
+     "description": "true: the section's first page uses the `first` header and footer stories.",
+     "default": false,
+     "type": "boolean"
+    },
+    "pageNumStart": {
+     "description": "The number of the section's first page. Null: numbering continues from the previous section (the first section starts at 1).",
+     "default": null,
+     "anyOf": [
+      {
+       "type": "integer",
+       "minimum": 0,
+       "maximum": 4294967295
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "pageNumFormat": {
+     "description": "How page numbers are written in this section.",
+     "default": "decimal",
+     "$ref": "#/$defs/NumFormat"
+    },
+    "lineNumbers": {
+     "description": "Line numbering in the margin. Null: lines are not numbered.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/LineNumbering"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "valign": {
+     "description": "Vertical position of the text on a page that it does not fill.",
+     "default": "top",
+     "$ref": "#/$defs/VAlign"
+    },
+    "pageBorders": {
+     "description": "Borders drawn around each page of the section; `between` and `inside_v` are unused. Null: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/Borders"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "rtl": {
+     "description": "true: a right-to-left section (columns run right to left, page-number position mirrors).",
+     "default": false,
+     "type": "boolean"
+    },
+    "textDirection": {
+     "description": "Which way the section's text runs. `down` and `up` turn the page's text area; headers and footers stay horizontal. Absent: horizontal.",
+     "default": "horizontal",
+     "$ref": "#/$defs/TextDirection"
+    },
+    "fmtChange": {
+     "description": "Tracked change of the section's properties: the properties before the change and the tracked-change entry that made it. Null or absent: none.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/PropChange_SectionProps"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "docGrid": {
+     "description": "The document grid lines of text snap to. Null: the section has no grid.",
+     "default": null,
+     "anyOf": [
+      {
+       "$ref": "#/$defs/DocGrid"
+      },
+      {
+       "type": "null"
+      }
+     ]
+    },
+    "footnotePr": {
+     "description": "The section's own footnote options (unset fields: the document's, in the settings node). Absent: none of its own.",
+     "default": {},
+     "$ref": "#/$defs/NoteProps"
+    },
+    "endnotePr": {
+     "description": "The section's own endnote options (unset fields: the document's, in the settings node). Absent: none of its own.",
+     "default": {},
+     "$ref": "#/$defs/NoteProps"
+    }
+   }
+  },
+  "SectionStart": {
+   "description": "Where a section begins relative to the one before it. Values: `nextPage`: on a new page; `continuous`: on the same page, directly below the previous section; `evenPage`: on the next even-numbered page (a blank page is inserted if needed); `oddPage`: on the next odd-numbered page (a blank page is inserted if needed); `nextColumn`: at the top of the next column.",
+   "type": "string",
+   "enum": [
+    "nextPage",
+    "continuous",
+    "evenPage",
+    "oddPage",
+    "nextColumn"
+   ]
+  },
+  "TextDirection": {
+   "description": "Which way lines of text run. Values: `horizontal`: Left to right, lines stacking downwards; `down`: Turned 90 degrees clockwise: lines read top to bottom and stack from right to left; `up`: Turned 90 degrees counter-clockwise: lines read bottom to top and stack from left to right.",
+   "type": "string",
+   "enum": [
+    "horizontal",
+    "down",
+    "up"
+   ]
+  },
+  "VAlign": {
+   "description": "Vertical position of content within the room it has. Values: `top`: at the top; `center`: centred; `bottom`: at the bottom.",
+   "type": "string",
+   "enum": [
+    "top",
+    "center",
+    "bottom"
+   ]
+  }
+ }
+}

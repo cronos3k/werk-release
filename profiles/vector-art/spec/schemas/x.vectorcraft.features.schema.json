@@ -1,0 +1,400 @@
+{
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Any JSON value, carried verbatim. Strings inside it are never references to other parts of the document."
+    },
+    "node_id": {
+      "description": "The node_id of a node of this package.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "object_id": {
+      "description": "The `id` of an object in one of the document's layers.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "rect": {
+      "additionalProperties": false,
+      "description": "An axis-aligned rectangle: its left (`x0`), top (`y0`), right (`x1`) and bottom (`y1`) edges in points. y grows down, so `y0 <= y1`.",
+      "properties": {
+        "x0": {
+          "description": "Left edge.",
+          "type": "number"
+        },
+        "x1": {
+          "description": "Right edge.",
+          "type": "number"
+        },
+        "y0": {
+          "description": "Top edge.",
+          "type": "number"
+        },
+        "y1": {
+          "description": "Bottom edge.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x0",
+        "y0",
+        "x1",
+        "y1"
+      ],
+      "type": "object"
+    },
+    "slice_options": {
+      "additionalProperties": false,
+      "description": "How web output writes a slice.",
+      "properties": {
+        "alt": {
+          "description": "The alternative text.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "background": {
+          "description": "The cell's background: empty, `matte` or `#rrggbb`.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "hAlign": {
+          "description": "Horizontal alignment of the cell's text. One of: `default`; `left`; `center`; `right`.",
+          "enum": [
+            "default",
+            "left",
+            "center",
+            "right"
+          ]
+        },
+        "kind": {
+          "description": "What web output puts in the slice's cell. One of: `image` (the artwork as an image; the default); `noImage` (an empty cell showing `text`); `htmlText` (the text of the sliced type as HTML).",
+          "enum": [
+            "image",
+            "noImage",
+            "htmlText"
+          ]
+        },
+        "message": {
+          "description": "The browser's status message over the slice.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "name": {
+          "description": "The slice's file name in web output.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "target": {
+          "description": "The frame the link opens in.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text a `noImage` cell shows (HTML allowed).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "url": {
+          "description": "The link the slice's image opens.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "vAlign": {
+          "description": "Vertical alignment of the cell's text. One of: `default`; `top`; `middle`; `baseline`; `bottom`.",
+          "enum": [
+            "default",
+            "top",
+            "middle",
+            "baseline",
+            "bottom"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "variable_value": {
+      "description": "A value: `{\"text\": \"...\"}` for a text variable, `{\"visible\": true|false}` for a visibility variable.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "description": "The characters the bound type shows.",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "visible": {
+              "description": "Whether the bound objects show.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "visible"
+          ],
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.features.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Variables (data merge), web slices, export assets, pattern editing state and the list of graph designs.",
+  "properties": {
+    "assets": {
+      "description": "Export assets, in panel order.",
+      "items": {
+        "additionalProperties": false,
+        "description": "An export asset: art collected for export.",
+        "properties": {
+          "id": {
+            "description": "Its id.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "name": {
+            "description": "Its name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "nodes": {
+            "description": "The objects it exports.",
+            "items": {
+              "$ref": "#/$defs/object_id"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "nodes"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "graph_designs": {
+      "description": "Graph designs.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A graph design and the node that holds it.",
+        "properties": {
+          "name": {
+            "description": "The design's name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "node": {
+            "$ref": "#/$defs/node_id",
+            "description": "The x.vectorcraft.graph-design node."
+          }
+        },
+        "required": [
+          "name",
+          "node"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "pattern_edit": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Pattern editing mode was on when the document was saved.",
+          "properties": {
+            "layer": {
+              "$ref": "#/$defs/object_id",
+              "description": "The temporary layer holding the tile art."
+            },
+            "original": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "additionalProperties": {
+                    "$ref": "#/$defs/json"
+                  },
+                  "description": "The pattern's definition before editing: the `pattern` object of a core.paint.pattern payload, with each object's VectorCraft-only members (graph, series_index, shaper, trace, slice, perspective) inline.",
+                  "type": "object"
+                }
+              ],
+              "description": "Restored when the edit is cancelled. Null: the pattern was new."
+            },
+            "pattern": {
+              "description": "The pattern being edited.",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern",
+            "layer"
+          ],
+          "type": "object"
+        }
+      ],
+      "description": "Null: not editing a pattern."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    },
+    "slices": {
+      "description": "User slices.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A user slice.",
+        "properties": {
+          "id": {
+            "description": "The slice's id (from the document's object id counter).",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "options": {
+            "$ref": "#/$defs/slice_options"
+          },
+          "rect": {
+            "$ref": "#/$defs/rect",
+            "description": "Its rectangle, document points."
+          }
+        },
+        "required": [
+          "id",
+          "rect"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "slices_clip_to_artboard": {
+      "description": "Slices are clipped to the artboards. Absent: true.",
+      "type": "boolean"
+    },
+    "variables": {
+      "additionalProperties": false,
+      "description": "Variables: named values bound to objects, applied per data set.",
+      "properties": {
+        "active_dataset": {
+          "description": "The data set applied to the document now.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "bindings": {
+          "additionalProperties": {
+            "description": "The variables bound to the object.",
+            "items": {
+              "description": "A variable's name.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Which variables each object is bound to, by the object's `id` written in decimal.",
+          "propertyNames": {
+            "pattern": "^[0-9]+$"
+          },
+          "type": "object"
+        },
+        "datasets": {
+          "description": "The data sets.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A data set: one value per variable.",
+            "properties": {
+              "name": {
+                "description": "Its name.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "values": {
+                "additionalProperties": {
+                  "$ref": "#/$defs/variable_value"
+                },
+                "description": "Values by variable name.",
+                "type": "object"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "variables": {
+          "description": "The variables.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A variable.",
+            "properties": {
+              "kind": {
+                "description": "What it sets. One of: `text` (a type object's characters); `visibility` (whether bound objects show).",
+                "enum": [
+                  "text",
+                  "visibility"
+                ]
+              },
+              "name": {
+                "description": "Its name.",
+                "format": "werk-content-text",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "kind"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "x.vectorcraft.features - document features only VectorCraft has",
+  "type": "object"
+}

@@ -1,0 +1,378 @@
+core.raster.surface - layout grammar v1
+======================================
+
+Applies to: every file of a node of type `core.raster.surface` in a werk package
+of profile raster-layers/1. Magic "WKX0" (57 4B 58 30), envelope version 1,
+header key "kind" = "core.raster.surface". A tile file may be stored as a zlib
+stream of such an envelope (section 5.1).
+
+A surface is a rectangle-less, sparse picture: an unbounded plane of pixels of
+ONE pixel format, of which only some 256 x 256 squares ("tiles") are stored.
+Every pixel no stored tile covers has the surface's DEFAULT PIXEL. Layer pixels,
+masks, channels, selections, patterns, rendered caches and video frames are all
+surfaces.
+
+This file is normative and builds on spec/layouts/ENVELOPE.layout.txt, which
+defines the frame (magic, version, header length, MessagePack header, 16-byte
+aligned sections at DECLARED absolute offsets) and is not restated. Read its
+sections 1, 3, 4 and 7 first; its reference reader (section 7) reads every file
+described here. Everything below says what the header keys and sections MEAN.
+
+A complete worked example - two real files, annotated, with the sha256 of every
+stage so that a decoder can check itself:
+
+    spec/examples/raster-layers/surface.example.wkx      the index file, 1 tile
+    spec/examples/raster-layers/surface.example.hex.txt
+    spec/examples/raster-layers/tiles.example.wkxz      its tile file, as stored
+    spec/examples/raster-layers/tiles.example.hex.txt    the envelope inside it
+
+--------------------------------------------------------------------------
+1. The files of one surface node
+--------------------------------------------------------------------------
+
+  A surface node has ONE index file and ZERO OR MORE tile files, all listed in
+  the node version's `files[]` in MANIFEST.json:
+
+  file          role in files[]       how many   what
+  ------------  --------------------  ---------  ------------------------------
+  index file    "payload" when the    exactly 1  pixel format, default pixel,
+                node has tile files;             and one row per stored tile
+                it is ALSO the
+                version's
+                `payload_file`
+  tile file     any kebab-case role   0 or more  the samples of some tiles,
+                that the index names             one tile after another: a
+                                                 tile envelope (section 5), or
+                                                 a zlib stream of one (5.1)
+
+  A surface with no stored tile (an empty layer; a mask that reveals
+  everything) is the index file alone; the version then has one file and no
+  `payload_file`, and that one file is the payload (SPEC.md section 2.1 rule 2).
+
+  The index names each tile file by its ROLE STRING, never by path: header key
+  "tile_files" is an array of role strings, and a row of the tile index refers
+  to an element of that array by position. To get the bytes of tile file k:
+  take tile_files[k], find the entry of this version's files[] whose "role"
+  equals it, read that entry's "path".
+
+  How tiles are distributed over tile files carries NO meaning. A writer may
+  put every tile in one tile file. PhotoCraft puts the tiles of each 4 x 4-tile
+  block into a file of their own (role "ztiles-<bx>-<by>", where bx =
+  floor(tile_x / 4), by = floor(tile_y / 4), each written as "p<n>" when >= 0
+  and "m<n>" for -n) so that a change to one corner of a large layer re-stores
+  one block; a reader does not need to know this and MUST follow the index.
+
+--------------------------------------------------------------------------
+2. Header keys common to the index file and every tile file
+--------------------------------------------------------------------------
+
+  key            type          meaning
+  -------------  ------------  ---------------------------------------------
+  "part"         str           "index" or "tiles": which of the two this
+                               file is.
+  "pixel_mode"   str           colour model of the pixels, one of the eight
+                               values in the table below.
+  "has_alpha"    bool          true: one alpha sample follows the colour
+                               samples of each pixel.
+  "channels"     array<str>    the name of every sample of one pixel, in
+                               stored order. Its length C is the number of
+                               samples per pixel.
+  "sample_type"  str           "u8", "u16" or "f32": how one sample is
+                               stored (section 3).
+  "tile_size"    uint          always 256 (conventions.tile_size_px).
+  "tile_count"   uint          index file: tiles of the surface. tile file:
+                               tiles in this file.
+  "nonfinite"    bool          true only when sample_type is "f32" and some
+                               sample in THIS file is NaN or +-infinity
+                               (section 3).
+
+  pixel_mode       colour samples, in order        channels (without alpha)
+  ---------------  ------------------------------  -------------------------
+  "rgb"            red, green, blue                ["red","green","blue"]
+  "indexed"        red, green, blue                ["red","green","blue"]
+  "multichannel"   red, green, blue                ["red","green","blue"]
+  "grayscale"      gray                            ["gray"]
+  "bitmap"         gray                            ["gray"]
+  "duotone"        gray                            ["gray"]
+  "cmyk"           cyan, magenta, yellow, black    ["cyan","magenta","yellow","black"]
+  "lab"            lightness, a, b                 ["lightness","a","b"]
+
+  With has_alpha = true, "alpha" is appended, so C is 1..5.
+  "indexed" and "multichannel" pixels are stored expanded to RGB, "bitmap" and
+  "duotone" expanded to gray; the mode word records which kind of document the
+  surface belongs to and does not change how samples are read.
+
+  What a sample VALUE means (v is the normalised value from section 3):
+
+    red, green, blue   0.0 = none, 1.0 = full, in the document's colour space
+    gray               0.0 = black, 1.0 = white. In a mask, selection or
+                       channel: 0.0 = hidden / unselected, 1.0 = revealed /
+                       selected.
+    cyan .. black      INK amount: 0.0 = no ink, 1.0 = full ink
+    lightness          L* = 100 * v
+    a, b               a* = 255 * v - 128, b* = 255 * v - 128
+    alpha              0.0 = transparent, 1.0 = opaque. STRAIGHT alpha: colour
+                       samples are NOT multiplied by alpha.
+
+--------------------------------------------------------------------------
+3. Sample encoding
+--------------------------------------------------------------------------
+
+  sample_type  bytes  stored as                      value v
+  -----------  -----  -----------------------------  ------------------------
+  "u8"         1      unsigned 8-bit                 v = sample / 255
+  "u16"        2      unsigned 16-bit little-endian  v = sample / 65535
+  "f32"        4      IEEE-754 binary32, little-     v = the float itself;
+                      endian                         values outside 0..1 and
+                                                     non-finite values are
+                                                     legal pixel data
+
+  The dtype of a section of samples is the sample_type - with ONE exception
+  forced by ENVELOPE.layout.txt section 6, which forbids NaN and infinity in an
+  "f32" section: a file whose f32 samples include a NaN or an infinity declares
+  those sections with dtype "u32" (the bytes are unchanged: they are the IEEE-754
+  bit patterns) and sets "nonfinite": true.
+
+  READER RULE, the same in both cases: decode samples by the header's
+  "sample_type", never by the section's dtype label. When sample_type is "f32",
+  every 4 bytes are one little-endian IEEE-754 binary32, whether the section
+  says "f32" or "u32".
+
+--------------------------------------------------------------------------
+4. The index file  (part = "index")
+--------------------------------------------------------------------------
+
+  Additional header key:
+
+  "tile_files"   array<str>    the roles of this surface's tile files (section
+                               1). Empty when tile_count is 0.
+  "tile_file_sha256"           OPTIONAL. array<str>, one entry per entry of
+                 array<str>    "tile_files", in the same order: the sha256
+                               (64 lowercase hex digits) of that tile file's
+                               ENVELOPE - of the file's bytes when it is a
+                               plain envelope, of the inflated bytes when it
+                               is a zlib stream (section 5.1). A reader MAY
+                               check it and rejects the node on a mismatch. A
+                               writer uses it to tell, without inflating
+                               anything, which tile files a new version can
+                               list again unchanged. Absent: nothing is said.
+
+  Sections, found BY NAME:
+
+  name             dtype                 shape            stride   size
+  ---------------  --------------------  ---------------  -------  ------------
+  "default-pixel"  per sample_type       [C]              esz      esz * C
+                   (section 3)
+  "tile-index"     "i32"                 [tile_count, 4]  16       16 * tile_count
+
+  esz is 1, 2 or 4 (bytes per sample).
+
+  "default-pixel": the C samples of the pixel every position outside the stored
+  tiles has. (An all-zero default pixel is a fully transparent black; a mask
+  that reveals everything has default-pixel [255] and no tiles.)
+
+  "tile-index": one row of four little-endian i32 per stored tile:
+
+      offset in row   field     meaning
+      -------------   --------  -------------------------------------------
+      0               tile_x    tile column tx; may be negative
+      4               tile_y    tile row ty; may be negative
+      8               file      index into "tile_files": which tile file
+      12              slot      position of the tile inside that file's
+                                "samples" section, counted from 0
+
+  Tile (tx, ty) covers the pixels x in [256*tx, 256*tx + 256) and
+  y in [256*ty, 256*ty + 256) of the surface. x grows to the right, y grows
+  DOWN, and pixel (0, 0) is the top-left pixel of the document's canvas
+  (conventions.pixel_origin, y_axis) - for a pattern, of the pattern tile.
+  A surface may extend beyond the canvas in every direction.
+
+  Each (tile_x, tile_y) appears at most once. Rows are written ordered by
+  (tile_y, tile_x); a reader MUST NOT depend on the order.
+
+  A reader REJECTS the node (marks it dead, reports, continues - law 3) when:
+  tile_size is not 256; "channels" has a length other than the table of section
+  2 gives; "default-pixel" is not esz * C bytes; a row's file is not a valid
+  index into "tile_files"; a slot does not exist in its tile file; a tile
+  coordinate is listed twice; or 256 * tile_x, 256 * tile_y or 256 * (t + 1)
+  does not fit a signed 32-bit integer.
+
+--------------------------------------------------------------------------
+5. A tile envelope  (part = "tiles")
+--------------------------------------------------------------------------
+
+  Additional header key:
+
+  "sample_encoding"  str       OPTIONAL. "raw" (also when the key is absent):
+                               the "samples" section holds the samples as
+                               they are. "planes-delta": it holds them
+                               reordered as section 5.2 says. A reader that
+                               meets any other word rejects the node.
+
+  One section, "samples". Its declaration depends on the sample encoding:
+
+  sample_encoding  dtype               shape                    stride   size
+  ---------------  ------------------  -----------------------  -------  -----------
+  "raw"            per sample_type     [tile_count, 256, 256,   esz * C  tile_count *
+                   (section 3)          C]                               65536 * esz * C
+  "planes-delta"   "u8"                [tile_count * 65536 *    1        the same
+                                        esz * C]
+
+  Either way the section is tile_count tiles one after another, each of
+  T = 65536 * esz * C bytes. Tile number `slot` starts at byte offset slot * T
+  of the section, and every tile is encoded on its own.
+
+  THE TILE, once decoded (for "raw": as it is stored): 256 rows from TOP to
+  BOTTOM; in each row 256 pixels from LEFT to RIGHT; in each pixel C samples in
+  the order of "channels" (interleaved), each sample esz bytes, little-endian.
+  The sample of channel c of the pixel in row r (0..255), column q (0..255) is
+  at byte offset
+
+      (r * 256 + q) * C * esz  +  c * esz
+
+  of the tile. Every tile is stored whole: a tile that is only partly painted
+  holds the default pixel in its unpainted pixels.
+
+  A tile envelope's "pixel_mode", "has_alpha", "channels" and "sample_type"
+  MUST equal the index file's; a reader rejects the node when they differ.
+
+  5.1 A tile file stored as a zlib stream
+  ---------------------------------------
+
+  A tile file is EITHER a tile envelope, byte for byte, OR a zlib stream (RFC
+  1950: a 2-byte header, DEFLATE data, a 4-byte Adler-32) whose inflated bytes
+  are exactly one tile envelope. Tell them apart by the first bytes of the file:
+
+      57 4B 58 30 ("WKX0")       a tile envelope
+      anything else              a zlib stream; its first byte has the low four
+                                 bits 1000 (compression method 8), which "W"
+                                 (0x57) has not
+
+  A node that holds zlib-stream tile files says so in MANIFEST.json: the node's
+  `meta.file_formats` maps the ROLE of each such file to the format id
+  "zlib-deflate", and `formats["zlib-deflate"]` is the path, inside this package,
+  of the definition of that format - everything needed to write an inflater,
+  with test vectors, and a reference inflater in source (the `core.tool` node
+  the definition names). Python: zlib.decompress(file_bytes).
+
+  A reader inflates the whole stream, refuses a stream that inflates to more
+  than its tiles can hold (T * the number of tiles the index places in the
+  file, plus the envelope header), and then reads the envelope as section 5
+  says. The file's sha256 in MANIFEST.json is of the STORED bytes (the stream);
+  "tile_file_sha256" in the index (section 4) is of the INFLATED bytes.
+
+  A writer may use any zlib level: every level inflates to the same bytes.
+  PhotoCraft writes level 3 with no preset dictionary, so that the same tiles
+  give the same file on every save.
+
+  5.2 sample_encoding "planes-delta"
+  ----------------------------------
+
+  Pixel data compresses far better when equal things sit together and when
+  what is stored is the CHANGE from one pixel to the next. "planes-delta" does
+  both, exactly and reversibly, for every sample type. For ONE tile of
+  T = N * esz bytes, where N = 65536 * C is its number of samples:
+
+  ENCODE (little-endian samples d[0 .. T) -> stored bytes e[0 .. T)):
+
+      for k in 0 .. esz:                    # k = 0 is the LEAST significant byte
+          for i in 0 .. N:
+              p[i] = d[i * esz + k]         # plane k: byte k of every sample
+          for i in 0 .. N:
+              if i < C:  e[k * N + i] = p[i]
+              else:      e[k * N + i] = (p[i] - p[i - C]) mod 256
+
+  DECODE (stored bytes e -> little-endian samples d):
+
+      for k in 0 .. esz:
+          for i in 0 .. N:
+              if i < C:  p[i] = e[k * N + i]
+              else:      p[i] = (e[k * N + i] + p[i - C]) mod 256
+              d[i * esz + k] = p[i]
+
+  In words: the tile is split into esz BYTE PLANES (all the low bytes, then
+  the next bytes, ...). Within a plane, sample i is the same channel of the
+  pixel after sample i - C, so each byte is stored as its difference to the
+  same channel of the previous pixel; the first pixel of the tile is stored as
+  it is. The difference runs on from the end of one row into the next. For
+  8-bit samples (esz = 1) there is one plane and this is simply "each pixel
+  minus the pixel before it".
+
+  Worked example, small enough to do by hand (not a whole tile): C = 2 channels
+  of "u16" (esz = 2), two pixels with the samples 0x1234, 0x00FF and 0x1236,
+  0x0100, so N = 4:
+
+      d (little-endian)   34 12  FF 00  36 12  00 01
+      plane 0 (low)       34 FF 36 00   ->  34 FF (36-34) (00-FF)  =  34 FF 02 01
+      plane 1 (high)      12 00 12 01   ->  12 00 (12-12) (01-00)  =  12 00 00 01
+      e                   34 FF 02 01 12 00 00 01
+
+  The dtype label of the section is "u8" because the stored bytes are no
+  longer samples; decode by "sample_type" after undoing the encoding. NaN and
+  infinity need no special case here ("nonfinite" still says truthfully
+  whether the tiles hold any).
+
+  The real file spec/examples/raster-layers/tiles.example.wkxz is one 8-bit
+  gray tile stored this way; tiles.example.hex.txt beside it gives the sha256
+  of the stored stream, of the inflated envelope and of the 65 536 decoded
+  samples.
+
+--------------------------------------------------------------------------
+6. Reading the pixel at (x, y), as an algorithm
+--------------------------------------------------------------------------
+
+      tx = floor(x / 256);  ty = floor(y / 256)          # floor, not truncate:
+                                                         # x = -1 is in tile -1
+      row = the "tile-index" row with tile_x == tx and tile_y == ty
+      if there is none:
+          return the "default-pixel" samples
+      bytes  = the file of this node version whose role == tile_files[row.file]
+      if bytes does not begin with "WKX0":  bytes = inflate(bytes)   # 5.1
+      tile   = samples[row.slot * T .. (row.slot + 1) * T]           # T = 65536 * C * esz
+      if sample_encoding is "planes-delta":  tile = DECODE(tile)     # 5.2
+      r = y - 256 * ty;  q = x - 256 * tx
+      at = (r * 256 + q) * C * esz
+      return the C samples at  tile[at .. at + C * esz]
+
+--------------------------------------------------------------------------
+7. Writing a surface, as an algorithm
+--------------------------------------------------------------------------
+
+      choose pixel_mode, has_alpha, sample_type          # -> channels, C, esz
+      tiles = every tile (tx, ty) that holds a pixel differing from the
+              default pixel (a writer MAY store more; it MUST store these)
+      write ONE tile file with role "tiles-p0-p0", a plain tile envelope:
+          header: part "tiles", the format keys, tile_count = len(tiles),
+                  nonfinite as section 3 says (no "sample_encoding": raw)
+          section "samples": the tiles in any order you choose; remember each
+                  tile's position as its slot
+      write the index file:
+          header: part "index", the format keys, tile_count = len(tiles),
+                  tile_files = ["tiles-p0-p0"]  (or [] with no tiles)
+          section "default-pixel": C samples
+          section "tile-index": for each tile the row (tx, ty, 0, slot)
+      in MANIFEST.json, the node version lists the index file with
+      "role": "payload" and the tile file with "role": "tiles-p0-p0", and
+      carries "payload_file": <the index file's path>.
+
+  spec/examples/raster-layers/write_minimal.py does exactly this. It is the
+  simplest valid form: nothing compressed, nothing reordered. To write small
+  files instead, encode each tile as 5.2 says, set "sample_encoding":
+  "planes-delta", store the envelope as a zlib stream (5.1), list its role under
+  the node's `meta.file_formats` as "zlib-deflate", make sure the package
+  carries that format's definition (spec/CRAFT-BASE.md section 6.1), and add
+  "tile_file_sha256" to the index.
+
+--------------------------------------------------------------------------
+8. Versions of a surface
+--------------------------------------------------------------------------
+
+  When pixels change, the node gains a version (spec/CRAFT-BASE.md sections 3
+  and 4). A tile file whose bytes did not change is listed again by the new
+  version with its identical path, sha256 and size - one copy of the bytes. A
+  tile file whose bytes changed takes the plain path, and the superseded bytes
+  move to the same name with an "@N" marker. The index file changes when the
+  SET of tiles or their placement in files changes and, when it lists
+  "tile_file_sha256", whenever a tile file changes. To read the surface as
+  it was at an earlier version, use that version's files[]: resolve the index
+  and every role through THAT version's entries.

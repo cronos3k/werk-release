@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Any JSON value, carried verbatim. Strings inside it are never references to other parts of the document."
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.brushes.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The document's brushes. A stroke names a brush by `name` (`brush` of a stroke item); a reader that does not implement brushes draws the plain stroke.",
+  "properties": {
+    "brushes": {
+      "$ref": "#/$defs/json",
+      "description": "An array of brush definitions as VectorCraft keeps them: each an object with `name` and `type` (`calligraphic`, `scatter`, `art`, `pattern` or `bristle`) and the parameters of that type; art-carrying brushes hold objects of the same shape as a layer's."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    }
+  },
+  "required": [
+    "schema_version",
+    "brushes"
+  ],
+  "title": "x.vectorcraft.brushes - VectorCraft's brush library",
+  "type": "object"
+}

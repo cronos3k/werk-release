@@ -1,0 +1,72 @@
+{
+  "$defs": {},
+  "$id": "https://werk.format/spec/schemas/core.raster.metadata.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Descriptive metadata of the document.",
+  "properties": {
+    "exif": {
+      "anyOf": [
+        {
+          "description": "The node carrying the EXIF block verbatim: a `core.raster.source` whose `meta.payload_format` is `exif` (section 3.13 of the profile specification).",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Null: none."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "text": {
+      "description": "Free-form key/value text as image files carry it (PNG text chunks, TIFF ASCII tags), in order, duplicate keys allowed.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One text entry.",
+        "properties": {
+          "key": {
+            "description": "Keyword.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "value": {
+            "description": "Text.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "xmp": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The XMP packet as text (RDF/XML). Null: none."
+    }
+  },
+  "required": [
+    "schema_version",
+    "xmp",
+    "exif",
+    "text"
+  ],
+  "title": "core.raster.metadata — werk profile raster-layers/1",
+  "type": "object"
+}

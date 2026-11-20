@@ -1,0 +1,44 @@
+{
+  "images": [
+    {
+      "key": "doc0000-1",
+      "proxy": {
+        "is": "pixels"
+      }
+    },
+    {
+      "key": "img-jpeg-unread",
+      "proxy": {
+        "is": "original"
+      }
+    },
+    {
+      "key": "img-linked-unread",
+      "proxy": {
+        "is": "original"
+      }
+    },
+    {
+      "key": "img-png-proxy",
+      "proxy": {
+        "is": "node",
+        "node": "x-proxy-10"
+      }
+    },
+    {
+      "key": "img-undecodable",
+      "mime": "image/png",
+      "original": "x-source-12-other"
+    },
+    {
+      "key": "img-undecodable-preview",
+      "mime": "image/x-raw",
+      "original": "x-source-13-other",
+      "proxy": {
+        "is": "node",
+        "node": "x-proxy-13"
+      }
+    }
+  ],
+  "schema_version": 1
+}

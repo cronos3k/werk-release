@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.source.vectorcraft.schema.json",
+  "title": "x.vectorcraft.source.vectorcraft - a placed document in VectorCraft's earlier native format (when it is not compressed)",
+  "type": "object",
+  "description": "A VectorCraft native file as it was placed, verbatim. This schema only says what the file is; spec/layouts/x.vectorcraft.source.vectorcraft.layout.txt describes the format.",
+  "required": [
+    "format",
+    "version",
+    "document"
+  ],
+  "properties": {
+    "format": {
+      "enum": [
+        "vectorcraft",
+        "drawcraft"
+      ],
+      "description": "The format's name (`drawcraft`: files from before the application was renamed)."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "The format version, 1 to 4."
+    },
+    "document": {
+      "type": "object",
+      "description": "VectorCraft's document model as one JSON object."
+    }
+  }
+}

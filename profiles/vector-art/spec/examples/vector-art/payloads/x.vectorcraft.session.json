@@ -1,0 +1,74 @@
+{
+  "export_settings": {
+    "formats": [
+      {
+        "format": "png",
+        "scale": "2x"
+      }
+    ],
+    "prefix": "corpus-",
+    "subfolders": true
+  },
+  "last_view": {
+    "center": {
+      "x": 306.0,
+      "y": 396.0
+    },
+    "name": "",
+    "rotation": -30.0,
+    "zoom": 1.25
+  },
+  "layers_open": [
+    92,
+    91
+  ],
+  "paste_remembers_layers": true,
+  "print_setup": {
+    "copies": 3,
+    "marks": {
+      "style": "japanese",
+      "trim": true
+    },
+    "media": {
+      "orientation": "landscape",
+      "size": "A4"
+    }
+  },
+  "saved_selections": [
+    {
+      "name": "Selection 1",
+      "objects": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "Just one",
+      "objects": [
+        94
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "views": [
+    {
+      "center": {
+        "x": 100.5,
+        "y": 200.25
+      },
+      "name": "Detail",
+      "rotation": 15.0,
+      "zoom": 6.4
+    },
+    {
+      "center": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "name": "Ünï \"q\" \\ \u0007 é́ עברית 日本語 🎨",
+      "rotation": 0.0,
+      "zoom": 0.03125
+    }
+  ]
+}

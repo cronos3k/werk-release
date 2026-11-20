@@ -1,0 +1,954 @@
+{
+  "$defs": {
+    "loaderMeta": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "form": {
+                "const": "prebuilt"
+              }
+            },
+            "required": [
+              "form"
+            ]
+          },
+          "then": {
+            "required": [
+              "prebuilt"
+            ]
+          }
+        }
+      ],
+      "description": "core.loader — the reference readers that travel INSIDE the package. Identical in meaning to profile 1's; see SPEC.md section 7 for the normative text, including what counts as a dependency and the rule that a prebuilt binary is never executed automatically.",
+      "properties": {
+        "build_command": {
+          "type": "string"
+        },
+        "capabilities": {
+          "items": {
+            "enum": [
+              "read-manifest",
+              "verify-hashes",
+              "read-envelope",
+              "read-geometry",
+              "read-textures",
+              "read-audio",
+              "read-skeleton",
+              "read-animation",
+              "materialize",
+              "verify-signature",
+              "summarize-points",
+              "summarize-gsplat"
+            ]
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "dependencies": {
+          "description": "MUST be an empty array. A loader with a dependency is a promise about other files, which law 1 bans at the constitutional level. See SPEC.md section 7 for what counts as a dependency.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 0,
+          "type": "array"
+        },
+        "entrypoint": {
+          "$ref": "#/$defs/path"
+        },
+        "form": {
+          "enum": [
+            "source",
+            "prebuilt"
+          ]
+        },
+        "language": {
+          "enum": [
+            "python",
+            "rust",
+            "c",
+            "cpp",
+            "javascript",
+            "other"
+          ]
+        },
+        "prebuilt": {
+          "additionalProperties": false,
+          "properties": {
+            "abi": {
+              "type": "string"
+            },
+            "arch": {
+              "enum": [
+                "x86-64",
+                "aarch64",
+                "wasm32",
+                "other"
+              ]
+            },
+            "built_from": {
+              "$ref": "#/$defs/path"
+            },
+            "platform": {
+              "enum": [
+                "windows",
+                "linux",
+                "macos",
+                "wasm",
+                "other"
+              ]
+            },
+            "reproducible_build_command": {
+              "type": "string"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            }
+          },
+          "required": [
+            "platform",
+            "arch",
+            "abi",
+            "sha256",
+            "built_from"
+          ],
+          "type": "object"
+        },
+        "toolchain": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "language",
+        "form",
+        "entrypoint",
+        "dependencies",
+        "capabilities"
+      ],
+      "type": "object"
+    },
+    "meta6": {
+      "description": "What a core.media.image node is a picture of.",
+      "properties": {
+        "of": {
+          "description": "The node_id of the core.media.asset node it was derived from.",
+          "format": "werk-node-ref",
+          "type": "string"
+        },
+        "role": {
+          "description": "`rendition`: the picture of the asset `of`, decoded to PNG. `poster`: one frame of the video asset `of`.",
+          "enum": [
+            "rendition",
+            "poster"
+          ]
+        }
+      },
+      "required": [
+        "role",
+        "of"
+      ],
+      "type": "object"
+    },
+    "meta7": {
+      "description": "What a core.media.audio node is an excerpt of.",
+      "properties": {
+        "of": {
+          "description": "The node_id of the core.media.asset node it was derived from.",
+          "format": "werk-node-ref",
+          "type": "string"
+        },
+        "role": {
+          "description": "`excerpt`: the first seconds of the sound of the asset `of`.",
+          "enum": [
+            "excerpt"
+          ]
+        }
+      },
+      "required": [
+        "role",
+        "of"
+      ],
+      "type": "object"
+    },
+    "node": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "core.loader"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "meta": {
+                "$ref": "#/$defs/loaderMeta"
+              }
+            },
+            "required": [
+              "meta"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "core.media.image"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "meta": {
+                "$ref": "#/$defs/meta6"
+              }
+            },
+            "required": [
+              "meta"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "core.media.audio"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "meta": {
+                "$ref": "#/$defs/meta7"
+              }
+            },
+            "required": [
+              "meta"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "active": {
+          "description": "The v number of the author's RECOMMENDED version — a recommendation, not a command.",
+          "minimum": 1,
+          "type": "integer"
+        },
+        "edges": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "kind": {
+                "enum": [
+                  "requires",
+                  "enhances"
+                ]
+              },
+              "role": {
+                "description": "e.g. 'derived-from', 'recipe-for', 'discloses', 'describes'.",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              "to": {
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "to",
+              "kind"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "meta": {
+          "description": "Type-specific metadata a reader needs BEFORE opening the payload. Payload-internal detail belongs in the payload.",
+          "type": "object"
+        },
+        "node_id": {
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "core.spec",
+                "core.loader",
+                "core.license",
+                "core.readme",
+                "core.recipe",
+                "core.disclosure",
+                "core.provenance",
+                "core.semantics",
+                "core.tool",
+                "core.tool.config",
+                "core.embedding",
+                "core.revisions",
+                "core.slide.document",
+                "core.slide.slide",
+                "core.slide.layout",
+                "core.slide.master",
+                "core.slide.geometry",
+                "core.media.asset",
+                "core.media.image",
+                "core.media.audio",
+                "core.slide.preview",
+                "core.slide.outline"
+              ]
+            },
+            {
+              "pattern": "^x\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$",
+              "type": "string"
+            }
+          ],
+          "description": "Namespaced node type. core.* is this profile's constitution; x.* is open frontier and a reader that does not know an x.* type skips it and loses nothing (law 12)."
+        },
+        "versions": {
+          "description": "Append-only (law 6). A node may hold multiple coexisting versions; in an image package this is how a re-encode or a re-crop lives beside the thing it replaced instead of overwriting it.",
+          "items": {
+            "$ref": "#/$defs/version"
+          },
+          "minItems": 1,
+          "type": "array"
+        }
+      },
+      "required": [
+        "node_id",
+        "type",
+        "versions",
+        "active",
+        "edges"
+      ],
+      "type": "object"
+    },
+    "path": {
+      "description": "Package-relative POSIX path. No leading slash, no drive letter, no '..' segment, no backslash. Case-sensitive.",
+      "maxLength": 1024,
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(^|/)\\.\\.(/|$))[A-Za-z0-9][A-Za-z0-9._@/-]*$",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "version": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "description": "Law 5, machine-checked: anything not authored was derived from something, so it must say what from.",
+          "if": {
+            "properties": {
+              "epistemic": {
+                "enum": [
+                  "measured",
+                  "inferred"
+                ]
+              }
+            },
+            "required": [
+              "epistemic"
+            ]
+          },
+          "then": {
+            "required": [
+              "input_hash",
+              "input_files"
+            ]
+          }
+        },
+        {
+          "description": "ArtCraft rule: an `inferred` version names the model that guessed it and carries a confidence.",
+          "if": {
+            "properties": {
+              "epistemic": {
+                "const": "inferred"
+              }
+            },
+            "required": [
+              "epistemic"
+            ]
+          },
+          "then": {
+            "properties": {
+              "producer": {
+                "required": [
+                  "tool",
+                  "version",
+                  "model"
+                ]
+              }
+            },
+            "required": [
+              "confidence"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "compacted": {
+          "additionalProperties": false,
+          "properties": {
+            "at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "by": {
+              "type": "string"
+            },
+            "reason": {
+              "minLength": 8,
+              "type": "string"
+            }
+          },
+          "required": [
+            "at",
+            "by",
+            "reason"
+          ],
+          "type": "object"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "created": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "epistemic": {
+          "description": "Law 5. 'authored' a human or a deliberate authoring act made it. 'measured' it came out of a computation and is reproducible from its inputs. 'inferred' a model guessed it. NOTE FOR THIS PROFILE: a generated image is 'inferred' — a model produced it and it is not reproducible from its inputs, which is precisely what core.recipe's reproducibility grade then quantifies. A deterministic downscale of that image is 'measured'. Getting these two the wrong way round is the most common mistake in an image package.",
+          "enum": [
+            "authored",
+            "measured",
+            "inferred"
+          ]
+        },
+        "files": {
+          "description": "Every byte this version owns. Every byte in the container except MANIFEST.json and SIGNATURE.json is reachable from exactly one NODE's files[] — see PROFILE-IMAGE.md section 2 and SPEC.md section 2 for why the unit is the node and not the node version. Two different nodes claiming one path is an error.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "media_type": {
+                "type": "string"
+              },
+              "offset_hint": {
+                "description": "Byte offset of this file's DATA within the zip form, when known. A hint for ranged reads; a reader MUST verify by parsing the zip's own headers and MUST NOT trust this number.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "path": {
+                "$ref": "#/$defs/path"
+              },
+              "role": {
+                "description": "Which slot this file fills within a multi-file node. Open kebab-case vocabulary with three RESERVED values a reader may rely on: 'payload' (this file IS the node's payload, at most one per version), 'descriptor' (a sidecar ABOUT the payload, NEVER selected as the payload) and 'best' (the recommended one of several interchangeable takes). SPEC.md section 2.1.",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256"
+              },
+              "size": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "path",
+              "sha256",
+              "size"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "input_files": {
+          "items": {
+            "$ref": "#/$defs/path"
+          },
+          "type": "array"
+        },
+        "input_hash": {
+          "$ref": "#/$defs/sha256",
+          "description": "sha256 over this version's declared inputs (law 5): the concatenation, in the order given by input_files, of each input file's own sha256 as 32 RAW BYTES, followed by the UTF-8 bytes of the canonical JSON of input_params. AN ABSENT input_params IS THE EMPTY OBJECT and its canonical JSON is the two bytes '{}'. See spec/MINI-SPECS.md section 11."
+        },
+        "input_params": {
+          "type": "object"
+        },
+        "note": {
+          "description": "MANDATORY (law 6). One sentence saying why this version exists. 'update' is not a note.",
+          "maxLength": 2000,
+          "minLength": 8,
+          "type": "string"
+        },
+        "payload_file": {
+          "$ref": "#/$defs/path",
+          "description": "PROPOSED (S-XV-4 / S-OW-2), optional and purely additive. The package-relative path of the file that IS this node's payload; MUST equal the `path` of exactly one entry in THIS version's files[]. primary.{image,...} names a NODE and a node may hold several files, so following it is only half the journey -- SPEC.md section 2.1 is the other half. A consumer MUST NOT take files[0]."
+        },
+        "producer": {
+          "additionalProperties": false,
+          "properties": {
+            "host": {
+              "type": "string"
+            },
+            "model": {
+              "description": "Model id when a model produced this. Where a core.recipe node exists it is the authority on the full model chain; this field is the one-line answer for a listing (law 9).",
+              "type": "string"
+            },
+            "tool": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "version": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "tool",
+            "version"
+          ],
+          "type": "object"
+        },
+        "spec_sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "OPTIONAL (S-29, RULING, implemented). The revision of the spec this version payload conforms to - the same construction as the global field, over exactly the spec files this payload conforms to. See spec/SPEC.md section 2."
+        },
+        "supersedes": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "v": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "v",
+        "files",
+        "note",
+        "producer",
+        "epistemic",
+        "created"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/manifest.presentation.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The single source of structure for a werk package whose `profile` is \"presentation/1\". Narrative spec: spec/PROFILE-PRESENTATION.md (profile) and spec/CRAFT-BASE.md (the ArtCraft base additions), on top of spec/SPEC.md's base doctrine. Standalone: no $ref to any other file. GENERATED by craft-werk from the vendored spec/schemas/manifest.image.schema.json — the version, file, path, edge and loaderMeta definitions are the reference's, unchanged; only the profile id, the conventions, the `primary` slots, the core.* type list and the per-type `meta` rules are this profile's. WHICH SCHEMA VALIDATES A MANIFEST is answered by the manifest itself, in `manifest_schema`.",
+  "properties": {
+    "container": {
+      "additionalProperties": false,
+      "description": "How this package is materialised. Directory and zip layouts are identical; both are the format. Semantics are exactly profile 1's, including the advisory-and-frozen reading of `form`.",
+      "properties": {
+        "entry_order": {
+          "description": "Law 9, preview-first byte layout: the physical order zip entries were written in. MATCHING RULE, normative: an element ending in '/' is a DIRECTORY PREFIX and matches every entry beneath it; anything else is an EXACT path. Matching is two-pass — exact paths first, then prefixes — so an exact entry listed between two prefixes lands where it is listed. A reader MUST NOT depend on this order for correctness; it exists so a store can exploit it.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "form": {
+          "description": "ADVISORY, and frozen at authoring time: the form the package was written in when it was last signed, NOT a claim about the form you are holding. A reader finding it disagreeing treats that as an informational note, never as damage and never as a reason to rewrite anything.",
+          "enum": [
+            "directory",
+            "zip"
+          ]
+        },
+        "preview_prefix_bytes": {
+          "description": "Byte offset of the END of the last container entry belonging to the PREVIEW TIER, measured from the start of the zip — i.e. the number of leading bytes a store may fetch and have a complete browsable, searchable, auditable record. For this profile the DEFAULT preview tier is MANIFEST.json, SIGNATURE.json, LICENSE, README.txt, loaders/, spec/, semantics/, disclosure/, the recipe node's record and prompt files but NOT its embedded input media (which are routinely larger than the image they conditioned), and the node named by primary.thumbnail. `preview_tier` lists the actual set and is the authority; this sentence is only what a package means when it omits that key. S-15, RULING, implemented: THE NUMBER IS A HINT, declared-not-guaranteed. A writer SHOULD emit the recomputed value rather than an estimate, and a READER MUST NOT TREAT IT AS EXACT - check what a range request actually returned, and never report a disagreement as damage or refuse a package over one. It is a hint for an arithmetic reason that was measured (S10-2): the field measures the container that contains it, so writing it changes the length of MANIFEST.json and therefore the measurement. See spec/SPEC.md section 1, which governs both profiles here.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "preview_tier": {
+          "description": "The entries the number above was computed over, listed rather than implied, so a reader can recompute it without knowing this profile's default set. Same matching rule as entry_order: trailing '/' means prefix.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "total_size_bytes": {
+          "description": "OPTIONAL. The sum of the `size` fields of every DISTINCT path declared in nodes[].versions[].files[]: payload bytes only, excluding MANIFEST.json, SIGNATURE.json and all container framing, so it is the same number in the directory form and in the zip. A path listed by several versions of ONE node counts ONCE — the S-18 reading of what a file belongs to, applied arithmetically. It exists so a store can size a fetch before parsing the graph, and it is advisory: a reader that needs the number computes it. S-26, RULING: the field previously had no definition anywhere in the spec, and a gauntlet reader established what it meant by trying candidates against the file, which is exactly the \"if you had to ask a person, that is a spec bug\" case this format is supposed to remove.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "zip_compression": {
+          "default": "store",
+          "description": "STORE is the default and what conformance fixtures use. Note the argument is even stronger here than in profile 1: a PNG is already deflated, so deflating the container again costs CPU to gain nothing.",
+          "enum": [
+            "store",
+            "deflate"
+          ]
+        }
+      },
+      "required": [
+        "form",
+        "zip_compression",
+        "entry_order"
+      ],
+      "type": "object"
+    },
+    "conventions": {
+      "additionalProperties": false,
+      "description": "Law 8, machine-checked, all mandatory. Every value is pinned to a const, so 'does this reader support it' is a validation result. spec/conventions-map.presentation.json tabulates which node types each convention governs.",
+      "properties": {
+        "alignment_bytes": {
+          "const": 16,
+          "description": "Payload sections of envelope binaries start on this boundary."
+        },
+        "alpha_mode": {
+          "const": "straight",
+          "description": "Alpha is straight (not premultiplied): 0 transparent, maximum opaque."
+        },
+        "angle_direction": {
+          "const": "clockwise",
+          "description": "A positive angle turns clockwise as seen on screen (with y down: from the +x axis towards the +y axis)."
+        },
+        "angle_file_unit_per_degree": {
+          "const": 60000,
+          "description": "The `hueOff` colour-transform operand and preset adjust angles are in 1/60000 degree."
+        },
+        "angle_unit": {
+          "const": "degree",
+          "description": "Every angle is in degrees (preset adjust angles and hue offsets excepted: see angle_file_unit_per_degree)."
+        },
+        "color_component_max": {
+          "const": 255,
+          "description": "Colour components r, g, b, a are integers 0..255."
+        },
+        "color_space": {
+          "const": "srgb",
+          "description": "Every colour value and every decoded picture is sRGB."
+        },
+        "endianness": {
+          "const": "le",
+          "description": "Every envelope binary is little-endian. MessagePack header integers inside an envelope are big-endian by MessagePack's own definition (spec/layouts/ENVELOPE.layout.txt section 4)."
+        },
+        "excerpt_sample_format": {
+          "const": "pcm-s16le",
+          "description": "An audio excerpt is linear PCM, signed 16-bit little-endian, interleaved, WAVE format tag 1."
+        },
+        "excerpt_seconds": {
+          "const": 5,
+          "description": "An audio excerpt holds at most this many seconds from the start of the sound."
+        },
+        "hash_algorithm": {
+          "const": "sha256",
+          "description": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256."
+        },
+        "id_case": {
+          "const": "kebab-case",
+          "description": "Every id matches ^[a-z0-9]+(-[a-z0-9]+)*$."
+        },
+        "length_unit": {
+          "const": "point",
+          "description": "Every coordinate, length, font size and line width is in points."
+        },
+        "number_format": {
+          "const": "shortest-round-trip-decimal",
+          "description": "Every JSON number is the shortest decimal that parses back to the same IEEE 754 binary64 value."
+        },
+        "outline_line_ending": {
+          "const": "lf",
+          "description": "Every line of the outline text ends with one U+000A."
+        },
+        "paint_order": {
+          "const": "bottom-first",
+          "description": "In every list of shapes the first element is at the bottom; each later one paints over it."
+        },
+        "paragraph_index_base": {
+          "const": 0,
+          "description": "An animation's `paragraph` counts paragraphs from 0."
+        },
+        "pixel_origin": {
+          "const": "top-left",
+          "description": "Pixel row 0 of a PNG is the top row."
+        },
+        "pointer_syntax": {
+          "const": "rfc6901",
+          "description": "A `pointer` is an RFC 6901 JSON Pointer into the owner node's payload; array indices count from 0."
+        },
+        "points_per_inch": {
+          "const": 72,
+          "description": "One point is 1/72 inch: 72 points = 25.4 mm."
+        },
+        "ratio_file_unit_per_whole": {
+          "const": 100000,
+          "description": "Colour-transform operands and preset adjust ratios are integers in 1/100000: 100000 = 100 % = 1.0."
+        },
+        "show_range_base": {
+          "const": 1,
+          "description": "`show.range.first` and `.last` count slides from 1, inclusive."
+        },
+        "signature_algorithm": {
+          "const": "ed25519",
+          "description": "SIGNATURE.json only. Refusing it is the 'unverified' state, not damage."
+        },
+        "style_index_base": {
+          "const": 1,
+          "description": "A theme style reference `index` counts format-scheme entries from 1; 0 means none."
+        },
+        "text_encoding": {
+          "const": "utf-8",
+          "description": "Every text and JSON payload, INCLUDING MANIFEST.json - which is why the scope is container."
+        },
+        "time_unit": {
+          "const": "millisecond",
+          "description": "Every duration, delay and media position is in milliseconds."
+        },
+        "x_axis": {
+          "const": "right",
+          "description": "x grows to the right; the slide's origin (0, 0) is its top-left corner."
+        },
+        "y_axis": {
+          "const": "down",
+          "description": "y grows downwards: a box's top edge is its smaller y."
+        }
+      },
+      "required": [
+        "endianness",
+        "alignment_bytes",
+        "text_encoding",
+        "id_case",
+        "hash_algorithm",
+        "signature_algorithm",
+        "length_unit",
+        "points_per_inch",
+        "x_axis",
+        "y_axis",
+        "angle_unit",
+        "angle_direction",
+        "paint_order",
+        "ratio_file_unit_per_whole",
+        "angle_file_unit_per_degree",
+        "number_format",
+        "color_space",
+        "color_component_max",
+        "alpha_mode",
+        "pixel_origin",
+        "time_unit",
+        "paragraph_index_base",
+        "show_range_base",
+        "style_index_base",
+        "pointer_syntax",
+        "excerpt_sample_format",
+        "excerpt_seconds",
+        "outline_line_ending"
+      ],
+      "type": "object"
+    },
+    "conventions_map": {
+      "description": "OPTIONAL (S-17, RULING, implemented). Path inside this package of the machine-readable convention to node-type map. Absence means this profile table as printed in the vendored spec/PROFILE-IMAGE.md section 6. See spec/SPEC.md section 10.2.",
+      "pattern": "^spec/[A-Za-z0-9._/-]+\\.json$",
+      "type": "string"
+    },
+    "entity": {
+      "additionalProperties": false,
+      "description": "Identity for recognition, never for external reference (laws 1 and 4). An image is an entity like any other: two hermetic copies of one image share a uuid, a re-generation does not.",
+      "properties": {
+        "created": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "type": "string"
+        },
+        "summary": {
+          "maxLength": 4000,
+          "type": "string"
+        },
+        "uuid": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid",
+        "name"
+      ],
+      "type": "object"
+    },
+    "formats": {
+      "additionalProperties": {
+        "pattern": "^spec/formats/[a-z0-9-]+\\.md$",
+        "type": "string"
+      },
+      "description": "OPTIONAL; parallel to `schemas` and `layouts`. Map from a FORMAT ID to the path, inside this package, of the format's definition document: a normative, byte-level definition with hash-checkable test vectors from which a codec can be built (spec/CRAFT-BASE.md section 6). It lists the formats of the encoded nodes actually present; a node says which format its payload is in with `meta.payload_format`. Absent means no node of this package carries a foreign-encoded payload.",
+      "propertyNames": {
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+      },
+      "type": "object"
+    },
+    "generator": {
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "tool": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "tool",
+        "version"
+      ],
+      "type": "object"
+    },
+    "layouts": {
+      "additionalProperties": {
+        "pattern": "^spec/layouts/[A-Za-z0-9._-]+\\.layout\\.txt$",
+        "type": "string"
+      },
+      "description": "Map from node type id to the path of the layout grammar for that node's custom binary payload. Every type in nodes[] whose payload is a custom binary MUST have an entry.",
+      "propertyNames": {
+        "pattern": "^(core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+      },
+      "type": "object"
+    },
+    "license": {
+      "additionalProperties": false,
+      "description": "Law 7: the license travels as full embedded text, never as a link. S12-9, RULING: the format provides the structured place for licence facts and nothing more — filling it truthfully is the responsibility of the author and their tool or export implementation, and the format neither vets nor enforces content licensing. No conformance clause turns on what the text SAYS; the manifest hash and signature chain only guarantee it cannot be swapped or stripped silently. The doctrine's home is spec/SPEC.md section 2, beside the disclosure no-enforcement doctrine of section 3.12, of which it is the licence-side twin.",
+      "properties": {
+        "file": {
+          "const": "LICENSE",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "spdx_id": {
+          "description": "Advisory shorthand only. The embedded text is the license.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file",
+        "sha256"
+      ],
+      "type": "object"
+    },
+    "manifest_schema": {
+      "description": "Path inside this package of the JSON Schema that validates THIS manifest. Present so a reader never has to map a profile string to a filename by convention. For this profile it is spec/schemas/manifest.image.schema.json.",
+      "pattern": "^spec/schemas/[A-Za-z0-9._-]+\\.schema\\.json$",
+      "type": "string"
+    },
+    "nodes": {
+      "description": "The graph. Every node is an island (law 3). Cross-references are by identity through this array only.",
+      "items": {
+        "$ref": "#/$defs/node"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "primary": {
+      "additionalProperties": false,
+      "description": "Which node a consumer reaches for when it wants exactly ONE of something. Each value is a node_id. `primary` names a NODE; resolve that node's payload file by SPEC.md section 2.1 (`payload_file` first) and never take files[0].",
+      "minProperties": 1,
+      "properties": {
+        "document": {
+          "description": "node_id of the one core.slide.document node: the structure a reader opens first.",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "image": {
+          "description": "node_id of the core.slide.preview node: the PNG a listing shows for this presentation. Absent for a deck with no slide.",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "profile": {
+      "const": "presentation/1",
+      "type": "string"
+    },
+    "profile_spec": {
+      "description": "OPTIONAL. Path inside this package of the NARRATIVE specification of this profile - the document a                                 reader starts with and the one that carries the normative 'Writing a minimal valid ...' section.                                 Declared so that nobody derives it from a file-name convention.",
+      "pattern": "^spec/[A-Za-z0-9._/-]+[.]md$",
+      "type": "string"
+    },
+    "schemas": {
+      "additionalProperties": {
+        "pattern": "^spec/schemas/[A-Za-z0-9._-]+\\.schema\\.json$",
+        "type": "string"
+      },
+      "description": "AN EMPTY MAP IS CONFORMANT (S10-1, RULING, implemented): a package with no schema-bearing node type present says so with {} rather than being rejected for being small. Map from node type id to the path of the JSON Schema that validates that node's structured payload, inside this package. Every type in nodes[] whose payload is JSON MUST have an entry.",
+      "propertyNames": {
+        "pattern": "^(core|x)\\.[a-z0-9-]+(\\.[a-z0-9-]+)*$"
+      },
+      "type": "object"
+    },
+    "signature_file": {
+      "const": "SIGNATURE.json",
+      "description": "Present when a signature chain accompanies this package. SIGNATURE.json is NOT listed in any node's files[] and is NOT hashed by this manifest, because it signs this manifest.",
+      "type": "string"
+    },
+    "spec_sha256": {
+      "$ref": "#/$defs/sha256",
+      "description": "MANDATORY (S-29, RULING, implemented). One sha256 over the spec/ tree THIS PACKAGE CARRIES, so a reader can tell in one comparison whether the schemas travelling inside the file are the ones it already knows. Identical in meaning and algorithm to profile 1: see spec/SPEC.md section 2 for the complete construction. Vendoring spec/ is structural for every writer in every language, and until this field existed nothing said which revision the vendored bytes were."
+    },
+    "werk": {
+      "additionalProperties": false,
+      "properties": {
+        "major": {
+          "const": 1,
+          "type": "integer"
+        },
+        "minor": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "major",
+        "minor"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "werk",
+    "profile",
+    "entity",
+    "conventions",
+    "container",
+    "license",
+    "schemas",
+    "spec_sha256",
+    "nodes",
+    "manifest_schema",
+    "conventions_map",
+    "layouts",
+    "primary"
+  ],
+  "title": "werk MANIFEST.json — profile presentation/1",
+  "type": "object"
+}

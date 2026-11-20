@@ -1,0 +1,1 @@
+{"api":1,"effect":"org.example.werk-test-gain","manifest":{"api":1,"author":"Example","category":"Color Correction","description":"Halves red.","id":"org.example.werk-test-gain","name":"Test Gain","params":[{"default":true,"id":"on","name":"On","type":"checkbox"}],"version":"1.2.3"},"name":"Test Gain","schema_version":1,"version":"1.2.3"}

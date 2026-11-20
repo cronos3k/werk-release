@@ -1,0 +1,124 @@
+core.sheet.computed — layout grammar v1
+=======================================
+
+The CACHED RESULTS of one sheet of a `spreadsheet/1` document: the value each formula cell
+had when the document was saved, and the values that dynamic-array formulas spilled into
+neighbouring cells.
+
+WHERE THESE BYTES ARE. Like a sheet's cells, its cached results are stored in BANDS of rows:
+each band is a file of the node `sheet-<uid>-computed`
+(`sheets/sheet-<uid>/computed/rows-<first row>.wkx.zlib`), ONE zlib stream (RFC 1950;
+spec/formats/zlib-deflate.md). This grammar describes a band AFTER it is inflated. The node's
+payload, `sheets/sheet-<uid>/computed.json`, is the index that lists the bands
+(spec/PROFILE-SPREADSHEET.md section 3.4). A band holds the entries of its rows only; a spill
+range is recorded in the band that holds its anchor cell.
+
+This is derived data. Its node is stamped `measured`; the manifest lists, in `input_files`,
+the files it was computed from and, in `input_hash`, their hash (spec/CRAFT-BASE.md section
+5), so a reader can tell whether the cache still belongs to the cells it sits beside:
+
+  * A reader WITHOUT a formula engine reads the numbers from here. That is what this file is
+    for: nobody needs a formula engine to read a saved spreadsheet.
+  * A reader WITH a formula engine may recompute and compare, or simply recompute. When this
+    node is dead, missing, or its `input_hash` no longer matches its inputs, the values are
+    stale or gone and the formulas (in core.sheet.cells) are the truth.
+
+It is a werk binary envelope; spec/layouts/ENVELOPE.layout.txt is normative for the frame.
+The value encoding is exactly that of spec/layouts/core.sheet.cells.layout.txt sections 2.2
+to 2.4, which this file does not repeat. Worked example, annotated to the decoded values:
+spec/examples/spreadsheet/computed.example.hex.txt (binary: computed.example.wkx). Running
+code: `read_computed` and `apply_computed` in spec/examples/spreadsheet/read_spreadsheet.py.
+
+--------------------------------------------------------------------------
+1. Frame
+--------------------------------------------------------------------------
+
+  magic      "WKX1"   (57 4B 58 31)
+  version    1
+  header     the five mandatory envelope keys with "kind" = "core.sheet.computed", and (uint):
+
+  key                  meaning
+  -------------------  -------------------------------------------------------
+  "sheet_uid"          MANDATORY. The uid of the sheet: the <uid> of the node id
+                       `sheet-<uid>-computed`. A reader refuses the node when it differs.
+  "entry_count"        n, the number of entries.
+  "text_count"         t, strings in the string table.
+  "array_count"        a, arrays in the array table.
+  "element_count"      e, array elements.
+  "spill_range_count"  k, entries of `spill-ranges`.
+
+--------------------------------------------------------------------------
+2. Sections
+--------------------------------------------------------------------------
+
+All thirteen sections are present in every file (an empty table is a section of size 0); a
+reader finds each BY NAME. Little-endian, unsigned.
+
+  name          dtype  shape   stride  size     one entry per
+  ------------  -----  ------  ------  -------  ------------------------------
+  row           u32    [n]     4       4*n      entry
+  col           u32    [n]     4       4*n      entry
+  source        u8     [n]     1       n        entry
+  kind          u8     [n]     1       n        entry
+  number        f64    [n]     8       8*n      entry
+  ref           u32    [n]     4       4*n      entry
+  text-offsets  u64    [t+1]   8       8*(t+1)  string, plus one
+  text-bytes    u8     [T]     1       T        byte of string data
+  array-dims    u32    [a,4]   16      16*a     array
+  elem-kind     u8     [e]     1       e        array element
+  elem-number   f64    [e]     8       8*e      array element
+  elem-ref      u32    [e]     4       4*e      array element
+  spill-ranges  u32    [k,6]   24      24*k     dynamic-array formula that spilled
+
+2.1 Entries
+
+  Entry i says: the cell at ZERO-based (row[i], col[i]) shows the value
+  (kind[i], number[i], ref[i]) — decoded exactly as in core.sheet.cells.layout.txt 2.2-2.4,
+  against THIS file's own string and array tables.
+
+  source[i] says why the cell has that value:
+    0  it is the cached result of the FORMULA stored at that position in the sheet's
+       core.sheet.cells node. kind 0 (empty) means "not calculated yet".
+    1  it is a SPILLED value: the cell itself is not stored in core.sheet.cells (or is
+       stored empty); a dynamic-array formula elsewhere produced an array and this is one
+       of its elements. The formula's own cell (the anchor) is a source-0 entry.
+  Any other source: the reader refuses the node.
+
+  Entries are sorted strictly ascending by (row, col, source). A position may therefore have
+  at most one entry of each source.
+
+  What a reader shows for a cell, in order:
+    1. the cell has a formula in core.sheet.cells  → its source-0 value here
+                                                     (empty if there is none);
+    2. the cell has a non-empty constant there     → that constant;
+    3. there is a source-1 entry for it here       → that value;
+    4. otherwise                                   → empty.
+  A source-0 entry for a position that has no formula cell is ignored (and reported).
+
+2.2 `spill-ranges`
+
+  Entry j is six u32 values (anchor_row, anchor_col, r0, c0, r1, c1): the dynamic-array
+  formula in cell (anchor_row, anchor_col) fills the block rows r0..r1, columns c0..c1
+  (zero-based, both ends included; the anchor is its top-left cell). It tells a reader which
+  cells belong to which formula; the values themselves are the entries of 2.1.
+
+--------------------------------------------------------------------------
+3. What a reader does on each failure
+--------------------------------------------------------------------------
+
+  Any structural fault (as listed in core.sheet.cells.layout.txt section 5), an unknown
+  `source`, entries out of order, wrong "sheet_uid": refuse the NODE. The sheet keeps its
+  cells and formulas; its formula cells show no value until something recalculates them; say
+  so. Nothing else is affected. An entry outside the grid is skipped.
+
+--------------------------------------------------------------------------
+4. Writing one
+--------------------------------------------------------------------------
+
+  A writer WITHOUT a formula engine does not write this node at all: it writes the formulas
+  into core.sheet.cells and omits `computed` from the sheet node. That is conformant — the
+  values are simply not cached — and is what the minimal example does for a sheet without
+  formulas. A writer that does know the results writes one source-0 entry per formula cell,
+  stamps the node `measured`, and lists as inputs, in this order: the workbook node's file,
+  the names node's file, and then, for the sheet itself and every other sheet its formulas
+  read (spec/PROFILE-SPREADSHEET.md section 3.4), that sheet's sheet file and cells file.

@@ -1,0 +1,149 @@
+{
+  "art": {
+    "id": 113,
+    "kind": {
+      "children": [
+        {
+          "appearance": {
+            "items": [
+              {
+                "kind": "fill",
+                "paint": {
+                  "color": {
+                    "b": 1.0,
+                    "g": 1.0,
+                    "model": "rgb",
+                    "r": 1.0
+                  },
+                  "type": "solid"
+                }
+              },
+              {
+                "kind": "stroke",
+                "paint": {
+                  "color": {
+                    "b": 0.0,
+                    "g": 0.0,
+                    "model": "rgb",
+                    "r": 0.0
+                  },
+                  "type": "solid"
+                },
+                "width": 1.0
+              }
+            ]
+          },
+          "id": 114,
+          "kind": {
+            "path": {
+              "subpaths": [
+                {
+                  "anchors": [
+                    {
+                      "p": [
+                        0.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        20.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        20.0,
+                        25.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        0.0,
+                        25.0
+                      ]
+                    }
+                  ],
+                  "closed": true
+                }
+              ]
+            },
+            "type": "path"
+          }
+        },
+        {
+          "appearance": {
+            "items": [
+              {
+                "kind": "fill",
+                "paint": {
+                  "color": {
+                    "b": 1.0,
+                    "g": 1.0,
+                    "model": "rgb",
+                    "r": 1.0
+                  },
+                  "type": "solid"
+                }
+              },
+              {
+                "kind": "stroke",
+                "paint": {
+                  "color": {
+                    "b": 0.0,
+                    "g": 0.0,
+                    "model": "rgb",
+                    "r": 0.0
+                  },
+                  "type": "solid"
+                },
+                "width": 1.0
+              }
+            ]
+          },
+          "id": 115,
+          "kind": {
+            "path": {
+              "subpaths": [
+                {
+                  "anchors": [
+                    {
+                      "p": [
+                        4.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        24.0,
+                        10.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        24.0,
+                        25.0
+                      ]
+                    },
+                    {
+                      "p": [
+                        4.0,
+                        25.0
+                      ]
+                    }
+                  ],
+                  "closed": true
+                }
+              ]
+            },
+            "type": "path"
+          }
+        }
+      ],
+      "clip": false,
+      "type": "group"
+    }
+  },
+  "name": "Marker Star",
+  "schema_version": 1
+}

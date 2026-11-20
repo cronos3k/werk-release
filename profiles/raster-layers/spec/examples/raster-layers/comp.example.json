@@ -1,0 +1,35 @@
+{
+  "apply_appearance": true,
+  "apply_position": false,
+  "apply_visibility": true,
+  "comment": "For the plain variant.",
+  "id": 1,
+  "name": "Without logo",
+  "schema_version": 1,
+  "states": [
+    {
+      "appearance": null,
+      "layer": "layer-5",
+      "position": null,
+      "visible": false
+    },
+    {
+      "appearance": {
+        "blend": "Normal",
+        "effects": {
+          "enabled": true,
+          "items": [],
+          "reference": null
+        },
+        "fill_opacity": 1.0,
+        "opacity": 1.0
+      },
+      "layer": "layer-2",
+      "position": [
+        40,
+        96
+      ],
+      "visible": true
+    }
+  ]
+}

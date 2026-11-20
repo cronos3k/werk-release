@@ -1,0 +1,11 @@
+x.vectorcraft.pdf - a PDF rendering of every artboard
+
+What it is
+    The document exported as PDF (ISO 32000), one page per artboard, written when the user saves
+    with "Create PDF-Compatible File" so that programs that read PDF can show the artwork. One
+    file, starting with the bytes "%PDF-".
+
+It is a rendering, not the document: the document is the core.* nodes. The node is stamped
+`measured`; its version's input_files list the files it was exported from.
+
+Opaque to every other reader. Safe to skip.

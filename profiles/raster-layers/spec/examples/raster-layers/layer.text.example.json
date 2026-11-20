@@ -1,0 +1,152 @@
+{
+  "advanced": {
+    "blendClipped": true,
+    "blendInterior": false,
+    "knockout": "none",
+    "layerMaskHidesEffects": false,
+    "transparencyShapes": true,
+    "vectorMaskHidesEffects": false
+  },
+  "blend": "Normal",
+  "blend_if": {
+    "ranges": []
+  },
+  "clipped": false,
+  "content": {
+    "antialias": "Smooth",
+    "cache": "layer-2-cache",
+    "color": {
+      "alpha": 1.0,
+      "c": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mode": "Rgb"
+    },
+    "font_family": "Inter",
+    "kind": "text",
+    "orientation": "Horizontal",
+    "paragraphs": [],
+    "runs": [
+      {
+        "len": 6,
+        "style": {
+          "baseline_shift_pt": 0.0,
+          "caps": "Normal",
+          "color": {
+            "alpha": 1.0,
+            "c": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "mode": "Rgb"
+          },
+          "discretionary_ligatures": false,
+          "faux_bold": false,
+          "faux_italic": false,
+          "features": [],
+          "font_family": "Inter",
+          "font_style": "Regular",
+          "horizontal_scale": 1.0,
+          "italic": false,
+          "kern": 0.0,
+          "kerning": "Metrics",
+          "language": null,
+          "leading_pt": null,
+          "ligatures": true,
+          "postscript_name": null,
+          "size_pt": 24.0,
+          "strikethrough": false,
+          "tracking": 0.0,
+          "underline": false,
+          "variations": [],
+          "vertical_scale": 1.0,
+          "weight": 400
+        }
+      },
+      {
+        "len": 5,
+        "style": {
+          "baseline_shift_pt": 0.0,
+          "caps": "Normal",
+          "color": {
+            "alpha": 1.0,
+            "c": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "mode": "Rgb"
+          },
+          "discretionary_ligatures": false,
+          "faux_bold": false,
+          "faux_italic": false,
+          "features": [],
+          "font_family": "Inter",
+          "font_style": "Bold",
+          "horizontal_scale": 1.0,
+          "italic": false,
+          "kern": 0.0,
+          "kerning": "Metrics",
+          "language": null,
+          "leading_pt": null,
+          "ligatures": true,
+          "postscript_name": null,
+          "size_pt": 24.0,
+          "strikethrough": false,
+          "style_sheet": 1,
+          "tracking": 0.0,
+          "underline": false,
+          "variations": [],
+          "vertical_scale": 1.0,
+          "weight": 700
+        }
+      }
+    ],
+    "shape": "Point",
+    "size_pt": 24.0,
+    "text": "Hello, werk",
+    "transform": {
+      "m": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        40.0,
+        120.0
+      ]
+    },
+    "warp": null
+  },
+  "effects": {
+    "enabled": true,
+    "items": [],
+    "reference": null
+  },
+  "excluded_channels": 0,
+  "fill_cache": null,
+  "fill_opacity": 1.0,
+  "label": "None",
+  "link_group": null,
+  "locks": {
+    "all": false,
+    "artboard": false,
+    "pixels": false,
+    "position": false,
+    "transparency": false
+  },
+  "mask": null,
+  "name": "Title",
+  "opacity": 1.0,
+  "psd": null,
+  "psd_id": null,
+  "schema_version": 1,
+  "vector_mask": null,
+  "video": null,
+  "visible": true
+}

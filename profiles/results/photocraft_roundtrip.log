@@ -1,0 +1,10 @@
+A open fixture: exit_status 0 lost 0 skipped [] signature absent
+A   report: [info] signature-absent scope=value: no SIGNATURE.json: this package is anonymous, which is a legitimate state
+A   document: 512 x 384, 3 top-level layers
+A save: revision 1
+A reopen: exit_status 0 lost 0
+A Document(open(fixture)) == Document(open(save(open(fixture)))): true
+B simple: exit_status 0 lost 0 equal true
+B maximal: exit_status 0 lost 0 equal true
+failures: 0
+exit 0

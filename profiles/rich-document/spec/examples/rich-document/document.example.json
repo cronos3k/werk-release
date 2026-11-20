@@ -1,0 +1,86 @@
+{
+  "bibliography": "bibliography",
+  "body": [
+    "body-000001"
+  ],
+  "bodyNextId": 2,
+  "comments": "comments",
+  "finalSection": {
+    "columns": {
+      "count": 1,
+      "separator": false,
+      "space": 36.0,
+      "widths": []
+    },
+    "docGrid": null,
+    "footer": 36.0,
+    "footers": {
+      "default": null,
+      "even": null,
+      "first": null
+    },
+    "gutter": 0.0,
+    "header": 36.0,
+    "headers": {
+      "default": 1,
+      "even": null,
+      "first": null
+    },
+    "landscape": false,
+    "lineNumbers": null,
+    "marginBottom": 72.0,
+    "marginLeft": 72.0,
+    "marginRight": 72.0,
+    "marginTop": 72.0,
+    "pageBorders": null,
+    "pageH": 841.9,
+    "pageNumFormat": "decimal",
+    "pageNumStart": null,
+    "pageW": 595.3,
+    "rtl": false,
+    "start": "nextPage",
+    "titlePage": false,
+    "valign": "top"
+  },
+  "fonts": [
+    {
+      "family": "Source Serif 4",
+      "node": "font-7cf4f4e1ad74f450",
+      "status": "embedded",
+      "style": "Bold",
+      "use": "text"
+    },
+    {
+      "family": "Source Serif 4",
+      "node": "font-e5a4ee6a3d87bb90",
+      "status": "embedded",
+      "style": "Regular",
+      "use": "text"
+    }
+  ],
+  "media": [
+    {
+      "image": "media-image1-png-94a7c7",
+      "imageIs": "original",
+      "key": "image1.png",
+      "mediaType": "image/png",
+      "original": null
+    }
+  ],
+  "noteSeparators": [],
+  "numbering": "numbering",
+  "packageParts": [],
+  "plainText": [
+    "text-000001"
+  ],
+  "properties": "properties",
+  "schema_version": 1,
+  "settings": "settings",
+  "stories": [
+    "story-1",
+    "story-2",
+    "story-3"
+  ],
+  "styles": "styles",
+  "trackedChanges": "tracked-changes"
+}

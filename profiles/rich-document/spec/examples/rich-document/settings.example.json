@@ -1,0 +1,85 @@
+{
+  "autoHyphenation": false,
+  "compatMode": 15,
+  "consecutiveHyphenLimit": 0,
+  "defaultTab": 36.0,
+  "endnoteFormat": "lowerRoman",
+  "evenOddHeaders": false,
+  "footnoteFormat": "decimal",
+  "gridH": 9.0,
+  "gridV": 9.0,
+  "hyphenateCaps": true,
+  "hyphenationZone": 18.0,
+  "linkStyles": false,
+  "majorFont": "Source Serif 4",
+  "minorFont": "Source Serif 4",
+  "mirrorMargins": false,
+  "pageColor": null,
+  "protection": null,
+  "schema_version": 1,
+  "themeColors": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      255,
+      255,
+      255
+    ],
+    [
+      14,
+      40,
+      65
+    ],
+    [
+      232,
+      232,
+      232
+    ],
+    [
+      21,
+      96,
+      130
+    ],
+    [
+      233,
+      113,
+      50
+    ],
+    [
+      25,
+      107,
+      36
+    ],
+    [
+      15,
+      158,
+      213
+    ],
+    [
+      160,
+      43,
+      147
+    ],
+    [
+      78,
+      167,
+      46
+    ],
+    [
+      70,
+      120,
+      134
+    ],
+    [
+      150,
+      96,
+      125
+    ]
+  ],
+  "themeName": "Craft",
+  "trackChanges": false,
+  "watermark": null
+}

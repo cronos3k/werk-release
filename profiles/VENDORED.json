@@ -1,0 +1,1360 @@
+{
+ "formats": {
+  "zip": {
+   "definition": {
+    "from": "formats/zip.md",
+    "sha256": "fbeb731575d83bf8a7b47f7f3b54129a15784cca686580fd996cf2dfd851ff81",
+    "size": 35476
+   },
+   "tools": {
+    "tool.json": {
+     "from": "photocraft/maximal.werk",
+     "sha256": "e5047af0bb392aca7256487c13d4ac14914cf4bad38e20e8f37d543495f2a6e3",
+     "size": 1025
+    },
+    "zip_dump.py": {
+     "from": "formats/ref/zip_dump.py",
+     "sha256": "b52278d0fa0602966e11e5cd597f71115b679218acbfe2b783ec9a020ce8e583",
+     "size": 13495
+    }
+   }
+  },
+  "zlib-deflate": {
+   "definition": {
+    "from": "formats/zlib-deflate.md",
+    "sha256": "2d1e9781a56867b005d7fa763be000badbf95532e8906660d5ebf36fb2e509c9",
+    "size": 19969
+   },
+   "tools": {
+    "inflate.py": {
+     "from": "formats/ref/inflate.py",
+     "sha256": "ac730786449a7c9b7f5ff5ddfea4d57759878d5fa0525f06a5ee7f5aa4b8ad3e",
+     "size": 9307
+    },
+    "tool.json": {
+     "from": "photocraft/simple.werk",
+     "sha256": "4e969fd028bff268c4adec16e3040a1684b8322ac4d98bd81e5daa4654024b0a",
+     "size": 973
+    }
+   }
+  }
+ },
+ "note": "Copied byte for byte from the ArtCraft sample packages (werk-native branches, 2026-10-13..16). Alignment edits: profiles/ALIGNMENT.json.",
+ "profiles": {
+  "motion-comp": {
+   "app": "effectcraft",
+   "files": {
+    "HOW-TO-READ.md": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "598590597a2583a4a2b8b37cb75afb0764ea5e5421f3ab0c598e42fa559edd35",
+     "size": 3741
+    },
+    "spec/CRAFT-BASE.md": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "5f4cedeedbae4b52f124c6e5b3801f56653553e0246c1d0acfb25d9346b1bb88",
+     "size": 54585
+    },
+    "spec/NOT-CARRIED.md": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "ec47c3dd2d837840b0bf81835f9ab1a302a9d4ac28d75184fcf2c68c37a567d1",
+     "size": 10927
+    },
+    "spec/PROFILE-MOTION-COMP.md": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "f1ee2f658304b65fa336817956f6bfe936783245d1e6d78082bda806829f3640",
+     "size": 152795
+    },
+    "spec/conventions-map.motion-comp.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "cc683b5b5cbbf5e29bec72ea61b96219f28d3efff2947e963d892d55ce964479",
+     "size": 15625
+    },
+    "spec/examples/motion-comp/README.md": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "f9b594d9ebe5abe3a78d179a8cba1add151acd02a2469b27934a2133a684906d",
+     "size": 3450
+    },
+    "spec/examples/motion-comp/baked-values.example.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "a6364df775f89af9c627892875fd402435032cabe0ada466b14a7df4ccbaa161",
+     "size": 1644
+    },
+    "spec/examples/motion-comp/catalog.tint.example.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "10baad412904d89c5066ff9e2227bf4fae4b495b4f6da7985a6cdb93fbdb788a",
+     "size": 30839
+    },
+    "spec/examples/motion-comp/core.preview.proxy.layout.txt": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "2aaaaab20c6943f8098c3fe96a315bb9b5dc113216a400b16f43881b7dcb26ed",
+     "size": 5880
+    },
+    "spec/examples/motion-comp/data.example.csv": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "492d5ea496056f1a6a6592241032fab764c321596317930b4fa0e1e8bc3b7470",
+     "size": 8
+    },
+    "spec/examples/motion-comp/footage.item.example.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "a6ec2d4e6fbb702df76b141dc403e8085c559a19488a078da69ef9bd4fdf9625",
+     "size": 479
+    },
+    "spec/examples/motion-comp/lut.example.cube": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "c8a675e513ab2096907587e5a91610a3f1c7fe499a3d8682330ac811e58d9b8b",
+     "size": 75
+    },
+    "spec/examples/motion-comp/minimal.layer-3.keys.wkx": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "a16742d394e98e7027bd91195cec32cc8c0268987e10658963d1f04b076fedb1",
+     "size": 912
+    },
+    "spec/examples/motion-comp/plugin-state.example.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "2d7276a0429f3fbed0cec69f108104d7c5cb743bf2bf2f4e35f9473d41dca4a4",
+     "size": 341
+    },
+    "spec/examples/motion-comp/proxy.example.wkx.zlib": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "74588c04d06153b42d38e298fd99e63692167cef17122de464d4909a59241833",
+     "size": 307
+    },
+    "spec/examples/motion-comp/read_motion.py": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "919525c3e10a03d930eac89f00031ba50726ec55e66386fe46d10163b8f8a327",
+     "size": 88485
+    },
+    "spec/examples/motion-comp/render-queue.example.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "d5e78ad9aa8b2e85d240d974d883e2750b00a2348862c8223ebbde0f44a0cdae",
+     "size": 1587
+    },
+    "spec/examples/motion-comp/stage.baked.wkx": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "96b52c5ed3ec39070e9e77e903a70213816e836b2e434f8c447b80fbd3e66987",
+     "size": 704
+    },
+    "spec/examples/motion-comp/stage.catalog.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "f99fd16c675d441082e2622fc3e6f327169d56c6aa5b651cc7911dd75dbc90cc",
+     "size": 3491
+    },
+    "spec/examples/motion-comp/stage.comp.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "78f00c6be30ebf832cc925cdf1be935324b9ac31ece425244c88b9e3d4a7901b",
+     "size": 1202
+    },
+    "spec/examples/motion-comp/stage.frame10.png": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "c0951b2cb13b1838ec0d68bfc255ceb91fbc4c870c62f5b73e2bc72ef9faecf3",
+     "size": 1464
+    },
+    "spec/examples/motion-comp/stage.item-solid.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "3d918105b4cee333910d6b88cd2f58b53035651f3d148bb10b069a1777ec7ff1",
+     "size": 232
+    },
+    "spec/examples/motion-comp/stage.layer-badge.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "29c68f303ff6f7da3bd85fab8eba9edfae2973cd380b7b873e1a8fb546719911",
+     "size": 9831
+    },
+    "spec/examples/motion-comp/stage.layer-card.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "6f82f480cd8b6aa9f842d9a1ccdfdce9dbcdc1b3534ef540191e81d183f19409",
+     "size": 6742
+    },
+    "spec/examples/motion-comp/stage.layer-card.keys.txt": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "f127c12d890e8c013d66ff611089902d5eac2a908955b8b6cfb402f504e11fa8",
+     "size": 8026
+    },
+    "spec/examples/motion-comp/stage.layer-card.keys.wkx": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "bfebe0d2096e6bdf72a6bd9398059c4c78608a97522ece3d7fec8917e9469cdb",
+     "size": 1344
+    },
+    "spec/examples/motion-comp/stage.project.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "d3c57e0b498a310dd716fc3461b5d6d0d73612e3b27b8a970a2b9e1c99a8ba73",
+     "size": 539
+    },
+    "spec/examples/motion-comp/view.example.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "1d869649b8405302906eed01fbedc42eb14d127d7e078feaef06f93b94df4a39",
+     "size": 56
+    },
+    "spec/examples/motion-comp/write_minimal.py": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "0ae40f17fe11fb27afa7890e1485fbbf48d0b3c3af52b46d999fc848aefc35df",
+     "size": 20008
+    },
+    "spec/layouts/core.expr.baked.layout.txt": {
+     "from": "git <artcraft>/effectcraft werk-native:crates/werk/spec/layouts/core.expr.baked.layout.txt",
+     "sha256": "fa543d2d9be17247d38f91c06b17a7810db2ce86b52cd2f14e69131cfee2659d",
+     "size": 7829
+    },
+    "spec/layouts/core.keyframe.tracks.layout.txt": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "2f40fbf55935e3ffa33963e9c23c6a1c1f1594d41650a1217eb9b88a2f586832",
+     "size": 15128
+    },
+    "spec/layouts/x.effectcraft.media.layout.txt": {
+     "from": "git <artcraft>/effectcraft werk-native:crates/werk/spec/layouts/x.effectcraft.media.layout.txt",
+     "sha256": "25397bd357ac05be93ec5ed7deac41d33db2c344a87dd327dbeff9abfac909dd",
+     "size": 2868
+    },
+    "spec/schemas/core.effect.catalog.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "b66c8e159d46aab81305f740739a51c255b21c30bf9c21b4c3d489b3d3a10c61",
+     "size": 11239
+    },
+    "spec/schemas/core.expr.baked-values.schema.json": {
+     "from": "generated: effectcraft-werk `schema::of(type)` (werk-native ea503b9), run by W19 in a mirror build on the release core (example w19_schemas); the seven schemas the sample also carries came out byte-identical to the sample's copies",
+     "sha256": "f52b359f594432c6b7bae92de3373e16d50c0583162e1a69b8a6f30397213c8e",
+     "size": 3903
+    },
+    "spec/schemas/core.expr.language.schema.json": {
+     "from": "generated: effectcraft-werk `schema::of(type)` (werk-native ea503b9), run by W19 in a mirror build on the release core (example w19_schemas); the seven schemas the sample also carries came out byte-identical to the sample's copies",
+     "sha256": "d963fb80a617aa184f5d2be253bcda90a13389f10038d6f4cedd769e1e1f6b1d",
+     "size": 4766
+    },
+    "spec/schemas/core.motion.comp.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "489bb639ad33d31b8dc57d5d258e5b0dd2fd3636a8ac1e595bbd0caa5ca51209",
+     "size": 110767
+    },
+    "spec/schemas/core.motion.item.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "7a43f447dbd3b2ad99071e4073d162c22bd89deb993134ccbae5f3f783ab89d2",
+     "size": 15649
+    },
+    "spec/schemas/core.motion.layer.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "bf79678cf74c6d89183bdedca55970683b5b2f78eecea6d34923762918305afd",
+     "size": 103514
+    },
+    "spec/schemas/core.motion.lottie.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "450883e76de700cd0dcb3fd2f4c8783c04d769da5b75c715e283b745d6fd1d5d",
+     "size": 1250
+    },
+    "spec/schemas/core.motion.project.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "ba89ab279bb9b23b152688d1155fb644221c213f79d35310b50ed75620cd191e",
+     "size": 26114
+    },
+    "spec/schemas/core.motion.render-queue.schema.json": {
+     "from": "generated: effectcraft-werk `schema::of(type)` (werk-native ea503b9), run by W19 in a mirror build on the release core (example w19_schemas); the seven schemas the sample also carries came out byte-identical to the sample's copies",
+     "sha256": "05671de13f5845966bef2d719ef791f1ceba616ff8470be1ad6ce32c52dcbd91",
+     "size": 25667
+    },
+    "spec/schemas/manifest.motion-comp.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "8f8c3746a241fcef2115f5b8c41d1d3952517e546f497ffd2ce82994ecf86d36",
+     "size": 62024
+    },
+    "spec/schemas/x.effectcraft.plugin-state.schema.json": {
+     "from": "generated: effectcraft-werk `schema::of(type)` (werk-native ea503b9), run by W19 in a mirror build on the release core (example w19_schemas); the seven schemas the sample also carries came out byte-identical to the sample's copies",
+     "sha256": "b86645e640cd7cf4c06542636e865aa8402b0a97d41047b6530b0c9f13744ce4",
+     "size": 1746
+    },
+    "spec/schemas/x.effectcraft.view.schema.json": {
+     "from": "effectcraft/intro-folder.werk",
+     "sha256": "d7f8ca0074d7f233787ca04e5ccb47723520b51c34db1186e8b04e2cf8184b79",
+     "size": 1183
+    }
+   }
+  },
+  "presentation": {
+   "app": "deckcraft",
+   "files": {
+    "HOW-TO-READ.md": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "4e9b92715a56a0ef019e3616b1de9082721feea3cf38cecdf86c6dcb4c29289a",
+     "size": 4549
+    },
+    "spec/CRAFT-BASE.md": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+     "size": 27724
+    },
+    "spec/NOT-CARRIED.md": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "d137155b474b785418cda07a28e2ee5abae79ca7aa985d35f2e673244bcc15ea",
+     "size": 8888
+    },
+    "spec/PROFILE-PRESENTATION.md": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "b5d55ba2be5cc93a9a537ee00f194d5b69c5230b1c48050d6afd2fba7a1577ee",
+     "size": 63259
+    },
+    "spec/conventions-map.presentation.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "4150ec69952d3a25570815429ec327a7f3281eed3c08d49e24bf5dcfc29ee5db",
+     "size": 7436
+    },
+    "spec/examples/presentation/README.md": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "bbdedae23c18812c8cc8b2695dfae13b209bded0725d7f8cef9541f18c30af76",
+     "size": 3001
+    },
+    "spec/examples/presentation/asset.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "c36aabb552348ad96da60b74dfc50cfb9a3cec6cc66d605f0b155f1a7d1e3a49",
+     "size": 175
+    },
+    "spec/examples/presentation/document.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "a26e63412534d4c442a9d842a9f78d7f0f636c94fd1332b16646e5a3330de9f2",
+     "size": 6272
+    },
+    "spec/examples/presentation/geometry.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "e8a0618a9476aefc2a414eb2b490502b052a58e22df01e02d04be6b4562663bb",
+     "size": 4652
+    },
+    "spec/examples/presentation/layout.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "4be2d3eab3d4cf58a304ab3129c9896241e1696f856ceeda0990106787c2091f",
+     "size": 6641
+    },
+    "spec/examples/presentation/master.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "1c38ca4b6e84fe40105a532df03c197a04ef87e2599e9a9efa76f6c420d79507",
+     "size": 27124
+    },
+    "spec/examples/presentation/ooxml.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "83f59a4482d62f19dee672a62c753fdd96ed9e8311426e26a3f52ed2da50d345",
+     "size": 311
+    },
+    "spec/examples/presentation/outline.example.txt": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "d86d4b5b55ed59053d13d32668ac948f250a90eb3d3a337575436e7825b54f5d",
+     "size": 166
+    },
+    "spec/examples/presentation/read_presentation.py": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "53f790d1ef5d098aed03d210dc87614dd4e86d9323adc3beff7d894a7e18ad8f",
+     "size": 20113
+    },
+    "spec/examples/presentation/slide-every-kind.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "733424f70b04120dc2e03b5601c67ca5671c3f913eabeac40e1f2dc63b7ff070",
+     "size": 14396
+    },
+    "spec/examples/presentation/slide.example.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "c49de089c9a776d5193392d83591bef63dc63b19cc2ecc42e2837ee8287cf661",
+     "size": 5033
+    },
+    "spec/examples/presentation/write_minimal.py": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "06f677de0dd87200cb3e43ca88e8059c951bc76b131a557e3955524da31247f6",
+     "size": 13338
+    },
+    "spec/schemas/core.media.asset.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "0c3b6b3c29018fbe2bbfc637b0d9fbd27b815a595a9ffe1b6cad8acdab224b88",
+     "size": 2607
+    },
+    "spec/schemas/core.slide.document.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "6dff73e15dce60bcac0fd3c8a71fa3cbddaa4cab18f2c31da2592ea6036eb9a5",
+     "size": 41812
+    },
+    "spec/schemas/core.slide.geometry.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "c7ec2fe94064f7465a96d839c65230da5e3302347487235a31571ab413ddf39e",
+     "size": 2680
+    },
+    "spec/schemas/core.slide.layout.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "29db026649d72fc776f2c6884e851c696d2f053d593371eaad17a1704fe25586",
+     "size": 67634
+    },
+    "spec/schemas/core.slide.master.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "f94529f5d48d845f6254914f9567b8610cf7e43bf888d865d08d4eb0749c8ea8",
+     "size": 72000
+    },
+    "spec/schemas/core.slide.slide.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "1f6a070c5a4483c255caeea5b14411972343bc96d210153721809a91605d206c",
+     "size": 74367
+    },
+    "spec/schemas/manifest.presentation.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "38795c452fb87b49053ece5728fbb1d2a7569b94f66967fb0dca9fdff75c9666",
+     "size": 35932
+    },
+    "spec/schemas/x.deckcraft.ooxml.schema.json": {
+     "from": "deckcraft/every-field-signed-directory",
+     "sha256": "d998da458d07edfb9da5837bba28bfc831641f65c528f7d15ea2ae7dc70e00cf",
+     "size": 1400
+    }
+   }
+  },
+  "raster-layers": {
+   "app": "photocraft",
+   "files": {
+    "HOW-TO-READ.md": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "9af0f0566869a9f1a4a734da6dc1cce3400964db02a78aaa470fd161e3953124",
+     "size": 7353
+    },
+    "spec/CRAFT-BASE.md": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+     "size": 27724
+    },
+    "spec/NOT-CARRIED.md": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "d137155b474b785418cda07a28e2ee5abae79ca7aa985d35f2e673244bcc15ea",
+     "size": 8888
+    },
+    "spec/PROFILE-RASTER-LAYERS.md": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "6749cfebde85ceb28449ba9bf0997c76270712fea9b9ddf2583a9a897e97dc9e",
+     "size": 50607
+    },
+    "spec/conventions-map.raster-layers.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "0fa0cfd711fe85b7fb3b1458ccbab4d5117ff8a639e82e0077aa046142b801d8",
+     "size": 7826
+    },
+    "spec/examples/raster-layers/README.md": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "457a1b1e02671ad1c2b6934807e3df4fc548fe79d492eed53035d90a4c9cc47f",
+     "size": 2161
+    },
+    "spec/examples/raster-layers/channel.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "90da03615222ad6b40fea66defef082260ac66567b08cc549583c084430e6b64",
+     "size": 453
+    },
+    "spec/examples/raster-layers/comp.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "156d1adcdc553d8c61629e59c62914e94ce4a4e1618c597560caae6cf120f9da",
+     "size": 648
+    },
+    "spec/examples/raster-layers/document.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "e77e59231f3cbd772bade6f134b0f7dc6a68ee2f758a8e29be6f2b483f0ca84d",
+     "size": 1907
+    },
+    "spec/examples/raster-layers/layer.adjustment.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "120c03fdc9efe70fcf9d05f23c9fe6dd8a64e0cde01067732bcea5704cc49352",
+     "size": 1827
+    },
+    "spec/examples/raster-layers/layer.raster.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "81d7fb676ecf52cb7caa4ec1bb9a6e018d77ae6c616237c90cf773ff2e7054b3",
+     "size": 1600
+    },
+    "spec/examples/raster-layers/layer.smart.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "b3b846d3f062fef7c164b3c83757cc93b36c08724698b834859b35b0ed5730bd",
+     "size": 1464
+    },
+    "spec/examples/raster-layers/layer.text.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "41a701cc262283773d8667d4cea57010c27a0f08b7a01e6d759d25860fd51e46",
+     "size": 3280
+    },
+    "spec/examples/raster-layers/lut3d.example.hex.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "bc72236ef169d4dd17331b6bf952eba8dd86673d00fd5a78b422caca5ddeb957",
+     "size": 3917
+    },
+    "spec/examples/raster-layers/lut3d.example.wkx": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "192c72be720155007730ed82967f6a2f91cfdfe455cc77ac028fa553f2c6f03a",
+     "size": 288
+    },
+    "spec/examples/raster-layers/metadata.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "caf3860c789f2308fd0f90b63722921e49f6c545bb6ab530cf1e9af854e54ec8",
+     "size": 255
+    },
+    "spec/examples/raster-layers/path.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "a52bb76ebe7cfa633d5e3954d108209a8f5be1346bb0d0d9b86b0f92685058bc",
+     "size": 1196
+    },
+    "spec/examples/raster-layers/pattern.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "65d1d003619dc77558ec0a1ce30a4eb157c31fbaf15814d12f2ccc5f418346ba",
+     "size": 155
+    },
+    "spec/examples/raster-layers/psd-blocks.example.hex.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "8cf0f3e52ebc800eb4d488b26ed1bcf6cecf2cdf63ce8800a451cbbecceed0b4",
+     "size": 5856
+    },
+    "spec/examples/raster-layers/psd-blocks.example.wkx": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "b3a442434d0b4ae3d50887547288a1dd8e615695f876c7a9b14f90c199059010",
+     "size": 352
+    },
+    "spec/examples/raster-layers/surface.example.hex.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "17f7e19fec82cf151c5141efe71c08456e6792acc7c7c9d031aa00770018f903",
+     "size": 6181
+    },
+    "spec/examples/raster-layers/surface.example.wkx": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "12cf629a4ce5c48e00fe736413d62c02bf7cf761099cec3fd31fa39b9627cd07",
+     "size": 480
+    },
+    "spec/examples/raster-layers/text-styles.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "273e22f69777d2f72514d1a30d7598ec9b174f9f5fc59f3b08abc9a51f8db15d",
+     "size": 529
+    },
+    "spec/examples/raster-layers/tiles.example.hex.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "e495837e8291a84080a8b92db638b9e6725ad10119320cf401663ab4d122ee2b",
+     "size": 5487
+    },
+    "spec/examples/raster-layers/tiles.example.wkxz": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "5970b2296aa3ff5f20c8aab5edf8ac13bd22d7f100b252462af5ed2072131971",
+     "size": 566
+    },
+    "spec/examples/raster-layers/variables.example.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "d718a8b65db6fbc867e9df610b2d6c9744f9bc7cee58abd4cb00074b10422b91",
+     "size": 609
+    },
+    "spec/examples/raster-layers/write_minimal.py": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "9fe71824253fc5b2e2e99cfd1a0064da33a13a7fbe6d42205801a0301f21a728",
+     "size": 18123
+    },
+    "spec/layouts/core.raster.lut3d.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "b8677dcd6a8b98de77aaa913eba9a1079fd28fc23685e3720b02a13819e32107",
+     "size": 3296
+    },
+    "spec/layouts/core.raster.surface.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "c1d2a1145633ccc23a60c7b9a20d3f36ca1e7fb83f4e3df8d982b5dc6cea9a8d",
+     "size": 20695
+    },
+    "spec/layouts/x.photocraft.psd-blocks.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "78ba294938432f543037e98d437a705b068351c51b834057d8795e548df6b524",
+     "size": 6875
+    },
+    "spec/layouts/x.photocraft.source.bmp.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "ef973827d288386d577a15bf7b83f59f897139d1e384d9355e3a92a7d9541458",
+     "size": 1486
+    },
+    "spec/layouts/x.photocraft.source.exif.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "56b7956fa63b556b6b1015e23dabca4cc5fcf3786366583e868c63443c0b8f19",
+     "size": 1531
+    },
+    "spec/layouts/x.photocraft.source.font.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "d4ce128f23bcb79dd14af305001153d7485922b5ccea993d28d333b39a980193",
+     "size": 1461
+    },
+    "spec/layouts/x.photocraft.source.gif.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "e29724e4c1d1881203e4f17b823eea220e53fcd5351976e9f1104ea82159e628",
+     "size": 1404
+    },
+    "spec/layouts/x.photocraft.source.icc.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "52ef18c712766619f6fc23a8543c91822cf659f9ce7d172fa435bc739358521a",
+     "size": 1528
+    },
+    "spec/layouts/x.photocraft.source.jpeg.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "3cae5987026ef43dc1155590d7763b2000d11c37798c2df458b65b85faa9f7c0",
+     "size": 1433
+    },
+    "spec/layouts/x.photocraft.source.other.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "a60ef54f6ae9309b698c59135e86b4affdb80c4d614c0455bd3d56a673545000",
+     "size": 1479
+    },
+    "spec/layouts/x.photocraft.source.pcraft.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "0f850f43c169a1eefa2a746a6f5c92c484bafcb81b0ec94835f02e67b4e5f8d6",
+     "size": 1515
+    },
+    "spec/layouts/x.photocraft.source.pdf.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "6831e02e5bd00ac992451ac470005e075f0c52a77d4ec161a05cab96fbd0040f",
+     "size": 1483
+    },
+    "spec/layouts/x.photocraft.source.png.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "190823aea5ac7591eabca7bd47e9924478e92d36b2bc935bbb79fd92055581c3",
+     "size": 1459
+    },
+    "spec/layouts/x.photocraft.source.psd.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "9e01e10ba67a33eb9ffd5cf5dec71b1d5daa1e91ea780dd693b051cf0744460d",
+     "size": 1531
+    },
+    "spec/layouts/x.photocraft.source.svg.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "2751ad251277289c8c1a545edc526c86b8ee3b6dbe0ce253a212e332dd20c748",
+     "size": 1449
+    },
+    "spec/layouts/x.photocraft.source.tiff.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "4c2184223438e56928951b6bbbeeb2f55e5002ae315e39a552a5f4499b39c7cb",
+     "size": 1476
+    },
+    "spec/layouts/x.photocraft.source.webp.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "71b9debf525e8418fc9ef0ca12cc6e189c5f42344dcaf2334a6d3d157f5f92b2",
+     "size": 1443
+    },
+    "spec/layouts/x.photocraft.source.werk.layout.txt": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "ee0a8f803765bc5c4c846cb7174953dfc5b9214ec6da1911125b27fcbe04db4b",
+     "size": 1495
+    },
+    "spec/schemas/core.raster.channel.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "93bfa1ce8ff4cc8ff7f91a573c039611d78979ff2ceb04b42d2c5c68c8d8ba0a",
+     "size": 3613
+    },
+    "spec/schemas/core.raster.comp.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "57867fff5dd4b79c20519c365238c51414c2c4208e46fbf0e166a965d7aa49c4",
+     "size": 32935
+    },
+    "spec/schemas/core.raster.document.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "c0ec738e713e2bc6ef996b9dda9d258f3439365c25e84bd0110b9618cdad6b68",
+     "size": 45661
+    },
+    "spec/schemas/core.raster.layer.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "59785399bf7e6eaf32b2cf426e13308152cff51a717a6f3714a9a0749ccfbcfc",
+     "size": 120859
+    },
+    "spec/schemas/core.raster.metadata.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "5ce165ffc33c98e17b7478e06d7d3deadfdf91926a9434b1b7597c83313d9ac2",
+     "size": 1950
+    },
+    "spec/schemas/core.raster.path.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "f27984fbccd77ecdb5871174386899a623721665a8920cf21c8f5b7e941225a7",
+     "size": 4164
+    },
+    "spec/schemas/core.raster.pattern.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "1c113547dea993469bc10d9bf88fd14d60cbe27de21a95dcea71e1832006c0db",
+     "size": 1493
+    },
+    "spec/schemas/core.raster.text-styles.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "12e86fa82faf32613f585bcf0baae202c2e3aace17d54752fc8a802c7ab2de41",
+     "size": 4715
+    },
+    "spec/schemas/core.raster.variables.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "695ef9c8180d7a11346245c0e18a815cb5a5d02f386f2ad4946c90067b316d78",
+     "size": 9319
+    },
+    "spec/schemas/manifest.raster-layers.schema.json": {
+     "from": "photocraft/maximal-dir.werk",
+     "sha256": "989adb3485ab55059ca233795631cc899e8acb504720a2d6ab1ccaa7034758cd",
+     "size": 43948
+    }
+   }
+  },
+  "rich-document": {
+   "app": "wordcraft",
+   "files": {
+    "HOW-TO-READ.md": {
+     "from": "wordcraft/report-directory.werk",
+     "sha256": "48c397698cd5432ebffafd1dbe9d50db2d3450e1f31f2baf3aaa0ec08000c878",
+     "size": 5727
+    },
+    "spec/CRAFT-BASE.md": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+     "size": 27724
+    },
+    "spec/NOT-CARRIED.md": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "d137155b474b785418cda07a28e2ee5abae79ca7aa985d35f2e673244bcc15ea",
+     "size": 8888
+    },
+    "spec/PROFILE-RICH-DOCUMENT.md": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "bf8e9a58b258705965fd8ad6fafb51c0b9aee89ab73ee3e1ada59326158d7d89",
+     "size": 73401
+    },
+    "spec/conventions-map.rich-document.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "14b96d276c65e2ef16022c5934757fb8e3083d763c4dd90b3cc3d3f1805454bc",
+     "size": 8895
+    },
+    "spec/examples/rich-document/README.md": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "ae5f572d8a2d9c950e0c7c4b15e1f46feb093d04956c93173b13e98b2cee22d2",
+     "size": 5691
+    },
+    "spec/examples/rich-document/bibliography.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "ff6d6a92a0c199718faad2aa62d673b508056dbdd21b9506f60de780aa9e4778",
+     "size": 443
+    },
+    "spec/examples/rich-document/blocks-story.example.blocks.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "30b860d18e22a89c9c7b2647e0325e887191965a547dcb6679adfdbdc6be78ff",
+     "size": 186
+    },
+    "spec/examples/rich-document/blocks-story.example.blocks.zlib": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "37165fff09058fb0d8c013d7afeba8d3b8678f363e14eee0cbb58e1de7769b39",
+     "size": 157
+    },
+    "spec/examples/rich-document/blocks-story.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "fc7fdfb0f673ab849b985e3592a46334da157e01f8a5b1e98658a265f2ac77c4",
+     "size": 394
+    },
+    "spec/examples/rich-document/blocks.example.blocks.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "b9d1930c3e74f4cfe5f9cace32b96a0b8cb41ab9af218b820114af39608ace95",
+     "size": 2381
+    },
+    "spec/examples/rich-document/blocks.example.blocks.zlib": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "77239e57104b7abbed1bbbdb4ba78481b4569979fe440d74bbb6ff48290f9544",
+     "size": 723
+    },
+    "spec/examples/rich-document/blocks.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "65c8b84945704320e9f553943ca8ab8d4f1329577ef810bbcba5a14ec762767e",
+     "size": 380
+    },
+    "spec/examples/rich-document/chart-data.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "3e0789142b3a2222348b727e45dac3a5407f078cc3ef0648f066c94b3db94594",
+     "size": 762
+    },
+    "spec/examples/rich-document/comments.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "a852939cba07300b9685dd623f36b1d9239cfd157739f99c59f4061b776e71c7",
+     "size": 229
+    },
+    "spec/examples/rich-document/document.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "a9f3396cb7fe87bd1b652bca5f7f16d08ae8d366ad7c5ed6f91474b9498a300c",
+     "size": 1693
+    },
+    "spec/examples/rich-document/embedded.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "72d701ec4d76a7015bc5a3584484e1b8b6e8387f3928bb4df0b8ad5eb15b53e0",
+     "size": 979
+    },
+    "spec/examples/rich-document/numbering.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "a5bfa6666d513029b528b0eafd90d53c9aded3d5ef829d0fc722b3cc95eaf286",
+     "size": 524
+    },
+    "spec/examples/rich-document/part-descriptor.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "e9dab598059f9705043e2403fbcb1c5cd34dfcaa148447a078480bd985f914a4",
+     "size": 190
+    },
+    "spec/examples/rich-document/plain-text.example.txt": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "d366d999127efec042bcdbb185a9da08b797944a9ae588da264aa00f6a8df22b",
+     "size": 116
+    },
+    "spec/examples/rich-document/plain-text.example.txt.zlib": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "af3746128133d75ca88384c58f4e756454cc3c222d18b4854fbfc8134b896596",
+     "size": 110
+    },
+    "spec/examples/rich-document/properties.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "77dd4105867cf0b8f0fcdd904fc6942bbc5f6d20730cbe175a3c4c08df227701",
+     "size": 390
+    },
+    "spec/examples/rich-document/read_document.py": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "d9e4d05d0ec719970c00d275bbf0aa04ec80c42e67fc2793c1eadcc897385866",
+     "size": 21890
+    },
+    "spec/examples/rich-document/settings.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "ad58e6183e64241fe4957bd7d523623f071e1cbf992a332f46cf592646384dce",
+     "size": 1073
+    },
+    "spec/examples/rich-document/source-descriptor.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "73a3f7c2749d006e5a0955e78e6f1db3a1ece930a6af91a37eb87c705983afe5",
+     "size": 192
+    },
+    "spec/examples/rich-document/styles.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "4b4c7622d2c8b0faeb6991dfc14e7782506fa54e7bbf8e15a167224c62151dc1",
+     "size": 1423
+    },
+    "spec/examples/rich-document/tracked-changes.example.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "1b58b76e57c5d6119d7bb404fe717cf846766fdec02aeb4d7140c26ddba591f0",
+     "size": 163
+    },
+    "spec/examples/rich-document/write_minimal.py": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "54a3106d6bf5ae3884ca96dbd2bae28bed73d8f18d03d69f3c1d5f23d8c5f81e",
+     "size": 16028
+    },
+    "spec/layouts/x.wordcraft.ooxml.part.layout.txt": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "9f4b9a0951f7cea2c91bb873b8e76d6f5c15bc056eab30a357cb121acd15eaeb",
+     "size": 4890
+    },
+    "spec/layouts/x.wordcraft.source.other.layout.txt": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "df8506d6680c0f723ef1ebe677e638ad1bebff7689acde8bc165634f9dfb0acb",
+     "size": 3038
+    },
+    "spec/schemas/core.chart.data.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "4a52d2683a938cb07bb9f4701334712f009afcf15a7c660eabcdf6cb2c7377a7",
+     "size": 4572
+    },
+    "spec/schemas/core.style.numbering.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "f12d5d518bf1af00cfd3ebb597a37c35a71e584ae4f7513acbed24492b3cad97",
+     "size": 37054
+    },
+    "spec/schemas/core.style.sheet.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "56053dc18b9e3cb6686245a6847265c4b5cd01a753847d4e9a3c012bd3062a2e",
+     "size": 57644
+    },
+    "spec/schemas/core.text.bibliography.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "66d09137f94ed3327dd2a3eeace92704fe8f82a109ecfd4ff9e079bec47cf01c",
+     "size": 3904
+    },
+    "spec/schemas/core.text.blocks.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "560980cf85ff731d9f407a6741b68a87c30a50fa2bc6d757909445b09e8c74de",
+     "size": 193943
+    },
+    "spec/schemas/core.text.comments.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "8f5167b3b9c8b27aae25abf0ee3ebacdeee50e60af00b46ea72b2641225a3254",
+     "size": 2483
+    },
+    "spec/schemas/core.text.document.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "0e7152a4a887f14cb9a395d71fd333b5694a65447e98bdb7d4b5f2154cc54671",
+     "size": 38648
+    },
+    "spec/schemas/core.text.properties.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "e20c07eb84add8db7378eb404d132bffe8f86ea8c7bf5687e1805c365c069f45",
+     "size": 4325
+    },
+    "spec/schemas/core.text.settings.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "8ec654d7b44fba6de82bd1ed55d9d131daa3c0b701e1c49277a39a465cc50344",
+     "size": 19625
+    },
+    "spec/schemas/core.text.tracked-changes.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "01bf8f879241edbd33b89175f240cef92d42dc9202a1ddc6f4536e0405d32b45",
+     "size": 2996
+    },
+    "spec/schemas/manifest.rich-document.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "b130a479a78fd51ccb1a5ac4e190ec6545a5a85689d143c8e246d0a918fe4f07",
+     "size": 43776
+    },
+    "spec/schemas/x.wordcraft.ooxml.embedded.schema.json": {
+     "from": "wordcraft/field-notes-directory.werk",
+     "sha256": "0baa50eead369286356f748aa32738fd70e425d6b3a14efe3869cf58273e7a69",
+     "size": 5421
+    }
+   }
+  },
+  "spreadsheet": {
+   "app": "gridcraft",
+   "files": {
+    "HOW-TO-READ.md": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "9f755848ac50affbee58c9897c66bc531c32ff5a398b8175d0683987712f0fa4",
+     "size": 4229
+    },
+    "spec/CRAFT-BASE.md": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+     "size": 27724
+    },
+    "spec/NOT-CARRIED.md": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "d137155b474b785418cda07a28e2ee5abae79ca7aa985d35f2e673244bcc15ea",
+     "size": 8888
+    },
+    "spec/PROFILE-SPREADSHEET.md": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "48ded78f388c66841a1c5b463fd08c8c858eb439dc2c5346390ba2619f0d0aac",
+     "size": 48987
+    },
+    "spec/conventions-map.spreadsheet.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "ce5e3ee7024b3a60241bcafb949c493c1e816af42de5cbc41a930af2caefa80e",
+     "size": 9524
+    },
+    "spec/examples/spreadsheet/README.md": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "c756dac63792a5d84784c64c0ac98b3f22b3c03290427b74bee133fa796d354c",
+     "size": 3055
+    },
+    "spec/examples/spreadsheet/cells.example.hex.txt": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "2c4e456b3156723537806b8287b84b111de5efcbe526c818d4263fb7ba7f062b",
+     "size": 16317
+    },
+    "spec/examples/spreadsheet/cells.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "e7e67991ccecb9f2eae89c93b5e3e868e01fbd16c0f433c3d3552733ea518637",
+     "size": 604
+    },
+    "spec/examples/spreadsheet/cells.example.wkx": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "47660b755cebc7a3346dd178e1ecf7ff75e76365c5440bd6bd32892d2a51e4bb",
+     "size": 1744
+    },
+    "spec/examples/spreadsheet/cells.rows-0000000.example.wkx.zlib": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "325dd82723031de221a8368b7491f99ffb2ff379eacd9267ef4a2bff35779d34",
+     "size": 570
+    },
+    "spec/examples/spreadsheet/chart.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "5e80ec7aec983ab64e65bdb0224cecf4c7bcdf16e9e1f095b95169c8b55ca890",
+     "size": 709
+    },
+    "spec/examples/spreadsheet/computed.example.hex.txt": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "24fa841ceb38812e8872c3d6d0ac82455f30865d754367da10069a1fcf7a7bf8",
+     "size": 10707
+    },
+    "spec/examples/spreadsheet/computed.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "e9997fc544715c903b3e7a5aaaa647c5567cb71d46551022114ee82b4aeb52c8",
+     "size": 611
+    },
+    "spec/examples/spreadsheet/computed.example.wkx": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "b7a74499486837948876ed443a4118265eb69439a0d9973d980c80fa8a2b7d8c",
+     "size": 1072
+    },
+    "spec/examples/spreadsheet/computed.rows-0000000.example.wkx.zlib": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "2a73b5f1e98001b8e67e39fc7694f84e18bb5390cf1f5485ae67271a9374d128",
+     "size": 402
+    },
+    "spec/examples/spreadsheet/external-values.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "d6e1dbe4cd2d5b690a6825621aed64aeeac3ed7a643fdc8c1155bf9b3ea6551c",
+     "size": 467
+    },
+    "spec/examples/spreadsheet/first-rows.example.csv": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "e26ea03ad9f671ee5fd60a42e437417c6d4d1d4330fc1147039c33ef9097ddd3",
+     "size": 79
+    },
+    "spec/examples/spreadsheet/names.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "5e518ee8caf5973f910b733d86af92875e3dee9e13072630982d62ce89387f5e",
+     "size": 300
+    },
+    "spec/examples/spreadsheet/ooxml-index.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "b40675d7ea0bfbbdf5c6419fc9376f80b8a2ab6942098d2c839891003e11ff4c",
+     "size": 1063
+    },
+    "spec/examples/spreadsheet/pivot.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "527a40bf1d7976c41b2137fa15c4f62f535b40c99693452b15914f1eeef78630",
+     "size": 706
+    },
+    "spec/examples/spreadsheet/preview.example.png": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "7d4284324ce1e5be22d352b3dfca25f6efea668c37f73c87588f180943359414",
+     "size": 10175
+    },
+    "spec/examples/spreadsheet/read_spreadsheet.py": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "39e1ff65471cdfe7f5286c5ba3b10c2aeee262d434eb5d0024b7807b1260fa89",
+     "size": 32131
+    },
+    "spec/examples/spreadsheet/sheet.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "97d1e460c24468e568a2f55d6a4c00b7a6e2810157cf6cf62652cfae339e925b",
+     "size": 3984
+    },
+    "spec/examples/spreadsheet/styles.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "1dcf744fea5fb727b07c9c269a71c32d44247d7280c131541fe647d65ec48162",
+     "size": 5068
+    },
+    "spec/examples/spreadsheet/vba.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "27648e91adf5312a00522fcc42e67f778e120b9d2491cdf258751bbf7d0d9ea5",
+     "size": 205
+    },
+    "spec/examples/spreadsheet/workbook.example.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "8b73461e2f1d24ae74a1bd3a6c20d7606d1d69219b314174353690fb9e656936",
+     "size": 623
+    },
+    "spec/examples/spreadsheet/write_minimal.py": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "5a61cabe35761fd4e85ee00fd201b3580775885bf8f05c749bfa5b2603f1c5b9",
+     "size": 22874
+    },
+    "spec/layouts/core.sheet.cells.layout.txt": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "e7b581f0d341d37c9493706c4245f662f847247666583398451be7d97bba7041",
+     "size": 14442
+    },
+    "spec/layouts/core.sheet.computed.layout.txt": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "8d2bd38005ab19414d749c282654f2acc7899604f72c08c21dbd61355e0bc9c5",
+     "size": 7130
+    },
+    "spec/layouts/x.gridcraft.source.media.layout.txt": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "ea5fd4cbedc80ac47c7a4ef37e3da0e85621a33f312e2bc0a6272b8a8d2c9ec2",
+     "size": 1460
+    },
+    "spec/schemas/core.sheet.cells.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "7d7051b601a34ee9b35b0eaeac16a9f3bac559cf2ddf99a82f3f2ab72451b066",
+     "size": 5803
+    },
+    "spec/schemas/core.sheet.chart.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "273755b405e54b1d0cf1823c9faf2153ab43ef9bacf3d3b0cbc08bf82b74b3b8",
+     "size": 16960
+    },
+    "spec/schemas/core.sheet.computed.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "4aafaf1f6aa192e624d599150b99fb344b225819bbc71fe8958bf26c50a7d7ae",
+     "size": 5757
+    },
+    "spec/schemas/core.sheet.external-values.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "28dfcea072a1083d663a27597f9ea1f5dddc0f989cc169bd326fd1c725453efc",
+     "size": 4479
+    },
+    "spec/schemas/core.sheet.names.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "df4536ee9fbd04d6a7162d50bd8d0002e5405e47cdc8bf95d9474ba30ad6e4c5",
+     "size": 2741
+    },
+    "spec/schemas/core.sheet.pivot.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "a10e991c95671bd5b0abd35dd14a005a872abb1c4152b13d0dbe9dc921456c09",
+     "size": 13744
+    },
+    "spec/schemas/core.sheet.sheet.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "2cd96541321dc4f5258d62b97748cbf8f99a783d25e224315c820fc4a8e1a4e3",
+     "size": 100145
+    },
+    "spec/schemas/core.sheet.styles.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "1e8a50be771639968dbb77988e8a33b87e4188f3b778444e6c3956e601e8813f",
+     "size": 15844
+    },
+    "spec/schemas/core.sheet.vba-project.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "714cfe49b6e6f7ceb85409c3495377006d6e20866c2395dd7dddb2bfb5fe24b6",
+     "size": 2538
+    },
+    "spec/schemas/core.sheet.workbook.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "3ffa810454ad90e024cf62e036b368c710cb8ecbfbf0fe0425bd6a85e461db81",
+     "size": 11078
+    },
+    "spec/schemas/manifest.spreadsheet.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "a312df57d1a164e39d5ba24a529481aa8dc7bb9d73d3405e79a4d55bb66c536f",
+     "size": 36467
+    },
+    "spec/schemas/x.gridcraft.ooxml.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "959da9d54a449d4f420802e68305783d0fcf1ec1c3ec70cd64accd9eaf93af4f",
+     "size": 14044
+    },
+    "spec/schemas/x.gridcraft.vba.schema.json": {
+     "from": "gridcraft/every-field-signed-directory",
+     "sha256": "46e01071e188c10fa189ac21cb1b2b2a7ea8a867f666e2b04df93f9e1e28e927",
+     "size": 2168
+    }
+   }
+  },
+  "vector-art": {
+   "app": "vectorcraft",
+   "files": {
+    "HOW-TO-READ.md": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "4924d0f7af8c5f1c59a2f318f8bfb5bc1654bc781858561fd61e1b7fc76ffe9d",
+     "size": 4994
+    },
+    "spec/CRAFT-BASE.md": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "059109350fede63e3cca43e738ce51a0ad8e584666ee60fee883a3177f65010c",
+     "size": 27724
+    },
+    "spec/NOT-CARRIED.md": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "d137155b474b785418cda07a28e2ee5abae79ca7aa985d35f2e673244bcc15ea",
+     "size": 8888
+    },
+    "spec/PROFILE-VECTOR-ART.md": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "a8cd1a0c8922150bbac610694303f157265aa0e8f7f9d33758d25324e946c0f9",
+     "size": 38788
+    },
+    "spec/conventions-map.vector-art.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "5463baed54807cbd3a27cca91887b350d297e17aab04913b785fd34018a34c15",
+     "size": 8229
+    },
+    "spec/examples/vector-art/README.md": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "cc44b5b5380276869ced453f9da1f19326877c32bb18a8b8b677260ba1dfda44",
+     "size": 1335
+    },
+    "spec/examples/vector-art/effects.md": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "89697835365e442a1e78f53c4ba3edd04eb3583fe4084d7ad5ffaa683429f9cc",
+     "size": 26522
+    },
+    "spec/examples/vector-art/minimal/artboard-1.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "c317ee569895e512aab830a9caee0784cacc3370021b67eab3402f220c7bd67b",
+     "size": 89
+    },
+    "spec/examples/vector-art/minimal/document.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "92c86b4bf15d587f5a610d9b7de016deed71c21c2e516741cf3bfdf88850da2d",
+     "size": 87
+    },
+    "spec/examples/vector-art/minimal/layer-1.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "69c19576e9a06c92cbb3357c7d95851ccb6e2cd3b99769c3e5e3c5a79326d850",
+     "size": 384
+    },
+    "spec/examples/vector-art/payloads/core.paint.pattern.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "6eb0f4f9b23ef3235315d38e0f4d79ca4141b768efc3cb2c20863dde3766fccf",
+     "size": 3541
+    },
+    "spec/examples/vector-art/payloads/core.paint.swatches.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "a4e24da0aaafa734c3d77f00b451f80d9e404dcba4411225e9e36b535336d45b",
+     "size": 6037
+    },
+    "spec/examples/vector-art/payloads/core.text.styles.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "28020678bf5ea9ae871a6baaaa6d691b72f623a234c32463ed05a44662c1d7eb",
+     "size": 713
+    },
+    "spec/examples/vector-art/payloads/core.vector.styles.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "793d1be624ba6bbaeca013be132362fe892c42553fa74a8846d8f8258ffd5d5e",
+     "size": 11760
+    },
+    "spec/examples/vector-art/payloads/core.vector.symbol.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "6157983a345c049b76f7adec8f6659b20a33c581c3bfce3a6b1f6712ccf2dbae",
+     "size": 29351
+    },
+    "spec/examples/vector-art/payloads/layer-every-kind.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "7fd3c0ad7a406ec3ee7929db5fdb5667e34e463a5eac0af612c20ca0e5c49b36",
+     "size": 238079
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.app-data.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "d9972a001b7fe9831138badfbe9a7c07b5908b2a569c9698f7ee39804b61b75f",
+     "size": 914
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.brushes.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "56f477cc4266bf42cd0a793966e84fadc5101c412897610bf097aed5039cb60c",
+     "size": 671
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.embedded.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "56a45574d316d3e30f7dc252c1fad77a0c70e6c91719017ee2f27655e6d49878",
+     "size": 749
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.features.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "383e0bfd283aa406411db9dd149c9c9dd2036e435a240cecb6e6eda308950823",
+     "size": 5647
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.graph-design.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "5b77f88d2a34d34d64378043a993c7610cc4fead917c692ee44d2a157db904e1",
+     "size": 3519
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.object-data.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "decde7194acbf6bb44b7dc5d052fe20bdbe335d40908c55d36f962a246023476",
+     "size": 27545
+    },
+    "spec/examples/vector-art/payloads/x.vectorcraft.session.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "99ce215620b1342a184eea1a387d0d876fcdaeb687fef8421687d73e86e4e2c8",
+     "size": 1140
+    },
+    "spec/examples/vector-art/read_document.py": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "f099f6d05a7286fd635541fdad3c15984cf5b7de65b8378dc132e94d37342d18",
+     "size": 23967
+    },
+    "spec/examples/vector-art/write_minimal.py": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "556b35c3c1f6d9d9f85181256bbc959efc1ed235b6921c49dd02890583050487",
+     "size": 10215
+    },
+    "spec/layouts/x.vectorcraft.pdf.layout.txt": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "e9d4a6cf309a6b5647d472b64a67b6805583489c9a6534463271daf65b522d04",
+     "size": 513
+    },
+    "spec/layouts/x.vectorcraft.proxy.layout.txt": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "64733aabeb6c834b916c18c5844628693a1fa2f05e17a95a652a1e1ca00355f9",
+     "size": 800
+    },
+    "spec/layouts/x.vectorcraft.source.icc.layout.txt": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "1def5daffd6a704182f8d6561def96bcf56989b7fab687949d0c60954fe3d30a",
+     "size": 902
+    },
+    "spec/layouts/x.vectorcraft.source.other.layout.txt": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "05ae5e6fc0a73fd629ea439707efc9734f95c907780bc65d44452288250ab66e",
+     "size": 976
+    },
+    "spec/layouts/x.vectorcraft.source.vectorcraft.layout.txt": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "ed4c6cdfc89d02efb645249df692262d797d9779c1f0604eff65ab5039abce60",
+     "size": 1075
+    },
+    "spec/schemas/core.paint.pattern.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "09cd4ee5771ab9d716b5041118ca1057227761d1ae557068eec3b0f3ef74e21e",
+     "size": 114778
+    },
+    "spec/schemas/core.paint.swatches.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "50dbeaae6866b39419a1807c802ae90feb4a3eb179a25056a95e1dccba56f874",
+     "size": 17638
+    },
+    "spec/schemas/core.text.styles.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "dc183b569bb3f4b12ff850f489d78d176e15854ed31dcfe31c2e2028d1444110",
+     "size": 2528
+    },
+    "spec/schemas/core.vector.artboard.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "96b0809ee7cf1fb28a169f158a42fb78d02925c30bc95648f6ba0e40e27c06c6",
+     "size": 1969
+    },
+    "spec/schemas/core.vector.document.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "ce5f516bd5454c544b1010028b103437b6764b1a4663ca288533a2114a7bb2c0",
+     "size": 26476
+    },
+    "spec/schemas/core.vector.layer.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "ea2485d28304c9618beb0ae5990e0bf3faea065381491e7b3ebfde2befec58d0",
+     "size": 111747
+    },
+    "spec/schemas/core.vector.styles.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "54cb7f171f3b0b59d4eb80bb39af73133afe888684a3be801eda39f60b143b26",
+     "size": 33542
+    },
+    "spec/schemas/core.vector.symbol.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "45f847348acd6e79b35de82d200aa06e799fb530d52d65a09c3ad015e0b4f964",
+     "size": 111890
+    },
+    "spec/schemas/manifest.vector-art.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "6665bec43c5da3124267ac9a1cbaafdac917d7c9aabcdf767ecf286870d049b1",
+     "size": 38981
+    },
+    "spec/schemas/x.vectorcraft.app-data.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "6f21cca6b57ec2243cb0a7219dbbc713f4118bd8b150992964e055472ddb4610",
+     "size": 1840
+    },
+    "spec/schemas/x.vectorcraft.brushes.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "920cd070d2a036e9da2dee122b5c7ac164ab549d8115e880e99820d5bd674955",
+     "size": 1600
+    },
+    "spec/schemas/x.vectorcraft.embedded.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "2839c5e91d9df6dcbfeb11458522b3b4235c3bcbec783dce56454ec2841c95ef",
+     "size": 2753
+    },
+    "spec/schemas/x.vectorcraft.features.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "1968fcd72bff10ed5d84ccc9141bc1b5d14496861834a759bbd759014d46242f",
+     "size": 11695
+    },
+    "spec/schemas/x.vectorcraft.graph-design.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "42a751af9ce88455b5370e7e8c2f124151512a6076f8a7f7a9848d519c8311f4",
+     "size": 109863
+    },
+    "spec/schemas/x.vectorcraft.object-data.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "7e4cf1a1b5171ef55db76e0eb0bf719525d904ad3e0ee31155fffae79f939fd5",
+     "size": 61512
+    },
+    "spec/schemas/x.vectorcraft.session.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "076813b21cad952a74d9c4687b65e2ce319387f6c778b2c25b374955b9f38655",
+     "size": 4805
+    },
+    "spec/schemas/x.vectorcraft.source.other.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "3ffbe87246f65b0f2ecde09fa8d7fd22477cd2afbf5d5e315b11f3a810e4d4c7",
+     "size": 349
+    },
+    "spec/schemas/x.vectorcraft.source.vectorcraft.schema.json": {
+     "from": "vectorcraft/every-field-signed-directory",
+     "sha256": "b0a745719869c38574caa63083aeef9627a8886004f699ec97a9054f9a70f43f",
+     "size": 1023
+    }
+   }
+  }
+ }
+}

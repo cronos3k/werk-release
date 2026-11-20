@@ -1,0 +1,760 @@
+{
+  "$defs": {
+    "frame_rate": {
+      "additionalProperties": false,
+      "description": "A frame rate as an exact fraction: num / den frames per second (24000/1001, 25/1...). One frame lasts 254016000000 * den / num ticks.",
+      "properties": {
+        "den": {
+          "description": "Denominator, seconds. Positive.",
+          "type": "integer"
+        },
+        "num": {
+          "description": "Numerator, frames. Positive.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "num",
+        "den"
+      ],
+      "type": "object"
+    },
+    "output_module": {
+      "additionalProperties": false,
+      "description": "An output module: how rendered frames are encoded and where they go. Every field is optional; defaults as given.",
+      "properties": {
+        "alpha_mode": {
+          "description": "How alpha is written. Default `Straight`. `Straight`: straight; `Premultiplied`: premultiplied.",
+          "enum": [
+            "Straight",
+            "Premultiplied"
+          ],
+          "type": "string"
+        },
+        "audio": {
+          "description": "Audio output. Default `Auto`. `Auto`: sound is written when the composition has any; `On`: always; `Off`: never.",
+          "enum": [
+            "Auto",
+            "On",
+            "Off"
+          ],
+          "type": "string"
+        },
+        "audio_channels": {
+          "description": "Channels of the written sound: 1 or 2. Default 2.",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "audio_format": {
+          "description": "Sample format. Default `S16`. `S16`: 16-bit integer; `S24`: 24-bit integer; `F32`: 32-bit float.",
+          "enum": [
+            "S16",
+            "S24",
+            "F32"
+          ],
+          "type": "string"
+        },
+        "audio_sample_rate": {
+          "description": "Sample rate of the written sound, Hz. Default 48000.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "bitrate_kbps": {
+          "description": "Target bit rate in kbit/s. Default 10000.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "channels": {
+          "description": "Channels written. Default `Rgb`. `Rgb`: colour; `Rgba`: colour and alpha; `Alpha`: alpha as grey.",
+          "enum": [
+            "Rgb",
+            "Rgba",
+            "Alpha"
+          ],
+          "type": "string"
+        },
+        "codec": {
+          "additionalProperties": false,
+          "description": "Options of the HEVC / AV1 encoders. All optional.",
+          "properties": {
+            "level": {
+              "anyOf": [
+                {
+                  "description": "The codec level times 10 (HEVC 4.1 = 41); null: chosen by the encoder.",
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The codec level times 10 (HEVC 4.1 = 41); null: chosen by the encoder."
+            },
+            "profile": {
+              "description": "Profile. Default `Main`. `Main`: 8-bit; `Main10`: 10-bit.",
+              "enum": [
+                "Main",
+                "Main10"
+              ],
+              "type": "string"
+            },
+            "quality": {
+              "description": "Constant-quality value 0..100. Default 70.",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "rate_control": {
+              "description": "Rate control. Default `Bitrate`. `Bitrate`: by `bitrate_kbps`; `Quality`: constant quality.",
+              "enum": [
+                "Bitrate",
+                "Quality"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "crop": {
+          "additionalProperties": false,
+          "description": "Crop of the rendered frame. All optional; default no crop.",
+          "properties": {
+            "bottom": {
+              "description": "Pixels removed at the bottom.",
+              "type": "integer"
+            },
+            "enabled": {
+              "description": "Crop is applied.",
+              "type": "boolean"
+            },
+            "left": {
+              "description": "Pixels removed at the left.",
+              "type": "integer"
+            },
+            "right": {
+              "description": "Pixels removed at the right.",
+              "type": "integer"
+            },
+            "roi": {
+              "anyOf": [
+                {
+                  "description": "x, y, width, height in composition pixels.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 4,
+                  "minItems": 4,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "x, y, width, height in composition pixels."
+            },
+            "top": {
+              "description": "Pixels removed at the top (negative adds).",
+              "type": "integer"
+            },
+            "use_roi": {
+              "description": "Crop to the region of interest in `roi`.",
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "format": {
+          "description": "Output format. Default `H264`. `H264`: H.264 in MP4; `ProRes`: ProRes in QuickTime; `PngSequence`: numbered PNG files; `JpegSequence`: numbered JPEG files; `TiffSequence`: numbered TIFF files; `ExrSequence`: numbered OpenEXR files; `Gif`: animated GIF; `WebM`: WebM; `Wav`: sound only, WAV; `Aiff`: sound only, AIFF; `Hevc`: HEVC in MP4; `Av1`: AV1 in MP4; `Uncompressed`: uncompressed video in AVI.",
+          "enum": [
+            "H264",
+            "ProRes",
+            "PngSequence",
+            "JpegSequence",
+            "TiffSequence",
+            "ExrSequence",
+            "Gif",
+            "WebM",
+            "Wav",
+            "Aiff",
+            "Hevc",
+            "Av1",
+            "Uncompressed"
+          ],
+          "type": "string"
+        },
+        "gif_loop": {
+          "description": "GIF: loops for ever. Default true.",
+          "type": "boolean"
+        },
+        "include_project_link": {
+          "description": "The output's metadata names the project it was rendered from. Default true.",
+          "type": "boolean"
+        },
+        "keyframe_interval": {
+          "description": "Frames between key frames; 0 = the encoder's own choice. Default 0.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "name": {
+          "description": "The name of the template. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "opus_application": {
+          "description": "Opus tuning. Default `Audio`. `Audio`: music and mixed sound; `Voip`: speech.",
+          "enum": [
+            "Audio",
+            "Voip"
+          ],
+          "type": "string"
+        },
+        "opus_bitrate_kbps": {
+          "description": "Opus bit rate in kbit/s. Default 192.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "output": {
+          "description": "The output file name or path template as the user set it. A destination on the computer that rendered: content text, never read by a reader of this file. Default `[compName].[fileExtension]`.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "prores_profile": {
+          "description": "ProRes flavour. Default `Hq`. `Proxy`: 422 Proxy; `Lt`: 422 LT; `Standard`: 422; `Hq`: 422 HQ; `P4444`: 4444; `P4444Xq`: 4444 XQ.",
+          "enum": [
+            "Proxy",
+            "Lt",
+            "Standard",
+            "Hq",
+            "P4444",
+            "P4444Xq"
+          ],
+          "type": "string"
+        },
+        "quality": {
+          "description": "Encoder quality 0..100. Default 90.",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "resize": {
+          "additionalProperties": false,
+          "description": "Resize of the rendered frame. All optional.",
+          "properties": {
+            "enabled": {
+              "description": "Resize is applied. Default false.",
+              "type": "boolean"
+            },
+            "height": {
+              "description": "Output height, pixels. Default 1080.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "lock_aspect": {
+              "description": "The editor keeps the aspect ratio. Default true.",
+              "type": "boolean"
+            },
+            "quality": {
+              "description": "Resize quality. Default `High`. `Low`: bilinear; `High`: bicubic.",
+              "enum": [
+                "Low",
+                "High"
+              ],
+              "type": "string"
+            },
+            "width": {
+              "description": "Output width, pixels. Default 1920.",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "webm_bitrate": {
+          "description": "WebM: rate-controlled by `bitrate_kbps` instead of `quality`. Default false.",
+          "type": "boolean"
+        },
+        "webm_codec": {
+          "description": "WebM video codec. Default `Vp9`. `Vp9`: VP9; `Av1`: AV1.",
+          "enum": [
+            "Vp9",
+            "Av1"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "render_settings": {
+      "additionalProperties": false,
+      "description": "Render settings: how the composition is rendered. Every field is optional; defaults as given.",
+      "properties": {
+        "color_depth": {
+          "description": "Colour depth. Default `Current`. `Current`: the project's; `Bpc8`: 8 bits per channel; `Bpc16`: 16 bits per channel; `Bpc32`: 32-bit float.",
+          "enum": [
+            "Current",
+            "Bpc8",
+            "Bpc16",
+            "Bpc32"
+          ],
+          "type": "string"
+        },
+        "effects": {
+          "description": "Effects. Default `Current`. `Current`: as the layers' switches are; `AllOn`: every effect runs; `AllOff`: no effect runs.",
+          "enum": [
+            "Current",
+            "AllOn",
+            "AllOff"
+          ],
+          "type": "string"
+        },
+        "field_render": {
+          "description": "Field rendering. Default `Off`. `Off`: progressive frames; `UpperFirst`: interlaced, upper field first; `LowerFirst`: interlaced, lower field first.",
+          "enum": [
+            "Off",
+            "UpperFirst",
+            "LowerFirst"
+          ],
+          "type": "string"
+        },
+        "frame_blending": {
+          "description": "Frame blending per layer. Default `Current`. `Current`: as the layers' switches are; `OnForChecked`: on for layers whose switch is on, whatever the composition's switch says; `OffForAll`: off for every layer.",
+          "enum": [
+            "Current",
+            "OnForChecked",
+            "OffForAll"
+          ],
+          "type": "string"
+        },
+        "frame_rate": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/frame_rate"
+                }
+              ],
+              "description": "The rate rendered at; null: the composition's."
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The rate rendered at; null: the composition's."
+        },
+        "guide_layers": {
+          "description": "Guide layers. Default `AllOff`. `Current`: as they are in the composition; `AllOff`: guide layers are not rendered.",
+          "enum": [
+            "Current",
+            "AllOff"
+          ],
+          "type": "string"
+        },
+        "motion_blur": {
+          "description": "Motion blur is rendered. Default true.",
+          "type": "boolean"
+        },
+        "motion_blur_mode": {
+          "description": "Motion blur per layer. Default `Current`. `Current`: as the layers' switches are; `OnForChecked`: on for layers whose switch is on, whatever the composition's switch says; `OffForAll`: off for every layer.",
+          "enum": [
+            "Current",
+            "OnForChecked",
+            "OffForAll"
+          ],
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the template these settings came from or are saved as. Default empty.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "proxy_use": {
+          "description": "Which proxies stand in. Default `UseNone`. `CurrentSettings`: proxies whose switch is on; `UseAll`: every proxy; `UseCompOnly`: composition proxies only; `UseNone`: no proxy.",
+          "enum": [
+            "CurrentSettings",
+            "UseAll",
+            "UseCompOnly",
+            "UseNone"
+          ],
+          "type": "string"
+        },
+        "pulldown": {
+          "description": "3:2 pulldown. Default `Off`. `Off`: none; `Wssww`: 3:2 pulldown, phase WSSWW; `Sswww`: phase SSWWW; `Swwws`: phase SWWWS; `Wwwss`: phase WWWSS; `Wwssw`: phase WWSSW.",
+          "enum": [
+            "Off",
+            "Wssww",
+            "Sswww",
+            "Swwws",
+            "Wwwss",
+            "Wwssw"
+          ],
+          "type": "string"
+        },
+        "quality": {
+          "description": "Quality. Default `Best`. `Best`: full quality; `Draft`: draft quality.",
+          "enum": [
+            "Best",
+            "Draft"
+          ],
+          "type": "string"
+        },
+        "resolution": {
+          "description": "Output scale relative to the composition's size: 1 = full, 0.5 = half. Default 1.",
+          "type": "number"
+        },
+        "skip_existing": {
+          "description": "Frames of an image sequence that already exist are not rendered again. Default false.",
+          "type": "boolean"
+        },
+        "solo": {
+          "description": "Solo switches. Default `Current`. `Current`: solo switches apply; `AllOff`: solo switches are ignored.",
+          "enum": [
+            "Current",
+            "AllOff"
+          ],
+          "type": "string"
+        },
+        "storage_overflow": {
+          "description": "When the output volume is full, continue in the overflow folders. Default true.",
+          "type": "boolean"
+        },
+        "time_span": {
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "WorkArea"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "the composition's work area",
+                "properties": {
+                  "kind": {
+                    "const": "WorkArea",
+                    "description": "the composition's work area"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "LengthOfComp"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "the whole composition",
+                "properties": {
+                  "kind": {
+                    "const": "LengthOfComp",
+                    "description": "the whole composition"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "kind": {
+                    "const": "Custom"
+                  }
+                },
+                "required": [
+                  "kind"
+                ]
+              },
+              "then": {
+                "additionalProperties": false,
+                "description": "from `start` (inclusive) to `end` (exclusive)",
+                "properties": {
+                  "end": {
+                    "description": "End of the span. Ticks: 254016000000 per second.",
+                    "type": "integer"
+                  },
+                  "kind": {
+                    "const": "Custom",
+                    "description": "from `start` (inclusive) to `end` (exclusive)"
+                  },
+                  "start": {
+                    "description": "First rendered instant. Ticks: 254016000000 per second.",
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "start",
+                  "end"
+                ],
+                "type": "object"
+              }
+            }
+          ],
+          "description": "The span of composition time that is rendered. Default `WorkArea`. `kind` says which: `WorkArea`: the composition's work area; `LengthOfComp`: the whole composition; `Custom`: from `start` (inclusive) to `end` (exclusive).",
+          "properties": {
+            "kind": {
+              "enum": [
+                "WorkArea",
+                "LengthOfComp",
+                "Custom"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The render queue of the project, its render-settings and output-module templates, and its render preferences. Nothing here changes what a composition looks like; it says what the user asked to be rendered, how, and where to.",
+  "properties": {
+    "prefs": {
+      "additionalProperties": false,
+      "description": "Render preferences. All optional.",
+      "properties": {
+        "notify": {
+          "description": "Notify when the queue finishes. Default false.",
+          "type": "boolean"
+        },
+        "overflow_folders": {
+          "description": "Storage overflow folders. Default none.",
+          "items": {
+            "description": "A folder on the computer that rendered: content text.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "queue": {
+      "description": "The queue, in order.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One entry of the render queue.",
+        "properties": {
+          "comp": {
+            "description": "Id of the composition to render.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "extra_outputs": {
+            "description": "Further output modules of the same render. Default none.",
+            "items": {
+              "$ref": "#/$defs/output_module"
+            },
+            "type": "array"
+          },
+          "id": {
+            "description": "The entry's id, unique in the queue.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "last_output": {
+            "anyOf": [
+              {
+                "description": "The file the last render wrote, as a path on the computer that rendered: content text, never read by a reader of this file.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The file the last render wrote, as a path on the computer that rendered: content text, never read by a reader of this file."
+          },
+          "log": {
+            "description": "What the render log records. Default `ErrorsOnly`. `ErrorsOnly`: errors; `PlusSettings`: errors and settings; `PlusPerFrameInfo`: errors, settings and per-frame information.",
+            "enum": [
+              "ErrorsOnly",
+              "PlusSettings",
+              "PlusPerFrameInfo"
+            ],
+            "type": "string"
+          },
+          "output": {
+            "$ref": "#/$defs/output_module"
+          },
+          "post_render": {
+            "description": "What happens after the render. Default `None`. `None`: nothing; `Import`: import the output into the project; `ImportAndReplace`: import it and use it in place of the composition; `SetProxy`: set it as the composition's proxy.",
+            "enum": [
+              "None",
+              "Import",
+              "ImportAndReplace",
+              "SetProxy"
+            ],
+            "type": "string"
+          },
+          "render": {
+            "description": "The entry is ticked to be rendered.",
+            "type": "boolean"
+          },
+          "render_time": {
+            "anyOf": [
+              {
+                "description": "How long the last render took, seconds.",
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How long the last render took, seconds."
+          },
+          "settings": {
+            "$ref": "#/$defs/render_settings"
+          },
+          "started": {
+            "anyOf": [
+              {
+                "description": "When the last render started: seconds since 1970-01-01T00:00:00Z.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the last render started: seconds since 1970-01-01T00:00:00Z."
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "Unqueued",
+                  "Queued",
+                  "NeedsOutput",
+                  "Rendering",
+                  "Done",
+                  "UserStopped"
+                ],
+                "type": "string"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "Failed": {
+                    "description": "The error message.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "Failed"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "`Unqueued`, `Queued` (default), `NeedsOutput`, `Rendering`, `Done`, `UserStopped`, or {\"Failed\": \"<message>\"}."
+          }
+        },
+        "required": [
+          "id",
+          "comp",
+          "render"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "templates": {
+      "additionalProperties": false,
+      "description": "Render templates. All optional.",
+      "properties": {
+        "defaults": {
+          "additionalProperties": false,
+          "description": "Which template is the default for which kind of render.",
+          "properties": {
+            "output_modules": {
+              "description": "Per slot.",
+              "items": {
+                "description": "[slot, template name]: slot is `Movie`, `Still`, `PreRender`, `MovieProxy` or `StillProxy`; the name is that of a template in the list beside it.",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "render_settings": {
+              "description": "Per slot.",
+              "items": {
+                "description": "[slot, template name]: slot is `Movie`, `Still`, `PreRender`, `MovieProxy` or `StillProxy`; the name is that of a template in the list beside it.",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              "type": "array"
+            }
+          },
+          "required": [],
+          "type": "object"
+        },
+        "output_modules": {
+          "description": "Output-module templates. Default none.",
+          "items": {
+            "$ref": "#/$defs/output_module"
+          },
+          "type": "array"
+        },
+        "render_settings": {
+          "description": "Render-settings templates. Default none.",
+          "items": {
+            "$ref": "#/$defs/render_settings"
+          },
+          "type": "array"
+        }
+      },
+      "required": [],
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "queue"
+  ],
+  "title": "core.motion.render-queue",
+  "type": "object"
+}

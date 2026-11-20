@@ -1,0 +1,121 @@
+{
+  "$defs": {
+    "color": {
+      "additionalProperties": false,
+      "description": "A colour with alpha, as normalised numbers.",
+      "properties": {
+        "alpha": {
+          "description": "Opacity, 0.0 transparent to 1.0 opaque (straight, not premultiplied).",
+          "type": "number"
+        },
+        "c": {
+          "description": "Up to four colour components in the order `mode` gives; unused ones are 0. Nominal range 0.0 to 1.0; a 32-bit float document may hold values outside it.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "mode": {
+          "$ref": "#/$defs/color_mode"
+        }
+      },
+      "required": [
+        "mode",
+        "c",
+        "alpha"
+      ],
+      "type": "object"
+    },
+    "color_mode": {
+      "description": "A colour model. Rgb, Indexed, Multichannel: components are red, green, blue. Grayscale, Bitmap, Duotone: one component, 0.0 black to 1.0 white. Cmyk: cyan, magenta, yellow, black as INK amounts, 0.0 no ink to 1.0 full ink. Lab: lightness L*/100, then (a* + 128)/255 and (b* + 128)/255.",
+      "enum": [
+        "Bitmap",
+        "Grayscale",
+        "Indexed",
+        "Rgb",
+        "Cmyk",
+        "Lab",
+        "Multichannel",
+        "Duotone"
+      ],
+      "type": "string"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.raster.channel.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An extra channel: a saved selection (alpha channel), a spot colour, or the Quick Mask. One gray value per pixel: 1.0 selected / full ink, 0.0 masked / no ink.",
+  "properties": {
+    "color": {
+      "$ref": "#/$defs/color",
+      "description": "The overlay colour used when the channel is shown over the image."
+    },
+    "indicates": {
+      "description": "Whether the overlay colour marks the masked (black) or the selected (white) areas.",
+      "enum": [
+        "maskedAreas",
+        "selectedAreas"
+      ],
+      "type": "string"
+    },
+    "name": {
+      "description": "The channel's name.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "opacity": {
+      "description": "Overlay opacity, 0.0 to 1.0.",
+      "type": "number"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "spot": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "A spot colour.",
+          "properties": {
+            "color": {
+              "$ref": "#/$defs/color"
+            },
+            "solidity": {
+              "description": "0.0 to 1.0: how opaque the ink is in a preview.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "color",
+            "solidity"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Set for a spot colour channel. Null: an alpha channel."
+    },
+    "surface": {
+      "description": "The `core.raster.surface` node holding the channel's pixels (one channel, document coordinates).",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "surface",
+    "spot",
+    "color",
+    "opacity",
+    "indicates"
+  ],
+  "title": "core.raster.channel — werk profile raster-layers/1",
+  "type": "object"
+}

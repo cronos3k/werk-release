@@ -1,0 +1,292 @@
+{
+  "layout": {
+    "id": 18,
+    "kind": "titleAndContent",
+    "name": "Title and Content",
+    "preserve": true,
+    "shapes": [
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 13,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Title 1",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 0,
+          "kind": "title",
+          "vertical": false
+        },
+        "text": {
+          "body": {
+            "anchor": "middle",
+            "autofit": {
+              "font_scale": 1.0,
+              "kind": "shrink",
+              "line_reduction": 0.0
+            }
+          },
+          "paragraphs": []
+        },
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 104.0,
+          "w": 840.0,
+          "x": 60.0,
+          "y": 29.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 14,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Content Placeholder 2",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 1,
+          "kind": "obj",
+          "vertical": false
+        },
+        "text": {
+          "body": {
+            "anchor": "top",
+            "autofit": {
+              "font_scale": 1.0,
+              "kind": "shrink",
+              "line_reduction": 0.0
+            }
+          },
+          "paragraphs": []
+        },
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 343.0,
+          "w": 840.0,
+          "x": 60.0,
+          "y": 144.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 15,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Date Placeholder",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 10,
+          "kind": "date",
+          "vertical": false
+        },
+        "text": {
+          "body": {
+            "anchor": "middle"
+          },
+          "list_style": {
+            "levels": [
+              {
+                "para": {
+                  "align": "left"
+                },
+                "run": {
+                  "fill": {
+                    "color": {
+                      "base": {
+                        "kind": "scheme",
+                        "slot": "tx1"
+                      },
+                      "mods": [
+                        {
+                          "op": "tint",
+                          "val": 75000
+                        }
+                      ]
+                    },
+                    "kind": "solid"
+                  },
+                  "size": 12.0
+                }
+              }
+            ]
+          },
+          "paragraphs": []
+        },
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 28.0,
+          "w": 216.0,
+          "x": 60.0,
+          "y": 500.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 16,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Footer Placeholder",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 11,
+          "kind": "footer",
+          "vertical": false
+        },
+        "text": {
+          "body": {
+            "anchor": "middle"
+          },
+          "list_style": {
+            "levels": [
+              {
+                "para": {
+                  "align": "center"
+                },
+                "run": {
+                  "fill": {
+                    "color": {
+                      "base": {
+                        "kind": "scheme",
+                        "slot": "tx1"
+                      },
+                      "mods": [
+                        {
+                          "op": "tint",
+                          "val": 75000
+                        }
+                      ]
+                    },
+                    "kind": "solid"
+                  },
+                  "size": 12.0
+                }
+              }
+            ]
+          },
+          "paragraphs": []
+        },
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 28.0,
+          "w": 324.0,
+          "x": 318.0,
+          "y": 500.0
+        }
+      },
+      {
+        "decorative": false,
+        "descr": "",
+        "geom": {
+          "kind": "preset",
+          "name": "rect"
+        },
+        "hidden": false,
+        "id": 17,
+        "kind": {
+          "type": "shape"
+        },
+        "locked": false,
+        "name": "Slide Number Placeholder",
+        "ph": {
+          "has_custom_prompt": false,
+          "idx": 12,
+          "kind": "slideNum",
+          "vertical": false
+        },
+        "text": {
+          "body": {
+            "anchor": "middle"
+          },
+          "list_style": {
+            "levels": [
+              {
+                "para": {
+                  "align": "right"
+                },
+                "run": {
+                  "fill": {
+                    "color": {
+                      "base": {
+                        "kind": "scheme",
+                        "slot": "tx1"
+                      },
+                      "mods": [
+                        {
+                          "op": "tint",
+                          "val": 75000
+                        }
+                      ]
+                    },
+                    "kind": "solid"
+                  },
+                  "size": 12.0
+                }
+              }
+            ]
+          },
+          "paragraphs": [
+            {
+              "level": 0,
+              "runs": [
+                {
+                  "kind": {
+                    "field": "slidenum",
+                    "kind": "field"
+                  },
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        },
+        "text_box": false,
+        "title": "",
+        "xfrm": {
+          "h": 28.0,
+          "w": 216.0,
+          "x": 684.0,
+          "y": 500.0
+        }
+      }
+    ],
+    "show_master_shapes": true
+  },
+  "master": "master-76",
+  "schema_version": 1
+}

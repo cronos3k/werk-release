@@ -1,0 +1,18 @@
+x.vectorcraft.source.<format> - bytes carried verbatim
+
+What it is
+    The exact bytes VectorCraft holds for something the document uses, in the encoding they came
+    in. They are never re-encoded: the manifest's sha256 of the file is the sha256 of the
+    original. One file per node.
+
+    x.vectorcraft.source.other holds bytes in an encoding VectorCraft did not recognise (an
+    image object whose data is not a PNG, JPEG, GIF, WebP, TIFF or BMP file and not a placed
+    document). Nothing can be said about them except their media type, which the
+    x.vectorcraft.embedded node records beside the image key: images[].mime, images[].original.
+
+Opaque to every other reader. Safe to skip: where pixels could be had, they are in the image's
+core.vector.image node as PNG.
+
+This type: x.vectorcraft.source.other
+Media type: application/octet-stream
+The bytes are: Bytes whose encoding VectorCraft did not recognise; the embedded table records the media type it was given.

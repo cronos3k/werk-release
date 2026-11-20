@@ -1,0 +1,307 @@
+werk keyframe tracks - layout grammar v1  (magic "WKX3")
+=======================================================
+
+Applies to: `core.keyframe.tracks` (profile `motion-comp/1`) - the numeric
+keyframes of the properties of ONE owner: a layer, or a composition's own
+properties. Which owner is said twice: by the node's `requires` edge (role
+`animates`) and by the header key "owner".
+
+Read `spec/layouts/ENVELOPE.layout.txt` FIRST. It defines the 4-byte magic,
+the u32 version, the u32 header length, the MessagePack header subset, the
+16-byte payload alignment and the section consistency rule. Everything below
+is the WKX3-specific part.
+
+What the numbers MEAN - how a value is interpolated between two keys - is
+`spec/PROFILE-MOTION-COMP.md` sections 6.3 and 6.4. This file says only where
+the numbers are.
+
+--------------------------------------------------------------------------
+0. Why a binary at all
+--------------------------------------------------------------------------
+
+A keyframe is 13 fields. A layer with a few thousand keys (a tracked point, a
+baked simulation) is megabytes of JSON, and every Save of that layer would
+store them again. As flat arrays they are 70 bytes per scalar key before the
+eases, they are exact to the bit, and the layer's JSON - what a person edits
+- stays small and separate from them. A property whose keys are not all finite
+numbers of one kind keeps them in the owner's JSON (`keys`), where anything
+can be said.
+
+--------------------------------------------------------------------------
+1. Fixed prefix
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKX3"  = 57 4B 58 33
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  payload sections (section 3), each starting on a 16-byte boundary
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys, per ENVELOPE.layout.txt section 3:
+    "kind"            = "core.keyframe.tracks"
+    "endianness"      = "le"
+    "payload_origin"  uint
+    "payload_size"    uint
+    "sections"        array of section maps
+
+  Mandatory WKX3 keys:
+
+  key                 type          meaning
+  ------------------  ------------  ------------------------------------------
+  "owner"             str           node id of the owner (`layer-12`, `comp-3`).
+  "ticks_per_second"  uint          254016000000. The unit of section "at".
+  "interpolations"    array of str  ["Linear", "Bezier", "Hold"]: the words the
+                                    codes 0, 1, 2 of section "interp" stand for.
+  "tracks"            array of map  one entry per track, in INDEX ORDER: entry i
+                                    is the track a property names with
+                                    `"track": i`.
+
+  Each element of "tracks":
+
+  key            type  meaning
+  -------------  ----  ---------------------------------------------------
+  "uid"          uint  uid of the property the track belongs to. A cross-
+                       check: the binding is the index. A property that
+                       names track i while entry i has another uid has lost
+                       its keys: it keeps its static value and the reader
+                       says so.
+  "kind"         str   "scalar", "vec2", "vec3" or "color": the kind of every
+                       key value (Scalar, Vec2, Vec3, Color).
+  "components"   uint  numbers per value: 1, 2, 3, 4 for the four kinds.
+  "keys"         uint  number of keys of the track, >= 1.
+  "first_key"    uint  index of the track's first key in the per-key sections.
+  "first_value"  uint  index of the first number of its first key in "value".
+  "first_ease"   uint  index of the first ease record of its first key in
+                       "ease".
+
+  Tracks are stored one after another without gaps: track i+1 has
+  first_key = first_key(i) + keys(i), first_value = first_value(i) +
+  keys(i) * components(i), and its first_ease follows the last ease of
+  track i. A reader MUST ignore header keys it does not know.
+
+--------------------------------------------------------------------------
+3. Payload sections
+--------------------------------------------------------------------------
+
+  K = total number of keys of all tracks, V = total number of value numbers,
+  E = total number of ease records. Eight sections, in this order; a reader
+  finds them BY NAME.
+
+  name          dtype  shape   stride  arithmetic that MUST hold
+  ------------  -----  ------  ------  ---------------------------------
+  "at"          i64    [K]     8       size == 8 * K
+  "interp"      u8     [K,2]   2       size == 2 * K
+  "flags"       u8     [K]     1       size == K
+  "label"       u8     [K]     1       size == K
+  "value"       f64    [V]     8       size == 8 * V
+  "spatial"     f64    [K,6]   48      size == 48 * K
+  "ease-count"  u8     [K,2]   2       size == 2 * K
+  "ease"        f64    [E,2]   16      size == 16 * E
+
+  All numbers little-endian. f64 is IEEE-754 binary64; no NaN and no
+  infinity.
+
+  "at"          key k: its time, in ticks, in the owner's time (a layer's
+                keys: layer time; a composition's: composition time). Within
+                a track strictly ascending.
+  "interp"      key k: two codes, (in_interp, out_interp), each 0 Linear,
+                1 Bezier, 2 Hold. Any other code: the file is refused.
+  "flags"       key k: bit 0 `continuous`, bit 1 `auto_bezier`,
+                bit 2 `spatial_auto`, bit 3 `spatial_continuous`,
+                bit 4 `roving`. Bits 5..7 are 0.
+  "label"       key k: the key's colour label, 0..16.
+  "value"       the numbers of the values, key after key: key j of a track
+                (j from 0) has its `components` numbers at
+                first_value + j * components.
+  "spatial"     key k: six numbers: spatial_in (x, y, z), spatial_out (x, y, z).
+                Stored for every key; meaningful only for a spatial property
+                whose key has `spatial_auto` false.
+  "ease-count"  key k: two counts, (number of in eases, number of out eases),
+                each 0..255.
+  "ease"        ease records (speed, influence), 16 bytes each. The records
+                of one key are consecutive: first its in eases, then its out
+                eases. The records of key j of a track start where those of
+                key j-1 end; those of key 0 at the track's first_ease.
+
+--------------------------------------------------------------------------
+4. Reading track i back into keyframes
+--------------------------------------------------------------------------
+
+    t = header["tracks"][i];  c = t["components"];  e = t["first_ease"]
+    for j in 0 .. t["keys"] - 1:
+        k = t["first_key"] + j
+        key.time        = at[k]
+        key.value       = value[t["first_value"] + j*c .. + c]   as t["kind"]
+        key.in_interp   = interpolations[interp[2k]]
+        key.out_interp  = interpolations[interp[2k + 1]]
+        key.continuous, auto_bezier, spatial_auto, spatial_continuous, roving
+                        = bits 0..4 of flags[k]
+        key.label       = label[k]
+        key.spatial_in  = spatial[6k .. 6k+3];  key.spatial_out = spatial[6k+3 .. 6k+6]
+        n_in, n_out     = ease-count[2k], ease-count[2k + 1]
+        key.in_ease     = n_in  records (speed, influence) from ease[e ..];  e += n_in
+        key.out_ease    = n_out records from ease[e ..];                     e += n_out
+
+  The result is exactly the list of keyframe objects the owner's JSON would
+  hold as `keys` (schema `$defs/keyframe`): the two spellings carry the same
+  fields. Every index MUST lie inside its section; a file in which one does
+  not is refused whole (the node is dead, the owner's properties keep their
+  static values).
+
+--------------------------------------------------------------------------
+5. Writing
+--------------------------------------------------------------------------
+
+  Lay the tracks out in index order, fill the eight sections, build the
+  header with the canonical MessagePack encoding of ENVELOPE.layout.txt
+  section 4.3 (map keys sorted by their bytes, shortest integer forms), pad
+  to 16 bytes, and place each section on the next 16-byte boundary after the
+  one before, zero bytes between. "payload_origin" is the offset of section
+  "at"; "payload_size" runs from there to the end of the file, which is the
+  16-byte boundary after the last section (zero bytes fill it). A zero-size
+  section has the offset where it would start.
+
+--------------------------------------------------------------------------
+6. A real file, byte by byte
+--------------------------------------------------------------------------
+
+  The file below is `spec/examples/motion-comp/minimal.layer-3.keys.wkx`:
+  the tracks node of the minimal project of the profile document's section
+  7.1 (written with --tracks): ONE track, the layer's `position`, kind vec3,
+  two Linear keys - [4, 9, 0] at tick 0 and [29, 9, 0] at tick 254016000000.
+
+  912 bytes, sha256 a16742d394e98e7027bd91195cec32cc8c0268987e10658963d1f04b076fedb1
+
+  offset  bytes
+  000000  57 4B 58 33
+          magic "WKX3"
+  000004  01 00 00 00
+          version = 1
+  000008  A1 02 00 00
+          header_len = 673
+  00000C  89 AA 65 6E 64 69 61 6E 6E 65 73 73 A2 6C 65 AE
+  00001C  69 6E 74 65 72 70 6F 6C 61 74 69 6F 6E 73 93 A6
+  00002C  4C 69 6E 65 61 72 A6 42 65 7A 69 65 72 A4 48 6F
+  00003C  6C 64 A4 6B 69 6E 64 B4 63 6F 72 65 2E 6B 65 79
+  00004C  66 72 61 6D 65 2E 74 72 61 63 6B 73 A5 6F 77 6E
+  00005C  65 72 A7 6C 61 79 65 72 2D 33 AE 70 61 79 6C 6F
+  00006C  61 64 5F 6F 72 69 67 69 6E CD 02 B0 AC 70 61 79
+  00007C  6C 6F 61 64 5F 73 69 7A 65 CC E0 A8 73 65 63 74
+  00008C  69 6F 6E 73 98 86 A5 64 74 79 70 65 A3 69 36 34
+  00009C  A4 6E 61 6D 65 A2 61 74 A6 6F 66 66 73 65 74 CD
+  0000AC  02 B0 A5 73 68 61 70 65 91 02 A4 73 69 7A 65 10
+  0000BC  A6 73 74 72 69 64 65 08 86 A5 64 74 79 70 65 A2
+  0000CC  75 38 A4 6E 61 6D 65 A6 69 6E 74 65 72 70 A6 6F
+  0000DC  66 66 73 65 74 CD 02 C0 A5 73 68 61 70 65 92 02
+  0000EC  02 A4 73 69 7A 65 04 A6 73 74 72 69 64 65 02 86
+  0000FC  A5 64 74 79 70 65 A2 75 38 A4 6E 61 6D 65 A5 66
+  00010C  6C 61 67 73 A6 6F 66 66 73 65 74 CD 02 D0 A5 73
+  00011C  68 61 70 65 91 02 A4 73 69 7A 65 02 A6 73 74 72
+  00012C  69 64 65 01 86 A5 64 74 79 70 65 A2 75 38 A4 6E
+  00013C  61 6D 65 A5 6C 61 62 65 6C A6 6F 66 66 73 65 74
+  00014C  CD 02 E0 A5 73 68 61 70 65 91 02 A4 73 69 7A 65
+  00015C  02 A6 73 74 72 69 64 65 01 86 A5 64 74 79 70 65
+  00016C  A3 66 36 34 A4 6E 61 6D 65 A5 76 61 6C 75 65 A6
+  00017C  6F 66 66 73 65 74 CD 02 F0 A5 73 68 61 70 65 91
+  00018C  06 A4 73 69 7A 65 30 A6 73 74 72 69 64 65 08 86
+  00019C  A5 64 74 79 70 65 A3 66 36 34 A4 6E 61 6D 65 A7
+  0001AC  73 70 61 74 69 61 6C A6 6F 66 66 73 65 74 CD 03
+  0001BC  20 A5 73 68 61 70 65 92 02 06 A4 73 69 7A 65 60
+  0001CC  A6 73 74 72 69 64 65 30 86 A5 64 74 79 70 65 A2
+  0001DC  75 38 A4 6E 61 6D 65 AA 65 61 73 65 2D 63 6F 75
+  0001EC  6E 74 A6 6F 66 66 73 65 74 CD 03 80 A5 73 68 61
+  0001FC  70 65 92 02 02 A4 73 69 7A 65 04 A6 73 74 72 69
+  00020C  64 65 02 86 A5 64 74 79 70 65 A3 66 36 34 A4 6E
+  00021C  61 6D 65 A4 65 61 73 65 A6 6F 66 66 73 65 74 CD
+  00022C  03 90 A5 73 68 61 70 65 92 00 02 A4 73 69 7A 65
+  00023C  00 A6 73 74 72 69 64 65 10 B0 74 69 63 6B 73 5F
+  00024C  70 65 72 5F 73 65 63 6F 6E 64 CF 00 00 00 3B 24
+  00025C  88 90 00 A6 74 72 61 63 6B 73 91 87 AA 63 6F 6D
+  00026C  70 6F 6E 65 6E 74 73 03 AA 66 69 72 73 74 5F 65
+  00027C  61 73 65 00 A9 66 69 72 73 74 5F 6B 65 79 00 AB
+  00028C  66 69 72 73 74 5F 76 61 6C 75 65 00 A4 6B 65 79
+  00029C  73 02 A4 6B 69 6E 64 A4 76 65 63 33 A3 75 69 64
+  0002AC  07
+          the header: a MessagePack map of 9 keys, decoded:
+
+            "endianness": "le"
+            "interpolations": ["Linear", "Bezier", "Hold"]
+            "kind": "core.keyframe.tracks"
+            "owner": "layer-3"
+            "payload_origin": 688
+            "payload_size": 224
+            "sections": [
+              {"dtype": "i64", "name": "at", "offset": 688, "shape": [2], "size": 16, "stride": 8}
+              {"dtype": "u8", "name": "interp", "offset": 704, "shape": [2, 2], "size": 4, "stride": 2}
+              {"dtype": "u8", "name": "flags", "offset": 720, "shape": [2], "size": 2, "stride": 1}
+              {"dtype": "u8", "name": "label", "offset": 736, "shape": [2], "size": 2, "stride": 1}
+              {"dtype": "f64", "name": "value", "offset": 752, "shape": [6], "size": 48, "stride": 8}
+              {"dtype": "f64", "name": "spatial", "offset": 800, "shape": [2, 6], "size": 96, "stride": 48}
+              {"dtype": "u8", "name": "ease-count", "offset": 896, "shape": [2, 2], "size": 4, "stride": 2}
+              {"dtype": "f64", "name": "ease", "offset": 912, "shape": [0, 2], "size": 0, "stride": 16}
+            ]
+            "ticks_per_second": 254016000000
+            "tracks": [
+              {"components": 3, "first_ease": 0, "first_key": 0, "first_value": 0, "keys": 2, "kind": "vec3", "uid": 7}
+            ]
+
+          3 zero bytes of padding to offset 688 (payload_origin)
+
+  section "at": offset 688, size 16, dtype i64, shape [2], stride 8
+  0002B0  00 00 00 00 00 00 00 00 00 90 88 24 3B 00 00 00
+          =
+            0  254016000000
+
+  section "interp": offset 704, size 4, dtype u8, shape [2, 2], stride 2
+  0002C0  00 00 00 00
+          =
+            0  0
+            0  0
+
+  section "flags": offset 720, size 2, dtype u8, shape [2], stride 1
+  0002D0  04 04
+          =
+            4  4
+
+  section "label": offset 736, size 2, dtype u8, shape [2], stride 1
+  0002E0  00 00
+          =
+            0  0
+
+  section "value": offset 752, size 48, dtype f64, shape [6], stride 8
+  0002F0  00 00 00 00 00 00 10 40 00 00 00 00 00 00 22 40
+  000300  00 00 00 00 00 00 00 00 00 00 00 00 00 00 3D 40
+  000310  00 00 00 00 00 00 22 40 00 00 00 00 00 00 00 00
+          =
+            4.0  9.0  0.0
+            29.0  9.0  0.0
+
+  section "spatial": offset 800, size 96, dtype f64, shape [2, 6], stride 48
+  000320  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  000330  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  000340  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  000350  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  000360  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  000370  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          =
+            0.0  0.0  0.0  0.0  0.0  0.0
+            0.0  0.0  0.0  0.0  0.0  0.0
+
+  section "ease-count": offset 896, size 4, dtype u8, shape [2, 2], stride 2
+  000380  00 00 00 00
+          =
+            0  0
+            0  0
+
+  section "ease": offset 912, size 0, dtype f64, shape [0, 2], stride 16
+
+  end of file at offset 912 (payload_origin + payload_size)
+
+  A second example, with eases and three tracks, is
+  `spec/examples/motion-comp/stage.layer-card.keys.wkx`; its decoded content
+  is in `stage.layer-card.keys.txt` beside it.

@@ -1,0 +1,17 @@
+{
+"$schema":"https://json-schema.org/draft/2020-12/schema",
+"additionalProperties":false,
+"description":"Derived: the outline of every shape of one slide, layout or master whose geometry is a named preset and whose box is known, computed by the writing application. A reader uses it instead of implementing the presets.",
+"properties":{
+"owner":{"description":"The node_id of the slide, layout or master the outlines belong to.","format":"werk-node-ref","type":"string"},
+"schema_version":{"const":1,"description":"The revision of this payload's schema. Always 1."},
+"shapes":{"description":"One entry per shape with a preset geometry and a box of its own, in depth-first order.","items":{"additionalProperties":false,"description":"The outline of one shape.","properties":{"h":{"description":"The box height, points.","type":"number"},"paths":{"description":"The sub-paths, painted in order.","items":{"additionalProperties":false,"description":"One sub-path.","properties":{"d":{"description":"The outline in the shape's own space, in points: (0,0) is the top-left corner of the shape's box before rotation and flips. Commands separated by single spaces, absolute coordinates: `M x y`, `L x y`, `C x1 y1 x2 y2 x y`, `Q x1 y1 x y`, `Z`.","format":"werk-content-text","type":"string"},"even_odd":{"description":"true: the sub-path is filled by the even-odd rule (holes); false: non-zero winding.","type":"boolean"},"fill":{"description":"How the sub-path is filled (as `custom_path.fill` in the owner's schema).","enum":["norm","none","lighten","lightenLess","darken","darkenLess"],"type":"string"},"stroke":{"description":"The sub-path is outlined with the shape's line.","type":"boolean"}},"required":["d","fill","stroke","even_odd"],"type":"object"},"type":"array"},"pointer":{"description":"RFC 6901 JSON Pointer of the shape within the owner node's payload, e.g. `/slide/shapes/2` or `/slide/shapes/4/kind/children/0`.","format":"werk-content-text","type":"string"},"preset":{"description":"The preset name the outline was generated from.","format":"werk-content-text","type":"string"},"shape":{"description":"The shape's `id`.","maximum":4294967295,"minimum":0,"type":"integer"},"text_rect":{"description":"The rectangle text is laid out in, in the shape's own space: x0, y0, x1, y1.","items":{"description":"Points.","type":"number"},"maxItems":4,"minItems":4,"type":"array"},"w":{"description":"The box width the outline was generated for, points.","type":"number"}},"required":["pointer","shape","preset","w","h","text_rect","paths"],"type":"object"},"type":"array"}
+},
+"required":[
+"schema_version",
+"owner",
+"shapes"
+],
+"title":"core.slide.geometry",
+"type":"object"
+}

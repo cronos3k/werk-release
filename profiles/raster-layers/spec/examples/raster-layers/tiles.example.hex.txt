@@ -1,0 +1,75 @@
+tiles.example.wkxz, inflated - annotated hex dump
+=================================================
+
+The TILE file of the same surface. As stored (tiles.example.wkxz, 566 bytes, sha256 5970b2296aa3ff5f20c8aab5edf8ac13bd22d7f100b252462af5ed2072131971) it is a zlib stream
+(layout section 5.1). Inflated - python: zlib.decompress - it is the tile envelope dumped here (65840 bytes, sha256
+412e39124c7b604bf702b38040b7dce2a5a62125faa52d52cfcd126913a3261d, the value the index lists under tile_file_sha256): one tile, sample_encoding planes-delta
+(layout section 5.2). For 8-bit gray that means: stored byte i is sample i minus sample i - 1 (mod 256), sample 0 as it is.
+Decoded, the 65 536 samples (sha256 9666edb477dd4922aa6f532fd8944cb8ce1abb9188c96664d8794993e6936618) are 256 rows top to
+bottom; the sample of the pixel in row r, column q is number r * 256 + q and has the value (q + 3 * r) mod 256.
+
+File size: 65840 bytes. sha256: 412e39124c7b604bf702b38040b7dce2a5a62125faa52d52cfcd126913a3261d.
+Offsets are hexadecimal, from the start of the file. Read spec/layouts/ENVELOPE.layout.txt
+first: the fixed prefix and the payload are LITTLE-endian, the MessagePack header BIG-endian.
+
+--- fixed prefix -----------------------------------------------------------
+  000000  57 4b 58 30                            magic "WKX0"
+  000004  01 00 00 00                            version = 1 (u32 little-endian)
+  000008  1f 01 00 00                            header_len = 287 (u32 little-endian)
+
+--- header: one MessagePack map, bytes 0x00000c .. 0x00012b ------------------
+  00000c  8e                                     map, 14 pair(s)
+  00000d  a8 63 68 61 6e 6e 65 6c 73               key "channels"
+  000016  91                                         = array, 1 element(s)
+  000017  a4 67 72 61 79                               fixstr(4) "gray"
+  00001c  aa 65 6e 64 69 61 6e 6e 65 73 73         key "endianness"
+  000027  a2 6c 65                                   = fixstr(2) "le"
+  00002a  a9 68 61 73 5f 61 6c 70 68 61            key "has_alpha"
+  000034  c2                                         = false
+  000035  a4 6b 69 6e 64                           key "kind"
+  00003a  b3 63 6f 72 65 2e 72 61 73 74 65 72 ..     = fixstr(19) "core.raster.surface"
+  00004e  a9 6e 6f 6e 66 69 6e 69 74 65            key "nonfinite"
+  000058  c2                                         = false
+  000059  a4 70 61 72 74                           key "part"
+  00005e  a5 74 69 6c 65 73                          = fixstr(5) "tiles"
+  000064  ae 70 61 79 6c 6f 61 64 5f 6f 72 69 ..   key "payload_origin"
+  000073  cd 01 30                                   = uint16 304 (big-endian)
+  000076  ac 70 61 79 6c 6f 61 64 5f 73 69 7a ..   key "payload_size"
+  000083  ce 00 01 00 00                             = uint32 65536 (big-endian)
+  000088  aa 70 69 78 65 6c 5f 6d 6f 64 65         key "pixel_mode"
+  000093  a9 67 72 61 79 73 63 61 6c 65              = fixstr(9) "grayscale"
+  00009d  af 73 61 6d 70 6c 65 5f 65 6e 63 6f ..   key "sample_encoding"
+  0000ad  ac 70 6c 61 6e 65 73 2d 64 65 6c 74 ..     = fixstr(12) "planes-delta"
+  0000ba  ab 73 61 6d 70 6c 65 5f 74 79 70 65      key "sample_type"
+  0000c6  a2 75 38                                   = fixstr(2) "u8"
+  0000c9  a8 73 65 63 74 69 6f 6e 73               key "sections"
+  0000d2  91                                         = array, 1 element(s)
+  0000d3  86                                           map, 6 pair(s)
+  0000d4  a5 64 74 79 70 65                              key "dtype"
+  0000da  a2 75 38                                         = fixstr(2) "u8"
+  0000dd  a4 6e 61 6d 65                                 key "name"
+  0000e2  a7 73 61 6d 70 6c 65 73                          = fixstr(7) "samples"
+  0000ea  a6 6f 66 66 73 65 74                           key "offset"
+  0000f1  cd 01 30                                         = uint16 304 (big-endian)
+  0000f4  a5 73 68 61 70 65                              key "shape"
+  0000fa  91                                               = array, 1 element(s)
+  0000fb  ce 00 01 00 00                                     uint32 65536 (big-endian)
+  000100  a4 73 69 7a 65                                 key "size"
+  000105  ce 00 01 00 00                                   = uint32 65536 (big-endian)
+  00010a  a6 73 74 72 69 64 65                           key "stride"
+  000111  01                                               = uint 1
+  000112  aa 74 69 6c 65 5f 63 6f 75 6e 74         key "tile_count"
+  00011d  01                                         = uint 1
+  00011e  a9 74 69 6c 65 5f 73 69 7a 65            key "tile_size"
+  000128  cd 01 00                                   = uint16 256 (big-endian)
+
+--- padding ----------------------------------------------------------------
+  00012b  00 00 00 00 00                         5 zero byte(s) up to payload_origin = 304 (0x130), the next multiple of 16
+
+--- section "samples": dtype u8, shape [65536], stride 1, bytes 0x000130 .. 0x010130 (65536 bytes)
+  000130  00 01 01 01 01 01 01 01 01 01 01 01    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  00013c  01 01 01 01 01 01 01 01 01 01 01 01    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  000148  01 01 01 01 01 01 01 01 01 01 01 01    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  ......  (5457 more lines of 12 bytes, same pattern)
+  010120  01 01 01 01 01 01 01 01 01 01 01 01    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+  01012c  01 01 01 01                            1, 1, 1, 1

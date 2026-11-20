@@ -1,0 +1,269 @@
+{
+  "$defs": {},
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What the effect ids used by the document mean: for each its parameters and, where this profile defines it, its arithmetic with test vectors and the words that arithmetic is written with; and the formula of every blend mode.",
+  "properties": {
+    "blend_modes": {
+      "description": "Every blend mode, in the application's menu order.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One blend mode.",
+        "properties": {
+          "formula": {
+            "description": "What the mode computes (profile document 6.9 gives the frame around it).",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "name": {
+            "description": "The word a layer's `blend_mode` holds.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "formula"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "effects": {
+      "description": "One entry per effect id the document uses, in ascending id.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One effect id and what it means.",
+        "properties": {
+          "category": {
+            "description": "The menu category.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "definition": {
+            "anyOf": [
+              {
+                "description": "The normative arithmetic of the effect, in the words of the catalog's `primitives` and of the section `section`; null when `rendering` is `parameters-only` or `none`.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The normative arithmetic of the effect, in the words of the catalog's `primitives` and of the section `section`; null when `rendering` is `parameters-only` or `none`."
+          },
+          "id": {
+            "description": "The effect id an effect instance names.",
+            "type": "string"
+          },
+          "kind": {
+            "description": "What the effect acts on. `video`: it changes the layer's picture; `audio`: it changes the layer's sound; `control`: it draws nothing: its parameters exist to be read by expressions.",
+            "enum": [
+              "video",
+              "audio",
+              "control"
+            ],
+            "type": "string"
+          },
+          "limits": {
+            "description": "Settings of the effect the definition does not cover (a reader that meets one treats the effect as `parameters-only`). Present with a definition; usually empty.",
+            "items": {
+              "description": "One thing the definition leaves undefined.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "name": {
+            "description": "The effect's name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "params": {
+            "description": "The parameters, in order.",
+            "items": {
+              "additionalProperties": false,
+              "description": "One parameter of an effect: a property of that `match` in an effect instance's group.",
+              "properties": {
+                "default": {
+                  "description": "The parameter's default, as a property value `{t, v}` (schema `core.motion.layer`, definition `value`).",
+                  "type": "object"
+                },
+                "id": {
+                  "description": "The parameter's id: the `match` of its property.",
+                  "type": "string"
+                },
+                "kind": {
+                  "description": "The kind of the parameter's value (the `t` of its value). `scalar`: Scalar; `vec2`: Vec2; `vec3`: Vec3; `color`: Color; `bool`: Bool; `enum`: Enum; `path`: Path; `text`: Text; `layer`: Layer; `gradient`: Gradient; `string`: Str.",
+                  "enum": [
+                    "scalar",
+                    "vec2",
+                    "vec3",
+                    "color",
+                    "bool",
+                    "enum",
+                    "path",
+                    "text",
+                    "layer",
+                    "gradient",
+                    "string"
+                  ],
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Its display name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "ui": {
+                  "description": "How the parameter is presented, with its range and option list where it has them (schema `core.motion.layer`, definition `param_ui`).",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "kind",
+                "default",
+                "ui"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "rendering": {
+            "description": "Whether this profile defines the effect's arithmetic. `exact`: `definition` is the normative arithmetic, given completely: a faithful implementation matches the vectors within `tolerance`, which covers binary32 against binary64 rounding only; `tolerance`: `definition` is the normative arithmetic; the result is reproducible within `tolerance` only; `parameters-only`: this revision of the profile does not define what the effect computes: a reader shows the layer without it and says so; `none`: the effect computes nothing.",
+            "enum": [
+              "exact",
+              "tolerance",
+              "parameters-only",
+              "none"
+            ],
+            "type": "string"
+          },
+          "section": {
+            "description": "The key in the catalog's `sections` of the words this definition shares with others. Present with a definition.",
+            "type": "string"
+          },
+          "test_vectors": {
+            "description": "Test vectors of the definition. Present with a definition.",
+            "items": {
+              "additionalProperties": false,
+              "description": "A test vector of an effect's definition, made by the writing application's renderer (the catalog's `primitives`, E7): the input is built from a formula, not stored.",
+              "properties": {
+                "context": {
+                  "description": "What differs from the stated context of the vectors: `time` (seconds), `seed`.",
+                  "type": "object"
+                },
+                "height": {
+                  "description": "Height of the output picture, pixels.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "input": {
+                  "description": "The input picture, by the name of its formula. `patch-a`: PATCH A; `patch-b`: PATCH B.",
+                  "enum": [
+                    "patch-a",
+                    "patch-b"
+                  ],
+                  "type": "string"
+                },
+                "origin": {
+                  "description": "Where the effect-space origin is in the output picture, pixels: [0, 0] unless the effect padded.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "output": {
+                  "description": "The output picture: width * height * 4 integers round(value * 65536) in decimal, joined by commas, row by row, premultiplied r, g, b, a.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "output_sha256": {
+                  "description": "The sha256 of the ASCII bytes of `output`, in lowercase hexadecimal.",
+                  "type": "string"
+                },
+                "params": {
+                  "description": "Parameter id to value, for the parameters that differ from their defaults: a number, an array of numbers (a colour r, g, b, a; a point in layer pixels), a boolean, a string, or `patch-b` for a layer parameter that reads the layer showing PATCH B.",
+                  "type": "object"
+                },
+                "width": {
+                  "description": "Width of the output picture, pixels (the input is 16 x 12; an effect that pads returns more).",
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "params",
+                "input",
+                "width",
+                "height",
+                "origin",
+                "output",
+                "output_sha256"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "third_party": {
+            "description": "True: the effect is a plug-in that is not part of the writing application (profile document 6.14).",
+            "type": "boolean"
+          },
+          "tolerance": {
+            "description": "The largest difference of an output value of a test vector a conformant implementation may have, in units of 1/65536. Present with a definition.",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "kind",
+          "params",
+          "rendering",
+          "definition",
+          "third_party"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "primitives": {
+      "description": "The words every definition of this catalog is written with: the pixel model, colour words, filters, hashes, the test patches and the vector format. Present when the catalog has a definition.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "sections": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Section name to the words the definitions of that section share. Present when the catalog has a definition.",
+      "type": "object"
+    },
+    "unknown": {
+      "description": "Effect ids the document uses that the writing application did not know (an effect instance another tool put there, or a plug-in that was not loaded): they are kept in the layers, and nothing is known about them here.",
+      "items": {
+        "description": "An effect id.",
+        "type": "string"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "effects",
+    "blend_modes",
+    "unknown"
+  ],
+  "title": "core.effect.catalog",
+  "type": "object"
+}

@@ -1,0 +1,25 @@
+x.photocraft.source.exif - an embedded original, carried verbatim
+====================================================================
+
+Applies to: node type `x.photocraft.source.exif` of werk profile raster-layers/1.
+
+The node has exactly one file. Its bytes are OPAQUE to this profile and are PRESERVED
+VERBATIM: they are, byte for byte, a file the application was given (a placed or
+linked file, a colour profile, a metadata block, a font). Nothing in this package
+re-encodes, wraps, compresses or truncates them, and `files[].sha256` in MANIFEST.json
+is the sha256 of exactly those bytes.
+
+Encoding:      Exif 2.3x / CIPA DC-008: a TIFF structure, with or without the 6-byte "Exif\0\0" prefix
+Media type:    application/octet-stream
+Recognise by:  optionally 45 78 69 66 00 00, then 49 49 2A 00 or 4D 4D 00 2A
+
+This is an EXTENSION node (law 12), and it is one only because this package cannot
+yet carry a definition of the encoding above from which a decoder could be built;
+originals in a defined format travel as `core.raster.source` nodes instead. A reader
+that does not implement the standard above skips this node and loses nothing else:
+wherever the application could decode the original, the decoded content is also
+carried in `core.*` nodes (PROFILE-RASTER-LAYERS.md section 3.13 says which, and what
+exists only here). The node that uses this file names it by node id in its JSON
+payload, together with the original file name where there was one.
+
+To extract it: read the node's one file; the bytes are the original.

@@ -1,0 +1,38 @@
+{
+  "anchor": {
+    "col": 0,
+    "row": 9
+  },
+  "calculated_fields": [],
+  "columns": [],
+  "filters": [],
+  "grand_totals_cols": true,
+  "grand_totals_rows": true,
+  "id": 2,
+  "last_range": null,
+  "layout": "Compact",
+  "name": "PivotTable1",
+  "rows": [
+    {
+      "collapsed_items": [],
+      "date_group": "None",
+      "sort": "Asc",
+      "source_col": "Item"
+    }
+  ],
+  "schema_version": 1,
+  "show_headers": true,
+  "source": "Prices!$A$1:$B$3",
+  "style": "PivotStyleLight16",
+  "subtotals": true,
+  "subtotals_top": true,
+  "values": [
+    {
+      "func": "Sum",
+      "name": "Sum of Price",
+      "number_format": null,
+      "show_as": "Normal",
+      "source_col": "Price"
+    }
+  ]
+}

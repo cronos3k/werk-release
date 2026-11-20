@@ -1,0 +1,30 @@
+{
+  "color": {
+    "alpha": 1.0,
+    "c": [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "mode": "Rgb"
+  },
+  "indicates": "maskedAreas",
+  "name": "PANTONE 185 C",
+  "opacity": 0.5,
+  "schema_version": 1,
+  "spot": {
+    "color": {
+      "alpha": 1.0,
+      "c": [
+        0.8899999856948853,
+        0.0,
+        0.17000000178813934,
+        0.0
+      ],
+      "mode": "Rgb"
+    },
+    "solidity": 1.0
+  },
+  "surface": "channel-1-surface"
+}

@@ -1,0 +1,67 @@
+{
+  "$defs": {},
+  "$id": "https://werk.format/spec/schemas/core.vector.artboard.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "An artboard: a named page rectangle on the document's canvas. Art is not owned by an artboard; an artboard shows whatever lies inside its rectangle.",
+  "properties": {
+    "id": {
+      "description": "The artboard's id, unique among the document's artboards and stable for its life. The node_id of this node is `artboard-<id>`.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "name": {
+      "description": "The artboard's name. Absent: empty.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "rect": {
+      "additionalProperties": false,
+      "description": "The artboard's rectangle in document points (1/72 inch), y down.",
+      "properties": {
+        "x0": {
+          "description": "Left edge.",
+          "type": "number"
+        },
+        "x1": {
+          "description": "Right edge.",
+          "type": "number"
+        },
+        "y0": {
+          "description": "Top edge.",
+          "type": "number"
+        },
+        "y1": {
+          "description": "Bottom edge.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x0",
+        "y0",
+        "x1",
+        "y1"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    },
+    "show_center_mark": {
+      "description": "An editor shows a mark at the artboard's centre. Absent: false.",
+      "type": "boolean"
+    },
+    "show_cross_hairs": {
+      "description": "An editor shows cross hairs through the artboard's centre. Absent: false.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "rect"
+  ],
+  "title": "core.vector.artboard - one artboard of a vector-art/1 document",
+  "type": "object"
+}

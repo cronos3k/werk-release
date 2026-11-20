@@ -1,0 +1,22 @@
+{
+  "core": {
+    "category": "",
+    "created": "2026-03-01T10:00:00Z",
+    "creator": "An Author",
+    "description": "",
+    "keywords": "",
+    "lastModifiedBy": "",
+    "modified": "",
+    "revision": 0,
+    "subject": "",
+    "title": "Field notes"
+  },
+  "custom": [
+    {
+      "kind": "lpwstr",
+      "name": "Project",
+      "value": "Survey 7"
+    }
+  ],
+  "schema_version": 1
+}

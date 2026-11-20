@@ -1,0 +1,124 @@
+x.photocraft.psd-blocks - layout grammar v1
+==========================================
+
+Applies to: the one file of a node of type `x.photocraft.psd-blocks` in a werk
+package of profile raster-layers/1. Magic "WKX2" (57 4B 58 32), envelope version
+1, header key "kind" = "x.photocraft.psd-blocks".
+
+WHAT THIS IS, AND WHY IT IS AN EXTENSION. PhotoCraft reads Adobe Photoshop
+(PSD/PSB) files. Whatever it understands in such a file becomes part of the
+document and is stored in the `core.*` nodes of this package. Beside that, it
+keeps some blocks of the original file BYTE FOR BYTE, for one purpose only: so
+that exporting the document to PSD again reproduces those blocks exactly,
+including details no application but Photoshop interprets. This node is that
+store. Its bytes are OPAQUE to this profile and PRESERVED VERBATIM.
+
+A reader that skips this node loses NOTHING of the document: every layer, every
+pixel, every effect, text run and path is in the core nodes. It loses only the
+ability to write those PSD blocks back unchanged. (One exception is named in
+section 3, slot "adjustment".)
+
+The container is the werk binary envelope (spec/layouts/ENVELOPE.layout.txt,
+sections 1, 3, 4, 7) used as a plain pack of byte strings. Worked example:
+
+    spec/examples/raster-layers/psd-blocks.example.wkx
+    spec/examples/raster-layers/psd-blocks.example.hex.txt
+
+--------------------------------------------------------------------------
+1. Header
+--------------------------------------------------------------------------
+
+  key        type         meaning
+  ---------  -----------  --------------------------------------------------
+  "blocks"   array<map>   one entry per block, in the order the application
+                          holds them. ORDER IS SIGNIFICANT: a PSD export
+                          writes blocks of one slot in this order.
+
+  Each entry is a map:
+
+  key          type   meaning
+  -----------  -----  ------------------------------------------------------
+  "section"    str    the name of the envelope section holding the block's
+                      bytes: "b0", "b1", ... in entry order.
+  "slot"       str    what the bytes are (section 3).
+  further keys        the slot's own attributes (section 3).
+
+--------------------------------------------------------------------------
+2. Sections
+--------------------------------------------------------------------------
+
+  One per block: name "b<i>", dtype "u8", shape [n], stride 1, size n, where n
+  is the block's length in bytes (0 is legal). The bytes are exactly the bytes
+  of the PSD structure the slot names, without any length prefix or padding of
+  the PSD container around them.
+
+--------------------------------------------------------------------------
+3. Slots
+--------------------------------------------------------------------------
+
+  All multi-byte values INSIDE these blocks are big-endian, as everywhere in a
+  PSD file. The public description of every structure below is Adobe's
+  "Adobe Photoshop File Formats Specification" (sections "Image Resources" and
+  "Layer and Mask Information" / "Additional Layer Information").
+
+  In a pack owned by a LAYER (node id `layer-<n>-psd`, named by that layer's
+  payload field `psd`):
+
+  slot            attributes                 the bytes
+  --------------  -------------------------  --------------------------------
+  "layer-block"   "key": 8 hex digits, the   the data of one "additional layer
+                  block's 4-byte key;        information" block of the layer
+                  "key_text": the same 4     record, after its key and length
+                  bytes as text (may hold    fields. May occur many times, also
+                  U+FFFD for non-ASCII)      with one key more than once.
+  "effects"       "key_text": "lfx2"         the layer style block (object
+                                             effects version + descriptor;
+                                             key "lfx2", or "lfxs" on a group)
+  "content"       "key_text": "TySh",        the block the layer's kind was
+                  "vmsk" or "SoLd"           read from: type tool object
+                                             ("TySh") of a text layer; vector
+                                             mask ("vsms" or "vmsk") of a shape
+                                             layer; placed layer ("SoLd",
+                                             "PlLd" or "SoLE") of a smart object
+  "adjustment"    none                       THE EXCEPTION: the raw block of an
+                                             adjustment layer whose payload
+                                             says {"Unsupported": {"psd_key":
+                                             k}} - an adjustment PhotoCraft
+                                             cannot evaluate. These bytes are
+                                             all the document holds of it.
+
+  In the DOCUMENT's pack (node id `psd-document`, named by the structure node's
+  payload field `psd`):
+
+  slot            attributes                 the bytes
+  --------------  -------------------------  --------------------------------
+  "resource"      "id": uint, the image      the data of one image resource
+                  resource id (0..65535);    block, after its name and length
+                  "name": its Pascal-string
+                  name as text
+  "global-block"  "signature": 8 hex digits  the data of one block of the
+                  ("8BIM" = 3842494d or      global "additional layer
+                  "8B64"); "key" and         information" at the end of the
+                  "key_text" as above        layer and mask section (e.g.
+                                             "Patt" patterns, "lnk2" embedded
+                                             smart-object files)
+  "duotone"       none                       the colour mode data section of a
+                                             duotone file
+  "path"          "node": the node id of a   the data of the path resource
+                  `core.raster.path` node    (ids 2000..2997) that saved path
+                                             was read from
+  "comp-effects"  "comp": the node id of a   the layer style block recorded
+                  `core.raster.comp` node;   for one layer state of a layer
+                  "state": uint, the index   comp
+                  into that payload's
+                  `states`
+
+  A reader that meets a slot it does not know skips the entry.
+
+--------------------------------------------------------------------------
+4. Writing one
+--------------------------------------------------------------------------
+
+  A writer that did not read a PSD file has nothing to put here and writes no
+  such node (the payload fields `psd` are then null). A writer that carries
+  blocks: one entry and one section per block, in order, as above.

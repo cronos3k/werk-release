@@ -1,0 +1,175 @@
+{
+  "$defs": {
+    "json": {
+      "anyOf": [
+        {
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        {
+          "type": [
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "items": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/json"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "Any JSON value, carried verbatim. Strings inside it are never references to other parts of the document."
+    },
+    "object_id": {
+      "description": "The `id` of an object in one of the document's layers.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A point in the space the field's description names, in points (1/72 inch); x grows right, y grows down.",
+      "properties": {
+        "x": {
+          "description": "Horizontal coordinate.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Vertical coordinate (larger is lower).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "view": {
+      "additionalProperties": false,
+      "description": "A view of the canvas.",
+      "properties": {
+        "center": {
+          "$ref": "#/$defs/point",
+          "description": "The document point at the centre of the window."
+        },
+        "name": {
+          "description": "The view's name (empty for the view the document was saved with).",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "rotation": {
+          "description": "Rotation of the canvas in degrees. Absent: 0.",
+          "type": "number"
+        },
+        "zoom": {
+          "description": "Screen pixels per point.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "center",
+        "zoom"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/x.vectorcraft.session.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "How VectorCraft's windows and dialogs were when the document was saved. None of it changes the artwork.",
+  "properties": {
+    "export_settings": {
+      "additionalProperties": {
+        "$ref": "#/$defs/json"
+      },
+      "description": "The parameters File > Export for Screens last ran with, by parameter name. Folder names in it are a record of where exports went, never something a reader follows.",
+      "type": "object"
+    },
+    "last_view": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/view"
+        }
+      ],
+      "description": "The view the document was saved with; it reopens there. Null: fitted to the window."
+    },
+    "layers_open": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "description": "A layer, sublayer or group.",
+          "items": {
+            "$ref": "#/$defs/object_id"
+          },
+          "type": "array"
+        }
+      ],
+      "description": "The rows open in the Layers panel. Null: only the top-level layers."
+    },
+    "paste_remembers_layers": {
+      "description": "Pasted objects go back into the layers they were copied from.",
+      "type": "boolean"
+    },
+    "print_setup": {
+      "$ref": "#/$defs/json",
+      "description": "The print settings saved with the document (null: never set up)."
+    },
+    "saved_selections": {
+      "description": "Saved selections (Select > Save Selection).",
+      "items": {
+        "additionalProperties": false,
+        "description": "A saved selection.",
+        "properties": {
+          "name": {
+            "description": "Its name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "objects": {
+            "description": "The objects it selects.",
+            "items": {
+              "$ref": "#/$defs/object_id"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "objects"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema: 1."
+    },
+    "views": {
+      "description": "Saved views (View > New View), in menu order.",
+      "items": {
+        "$ref": "#/$defs/view"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "x.vectorcraft.session - VectorCraft's view and panel state",
+  "type": "object"
+}

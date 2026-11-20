@@ -1,0 +1,40 @@
+{
+  "character": [
+    {
+      "attrs": {
+        "fill": {
+          "color": {
+            "b": 0,
+            "g": 0,
+            "model": "rgb",
+            "r": 1
+          },
+          "type": "solid"
+        },
+        "fontFamily": "Source Sans 3",
+        "size": 24
+      },
+      "name": "Heading Characters"
+    },
+    {
+      "attrs": {},
+      "name": "Ünï \"q\" \\ \u0007 é́ עברית 日本語 🎨"
+    }
+  ],
+  "paragraph": [
+    {
+      "attrs": {
+        "justify": "center",
+        "spaceBefore": 3.5,
+        "tabs": [
+          {
+            "align": "right",
+            "position": 80
+          }
+        ]
+      },
+      "name": "Body Paragraph"
+    }
+  ],
+  "schema_version": 1
+}

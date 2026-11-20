@@ -1,0 +1,2800 @@
+{
+  "$defs": {
+    "anchor": {
+      "additionalProperties": false,
+      "description": "Where a floating object sits: the top-left corner is `dx`,`dy` from the top-left corner of `cell`; the size is `width` x `height`. All four in points (1/72 inch), x to the right, y downwards.",
+      "properties": {
+        "cell": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "The cell the object is pinned to."
+        },
+        "dx": {
+          "description": "Horizontal offset from the cell's left edge, points.",
+          "type": "number"
+        },
+        "dy": {
+          "description": "Vertical offset from the cell's top edge, points.",
+          "type": "number"
+        },
+        "height": {
+          "description": "Height, points.",
+          "type": "number"
+        },
+        "mode": {
+          "description": "What happens when rows or columns under the object move or resize. MoveAndSize: it moves and stretches with them. MoveOnly: it moves, keeps its size. Absolute: it stays where it is on the sheet.",
+          "enum": [
+            "MoveAndSize",
+            "MoveOnly",
+            "Absolute"
+          ],
+          "type": "string"
+        },
+        "width": {
+          "description": "Width, points.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "cell",
+        "dx",
+        "dy",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "border_line": {
+      "additionalProperties": false,
+      "description": "One edge of a cell border.",
+      "properties": {
+        "color": {
+          "$ref": "#/$defs/color",
+          "description": "Line colour."
+        },
+        "style": {
+          "description": "Line style. `None` = no line. Drawn widths in pixels at 100%: Hair, Thin, Dashed, Dotted, DashDot, DashDotDot = 1; Medium, MediumDashed, MediumDashDot, MediumDashDotDot, SlantDashDot = 2; Thick, Double = 3.",
+          "enum": [
+            "None",
+            "Thin",
+            "Medium",
+            "Thick",
+            "Dashed",
+            "Dotted",
+            "Double",
+            "Hair",
+            "MediumDashed",
+            "DashDot",
+            "MediumDashDot",
+            "DashDotDot",
+            "MediumDashDotDot",
+            "SlantDashDot"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "style",
+        "color"
+      ],
+      "type": "object"
+    },
+    "cell_format": {
+      "additionalProperties": false,
+      "description": "The complete format of a cell: font, fill, borders, alignment, number format, protection. Every part is always present (a default format spells out the defaults).",
+      "properties": {
+        "align": {
+          "additionalProperties": false,
+          "description": "Alignment.",
+          "properties": {
+            "h": {
+              "description": "Horizontal. `General` = numbers right, text left, booleans and errors centred.",
+              "enum": [
+                "General",
+                "Left",
+                "Center",
+                "Right",
+                "Fill",
+                "Justify",
+                "CenterAcross",
+                "Distributed"
+              ],
+              "type": "string"
+            },
+            "indent": {
+              "description": "Indent level, 0..255 (one level is about three spaces).",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "rotation": {
+              "description": "Text rotation in degrees counter-clockwise, -90..90; the special value 255 means vertically stacked letters.",
+              "maximum": 32767,
+              "minimum": -32768,
+              "type": "integer"
+            },
+            "shrink": {
+              "description": "Shrink the text to fit the cell width.",
+              "type": "boolean"
+            },
+            "v": {
+              "description": "Vertical.",
+              "enum": [
+                "Top",
+                "Center",
+                "Bottom",
+                "Justify",
+                "Distributed"
+              ],
+              "type": "string"
+            },
+            "wrap": {
+              "description": "Wrap text onto several lines within the cell.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "h",
+            "v",
+            "wrap",
+            "shrink",
+            "indent",
+            "rotation"
+          ],
+          "type": "object"
+        },
+        "borders": {
+          "additionalProperties": false,
+          "description": "The six border lines.",
+          "properties": {
+            "bottom": {
+              "$ref": "#/$defs/border_line",
+              "description": "Bottom edge."
+            },
+            "diag_down": {
+              "$ref": "#/$defs/border_line",
+              "description": "Diagonal from top-left to bottom-right."
+            },
+            "diag_up": {
+              "$ref": "#/$defs/border_line",
+              "description": "Diagonal from bottom-left to top-right."
+            },
+            "left": {
+              "$ref": "#/$defs/border_line",
+              "description": "Left edge."
+            },
+            "right": {
+              "$ref": "#/$defs/border_line",
+              "description": "Right edge."
+            },
+            "top": {
+              "$ref": "#/$defs/border_line",
+              "description": "Top edge."
+            }
+          },
+          "required": [
+            "left",
+            "right",
+            "top",
+            "bottom",
+            "diag_down",
+            "diag_up"
+          ],
+          "type": "object"
+        },
+        "fill": {
+          "additionalProperties": false,
+          "description": "The cell background.",
+          "properties": {
+            "bg": {
+              "$ref": "#/$defs/color",
+              "description": "Pattern background (unused by `Solid`)."
+            },
+            "fg": {
+              "$ref": "#/$defs/color",
+              "description": "Pattern foreground; THE fill colour when the pattern is `Solid`."
+            },
+            "pattern": {
+              "description": "`None` = no fill. `Solid` = filled with `fg`. Every other value is a two-colour pattern drawn in `fg` over `bg` (the ECMA-376 pattern types, e.g. Gray125 = 12.5% dots).",
+              "enum": [
+                "None",
+                "Solid",
+                "Gray50",
+                "Gray75",
+                "Gray25",
+                "Gray125",
+                "Gray0625",
+                "DarkHorizontal",
+                "DarkVertical",
+                "DarkDown",
+                "DarkUp",
+                "DarkGrid",
+                "DarkTrellis",
+                "LightHorizontal",
+                "LightVertical",
+                "LightDown",
+                "LightUp",
+                "LightGrid",
+                "LightTrellis"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern",
+            "fg",
+            "bg"
+          ],
+          "type": "object"
+        },
+        "font": {
+          "additionalProperties": false,
+          "description": "The font.",
+          "properties": {
+            "bold": {
+              "description": "Bold.",
+              "type": "boolean"
+            },
+            "color": {
+              "$ref": "#/$defs/color",
+              "description": "Text colour."
+            },
+            "italic": {
+              "description": "Italic.",
+              "type": "boolean"
+            },
+            "name": {
+              "description": "Typeface family name, e.g. `Calibri`. Only a name: no font file is referenced or embedded, and a reader substitutes an available face. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "size": {
+              "description": "Size in points (1/72 inch), e.g. 11.",
+              "type": "number"
+            },
+            "strike": {
+              "description": "Strikethrough.",
+              "type": "boolean"
+            },
+            "underline": {
+              "description": "Underline. The Accounting kinds sit lower, below descenders.",
+              "enum": [
+                "None",
+                "Single",
+                "Double",
+                "SingleAccounting",
+                "DoubleAccounting"
+              ],
+              "type": "string"
+            },
+            "vert": {
+              "description": "Vertical position of the text.",
+              "enum": [
+                "Baseline",
+                "Superscript",
+                "Subscript"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "size",
+            "bold",
+            "italic",
+            "underline",
+            "strike",
+            "color",
+            "vert"
+          ],
+          "type": "object"
+        },
+        "num_fmt": {
+          "description": "Number format code in the spreadsheet format-code language (ECMA-376 Part 1, 18.8.31), written with `.` as the decimal point and `,` as the thousands separator, e.g. `General`, `0.00`, `#,##0.00`, `yyyy-mm-dd`, `0.0%`, `@`. It decides how a number is DISPLAYED, including whether a number is shown as a date; it never changes the stored value. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "protection": {
+          "additionalProperties": false,
+          "description": "What sheet protection does to the cell (only while the sheet is protected).",
+          "properties": {
+            "hidden": {
+              "description": "The cell's formula is not shown. Default false.",
+              "type": "boolean"
+            },
+            "locked": {
+              "description": "The cell cannot be edited. Default true.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "locked",
+            "hidden"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "font",
+        "fill",
+        "borders",
+        "align",
+        "num_fmt",
+        "protection"
+      ],
+      "type": "object"
+    },
+    "cell_ref": {
+      "additionalProperties": false,
+      "description": "One cell of the grid, by ZERO-BASED row and column: the cell written `A1` is {\"row\": 0, \"col\": 0}, `C7` is {\"row\": 6, \"col\": 2}.",
+      "properties": {
+        "col": {
+          "description": "Zero-based column index, 0..16383 (the grid has 16,384 columns; column 0 is `A`, 25 is `Z`, 26 is `AA`).",
+          "maximum": 16383,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "row": {
+          "description": "Zero-based row index, 0..1048575 (the grid has 1,048,576 rows).",
+          "maximum": 1048575,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "row",
+        "col"
+      ],
+      "type": "object"
+    },
+    "cf_rule": {
+      "description": "What a conditional format tests and what it draws. Exactly one key.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "The cell's value compared with one or two formulas.",
+          "properties": {
+            "CellIs": {
+              "additionalProperties": false,
+              "description": "The cell's value compared with one or two formulas.",
+              "properties": {
+                "a": {
+                  "description": "First operand: formula text without a leading `=`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "b": {
+                  "description": "Second operand, used by Between and NotBetween. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "op": {
+                  "$ref": "#/$defs/operator",
+                  "description": "The comparison."
+                },
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "op",
+                "a",
+                "b",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "CellIs"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A formula that is true for a matching cell. Relative references are relative to the top-left cell of the first range.",
+          "properties": {
+            "Expression": {
+              "additionalProperties": false,
+              "description": "A formula that is true for a matching cell. Relative references are relative to the top-left cell of the first range.",
+              "properties": {
+                "formula": {
+                  "description": "Formula text without a leading `=`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "formula",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Expression"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's text contains `text` (case-insensitive).",
+          "properties": {
+            "ContainsText": {
+              "additionalProperties": false,
+              "description": "The cell's text contains `text` (case-insensitive).",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                },
+                "text": {
+                  "description": "The text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ContainsText"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's text does not contain `text`.",
+          "properties": {
+            "NotContainsText": {
+              "additionalProperties": false,
+              "description": "The cell's text does not contain `text`.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                },
+                "text": {
+                  "description": "The text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "NotContainsText"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's text begins with `text`.",
+          "properties": {
+            "BeginsWith": {
+              "additionalProperties": false,
+              "description": "The cell's text begins with `text`.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                },
+                "text": {
+                  "description": "The text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "BeginsWith"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's text ends with `text`.",
+          "properties": {
+            "EndsWith": {
+              "additionalProperties": false,
+              "description": "The cell's text ends with `text`.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                },
+                "text": {
+                  "description": "The text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "EndsWith"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell is empty.",
+          "properties": {
+            "Blanks": {
+              "additionalProperties": false,
+              "description": "The cell is empty.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Blanks"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell is not empty.",
+          "properties": {
+            "NoBlanks": {
+              "additionalProperties": false,
+              "description": "The cell is not empty.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "NoBlanks"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell holds an error value.",
+          "properties": {
+            "Errors": {
+              "additionalProperties": false,
+              "description": "The cell holds an error value.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Errors"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell does not hold an error value.",
+          "properties": {
+            "NoErrors": {
+              "additionalProperties": false,
+              "description": "The cell does not hold an error value.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "NoErrors"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's value occurs more than once in the ranges.",
+          "properties": {
+            "Duplicate": {
+              "additionalProperties": false,
+              "description": "The cell's value occurs more than once in the ranges.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Duplicate"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's value occurs exactly once in the ranges.",
+          "properties": {
+            "Unique": {
+              "additionalProperties": false,
+              "description": "The cell's value occurs exactly once in the ranges.",
+              "properties": {
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Unique"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The largest or smallest values of the ranges.",
+          "properties": {
+            "Top10": {
+              "additionalProperties": false,
+              "description": "The largest or smallest values of the ranges.",
+              "properties": {
+                "bottom": {
+                  "description": "true: the smallest. false: the largest.",
+                  "type": "boolean"
+                },
+                "percent": {
+                  "description": "true: `rank` is a percentage of the cells. false: a count.",
+                  "type": "boolean"
+                },
+                "rank": {
+                  "description": "How many, or what percentage.",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "bottom",
+                "percent",
+                "rank",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Top10"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Values relative to the average of the ranges.",
+          "properties": {
+            "AboveAverage": {
+              "additionalProperties": false,
+              "description": "Values relative to the average of the ranges.",
+              "properties": {
+                "below": {
+                  "description": "true: below the average. false: above.",
+                  "type": "boolean"
+                },
+                "equal": {
+                  "description": "Values equal to the average match too.",
+                  "type": "boolean"
+                },
+                "std_dev": {
+                  "description": "0 = compare with the average; n > 0 = compare with the average plus (or minus, when `below`) n standard deviations.",
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "below",
+                "equal",
+                "std_dev",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "AboveAverage"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "The cell's date falls in a period relative to today.",
+          "properties": {
+            "TimePeriod": {
+              "additionalProperties": false,
+              "description": "The cell's date falls in a period relative to today.",
+              "properties": {
+                "period": {
+                  "description": "One of `yesterday`, `today`, `tomorrow`, `last7Days`, `lastWeek`, `thisWeek`, `nextWeek`, `lastMonth`, `thisMonth`, `nextMonth`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "style": {
+                  "$ref": "#/$defs/cell_format",
+                  "description": "The format a matching cell is shown with. It is a complete cell format; the parts that differ from the default format are the ones the rule applies."
+                }
+              },
+              "required": [
+                "period",
+                "style"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "TimePeriod"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Colour scale.",
+          "properties": {
+            "ColorScale": {
+              "additionalProperties": false,
+              "description": "A fill colour interpolated between stops by the cell's value.",
+              "properties": {
+                "stops": {
+                  "description": "Two or three stops, lowest first.",
+                  "items": {
+                    "description": "[threshold, colour].",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/cf_value"
+                        },
+                        {
+                          "$ref": "#/$defs/color"
+                        }
+                      ]
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "stops"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ColorScale"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Data bar.",
+          "properties": {
+            "DataBar": {
+              "additionalProperties": false,
+              "description": "A bar in the cell whose length shows the value.",
+              "properties": {
+                "color": {
+                  "$ref": "#/$defs/color",
+                  "description": "Bar colour."
+                },
+                "gradient": {
+                  "description": "true: gradient fill. false: solid.",
+                  "type": "boolean"
+                },
+                "max": {
+                  "$ref": "#/$defs/cf_value",
+                  "description": "Value shown as a full bar."
+                },
+                "min": {
+                  "$ref": "#/$defs/cf_value",
+                  "description": "Value shown as an empty bar."
+                },
+                "show_value": {
+                  "description": "The number is shown beside the bar.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "min",
+                "max",
+                "color",
+                "gradient",
+                "show_value"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "DataBar"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Icon set.",
+          "properties": {
+            "IconSet": {
+              "additionalProperties": false,
+              "description": "An icon chosen by the cell's value.",
+              "properties": {
+                "reverse": {
+                  "description": "The icon order is reversed.",
+                  "type": "boolean"
+                },
+                "set": {
+                  "description": "Icon set name; its first character is the number of icons, 3..5: `3Arrows`, `3TrafficLights1`, `4Rating`, `5Quarters` and so on. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "show_value": {
+                  "description": "The number is shown beside the icon.",
+                  "type": "boolean"
+                },
+                "thresholds": {
+                  "description": "One threshold per icon, lowest first; the first is the lower bound.",
+                  "items": {
+                    "$ref": "#/$defs/cf_value",
+                    "description": "Threshold."
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "set",
+                "thresholds",
+                "reverse",
+                "show_value"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "IconSet"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "cf_value": {
+      "description": "A threshold of a colour scale, data bar or icon set.",
+      "oneOf": [
+        {
+          "const": "Min",
+          "description": "The smallest value in the range."
+        },
+        {
+          "const": "Max",
+          "description": "The largest value in the range."
+        },
+        {
+          "additionalProperties": false,
+          "description": "Fixed number.",
+          "properties": {
+            "Number": {
+              "description": "A fixed number.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "Number"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Percent.",
+          "properties": {
+            "Percent": {
+              "description": "A percentage 0..100 of the way from the smallest to the largest value.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "Percent"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Percentile.",
+          "properties": {
+            "Percentile": {
+              "description": "A percentile 0..100 of the values.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "Percentile"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Formula.",
+          "properties": {
+            "Formula": {
+              "description": "Formula text without a leading `=`, giving the threshold. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "Formula"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "color": {
+      "description": "A colour: automatic, an explicit RGB value, or a slot of the workbook theme with a tint.",
+      "oneOf": [
+        {
+          "const": "Auto",
+          "description": "Automatic: black for text and lines, no fill for fills."
+        },
+        {
+          "additionalProperties": false,
+          "description": "An explicit sRGB colour.",
+          "properties": {
+            "Rgb": {
+              "description": "0xRRGGBB packed in one integer: red*65536 + green*256 + blue, each component 0..255, sRGB.",
+              "maximum": 16777215,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Rgb"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A theme colour with a tint.",
+          "properties": {
+            "Theme": {
+              "description": "[slot, tint]. slot: index 0..255 into `theme.colors` of the styles node (0 = light 1 / background, 1 = dark 1 / text, 2 = light 2, 3 = dark 2, 4..9 = accent 1..6, 10 = hyperlink, 11 = followed hyperlink; a slot beyond 11 resolves to black). tint: -1000..1000 thousandths; 0 = the theme colour itself. To resolve: convert the theme colour to HSL; if tint < 0 then L' = L * (1 + tint/1000), else L' = L * (1 - tint/1000) + tint/1000; convert back to RGB.",
+              "items": {
+                "maximum": 32767,
+                "minimum": -32768,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "Theme"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "filter_criterion": {
+      "description": "The filter of one column. Rows that do not satisfy it are hidden.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "By value list.",
+          "properties": {
+            "Values": {
+              "additionalProperties": false,
+              "description": "Show rows whose DISPLAYED text is one of `values`, compared case-insensitively.",
+              "properties": {
+                "blanks": {
+                  "description": "Also keep rows whose cell is empty.",
+                  "type": "boolean"
+                },
+                "values": {
+                  "description": "The displayed texts to keep.",
+                  "items": {
+                    "description": "One displayed text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "values",
+                "blanks"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Values"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Custom comparison.",
+          "properties": {
+            "Custom": {
+              "additionalProperties": false,
+              "description": "One or two comparisons.",
+              "properties": {
+                "a": {
+                  "description": "[operator, operand]. operator is one of `=`, `<>`, `>`, `>=`, `<`, `<=`; in the operand of `=` and `<>`, `*` matches any run of characters and `?` any one.",
+                  "items": {
+                    "description": "Operator or operand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "and": {
+                  "description": "true: both comparisons must hold. false: either.",
+                  "type": "boolean"
+                },
+                "b": {
+                  "anyOf": [
+                    {
+                      "description": "[operator, operand].",
+                      "items": {
+                        "description": "Operator or operand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                        "format": "werk-content-text",
+                        "type": "string"
+                      },
+                      "maxItems": 2,
+                      "minItems": 2,
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "The second comparison, same shape as `a`; `null` when there is one comparison."
+                }
+              },
+              "required": [
+                "a",
+                "b",
+                "and"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Custom"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Top or bottom N.",
+          "properties": {
+            "Top10": {
+              "additionalProperties": false,
+              "description": "The largest or smallest values.",
+              "properties": {
+                "bottom": {
+                  "description": "true: the smallest. false: the largest.",
+                  "type": "boolean"
+                },
+                "count": {
+                  "description": "How many (or what percentage), 0..4294967295.",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "percent": {
+                  "description": "true: `count` is a percentage of the rows. false: a number of rows.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "bottom",
+                "percent",
+                "count"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Top10"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Relative to the average.",
+          "properties": {
+            "AboveAverage": {
+              "description": "true: keep values above the column's average. false: below it.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "AboveAverage"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "By fill colour.",
+          "properties": {
+            "FillColor": {
+              "$ref": "#/$defs/color",
+              "description": "Keep cells with this fill colour."
+            }
+          },
+          "required": [
+            "FillColor"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "By font colour.",
+          "properties": {
+            "FontColor": {
+              "$ref": "#/$defs/color",
+              "description": "Keep cells with this font colour."
+            }
+          },
+          "required": [
+            "FontColor"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "By icon.",
+          "properties": {
+            "Icon": {
+              "additionalProperties": false,
+              "description": "Keep cells showing a given conditional-format icon.",
+              "properties": {
+                "id": {
+                  "description": "Zero-based icon index within the set; `null` = cells with no icon.",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "set": {
+                  "description": "Icon set name, e.g. `3TrafficLights1`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "set",
+                "id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Icon"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "operator": {
+      "description": "A comparison.",
+      "enum": [
+        "Between",
+        "NotBetween",
+        "Equal",
+        "NotEqual",
+        "Greater",
+        "Less",
+        "GreaterOrEqual",
+        "LessOrEqual"
+      ],
+      "type": "string"
+    },
+    "password_hash": {
+      "description": "The HASH of a protection password, never the password. Protection of this kind is a convenience against accidents, not security: the content is not encrypted.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "Legacy hash.",
+          "properties": {
+            "Legacy": {
+              "description": "The 16-bit spreadsheet legacy password hash (ECMA-376 Part 4, 14.7.1).",
+              "maximum": 65535,
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "Legacy"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "Iterated hash.",
+          "properties": {
+            "Iterated": {
+              "additionalProperties": false,
+              "description": "A salted, iterated hash (ECMA-376 Part 1, 18.2.29): H0 = hash(salt bytes followed by the password as UTF-16LE); then spin_count times Hn = hash(Hn-1 followed by the 4-byte little-endian iteration counter n-1).",
+              "properties": {
+                "algorithm": {
+                  "description": "Hash algorithm name as stored: `SHA-512`, `SHA-384` or `SHA-256`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "hash": {
+                  "description": "The final hash, standard base64 with padding. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "salt": {
+                  "description": "The salt, standard base64 with padding. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "spin_count": {
+                  "description": "Number of iterations, 0..4294967295 (the usual value is 100000).",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "algorithm",
+                "hash",
+                "salt",
+                "spin_count"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Iterated"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "range_ref": {
+      "additionalProperties": false,
+      "description": "A rectangle of cells, both corners INCLUDED. `start` is the top-left corner and `end` the bottom-right one (start.row <= end.row and start.col <= end.col; a reader that finds them swapped swaps them back). A whole row spans columns 0..16383; a whole column spans rows 0..1048575.",
+      "properties": {
+        "end": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Bottom-right cell."
+        },
+        "start": {
+          "$ref": "#/$defs/cell_ref",
+          "description": "Top-left cell."
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.sheet.sheet.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One sheet of a spreadsheet/1 document (node type core.sheet.sheet, node_id `sheet-<uid>`): its name, geometry, view, and everything attached to it except the cells themselves, which are the binary of the node named by `cells`.",
+  "properties": {
+    "autofilter": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "An AutoFilter.",
+          "properties": {
+            "criteria": {
+              "description": "The active filters.",
+              "items": {
+                "description": "[column_offset, criterion]: column_offset is the zero-based column within the filtered range (0 = its first column).",
+                "items": {
+                  "anyOf": [
+                    {
+                      "maximum": 4294967295,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    {
+                      "$ref": "#/$defs/filter_criterion"
+                    }
+                  ]
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "range": {
+              "$ref": "#/$defs/range_ref",
+              "description": "The filtered range; its first row is the header."
+            }
+          },
+          "required": [
+            "range",
+            "criteria"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The sheet's AutoFilter; `null` = none."
+    },
+    "cell_pictures": {
+      "description": "Pictures that are the CONTENT of a cell, sorted by row, then column.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A picture in a cell.",
+        "properties": {
+          "alt": {
+            "description": "Alternative text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "cell": {
+            "$ref": "#/$defs/cell_ref",
+            "description": "The cell the picture is the content of. That cell's entry in the cells binary holds the error value #VALUE! as the fallback for a reader without pictures."
+          },
+          "media": {
+            "description": "node_id of the node holding the picture's ORIGINAL bytes, verbatim: a core.sheet.image node when they are PNG; a core.sheet.picture node when they are in a defined foreign format (JPEG, GIF, BMP, TIFF - that node's meta.payload_format names it and the manifest's `formats` map points at its definition); an x.gridcraft.source.media node otherwise.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          },
+          "mime": {
+            "description": "Media type of the picture's ORIGINAL bytes as the application holds them, e.g. `image/png`, `image/jpeg`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "png": {
+            "description": "Only when the original bytes are JPEG and could be decoded: node_id of a core.sheet.image node holding the same picture decoded to PNG (8 bits per channel), so that a reader which only decodes PNG still shows it. A derived convenience: the original is authoritative.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cell",
+          "mime",
+          "alt",
+          "media"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "cells": {
+      "description": "node_id of the core.sheet.cells node holding this sheet's cells. Absent only when that node could not be written.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "charts": {
+      "description": "The charts on this sheet, back to front. Each entry is the node_id of a core.sheet.chart node.",
+      "items": {
+        "description": "node_id of a core.sheet.chart node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "cols": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "description": "Properties of one column.",
+        "properties": {
+          "collapsed": {
+            "description": "The outline group ending here is collapsed.",
+            "type": "boolean"
+          },
+          "custom": {
+            "description": "The size was set by a person (for rows: it does not follow the content automatically).",
+            "type": "boolean"
+          },
+          "hidden": {
+            "description": "Hidden (drawn with size 0).",
+            "type": "boolean"
+          },
+          "outline": {
+            "description": "Outline (grouping) level, 0 = not grouped, up to 255.",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "size": {
+            "description": "Size of the column in points (1/72 inch); `null` = the sheet's default size.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "style": {
+            "description": "Zero-based index into the styles node's `cell_formats`: the format of the cells of this column that are not stored in the cells binary. `null` = none.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "size",
+          "hidden",
+          "outline",
+          "collapsed",
+          "style"
+        ],
+        "type": "object"
+      },
+      "description": "The columns that differ from the default, keyed by the ZERO-BASED column index written as a decimal string (`\"0\"` is the first column). A column without an entry has the default size, is visible, has outline level 0 and no format of its own.",
+      "propertyNames": {
+        "pattern": "^(0|[1-9][0-9]{0,6})$"
+      },
+      "type": "object"
+    },
+    "comments": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "description": "A note (classic comment) or a comment thread.",
+        "properties": {
+          "author": {
+            "description": "Author of the note, or of the first comment of the thread. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "dates": {
+            "description": "Threads only: when the first comment and each reply were written, in that order, as ISO 8601 text exactly as read from the source file; an empty string where unknown. Absent when none is known.",
+            "items": {
+              "description": "One timestamp. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "replies": {
+            "description": "Replies of a thread, oldest first.",
+            "items": {
+              "description": "[author, text].",
+              "items": {
+                "description": "Author or text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "resolved": {
+            "description": "The thread is marked resolved.",
+            "type": "boolean"
+          },
+          "text": {
+            "description": "The text. Line breaks are U+000A. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "threaded": {
+            "description": "true: a comment thread. false: a note.",
+            "type": "boolean"
+          },
+          "visible": {
+            "description": "The note is always shown, not only on hover.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "author",
+          "text",
+          "replies",
+          "threaded",
+          "resolved",
+          "visible"
+        ],
+        "type": "object"
+      },
+      "description": "Notes and threaded comments, keyed by the cell's address in A1 notation (column letters, then the ONE-BASED row number: `B7`).",
+      "propertyNames": {
+        "pattern": "^[A-Z]{1,3}[1-9][0-9]{0,6}$"
+      },
+      "type": "object"
+    },
+    "computed": {
+      "description": "node_id of the core.sheet.computed node holding the cached results of this sheet's formulas. Absent when the sheet has no formula.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "cond_formats": {
+      "description": "Conditional formats.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One conditional format.",
+        "properties": {
+          "priority": {
+            "description": "Evaluation order: a lower number is evaluated first.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "ranges": {
+            "description": "The cells it applies to.",
+            "items": {
+              "$ref": "#/$defs/range_ref",
+              "description": "One range."
+            },
+            "type": "array"
+          },
+          "rule": {
+            "$ref": "#/$defs/cf_rule",
+            "description": "The test and what it draws."
+          },
+          "stop_if_true": {
+            "description": "When this rule matches a cell, rules with a higher priority number are not applied to it.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ranges",
+          "rule",
+          "priority",
+          "stop_if_true"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "default_col_width": {
+      "description": "Width of a column without an entry in `cols`, points.",
+      "type": "number"
+    },
+    "default_row_height": {
+      "description": "Height of a row without an entry in `rows`, points.",
+      "type": "number"
+    },
+    "edit_ranges": {
+      "description": "Ranges that stay editable while the sheet is protected.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One editable range.",
+        "properties": {
+          "password": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/password_hash"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hash of the password that unlocks it; `null` = no password."
+          },
+          "ranges": {
+            "description": "The cells.",
+            "items": {
+              "$ref": "#/$defs/range_ref",
+              "description": "One range."
+            },
+            "type": "array"
+          },
+          "security_descriptor": {
+            "description": "A Windows security descriptor (SDDL text) naming who may edit without a password, kept exactly as read from the source file. Absent when there is none. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "title": {
+            "description": "Its title. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "ranges",
+          "password"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "freeze": {
+      "anyOf": [
+        {
+          "description": "[rows, columns]: that many top rows and left columns stay in place when the sheet scrolls.",
+          "items": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Frozen panes."
+    },
+    "hyperlinks": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "description": "A hyperlink a person put on a cell.",
+        "properties": {
+          "target": {
+            "description": "Where the link goes: a URL, a `mailto:` address, or a place in this workbook such as `Sheet2!A1`. It is content the author typed. This document does not depend on it and a reader never opens it in order to read the document. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "tooltip": {
+            "description": "Text shown on hover. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "target",
+          "tooltip"
+        ],
+        "type": "object"
+      },
+      "description": "Hyperlinks, keyed by the cell's address in A1 notation.",
+      "propertyNames": {
+        "pattern": "^[A-Z]{1,3}[1-9][0-9]{0,6}$"
+      },
+      "type": "object"
+    },
+    "images": {
+      "description": "Floating pictures, back to front.",
+      "items": {
+        "additionalProperties": false,
+        "description": "A floating picture.",
+        "properties": {
+          "alt": {
+            "description": "Alternative text. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "anchor": {
+            "$ref": "#/$defs/anchor",
+            "description": "Where the picture floats."
+          },
+          "id": {
+            "description": "The picture's object id, unique among the objects of the workbook.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "media": {
+            "description": "node_id of the node holding the picture's ORIGINAL bytes, verbatim: a core.sheet.image node when they are PNG; a core.sheet.picture node when they are in a defined foreign format (JPEG, GIF, BMP, TIFF - that node's meta.payload_format names it and the manifest's `formats` map points at its definition); an x.gridcraft.source.media node otherwise.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          },
+          "mime": {
+            "description": "Media type of the picture's ORIGINAL bytes as the application holds them, e.g. `image/png`, `image/jpeg`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "png": {
+            "description": "Only when the original bytes are JPEG and could be decoded: node_id of a core.sheet.image node holding the same picture decoded to PNG (8 bits per channel), so that a reader which only decodes PNG still shows it. A derived convenience: the original is authoritative.",
+            "format": "werk-node-ref",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "anchor",
+          "mime",
+          "alt",
+          "media"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "merges": {
+      "description": "Merged cells: each range is shown as one cell holding the content of its top-left cell.",
+      "items": {
+        "$ref": "#/$defs/range_ref",
+        "description": "One merged range."
+      },
+      "type": "array"
+    },
+    "name": {
+      "description": "The sheet's name as shown on its tab and used in formulas (`Sheet1!A1`): 1..31 characters, none of `: \\ / ? * [ ]`, unique in the workbook ignoring case. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "ooxml": {
+      "description": "node_id of the x.gridcraft.ooxml node carrying content of this sheet, from an imported OOXML file, that GridCraft keeps without modelling it (form controls, embedded objects, query tables). Absent when there is none.",
+      "format": "werk-node-ref",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "pivots": {
+      "description": "The PivotTables whose output is on this sheet. Each entry is the node_id of a core.sheet.pivot node.",
+      "items": {
+        "description": "node_id of a core.sheet.pivot node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "print": {
+      "additionalProperties": false,
+      "description": "Page setup for printing.",
+      "properties": {
+        "center_h": {
+          "description": "Centred horizontally on the page.",
+          "type": "boolean"
+        },
+        "center_v": {
+          "description": "Centred vertically on the page.",
+          "type": "boolean"
+        },
+        "col_breaks": {
+          "description": "Manual page breaks: a break to the LEFT of each of these zero-based columns.",
+          "items": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "different_first": {
+          "description": "The first printed page uses `first_header` / `first_footer`.",
+          "type": "boolean"
+        },
+        "different_odd_even": {
+          "description": "Even pages use `even_header` / `even_footer`.",
+          "type": "boolean"
+        },
+        "even_footer": {
+          "description": "Footer of even pages. Header/footer text with codes: `&L` `&C` `&R` start the left, centre and right section; `&P` page number, `&N` page count, `&D` date, `&T` time, `&F` file name, `&A` sheet name, `&&` an ampersand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "even_header": {
+          "description": "Header of even pages. Header/footer text with codes: `&L` `&C` `&R` start the left, centre and right section; `&P` page number, `&N` page count, `&D` date, `&T` time, `&F` file name, `&A` sheet name, `&&` an ampersand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "first_footer": {
+          "description": "Footer of the first page. Header/footer text with codes: `&L` `&C` `&R` start the left, centre and right section; `&P` page number, `&N` page count, `&D` date, `&T` time, `&F` file name, `&A` sheet name, `&&` an ampersand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "first_header": {
+          "description": "Header of the first page. Header/footer text with codes: `&L` `&C` `&R` start the left, centre and right section; `&P` page number, `&N` page count, `&D` date, `&T` time, `&F` file name, `&A` sheet name, `&&` an ampersand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "fit_to": {
+          "anyOf": [
+            {
+              "description": "[pages wide, pages tall]; 0 = as many as needed in that direction.",
+              "items": {
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Fit to pages; `null` = use `scale`."
+        },
+        "footer": {
+          "description": "Footer of odd pages, and of every page unless the variants below apply. Header/footer text with codes: `&L` `&C` `&R` start the left, centre and right section; `&P` page number, `&N` page count, `&D` date, `&T` time, `&F` file name, `&A` sheet name, `&&` an ampersand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "gridlines": {
+          "description": "Gridlines are printed.",
+          "type": "boolean"
+        },
+        "header": {
+          "description": "Header of odd pages, and of every page unless the variants below apply. Header/footer text with codes: `&L` `&C` `&R` start the left, centre and right section; `&P` page number, `&N` page count, `&D` date, `&T` time, `&F` file name, `&A` sheet name, `&&` an ampersand. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "headings": {
+          "description": "Row numbers and column letters are printed.",
+          "type": "boolean"
+        },
+        "hf_align_with_margins": {
+          "description": "Headers and footers align with the page margins.",
+          "type": "boolean"
+        },
+        "hf_scale_with_doc": {
+          "description": "Headers and footers scale with the print scale.",
+          "type": "boolean"
+        },
+        "margins": {
+          "description": "Margins in INCHES: [left, right, top, bottom, header, footer].",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "type": "array"
+        },
+        "orientation": {
+          "description": "Paper orientation.",
+          "enum": [
+            "Portrait",
+            "Landscape"
+          ],
+          "type": "string"
+        },
+        "paper": {
+          "description": "Paper size name: `Letter`, `A4`, `Legal`, ... Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "print_area": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/range_ref"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The range that is printed; `null` = the used range."
+        },
+        "row_breaks": {
+          "description": "Manual page breaks: a break ABOVE each of these zero-based rows.",
+          "items": {
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "type": "array"
+        },
+        "scale": {
+          "description": "Print scale in percent (used when `fit_to` is null).",
+          "maximum": 65535,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "title_cols": {
+          "anyOf": [
+            {
+              "description": "[first, last] zero-based column indexes, both included.",
+              "items": {
+                "maximum": 4294967295,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Columns repeated at the left of every page."
+        },
+        "title_rows": {
+          "anyOf": [
+            {
+              "description": "[first, last] zero-based row indexes, both included.",
+              "items": {
+                "maximum": 4294967295,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Rows repeated at the top of every page."
+        }
+      },
+      "required": [
+        "orientation",
+        "paper",
+        "margins",
+        "print_area",
+        "title_rows",
+        "title_cols",
+        "scale",
+        "fit_to",
+        "gridlines",
+        "headings",
+        "center_h",
+        "center_v",
+        "header",
+        "footer",
+        "row_breaks",
+        "col_breaks"
+      ],
+      "type": "object"
+    },
+    "protection": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "Sheet protection.",
+          "properties": {
+            "autofilter": {
+              "description": "While the sheet is protected, users MAY use AutoFilter.",
+              "type": "boolean"
+            },
+            "delete_columns": {
+              "description": "While the sheet is protected, users MAY delete columns.",
+              "type": "boolean"
+            },
+            "delete_rows": {
+              "description": "While the sheet is protected, users MAY delete rows.",
+              "type": "boolean"
+            },
+            "format_cells": {
+              "description": "While the sheet is protected, users MAY format cells.",
+              "type": "boolean"
+            },
+            "format_columns": {
+              "description": "While the sheet is protected, users MAY format columns.",
+              "type": "boolean"
+            },
+            "format_rows": {
+              "description": "While the sheet is protected, users MAY format rows.",
+              "type": "boolean"
+            },
+            "insert_columns": {
+              "description": "While the sheet is protected, users MAY insert columns.",
+              "type": "boolean"
+            },
+            "insert_rows": {
+              "description": "While the sheet is protected, users MAY insert rows.",
+              "type": "boolean"
+            },
+            "password": {
+              "$ref": "#/$defs/password_hash",
+              "description": "Hash of the protection password. Absent when there is none."
+            },
+            "password_hash": {
+              "description": "A 64-bit hash written by old GridCraft versions (FNV-1a over the UTF-8 password, seeded 0xcbf29ce484222325 XOR 0x534845455443). Only verified, never written for new passwords. Absent otherwise. An integer up to 18446744073709551615: read it with an exact integer type.",
+              "maximum": 18446744073709551615,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "select_locked": {
+              "description": "While the sheet is protected, users MAY select locked cells.",
+              "type": "boolean"
+            },
+            "select_unlocked": {
+              "description": "While the sheet is protected, users MAY select unlocked cells.",
+              "type": "boolean"
+            },
+            "sort": {
+              "description": "While the sheet is protected, users MAY sort.",
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "select_locked",
+            "select_unlocked",
+            "format_cells",
+            "format_columns",
+            "format_rows",
+            "insert_columns",
+            "insert_rows",
+            "delete_columns",
+            "delete_rows",
+            "sort",
+            "autofilter"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Sheet protection; `null` = the sheet is not protected. While protected, locked cells cannot be edited; the flags say what users may still do."
+    },
+    "right_to_left": {
+      "description": "Column A is at the right.",
+      "type": "boolean"
+    },
+    "rows": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "description": "Properties of one row.",
+        "properties": {
+          "collapsed": {
+            "description": "The outline group ending here is collapsed.",
+            "type": "boolean"
+          },
+          "custom": {
+            "description": "The size was set by a person (for rows: it does not follow the content automatically).",
+            "type": "boolean"
+          },
+          "hidden": {
+            "description": "Hidden (drawn with size 0).",
+            "type": "boolean"
+          },
+          "outline": {
+            "description": "Outline (grouping) level, 0 = not grouped, up to 255.",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "size": {
+            "description": "Size of the row in points (1/72 inch); `null` = the sheet's default size.",
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "style": {
+            "description": "Zero-based index into the styles node's `cell_formats`: the format of the cells of this row that are not stored in the cells binary. `null` = none.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "size",
+          "hidden",
+          "outline",
+          "collapsed",
+          "style"
+        ],
+        "type": "object"
+      },
+      "description": "The rows that differ from the default, keyed by the ZERO-BASED row index written as a decimal string (`\"0\"` is the first row). A row without an entry has the default size, is visible, has outline level 0 and no format of its own.",
+      "propertyNames": {
+        "pattern": "^(0|[1-9][0-9]{0,6})$"
+      },
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "Revision of this payload's schema. Always 1 in profile spreadsheet/1.",
+      "type": "integer"
+    },
+    "shapes": {
+      "description": "Drawn shapes and text boxes, back to front.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One shape.",
+        "properties": {
+          "anchor": {
+            "$ref": "#/$defs/anchor",
+            "description": "Where the shape sits."
+          },
+          "fill": {
+            "$ref": "#/$defs/color",
+            "description": "Fill colour."
+          },
+          "format": {
+            "additionalProperties": false,
+            "description": "Outline visibility and text formatting; the text properties apply to the whole text.",
+            "properties": {
+              "align": {
+                "description": "Horizontal text alignment; `null` = the shape's default (left for text boxes, centred otherwise).",
+                "enum": [
+                  "Left",
+                  "Center",
+                  "Right",
+                  null
+                ],
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "anchor": {
+                "description": "Vertical text position; `null` = the shape's default (top for text boxes, middle otherwise).",
+                "enum": [
+                  "Top",
+                  "Middle",
+                  "Bottom",
+                  null
+                ],
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bold": {
+                "description": "Bold text.",
+                "type": "boolean"
+              },
+              "font": {
+                "description": "Typeface family name; `null` = default. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+                "format": "werk-content-text",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "font_size": {
+                "description": "Text size in points; `null` = default.",
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "italic": {
+                "description": "Italic text.",
+                "type": "boolean"
+              },
+              "no_line": {
+                "description": "No outline, whatever `line` says.",
+                "type": "boolean"
+              },
+              "text_color": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/color"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Text colour; `null` = default."
+              },
+              "text_outline": {
+                "anyOf": [
+                  {
+                    "description": "[colour, width in points].",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/color"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Text outline; `null` = none."
+              }
+            },
+            "required": [
+              "no_line",
+              "font_size",
+              "bold",
+              "italic",
+              "font",
+              "text_color",
+              "text_outline",
+              "align",
+              "anchor"
+            ],
+            "type": "object"
+          },
+          "id": {
+            "description": "Object id, unique among the objects of the workbook.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "kind": {
+            "description": "The shape. Icon: `text` holds the name of an icon of the application's own set. Ink: `text` holds the stroke as `x,y;x,y;...` in points relative to the anchor, `line` is the ink colour.",
+            "enum": [
+              "Rectangle",
+              "RoundedRectangle",
+              "Ellipse",
+              "Triangle",
+              "Line",
+              "Arrow",
+              "TextBox",
+              "Icon",
+              "Ink"
+            ],
+            "type": "string"
+          },
+          "line": {
+            "$ref": "#/$defs/color",
+            "description": "Outline colour."
+          },
+          "text": {
+            "description": "The shape's text (see `kind` for Icon and Ink). Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "anchor",
+          "fill",
+          "line",
+          "text"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "show_formulas": {
+      "description": "Cells show their formula text instead of the result.",
+      "type": "boolean"
+    },
+    "show_gridlines": {
+      "description": "Gridlines are drawn.",
+      "type": "boolean"
+    },
+    "show_headings": {
+      "description": "Row numbers and column letters are drawn.",
+      "type": "boolean"
+    },
+    "show_zeros": {
+      "description": "A zero value is shown (false: shown as empty).",
+      "type": "boolean"
+    },
+    "slicers": {
+      "description": "Slicers: on-sheet filter panels bound to one column of a table.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One slicer.",
+        "properties": {
+          "anchor": {
+            "$ref": "#/$defs/anchor",
+            "description": "Where the slicer sits."
+          },
+          "caption": {
+            "description": "Caption shown in the slicer's header. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "column": {
+            "description": "Name of the filtered column of that table. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "columns": {
+            "description": "Number of button columns in the slicer.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "id": {
+            "description": "Object id, unique among the objects of the workbook.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "selected": {
+            "anyOf": [
+              {
+                "description": "Selected values.",
+                "items": {
+                  "description": "One displayed value. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The selected displayed values. `null` = every value (the slicer filters nothing); an empty list = nothing selected (every row hidden)."
+          },
+          "table": {
+            "description": "Name of the table it filters. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "table",
+          "column",
+          "caption",
+          "anchor",
+          "selected",
+          "columns"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "sparklines": {
+      "description": "Sparklines: a tiny chart drawn inside one cell.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One sparkline.",
+        "properties": {
+          "cell": {
+            "$ref": "#/$defs/cell_ref",
+            "description": "The cell it is drawn in."
+          },
+          "color": {
+            "$ref": "#/$defs/color",
+            "description": "Colour."
+          },
+          "kind": {
+            "description": "Line, Column, or WinLoss (equal bars above and below the axis).",
+            "enum": [
+              "Line",
+              "Column",
+              "WinLoss"
+            ],
+            "type": "string"
+          },
+          "markers": {
+            "description": "Line sparklines: points are marked.",
+            "type": "boolean"
+          },
+          "source": {
+            "description": "The data range, as reference text (`B2:F2`, `Sheet2!A1:A12`). Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cell",
+          "source",
+          "kind",
+          "color",
+          "markers"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "tab_color": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/color"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Colour of the sheet tab; `null` = none."
+    },
+    "tables": {
+      "description": "Tables (structured ranges).",
+      "items": {
+        "additionalProperties": false,
+        "description": "One table.",
+        "properties": {
+          "banded_cols": {
+            "description": "Alternate columns are shaded.",
+            "type": "boolean"
+          },
+          "banded_rows": {
+            "description": "Alternate rows are shaded.",
+            "type": "boolean"
+          },
+          "columns": {
+            "description": "The columns, left to right; one per column of `range`.",
+            "items": {
+              "additionalProperties": false,
+              "description": "One table column.",
+              "properties": {
+                "formula": {
+                  "description": "Calculated-column formula text, without a leading `=`. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "description": "Column name. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "totals": {
+                  "description": "What the totals row shows for this column. Custom: the formula in `totals_label`.",
+                  "enum": [
+                    "None",
+                    "Average",
+                    "Count",
+                    "CountNums",
+                    "Max",
+                    "Min",
+                    "Sum",
+                    "StdDev",
+                    "Var",
+                    "Custom"
+                  ],
+                  "type": "string"
+                },
+                "totals_label": {
+                  "description": "Totals-row label (a text) or, with `totals` = Custom, the formula text. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+                  "format": "werk-content-text",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "totals",
+                "totals_label",
+                "formula"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "filter": {
+            "description": "The table's active filters.",
+            "items": {
+              "description": "[column_offset, criterion]: column_offset is the zero-based column within the filtered range (0 = its first column).",
+              "items": {
+                "anyOf": [
+                  {
+                    "maximum": 4294967295,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "$ref": "#/$defs/filter_criterion"
+                  }
+                ]
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "filter_button": {
+            "description": "The header cells show filter buttons.",
+            "type": "boolean"
+          },
+          "first_col": {
+            "description": "The first column is emphasised.",
+            "type": "boolean"
+          },
+          "header_row": {
+            "description": "The first row of `range` holds the column names.",
+            "type": "boolean"
+          },
+          "id": {
+            "description": "Object id, unique among the objects of the workbook.",
+            "maximum": 4294967295,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "last_col": {
+            "description": "The last column is emphasised.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "Table name, used in structured references (`Sales[Amount]`). Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "range": {
+            "$ref": "#/$defs/range_ref",
+            "description": "The whole table, header and totals rows included."
+          },
+          "style": {
+            "description": "Table style name, e.g. `TableStyleMedium2`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "totals_row": {
+            "description": "The last row of `range` is a totals row.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "range",
+          "header_row",
+          "totals_row",
+          "columns",
+          "style",
+          "banded_rows",
+          "banded_cols",
+          "first_col",
+          "last_col",
+          "filter_button"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "uid": {
+      "description": "The sheet's stable identity within the document, 1..4294967295. It never changes when the sheet is renamed or moved, and it is the number in this node's id (`sheet-<uid>`) and in the ids of the nodes that belong to it.",
+      "maximum": 4294967295,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "validations": {
+      "description": "Data validation rules.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One data validation: what may be typed into its cells.",
+        "properties": {
+          "allow_blank": {
+            "description": "An empty cell is valid.",
+            "type": "boolean"
+          },
+          "error_message": {
+            "description": "Text of the alert shown for an invalid entry. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "error_style": {
+            "description": "Stop: the entry is refused. Warning / Information: it may be kept.",
+            "enum": [
+              "Stop",
+              "Warning",
+              "Information"
+            ],
+            "type": "string"
+          },
+          "error_title": {
+            "description": "Title of the alert shown for an invalid entry. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "f1": {
+            "description": "First operand as formula text. For List: either a quoted literal list `\"a,b,c\"` or a range with a leading `=`, e.g. `=$A$1:$A$5`. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "f2": {
+            "description": "Second operand, used by Between and NotBetween. `null` when absent. Free text: content, never a reference - a reader never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "in_cell_dropdown": {
+            "description": "List: the cell shows a dropdown.",
+            "type": "boolean"
+          },
+          "input_message": {
+            "description": "Message shown when the cell is selected. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "input_title": {
+            "description": "Title of the message shown when the cell is selected. Free text: content, never a reference - a reader shows or stores it and never resolves it as a path or address.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "kind": {
+            "description": "What is checked. Any: nothing. Whole / Decimal / Date / Time / TextLength: the value against `f1` (and `f2`) with `op`. List: the value must be one of a list. Custom: the formula `f1` must be true.",
+            "enum": [
+              "Any",
+              "Whole",
+              "Decimal",
+              "List",
+              "Date",
+              "Time",
+              "TextLength",
+              "Custom"
+            ],
+            "type": "string"
+          },
+          "op": {
+            "$ref": "#/$defs/operator",
+            "description": "The comparison (ignored by Any, List and Custom)."
+          },
+          "ranges": {
+            "description": "The cells it applies to.",
+            "items": {
+              "$ref": "#/$defs/range_ref",
+              "description": "One range."
+            },
+            "type": "array"
+          },
+          "show_error": {
+            "description": "The alert is shown.",
+            "type": "boolean"
+          },
+          "show_input": {
+            "description": "The input message is shown.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ranges",
+          "kind",
+          "op",
+          "f1",
+          "f2",
+          "allow_blank",
+          "in_cell_dropdown",
+          "input_title",
+          "input_message",
+          "show_input",
+          "error_title",
+          "error_message",
+          "error_style",
+          "show_error"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "view": {
+      "description": "How the sheet is displayed.",
+      "enum": [
+        "normal",
+        "pageLayout",
+        "pageBreakPreview"
+      ],
+      "type": "string"
+    },
+    "view_active": {
+      "$ref": "#/$defs/cell_ref",
+      "description": "The selected cell when the sheet was last saved."
+    },
+    "view_top_left": {
+      "$ref": "#/$defs/cell_ref",
+      "description": "The first visible cell of the scrolling area when the sheet was last saved."
+    },
+    "visibility": {
+      "description": "Visible, Hidden (can be unhidden in the user interface) or VeryHidden (cannot).",
+      "enum": [
+        "Visible",
+        "Hidden",
+        "VeryHidden"
+      ],
+      "type": "string"
+    },
+    "zoom": {
+      "description": "Zoom in percent, 100 = actual size.",
+      "maximum": 65535,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "uid",
+    "name",
+    "cols",
+    "rows",
+    "default_col_width",
+    "default_row_height",
+    "merges",
+    "freeze",
+    "tab_color",
+    "visibility",
+    "show_gridlines",
+    "show_headings",
+    "show_formulas",
+    "show_zeros",
+    "right_to_left",
+    "zoom",
+    "view",
+    "view_active",
+    "view_top_left",
+    "cond_formats",
+    "validations",
+    "tables",
+    "autofilter",
+    "comments",
+    "hyperlinks",
+    "charts",
+    "images",
+    "cell_pictures",
+    "shapes",
+    "sparklines",
+    "protection",
+    "edit_ranges",
+    "print"
+  ],
+  "title": "core.sheet.sheet - one sheet: name, geometry, view and attached features",
+  "type": "object"
+}

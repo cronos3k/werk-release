@@ -1,0 +1,52 @@
+{
+  "$defs": {},
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "What the saving host knew about one third-party effect plug-in the document uses. The plug-in's code is not in the package. EffectCraft effect plug-ins have no private state beyond their declared parameters, which are ordinary properties of the effect instance; this record is therefore the plug-in's own manifest, kept so a reader can tell which plug-in, in which version, an effect id stood for.",
+  "properties": {
+    "api": {
+      "description": "The plug-in interface version the host loaded it with.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "effect": {
+      "description": "The effect id.",
+      "type": "string"
+    },
+    "manifest": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The plug-in's manifest as the host read it, verbatim (opaque to this profile); null when the host did not have it."
+    },
+    "name": {
+      "description": "The plug-in's name.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "version": {
+      "description": "The plug-in's version as its manifest states it; empty when unknown.",
+      "format": "werk-content-text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "effect",
+    "name",
+    "version",
+    "api",
+    "manifest"
+  ],
+  "title": "x.effectcraft.plugin-state",
+  "type": "object"
+}

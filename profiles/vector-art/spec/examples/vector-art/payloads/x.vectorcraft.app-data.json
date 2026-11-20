@@ -1,0 +1,53 @@
+{
+  "extra": {
+    "anotherFutureKey": 12,
+    "futureFeature": {
+      "added": "by a later version",
+      "values": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "schema_version": 1,
+  "unknown": {
+    "currentBrush": "Corpus Calligraphic",
+    "currentSymbol": "Gear",
+    "foreign": {
+      "svg": {
+        "data-app": "Ünï \"q\" \\ \u0007 é́ עברית 日本語 🎨",
+        "nested": [
+          1,
+          2.5,
+          null,
+          true,
+          {
+            "deep": []
+          }
+        ],
+        "source": "/home/someone/art/poster final.svg"
+      }
+    },
+    "perspectiveGrid": {
+      "horizon": 250.5,
+      "type": "two-point",
+      "vanishing": [
+        [
+          10.0,
+          250.5
+        ],
+        [
+          900.0,
+          250.5
+        ]
+      ]
+    },
+    "symbolSizes": {
+      "Gear": [
+        12.0,
+        12.000000000000007
+      ]
+    }
+  }
+}

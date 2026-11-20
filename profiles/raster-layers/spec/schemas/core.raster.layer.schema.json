@@ -1,0 +1,3826 @@
+{
+  "$defs": {
+    "adjustment": {
+      "description": "An adjustment: a function applied to everything beneath the layer. Exactly one key names its kind (`Invert` is the bare string).",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "BrightnessContrast": {
+              "additionalProperties": false,
+              "description": "Brightness/Contrast.",
+              "properties": {
+                "brightness": {
+                  "description": "-150 to 150 (legacy: -100 to 100).",
+                  "type": "number"
+                },
+                "contrast": {
+                  "description": "-50 to 100 (legacy: -100 to 100).",
+                  "type": "number"
+                },
+                "legacy": {
+                  "description": "True: the linear pre-CS3 formula.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "brightness",
+                "contrast",
+                "legacy"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "BrightnessContrast"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Levels": {
+              "additionalProperties": false,
+              "description": "Levels: the per-channel records are applied first, then `master` to every channel.",
+              "properties": {
+                "black": {
+                  "additionalProperties": false,
+                  "description": "The black ink channel when `space` is Cmyk.",
+                  "properties": {
+                    "gamma": {
+                      "description": "Midtone gamma, 1.0 = unchanged. out = ((in - in_black) / (in_white - in_black)) ^ (1 / gamma), then scaled to out_black..out_white.",
+                      "type": "number"
+                    },
+                    "in_black": {
+                      "description": "Input black point.",
+                      "type": "number"
+                    },
+                    "in_white": {
+                      "description": "Input white point.",
+                      "type": "number"
+                    },
+                    "out_black": {
+                      "description": "Output black point.",
+                      "type": "number"
+                    },
+                    "out_white": {
+                      "description": "Output white point.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "in_black",
+                    "in_white",
+                    "gamma",
+                    "out_black",
+                    "out_white"
+                  ],
+                  "type": "object"
+                },
+                "master": {
+                  "additionalProperties": false,
+                  "description": "One Levels record; all values on the 0.0 to 1.0 scale except `gamma`.",
+                  "properties": {
+                    "gamma": {
+                      "description": "Midtone gamma, 1.0 = unchanged. out = ((in - in_black) / (in_white - in_black)) ^ (1 / gamma), then scaled to out_black..out_white.",
+                      "type": "number"
+                    },
+                    "in_black": {
+                      "description": "Input black point.",
+                      "type": "number"
+                    },
+                    "in_white": {
+                      "description": "Input white point.",
+                      "type": "number"
+                    },
+                    "out_black": {
+                      "description": "Output black point.",
+                      "type": "number"
+                    },
+                    "out_white": {
+                      "description": "Output white point.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "in_black",
+                    "in_white",
+                    "gamma",
+                    "out_black",
+                    "out_white"
+                  ],
+                  "type": "object"
+                },
+                "per_channel": {
+                  "description": "Three records in the order `space` names.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "One Levels record; all values on the 0.0 to 1.0 scale except `gamma`.",
+                    "properties": {
+                      "gamma": {
+                        "description": "Midtone gamma, 1.0 = unchanged. out = ((in - in_black) / (in_white - in_black)) ^ (1 / gamma), then scaled to out_black..out_white.",
+                        "type": "number"
+                      },
+                      "in_black": {
+                        "description": "Input black point.",
+                        "type": "number"
+                      },
+                      "in_white": {
+                        "description": "Input white point.",
+                        "type": "number"
+                      },
+                      "out_black": {
+                        "description": "Output black point.",
+                        "type": "number"
+                      },
+                      "out_white": {
+                        "description": "Output white point.",
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "in_black",
+                      "in_white",
+                      "gamma",
+                      "out_black",
+                      "out_white"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                "space": {
+                  "description": "Which channels `per_channel` addresses: Rgb = red, green, blue; Cmyk = cyan, magenta, yellow (values are 1 - ink) plus `black`; Lab = lightness, a, b (stored 0.0 to 1.0), and `master` is ignored.",
+                  "enum": [
+                    "Rgb",
+                    "Cmyk",
+                    "Lab"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "master",
+                "per_channel",
+                "space",
+                "black"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Levels"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Curves": {
+              "additionalProperties": false,
+              "description": "Curves: the per-channel curves are applied first, then `master`. A curve with fewer than 2 points, or exactly (0,0),(1,1), is the identity.",
+              "properties": {
+                "black": {
+                  "description": "The black ink curve when `space` is Cmyk. Empty: identity.",
+                  "items": {
+                    "$ref": "#/$defs/curve_point"
+                  },
+                  "type": "array"
+                },
+                "master": {
+                  "description": "The composite curve.",
+                  "items": {
+                    "$ref": "#/$defs/curve_point"
+                  },
+                  "type": "array"
+                },
+                "pencil": {
+                  "description": "False: each curve is a smooth spline through its points. True: each curve has 256 points (input k/255 for k = 0..255) and is evaluated by straight segments between them.",
+                  "type": "boolean"
+                },
+                "per_channel": {
+                  "description": "Three curves in the order `space` names.",
+                  "items": {
+                    "description": "One channel's curve.",
+                    "items": {
+                      "$ref": "#/$defs/curve_point"
+                    },
+                    "type": "array"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                "space": {
+                  "description": "Which channels `per_channel` addresses: Rgb = red, green, blue; Cmyk = cyan, magenta, yellow (values are 1 - ink) plus `black`; Lab = lightness, a, b (stored 0.0 to 1.0), and `master` is ignored.",
+                  "enum": [
+                    "Rgb",
+                    "Cmyk",
+                    "Lab"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "master",
+                "per_channel",
+                "space",
+                "black",
+                "pencil"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Curves"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Exposure": {
+              "additionalProperties": false,
+              "description": "Exposure, applied in linear light.",
+              "properties": {
+                "exposure": {
+                  "description": "Stops: the value is multiplied by 2^exposure.",
+                  "type": "number"
+                },
+                "gamma": {
+                  "description": "Gamma correction, 1.0 = unchanged.",
+                  "type": "number"
+                },
+                "offset": {
+                  "description": "Added after the multiplication.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "exposure",
+                "offset",
+                "gamma"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Exposure"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Vibrance": {
+              "additionalProperties": false,
+              "description": "Vibrance.",
+              "properties": {
+                "saturation": {
+                  "description": "-100 to 100: uniform saturation change.",
+                  "type": "number"
+                },
+                "vibrance": {
+                  "description": "-100 to 100: saturation change weighted towards unsaturated colours.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "vibrance",
+                "saturation"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Vibrance"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "HueSaturation": {
+              "additionalProperties": false,
+              "description": "Hue/Saturation: master values (or the Colorize colour) plus six hue ranges.",
+              "properties": {
+                "colorize": {
+                  "description": "True: every pixel takes the hue and saturation above and keeps its own lightness.",
+                  "type": "boolean"
+                },
+                "hue": {
+                  "description": "Master hue shift in degrees, -180 to 180 (with `colorize`: the hue, 0 to 360).",
+                  "type": "number"
+                },
+                "lightness": {
+                  "description": "Master lightness change in percent, -100 to 100.",
+                  "type": "number"
+                },
+                "ranges": {
+                  "description": "Reds, yellows, greens, cyans, blues, magentas, in that order.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "One hue range.",
+                    "properties": {
+                      "bounds": {
+                        "description": "Hue degrees `[fade-in start, fully-on start, fully-on end, fade-out end]`. May wrap past 0/360.",
+                        "items": {
+                          "type": "number"
+                        },
+                        "maxItems": 4,
+                        "minItems": 4,
+                        "type": "array"
+                      },
+                      "hue": {
+                        "description": "Hue shift in degrees, -180 to 180.",
+                        "type": "number"
+                      },
+                      "lightness": {
+                        "description": "Percent, -100 to 100.",
+                        "type": "number"
+                      },
+                      "saturation": {
+                        "description": "Percent, -100 to 100.",
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "hue",
+                      "saturation",
+                      "lightness",
+                      "bounds"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 6,
+                  "minItems": 6,
+                  "type": "array"
+                },
+                "saturation": {
+                  "description": "Master saturation change in percent, -100 to 100 (with `colorize`: the saturation, 0 to 100).",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "hue",
+                "saturation",
+                "lightness",
+                "colorize",
+                "ranges"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "HueSaturation"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "ColorBalance": {
+              "additionalProperties": false,
+              "description": "Color Balance.",
+              "properties": {
+                "highlights": {
+                  "description": "As `shadows`, for the highlights.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                "midtones": {
+                  "description": "As `shadows`, for the midtones.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                "preserve_luminosity": {
+                  "description": "True: the result keeps each pixel's luminosity.",
+                  "type": "boolean"
+                },
+                "shadows": {
+                  "description": "`[cyan-red, magenta-green, yellow-blue]`, each -100 to 100.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "shadows",
+                "midtones",
+                "highlights",
+                "preserve_luminosity"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ColorBalance"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "BlackWhite": {
+              "additionalProperties": false,
+              "description": "Black & White.",
+              "properties": {
+                "tint": {
+                  "anyOf": [
+                    {
+                      "description": "`[r, g, b]`, 0.0 to 1.0.",
+                      "items": {
+                        "type": "number"
+                      },
+                      "maxItems": 3,
+                      "minItems": 3,
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "A tint colour applied to the gray result. Null: no tint."
+                },
+                "weights": {
+                  "description": "Percent contribution of reds, yellows, greens, cyans, blues, magentas to the gray value; typically -200 to 300.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 6,
+                  "minItems": 6,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "weights",
+                "tint"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "BlackWhite"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "PhotoFilter": {
+              "additionalProperties": false,
+              "description": "Photo Filter.",
+              "properties": {
+                "color": {
+                  "description": "Filter colour `[r, g, b]`, 0.0 to 1.0.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                "density": {
+                  "description": "0.0 to 1.0.",
+                  "type": "number"
+                },
+                "preserve_luminosity": {
+                  "description": "True: luminosity is kept.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "color",
+                "density",
+                "preserve_luminosity"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "PhotoFilter"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "ChannelMixer": {
+              "additionalProperties": false,
+              "description": "Channel Mixer.",
+              "properties": {
+                "matrix": {
+                  "description": "One row per output channel: red, green, blue.",
+                  "items": {
+                    "description": "`[from red, from green, from blue, constant]` as fractions (1.0 = 100 %).",
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                "monochrome": {
+                  "description": "True: the first row gives a gray output written to all three channels.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "matrix",
+                "monochrome"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ChannelMixer"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "ColorLookup": {
+              "additionalProperties": false,
+              "description": "Color Lookup: a 3D lookup table.",
+              "properties": {
+                "dither": {
+                  "description": "True: ordered dither of plus or minus half an 8-bit step.",
+                  "type": "boolean"
+                },
+                "lut": {
+                  "anyOf": [
+                    {
+                      "description": "The `core.raster.lut3d` node holding the table.",
+                      "format": "werk-node-ref",
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Null: no table is stored (a lookup Photoshop keeps as an ICC profile); the adjustment then changes nothing."
+                },
+                "name": {
+                  "description": "The table's display name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "size": {
+                  "description": "Entries per axis: the table holds size^3 RGB triplets.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "tetrahedral": {
+                  "description": "True: tetrahedral interpolation. False: trilinear.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "name",
+                "lut",
+                "size",
+                "tetrahedral",
+                "dither"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ColorLookup"
+          ],
+          "type": "object"
+        },
+        {
+          "const": "Invert",
+          "description": "Invert: every colour channel value v becomes 1 - v.",
+          "type": "string"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Posterize": {
+              "additionalProperties": false,
+              "description": "Posterize.",
+              "properties": {
+                "levels": {
+                  "description": "Number of tonal levels per channel, 2 to 255.",
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "levels"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Posterize"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Threshold": {
+              "additionalProperties": false,
+              "description": "Threshold.",
+              "properties": {
+                "level": {
+                  "description": "0.0 to 1.0: pixels whose luminosity is at or above it become white, the rest black.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "level"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Threshold"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "GradientMap": {
+              "additionalProperties": false,
+              "description": "Gradient Map: each pixel's luminosity (0.0 to 1.0) picks a colour from the gradient.",
+              "properties": {
+                "dither": {
+                  "description": "True: ordered dither of plus or minus half an 8-bit step.",
+                  "type": "boolean"
+                },
+                "reverse": {
+                  "description": "True: the gradient is traversed backwards.",
+                  "type": "boolean"
+                },
+                "stops": {
+                  "description": "Gradient stops, location 0.0 to 1.0, colour components 0.0 to 1.0.",
+                  "items": {
+                    "description": "`[location, [r, g, b]]`.",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "items": {
+                            "type": "number"
+                          },
+                          "maxItems": 3,
+                          "minItems": 3,
+                          "type": "array"
+                        }
+                      ]
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "stops",
+                "reverse",
+                "dither"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "GradientMap"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "SelectiveColor": {
+              "additionalProperties": false,
+              "description": "Selective Color.",
+              "properties": {
+                "adjustments": {
+                  "description": "Reds, yellows, greens, cyans, blues, magentas, whites, neutrals, blacks, in that order.",
+                  "items": {
+                    "description": "`[cyan, magenta, yellow, black]` change in percent, -100 to 100.",
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                  },
+                  "maxItems": 9,
+                  "minItems": 9,
+                  "type": "array"
+                },
+                "relative": {
+                  "description": "True: changes are relative to the ink already present. False: absolute.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "relative",
+                "adjustments"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "SelectiveColor"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Unsupported": {
+              "additionalProperties": false,
+              "description": "An adjustment imported from a PSD file that PhotoCraft cannot evaluate. It changes nothing when rendered. Its original bytes travel in the layer's `x.photocraft.psd-blocks` node (slot `adjustment`).",
+              "properties": {
+                "psd_key": {
+                  "description": "The 4-character PSD key of the adjustment block.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "psd_key"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Unsupported"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "advanced": {
+      "additionalProperties": false,
+      "description": "Advanced blending switches.",
+      "properties": {
+        "blendClipped": {
+          "description": "True: a clipping group composites as a whole in the base layer's blend mode.",
+          "type": "boolean"
+        },
+        "blendInterior": {
+          "description": "True: inner glow, satin and the overlays are merged with the content before fill opacity and blend mode apply.",
+          "type": "boolean"
+        },
+        "knockout": {
+          "description": "Which layers beneath are punched through by this layer's shape: none; to the bottom of the enclosing group; to the bottom layer.",
+          "enum": [
+            "none",
+            "shallow",
+            "deep"
+          ],
+          "type": "string"
+        },
+        "layerMaskHidesEffects": {
+          "description": "True: the layer mask hides the effects instead of shaping them.",
+          "type": "boolean"
+        },
+        "transparencyShapes": {
+          "description": "True: the layer's transparency limits its effects and knockout.",
+          "type": "boolean"
+        },
+        "vectorMaskHidesEffects": {
+          "description": "True: the vector mask hides the effects instead of shaping them.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "knockout",
+        "blendInterior",
+        "blendClipped",
+        "transparencyShapes",
+        "layerMaskHidesEffects",
+        "vectorMaskHidesEffects"
+      ],
+      "type": "object"
+    },
+    "affine": {
+      "additionalProperties": false,
+      "description": "A 2D affine transform.",
+      "properties": {
+        "m": {
+          "description": "`[a, b, c, d, e, f]`: x' = a*x + c*y + e, y' = b*x + d*y + f.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "type": "array"
+        }
+      },
+      "required": [
+        "m"
+      ],
+      "type": "object"
+    },
+    "artboard": {
+      "additionalProperties": false,
+      "description": "An artboard: its group clips its children to `rect` and paints `background` behind them.",
+      "properties": {
+        "background": {
+          "description": "What is painted behind the artboard's contents.",
+          "oneOf": [
+            {
+              "enum": [
+                "white",
+                "black",
+                "transparent"
+              ],
+              "type": "string"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "custom": {
+                  "$ref": "#/$defs/color"
+                }
+              },
+              "required": [
+                "custom"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "preset": {
+          "description": "The size preset the board was made from. Empty: custom.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "rect": {
+          "$ref": "#/$defs/rect"
+        }
+      },
+      "required": [
+        "rect",
+        "background",
+        "preset"
+      ],
+      "type": "object"
+    },
+    "blend_if": {
+      "additionalProperties": false,
+      "description": "Value ranges outside which the layer's pixels are hidden.",
+      "properties": {
+        "ranges": {
+          "description": "Entry 0 is the composite gray of the colour channels; then one entry per colour channel of the document's mode. Empty: every pixel blends.",
+          "items": {
+            "description": "`[this layer, underlying layers]`.",
+            "items": {
+              "additionalProperties": false,
+              "description": "One slider pair on the 0 to 255 scale, whatever the document's depth.",
+              "properties": {
+                "black": {
+                  "description": "`[low, high]`: below `low` the pixel is hidden; between `low` and `high` it fades in linearly.",
+                  "items": {
+                    "maximum": 255,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "white": {
+                  "description": "`[low, high]`: above `high` the pixel is hidden; between `low` and `high` it fades out linearly.",
+                  "items": {
+                    "maximum": 255,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "black",
+                "white"
+              ],
+              "type": "object"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ranges"
+      ],
+      "type": "object"
+    },
+    "blend_mode": {
+      "description": "How a layer or effect is combined with what lies beneath. The formula of every mode is in spec/PROFILE-RASTER-LAYERS.md section 5.2.",
+      "enum": [
+        "PassThrough",
+        "Normal",
+        "Dissolve",
+        "Darken",
+        "Multiply",
+        "ColorBurn",
+        "LinearBurn",
+        "DarkerColor",
+        "Lighten",
+        "Screen",
+        "ColorDodge",
+        "LinearDodge",
+        "LighterColor",
+        "Overlay",
+        "SoftLight",
+        "HardLight",
+        "VividLight",
+        "LinearLight",
+        "PinLight",
+        "HardMix",
+        "Difference",
+        "Exclusion",
+        "Subtract",
+        "Divide",
+        "Hue",
+        "Saturation",
+        "Color",
+        "Luminosity",
+        "Reflect",
+        "Glow",
+        "Negation",
+        "Xor",
+        "PaintNetColorBurn",
+        "PaintNetColorDodge"
+      ],
+      "type": "string"
+    },
+    "char_style": {
+      "additionalProperties": false,
+      "description": "A character style. Sizes are in points: pixels = points * resolution_dpi / 72.",
+      "properties": {
+        "baseline_shift_pt": {
+          "description": "Points; positive raises the text.",
+          "type": "number"
+        },
+        "caps": {
+          "description": "Capitalisation.",
+          "enum": [
+            "Normal",
+            "SmallCaps",
+            "AllCaps"
+          ],
+          "type": "string"
+        },
+        "color": {
+          "$ref": "#/$defs/color"
+        },
+        "discretionary_ligatures": {
+          "description": "Discretionary ligatures on.",
+          "type": "boolean"
+        },
+        "faux_bold": {
+          "description": "Synthetic bold.",
+          "type": "boolean"
+        },
+        "faux_italic": {
+          "description": "Synthetic slant.",
+          "type": "boolean"
+        },
+        "features": {
+          "description": "Extra OpenType features.",
+          "items": {
+            "additionalProperties": false,
+            "description": "An OpenType feature setting.",
+            "properties": {
+              "tag": {
+                "description": "4-character feature tag, e.g. \"ss01\".",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "value": {
+                "description": "Feature value; 1 = on.",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "tag",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "font_family": {
+          "description": "Family name, e.g. \"Inter\". Empty: the reader's default family. The font file is NOT in this package unless the structure node's `fonts[].source` names a node that carries it; the layer's `cache` is its rendered appearance.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "font_style": {
+          "description": "Face name as shown to the user, e.g. \"Bold Italic\". Informational; `weight` and `italic` decide.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "horizontal_scale": {
+          "description": "Fraction, 1.0 = 100 %.",
+          "type": "number"
+        },
+        "italic": {
+          "description": "True: italic.",
+          "type": "boolean"
+        },
+        "kern": {
+          "description": "Manual kerning in 1/1000 em between this character and the next, added to the automatic kerning.",
+          "type": "number"
+        },
+        "kerning": {
+          "description": "Automatic pair kerning: from the font; computed from glyph outlines; none.",
+          "enum": [
+            "Metrics",
+            "Optical",
+            "Off"
+          ],
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "BCP-47 language tag. Null: unspecified."
+        },
+        "leading_pt": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Baseline-to-baseline distance in points. Null: automatic (the paragraph's `auto_leading` times the size)."
+        },
+        "ligatures": {
+          "description": "Standard ligatures on.",
+          "type": "boolean"
+        },
+        "postscript_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "PostScript name of the exact face, when known."
+        },
+        "size_pt": {
+          "description": "Font size in points.",
+          "type": "number"
+        },
+        "strikethrough": {
+          "description": "Struck through.",
+          "type": "boolean"
+        },
+        "style_sheet": {
+          "description": "The `id` of the character style (in the `core.raster.text-styles` node) this run uses. Absent: none.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "tracking": {
+          "description": "Letter spacing in 1/1000 em.",
+          "type": "number"
+        },
+        "underline": {
+          "description": "Underlined.",
+          "type": "boolean"
+        },
+        "variations": {
+          "description": "Variable-font axis values.",
+          "items": {
+            "additionalProperties": false,
+            "description": "A variable-font axis value.",
+            "properties": {
+              "axis": {
+                "description": "4-character axis tag, e.g. \"wght\".",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "value": {
+                "description": "Axis value.",
+                "type": "number"
+              }
+            },
+            "required": [
+              "axis",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "vertical_scale": {
+          "description": "Fraction, 1.0 = 100 %.",
+          "type": "number"
+        },
+        "weight": {
+          "description": "CSS-style weight: 400 regular, 700 bold.",
+          "maximum": 1000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "font_family",
+        "font_style",
+        "postscript_name",
+        "weight",
+        "italic",
+        "size_pt",
+        "color",
+        "tracking",
+        "leading_pt",
+        "baseline_shift_pt",
+        "horizontal_scale",
+        "vertical_scale",
+        "underline",
+        "strikethrough",
+        "faux_bold",
+        "faux_italic",
+        "kerning",
+        "kern",
+        "caps",
+        "ligatures",
+        "discretionary_ligatures",
+        "features",
+        "variations",
+        "language"
+      ],
+      "type": "object"
+    },
+    "color": {
+      "additionalProperties": false,
+      "description": "A colour with alpha, as normalised numbers.",
+      "properties": {
+        "alpha": {
+          "description": "Opacity, 0.0 transparent to 1.0 opaque (straight, not premultiplied).",
+          "type": "number"
+        },
+        "c": {
+          "description": "Up to four colour components in the order `mode` gives; unused ones are 0. Nominal range 0.0 to 1.0; a 32-bit float document may hold values outside it.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "mode": {
+          "$ref": "#/$defs/color_mode"
+        }
+      },
+      "required": [
+        "mode",
+        "c",
+        "alpha"
+      ],
+      "type": "object"
+    },
+    "color_mode": {
+      "description": "A colour model. Rgb, Indexed, Multichannel: components are red, green, blue. Grayscale, Bitmap, Duotone: one component, 0.0 black to 1.0 white. Cmyk: cyan, magenta, yellow, black as INK amounts, 0.0 no ink to 1.0 full ink. Lab: lightness L*/100, then (a* + 128)/255 and (b* + 128)/255.",
+      "enum": [
+        "Bitmap",
+        "Grayscale",
+        "Indexed",
+        "Rgb",
+        "Cmyk",
+        "Lab",
+        "Multichannel",
+        "Duotone"
+      ],
+      "type": "string"
+    },
+    "color_stop": {
+      "description": "`[location, colour]`: a number 0.0 to 1.0, then a colour object.",
+      "items": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "$ref": "#/$defs/color"
+          }
+        ]
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "contour": {
+      "description": "A transfer curve applied to an effect's coverage: the string \"Linear\" (identity), or a custom curve.",
+      "oneOf": [
+        {
+          "const": "Linear",
+          "description": "The identity curve.",
+          "type": "string"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Custom": {
+              "additionalProperties": false,
+              "description": "A custom curve through points.",
+              "properties": {
+                "corners": {
+                  "description": "Parallel to `points`: true = the curve bends sharply at that point. Absent or shorter: smooth.",
+                  "items": {
+                    "type": "boolean"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "description": "Display name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "points": {
+                  "description": "The curve's points, by increasing input.",
+                  "items": {
+                    "$ref": "#/$defs/curve_point"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "points"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Custom"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "curve_point": {
+      "additionalProperties": false,
+      "description": "One point of a transfer curve.",
+      "properties": {
+        "input": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "output": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "input",
+        "output"
+      ],
+      "type": "object"
+    },
+    "effect": {
+      "description": "One layer effect. Exactly one key names its kind. A layer may hold several of one kind.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "DropShadow": {
+              "$ref": "#/$defs/shadow"
+            }
+          },
+          "required": [
+            "DropShadow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "InnerShadow": {
+              "$ref": "#/$defs/shadow"
+            }
+          },
+          "required": [
+            "InnerShadow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "OuterGlow": {
+              "$ref": "#/$defs/glow"
+            }
+          },
+          "required": [
+            "OuterGlow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "InnerGlow": {
+              "$ref": "#/$defs/glow"
+            }
+          },
+          "required": [
+            "InnerGlow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Stroke": {
+              "additionalProperties": false,
+              "description": "An outline following the layer's shape.",
+              "properties": {
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "paint": {
+                  "$ref": "#/$defs/fx_paint"
+                },
+                "position": {
+                  "description": "Where the stroke lies relative to the shape's edge.",
+                  "enum": [
+                    "Outside",
+                    "Inside",
+                    "Center"
+                  ],
+                  "type": "string"
+                },
+                "size": {
+                  "description": "Width in pixels.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "common",
+                "size",
+                "position",
+                "paint"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Stroke"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "ColorOverlay": {
+              "additionalProperties": false,
+              "description": "The layer's shape filled with one colour.",
+              "properties": {
+                "color": {
+                  "$ref": "#/$defs/color"
+                },
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                }
+              },
+              "required": [
+                "common",
+                "color"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ColorOverlay"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "GradientOverlay": {
+              "additionalProperties": false,
+              "description": "The layer's shape filled with a gradient.",
+              "properties": {
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "dither": {
+                  "description": "True: one 8-bit level of noise hides banding.",
+                  "type": "boolean"
+                },
+                "gradient": {
+                  "$ref": "#/$defs/gradient"
+                }
+              },
+              "required": [
+                "common",
+                "gradient",
+                "dither"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "GradientOverlay"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "PatternOverlay": {
+              "additionalProperties": false,
+              "description": "The layer's shape filled with a pattern.",
+              "properties": {
+                "angle": {
+                  "description": "Rotation in degrees, counter-clockwise.",
+                  "type": "number"
+                },
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "id": {
+                  "description": "The `id` of a `core.raster.pattern` node's payload. Empty: find the pattern by `name`.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "link": {
+                  "description": "True: the tiling origin follows the layer. False: the canvas origin.",
+                  "type": "boolean"
+                },
+                "name": {
+                  "description": "The pattern's stored name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "phase": {
+                  "description": "`[x, y]` offset of the tiling origin, in pixels.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "scale": {
+                  "description": "Scale as a fraction (1.0 = the tile at its own size).",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "common",
+                "name",
+                "id",
+                "scale",
+                "angle",
+                "link",
+                "phase"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "PatternOverlay"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Satin": {
+              "additionalProperties": false,
+              "description": "Interior shading from two offset, blurred copies of the layer's shape.",
+              "properties": {
+                "angle": {
+                  "description": "Degrees, counter-clockwise from 3 o'clock.",
+                  "type": "number"
+                },
+                "anti_alias": {
+                  "description": "True: the contour is anti-aliased.",
+                  "type": "boolean"
+                },
+                "color": {
+                  "$ref": "#/$defs/color"
+                },
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "contour": {
+                  "$ref": "#/$defs/contour"
+                },
+                "distance": {
+                  "description": "Offset in pixels.",
+                  "type": "number"
+                },
+                "invert": {
+                  "description": "True: the shading is inverted.",
+                  "type": "boolean"
+                },
+                "size": {
+                  "description": "Blur size in pixels.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "common",
+                "color",
+                "angle",
+                "distance",
+                "size",
+                "contour",
+                "anti_alias",
+                "invert"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Satin"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "BevelEmboss": {
+              "additionalProperties": false,
+              "description": "Highlights and shadows that make the layer's shape look raised or carved.",
+              "properties": {
+                "altitude": {
+                  "description": "Light altitude in degrees, 0 (grazing) to 90 (overhead).",
+                  "type": "number"
+                },
+                "angle": {
+                  "description": "Light direction in degrees, counter-clockwise from 3 o'clock: where the light comes FROM.",
+                  "type": "number"
+                },
+                "contour": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "The Contour element.",
+                      "properties": {
+                        "anti_alias": {
+                          "description": "True: anti-aliased.",
+                          "type": "boolean"
+                        },
+                        "contour": {
+                          "$ref": "#/$defs/contour"
+                        },
+                        "range": {
+                          "description": "0.0 to 1.0: the part of the bevel the contour spans.",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "contour",
+                        "range",
+                        "anti_alias"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Shapes the bevel's height profile. Null: off."
+                },
+                "depth": {
+                  "description": "Depth, 0.0 to 10.0 (1.0 = 100 %).",
+                  "type": "number"
+                },
+                "enabled": {
+                  "description": "False: stored but not drawn.",
+                  "type": "boolean"
+                },
+                "gloss_contour": {
+                  "$ref": "#/$defs/contour"
+                },
+                "highlight": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "highlight_color": {
+                  "$ref": "#/$defs/color"
+                },
+                "shadow": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "shadow_color": {
+                  "$ref": "#/$defs/color"
+                },
+                "size": {
+                  "description": "Bevel width in pixels.",
+                  "type": "number"
+                },
+                "soften": {
+                  "description": "Blur of the shading in pixels.",
+                  "type": "number"
+                },
+                "style": {
+                  "description": "Which edges are bevelled.",
+                  "enum": [
+                    "OuterBevel",
+                    "InnerBevel",
+                    "Emboss",
+                    "PillowEmboss",
+                    "StrokeEmboss"
+                  ],
+                  "type": "string"
+                },
+                "technique": {
+                  "description": "How the height profile is built.",
+                  "enum": [
+                    "Smooth",
+                    "ChiselHard",
+                    "ChiselSoft"
+                  ],
+                  "type": "string"
+                },
+                "texture": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "The Texture element.",
+                      "properties": {
+                        "depth": {
+                          "description": "-10.0 to 10.0 (1.0 = +100 %); negative carves the pattern in.",
+                          "type": "number"
+                        },
+                        "id": {
+                          "description": "The `id` of a `core.raster.pattern` node's payload.",
+                          "format": "werk-content-text",
+                          "type": "string"
+                        },
+                        "invert": {
+                          "description": "True: the pattern's luminance is inverted.",
+                          "type": "boolean"
+                        },
+                        "link": {
+                          "description": "True: the tiling origin follows the layer.",
+                          "type": "boolean"
+                        },
+                        "name": {
+                          "description": "The pattern's stored name.",
+                          "format": "werk-content-text",
+                          "type": "string"
+                        },
+                        "phase": {
+                          "description": "`[x, y]` offset in pixels.",
+                          "items": {
+                            "type": "number"
+                          },
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "type": "array"
+                        },
+                        "scale": {
+                          "description": "Scale as a fraction (1.0 = 100 %).",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "id",
+                        "scale",
+                        "depth",
+                        "invert",
+                        "link",
+                        "phase"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "A pattern whose luminance is added to the height. Null: off."
+                },
+                "up": {
+                  "description": "True: raised. False: carved.",
+                  "type": "boolean"
+                },
+                "use_global_light": {
+                  "description": "True: `angle` and `altitude` are ignored and the document's `global_light` is used.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "enabled",
+                "style",
+                "technique",
+                "depth",
+                "up",
+                "size",
+                "soften",
+                "angle",
+                "altitude",
+                "use_global_light",
+                "gloss_contour",
+                "highlight",
+                "highlight_color",
+                "shadow",
+                "shadow_color",
+                "contour",
+                "texture"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "BevelEmboss"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "effects": {
+      "additionalProperties": false,
+      "description": "A layer's style: its effects, drawn in list order.",
+      "properties": {
+        "enabled": {
+          "description": "False: no effect is drawn, whatever each one's own switch says.",
+          "type": "boolean"
+        },
+        "items": {
+          "description": "The effects.",
+          "items": {
+            "$ref": "#/$defs/effect"
+          },
+          "type": "array"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "description": "`[x, y]` in document pixels.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Where linked patterns anchor their tiling. Null: the layer's top-left."
+        }
+      },
+      "required": [
+        "enabled",
+        "items",
+        "reference"
+      ],
+      "type": "object"
+    },
+    "fill": {
+      "description": "What an area is filled with. Exactly one key: `Solid`, `Gradient` or `Pattern`.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Solid": {
+              "$ref": "#/$defs/color",
+              "description": "One colour over the whole area."
+            }
+          },
+          "required": [
+            "Solid"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Gradient": {
+              "additionalProperties": false,
+              "description": "A gradient between colour stops.",
+              "properties": {
+                "align": {
+                  "description": "True: the frame is the layer's bounds. False: the frame is the canvas.",
+                  "type": "boolean"
+                },
+                "angle": {
+                  "description": "Angle in degrees, counter-clockwise from the positive x axis (3 o'clock).",
+                  "type": "number"
+                },
+                "dither": {
+                  "description": "True: one 8-bit level of noise is added to hide banding.",
+                  "type": "boolean"
+                },
+                "midpoints": {
+                  "description": "One per segment between consecutive colour stops (sorted by location): where, as a fraction 0.0 to 1.0 of the segment, the two colours are mixed half and half. A missing entry means 0.5.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "offset": {
+                  "description": "`[x, y]` shift of the gradient's centre, as fractions of the frame's width and height.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "opacity_stops": {
+                  "description": "Opacity stops. Empty: a pixel's opacity is its colour stop's `alpha`. Otherwise it is that alpha times the interpolated opacity.",
+                  "items": {
+                    "description": "`[location, opacity]`, both 0.0 to 1.0.",
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "type": "array"
+                },
+                "reverse": {
+                  "description": "True: the stops are traversed from the last to the first.",
+                  "type": "boolean"
+                },
+                "scale": {
+                  "description": "Scale as a fraction: 1.0 is 100 %, the gradient spans the frame once.",
+                  "type": "number"
+                },
+                "stops": {
+                  "description": "Colour stops, each `[location, colour]`; location 0.0 (start) to 1.0 (end).",
+                  "items": {
+                    "$ref": "#/$defs/color_stop"
+                  },
+                  "type": "array"
+                },
+                "style": {
+                  "$ref": "#/$defs/gradient_style"
+                }
+              },
+              "required": [
+                "stops",
+                "angle",
+                "scale",
+                "style",
+                "reverse",
+                "opacity_stops",
+                "midpoints",
+                "offset",
+                "dither",
+                "align"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Gradient"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Pattern": {
+              "additionalProperties": false,
+              "description": "A repeating pattern tile.",
+              "properties": {
+                "angle": {
+                  "description": "Rotation in degrees, counter-clockwise.",
+                  "type": "number"
+                },
+                "id": {
+                  "description": "The `id` of a `core.raster.pattern` node of this document (compare with that node's payload field `id`). Empty: find it by `name`.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "link": {
+                  "description": "True: the tiling starts at the layer's top-left and moves with the layer. False: it starts at the canvas origin.",
+                  "type": "boolean"
+                },
+                "name": {
+                  "description": "The pattern's stored name. Used to find the pattern when `id` matches none.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "phase": {
+                  "description": "`[x, y]` offset of the tiling origin, in pixels.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "scale": {
+                  "description": "Scale as a fraction: 1.0 draws the tile at its own pixel size.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "scale",
+                "id",
+                "angle",
+                "link",
+                "phase"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Pattern"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "fx_common": {
+      "additionalProperties": false,
+      "description": "What every effect has.",
+      "properties": {
+        "blend": {
+          "$ref": "#/$defs/blend_mode"
+        },
+        "enabled": {
+          "description": "False: stored but not drawn.",
+          "type": "boolean"
+        },
+        "opacity": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "enabled",
+        "blend",
+        "opacity"
+      ],
+      "type": "object"
+    },
+    "fx_paint": {
+      "description": "What a stroke or glow is painted with. Exactly one key.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Color": {
+              "$ref": "#/$defs/color"
+            }
+          },
+          "required": [
+            "Color"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Gradient": {
+              "$ref": "#/$defs/gradient"
+            }
+          },
+          "required": [
+            "Gradient"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Pattern": {
+              "additionalProperties": false,
+              "description": "A pattern.",
+              "properties": {
+                "id": {
+                  "description": "The `id` of a `core.raster.pattern` node's payload.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Stored name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "scale": {
+                  "description": "Fraction, 1.0 = 100 %.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "id",
+                "scale"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Pattern"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "glow": {
+      "additionalProperties": false,
+      "description": "An outer glow (outside the layer's edges) or inner glow (inside them).",
+      "properties": {
+        "anti_alias": {
+          "description": "True: the contour is anti-aliased.",
+          "type": "boolean"
+        },
+        "common": {
+          "$ref": "#/$defs/fx_common"
+        },
+        "contour": {
+          "$ref": "#/$defs/contour"
+        },
+        "jitter": {
+          "description": "0.0 to 1.0: randomisation of a gradient glow.",
+          "type": "number"
+        },
+        "noise": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "paint": {
+          "$ref": "#/$defs/fx_paint"
+        },
+        "range": {
+          "description": "0.0 to 1.0: the part of the glow the contour spans.",
+          "type": "number"
+        },
+        "size": {
+          "description": "Size in pixels.",
+          "type": "number"
+        },
+        "source": {
+          "description": "Inner glow only: glows from the centre or from the edges.",
+          "enum": [
+            "Center",
+            "Edge"
+          ],
+          "type": "string"
+        },
+        "spread": {
+          "description": "Spread (outer) or choke (inner), 0.0 to 1.0.",
+          "type": "number"
+        },
+        "technique": {
+          "description": "How the glow's falloff is computed.",
+          "enum": [
+            "Softer",
+            "Precise"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "common",
+        "paint",
+        "technique",
+        "spread",
+        "size",
+        "contour",
+        "anti_alias",
+        "range",
+        "jitter",
+        "noise",
+        "source"
+      ],
+      "type": "object"
+    },
+    "gradient": {
+      "additionalProperties": false,
+      "description": "A gradient used by a layer effect.",
+      "properties": {
+        "align": {
+          "description": "True: laid out in the layer's bounds. False: in the canvas.",
+          "type": "boolean"
+        },
+        "angle": {
+          "description": "Degrees, counter-clockwise from 3 o'clock.",
+          "type": "number"
+        },
+        "offset": {
+          "description": "`[x, y]` centre offset as fractions of the bounds.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "opacity_stops": {
+          "description": "Opacity stops; empty means fully opaque.",
+          "items": {
+            "description": "`[location, opacity]`, both 0.0 to 1.0.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "reverse": {
+          "description": "True: traversed backwards.",
+          "type": "boolean"
+        },
+        "scale": {
+          "description": "Fraction, 1.0 = 100 %.",
+          "type": "number"
+        },
+        "stops": {
+          "description": "Colour stops, `[location, colour]`.",
+          "items": {
+            "$ref": "#/$defs/color_stop"
+          },
+          "type": "array"
+        },
+        "style": {
+          "$ref": "#/$defs/gradient_style"
+        }
+      },
+      "required": [
+        "stops",
+        "opacity_stops",
+        "style",
+        "angle",
+        "scale",
+        "reverse",
+        "align",
+        "offset"
+      ],
+      "type": "object"
+    },
+    "gradient_style": {
+      "description": "Gradient geometry: along a line, outward from the centre, around the centre, mirrored about the centre line, or as a diamond.",
+      "enum": [
+        "Linear",
+        "Radial",
+        "Angle",
+        "Reflected",
+        "Diamond"
+      ],
+      "type": "string"
+    },
+    "knot": {
+      "additionalProperties": false,
+      "description": "A Bezier knot.",
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/point"
+        },
+        "in_ctrl": {
+          "$ref": "#/$defs/point",
+          "description": "Control point of the segment ARRIVING at this knot."
+        },
+        "out_ctrl": {
+          "$ref": "#/$defs/point",
+          "description": "Control point of the segment LEAVING this knot."
+        },
+        "smooth": {
+          "description": "True: an editor keeps both handles collinear. No effect on the curve itself.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "anchor",
+        "in_ctrl",
+        "out_ctrl",
+        "smooth"
+      ],
+      "type": "object"
+    },
+    "label": {
+      "description": "The colour label shown in a layer list. No effect on pixels.",
+      "enum": [
+        "None",
+        "Red",
+        "Orange",
+        "Yellow",
+        "Green",
+        "Blue",
+        "Violet",
+        "Gray",
+        "Seafoam",
+        "Indigo",
+        "Magenta",
+        "Fuchsia"
+      ],
+      "type": "string"
+    },
+    "live_shape": {
+      "description": "The parametric shape a path was generated from, kept so an editor can change its parameters. `kind` selects the form.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "A rectangle.",
+          "properties": {
+            "kind": {
+              "const": "rect",
+              "type": "string"
+            },
+            "radii": {
+              "description": "Corner radii `[top-left, top-right, bottom-right, bottom-left]` in pixels.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            "rect": {
+              "description": "`[x, y, width, height]` in document pixels.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "kind",
+            "rect",
+            "radii"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "An ellipse inscribed in `rect`.",
+          "properties": {
+            "kind": {
+              "const": "ellipse",
+              "type": "string"
+            },
+            "rect": {
+              "description": "`[x, y, width, height]` in document pixels.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            }
+          },
+          "required": [
+            "kind",
+            "rect"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A regular polygon or star inscribed in `rect`.",
+          "properties": {
+            "kind": {
+              "const": "polygon",
+              "type": "string"
+            },
+            "rect": {
+              "description": "`[x, y, width, height]` in document pixels.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 4,
+              "minItems": 4,
+              "type": "array"
+            },
+            "sides": {
+              "description": "Number of sides (points of a star).",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "star_ratio": {
+              "description": "Inner radius / outer radius; 1.0 = a polygon.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "kind",
+            "rect",
+            "sides",
+            "star_ratio"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A line drawn as a filled bar.",
+          "properties": {
+            "from": {
+              "description": "`[x, y]`.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "kind": {
+              "const": "line",
+              "type": "string"
+            },
+            "to": {
+              "description": "`[x, y]`.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "weight": {
+              "description": "Thickness in pixels.",
+              "type": "number"
+            }
+          },
+          "required": [
+            "kind",
+            "from",
+            "to",
+            "weight"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "locks": {
+      "additionalProperties": false,
+      "description": "What may not be changed on the layer.",
+      "properties": {
+        "all": {
+          "description": "Nothing may be changed.",
+          "type": "boolean"
+        },
+        "artboard": {
+          "description": "The layer may not be moved to another artboard.",
+          "type": "boolean"
+        },
+        "pixels": {
+          "description": "Pixels may not be painted.",
+          "type": "boolean"
+        },
+        "position": {
+          "description": "The layer may not be moved.",
+          "type": "boolean"
+        },
+        "transparency": {
+          "description": "Transparent pixels stay transparent.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "transparency",
+        "pixels",
+        "position",
+        "artboard",
+        "all"
+      ],
+      "type": "object"
+    },
+    "mask": {
+      "additionalProperties": false,
+      "description": "A raster mask: one gray value per pixel, 0.0 hides, 1.0 reveals. The effective value is 1 - density * (1 - v).",
+      "properties": {
+        "density": {
+          "description": "0.0 to 1.0: how strongly the mask hides.",
+          "type": "number"
+        },
+        "enabled": {
+          "description": "False: stored but not applied (everything is revealed).",
+          "type": "boolean"
+        },
+        "feather": {
+          "description": "Feather radius in pixels.",
+          "type": "number"
+        },
+        "linked": {
+          "description": "True: the mask moves with the layer.",
+          "type": "boolean"
+        },
+        "surface": {
+          "description": "The `core.raster.surface` node holding the mask's pixels (one channel).",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "surface",
+        "enabled",
+        "linked",
+        "density",
+        "feather"
+      ],
+      "type": "object"
+    },
+    "paragraph_style": {
+      "additionalProperties": false,
+      "description": "A paragraph style. Lengths are in points.",
+      "properties": {
+        "align": {
+          "description": "Alignment; the Justify* values justify every line and align the last one as named (JustifyAll justifies it too).",
+          "enum": [
+            "Left",
+            "Center",
+            "Right",
+            "JustifyLeft",
+            "JustifyCenter",
+            "JustifyRight",
+            "JustifyAll"
+          ],
+          "type": "string"
+        },
+        "auto_leading": {
+          "description": "Automatic leading as a multiple of the font size (1.2 = 120 %).",
+          "type": "number"
+        },
+        "direction": {
+          "description": "Base direction: from the first strong character; left to right; right to left.",
+          "enum": [
+            "Auto",
+            "Ltr",
+            "Rtl"
+          ],
+          "type": "string"
+        },
+        "end_indent_pt": {
+          "description": "Points.",
+          "type": "number"
+        },
+        "first_line_indent_pt": {
+          "description": "Points.",
+          "type": "number"
+        },
+        "hyphenate": {
+          "description": "Hyphenation on.",
+          "type": "boolean"
+        },
+        "space_after_pt": {
+          "description": "Points.",
+          "type": "number"
+        },
+        "space_before_pt": {
+          "description": "Points.",
+          "type": "number"
+        },
+        "start_indent_pt": {
+          "description": "Points.",
+          "type": "number"
+        },
+        "style_sheet": {
+          "description": "The `id` of the paragraph style this paragraph uses. Absent: the basic paragraph style.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "align",
+        "first_line_indent_pt",
+        "start_indent_pt",
+        "end_indent_pt",
+        "space_before_pt",
+        "space_after_pt",
+        "auto_leading",
+        "direction",
+        "hyphenate"
+      ],
+      "type": "object"
+    },
+    "path": {
+      "additionalProperties": false,
+      "description": "A vector path of cubic Bezier subpaths, in document pixels (y down). Segment i of a subpath runs from knots[i].anchor via knots[i].out_ctrl and knots[i+1].in_ctrl to knots[i+1].anchor; a closed subpath adds the segment from the last knot back to the first. Each subpath is filled on its own with `fill_rule` and folded into the result, in order, with its `op`; the first subpath always acts as Combine.",
+      "properties": {
+        "fill_rule": {
+          "description": "Winding rule for filling each subpath.",
+          "enum": [
+            "NonZero",
+            "EvenOdd"
+          ],
+          "type": "string"
+        },
+        "inverted": {
+          "description": "True: the final area is inverted.",
+          "type": "boolean"
+        },
+        "subpaths": {
+          "description": "The subpaths.",
+          "items": {
+            "additionalProperties": false,
+            "description": "One subpath.",
+            "properties": {
+              "closed": {
+                "description": "True: closed.",
+                "type": "boolean"
+              },
+              "knots": {
+                "description": "The knots in order.",
+                "items": {
+                  "$ref": "#/$defs/knot"
+                },
+                "type": "array"
+              },
+              "op": {
+                "description": "How this subpath's area combines with the area so far: union; minus; intersection; exclusive-or; Join = it belongs to the previous subpath's shape and is filled together with it (holes).",
+                "enum": [
+                  "Combine",
+                  "Subtract",
+                  "Intersect",
+                  "Exclude",
+                  "Join"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "closed",
+              "knots",
+              "op"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "subpaths",
+        "fill_rule",
+        "inverted"
+      ],
+      "type": "object"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A position in document pixels: x to the right, y DOWN, origin at the canvas's top-left corner.",
+      "properties": {
+        "x": {
+          "description": "Pixels.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Pixels.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "rect": {
+      "additionalProperties": false,
+      "description": "A pixel rectangle: left and top inclusive, right and bottom exclusive.",
+      "properties": {
+        "x0": {
+          "description": "Left edge.",
+          "type": "integer"
+        },
+        "x1": {
+          "description": "Right edge (exclusive).",
+          "type": "integer"
+        },
+        "y0": {
+          "description": "Top edge.",
+          "type": "integer"
+        },
+        "y1": {
+          "description": "Bottom edge (exclusive).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x0",
+        "y0",
+        "x1",
+        "y1"
+      ],
+      "type": "object"
+    },
+    "shadow": {
+      "additionalProperties": false,
+      "description": "A drop shadow (behind the layer) or inner shadow (inside its edges).",
+      "properties": {
+        "angle": {
+          "description": "Light direction in degrees, counter-clockwise from 3 o'clock: where the light comes FROM. The shadow falls the opposite way.",
+          "type": "number"
+        },
+        "anti_alias": {
+          "description": "True: the contour is anti-aliased.",
+          "type": "boolean"
+        },
+        "color": {
+          "$ref": "#/$defs/color"
+        },
+        "common": {
+          "$ref": "#/$defs/fx_common"
+        },
+        "contour": {
+          "$ref": "#/$defs/contour"
+        },
+        "distance": {
+          "description": "Offset in pixels.",
+          "type": "number"
+        },
+        "knocks_out": {
+          "description": "Drop shadow only. True: the layer's own shape hides the shadow beneath it.",
+          "type": "boolean"
+        },
+        "noise": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "size": {
+          "description": "Blur size in pixels.",
+          "type": "number"
+        },
+        "spread": {
+          "description": "Spread (drop shadow) or choke (inner shadow), 0.0 to 1.0: the part of `size` that is solid.",
+          "type": "number"
+        },
+        "use_global_light": {
+          "description": "True: `angle` is ignored and the document's `global_light.angle` is used.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "common",
+        "color",
+        "angle",
+        "use_global_light",
+        "distance",
+        "spread",
+        "size",
+        "contour",
+        "anti_alias",
+        "noise",
+        "knocks_out"
+      ],
+      "type": "object"
+    },
+    "shape_stroke": {
+      "additionalProperties": false,
+      "description": "The stroke of a shape layer's outline.",
+      "properties": {
+        "align": {
+          "description": "Where the stroke lies relative to the path.",
+          "enum": [
+            "Inside",
+            "Center",
+            "Outside"
+          ],
+          "type": "string"
+        },
+        "cap": {
+          "description": "Line cap.",
+          "enum": [
+            "Butt",
+            "Round",
+            "Square"
+          ],
+          "type": "string"
+        },
+        "dash_offset": {
+          "description": "Dash offset as a multiple of the width.",
+          "type": "number"
+        },
+        "dashes": {
+          "description": "Dash and gap lengths as multiples of the width. Empty: solid.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "join": {
+          "description": "Line join.",
+          "enum": [
+            "Miter",
+            "Round",
+            "Bevel"
+          ],
+          "type": "string"
+        },
+        "miter_limit": {
+          "description": "Miter limit as a multiple of the width.",
+          "type": "number"
+        },
+        "opacity": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "paint": {
+          "$ref": "#/$defs/fill"
+        },
+        "width": {
+          "description": "Width in pixels.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "width",
+        "paint",
+        "opacity",
+        "align",
+        "cap",
+        "join",
+        "miter_limit",
+        "dashes",
+        "dash_offset"
+      ],
+      "type": "object"
+    },
+    "vector_mask": {
+      "additionalProperties": false,
+      "description": "A vector mask: the layer shows inside the path's area. A path without subpaths reveals everything.",
+      "properties": {
+        "density": {
+          "description": "0.0 to 1.0: how strongly the mask hides.",
+          "type": "number"
+        },
+        "enabled": {
+          "description": "False: stored but not applied.",
+          "type": "boolean"
+        },
+        "feather": {
+          "description": "Feather radius in pixels.",
+          "type": "number"
+        },
+        "linked": {
+          "description": "True: moves with the layer.",
+          "type": "boolean"
+        },
+        "path": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "required": [
+        "path",
+        "enabled",
+        "linked",
+        "density",
+        "feather"
+      ],
+      "type": "object"
+    },
+    "warp": {
+      "additionalProperties": false,
+      "description": "A warp of a smart object, in the source image's coordinates.",
+      "properties": {
+        "bend": {
+          "description": "Bend in percent, -100 to 100 (presets only).",
+          "type": "number"
+        },
+        "bounds": {
+          "description": "`[x0, y0, x1, y1]`: the source box the warp is defined over.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "hDistort": {
+          "description": "Horizontal distortion in percent, -100 to 100.",
+          "type": "number"
+        },
+        "mesh": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "description": "A grid of bicubic Bezier patches.",
+              "properties": {
+                "points": {
+                  "description": "Control points, row-major: (3*(len(us)-1)+1) columns by (3*(len(vs)-1)+1) rows.",
+                  "items": {
+                    "description": "`[x, y]` in output (document) coordinates.",
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 2,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  "type": "array"
+                },
+                "us": {
+                  "description": "Patch boundaries along x in the box's normalised coordinates: increasing, first 0, last 1.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                },
+                "vs": {
+                  "description": "Patch boundaries along y, likewise.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "us",
+                "vs",
+                "points"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The control mesh of a `custom` warp. Null otherwise."
+        },
+        "style": {
+          "description": "The warp shape; `custom` uses `mesh`.",
+          "enum": [
+            "none",
+            "custom",
+            "arc",
+            "arcLower",
+            "arcUpper",
+            "arch",
+            "bulge",
+            "shellLower",
+            "shellUpper",
+            "flag",
+            "wave",
+            "fish",
+            "rise",
+            "fisheye",
+            "inflate",
+            "squeeze",
+            "twist"
+          ],
+          "type": "string"
+        },
+        "vDistort": {
+          "description": "Vertical distortion in percent, -100 to 100.",
+          "type": "number"
+        },
+        "vertical": {
+          "description": "True: the warp runs along the vertical axis.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "style",
+        "bend",
+        "hDistort",
+        "vDistort",
+        "vertical",
+        "bounds",
+        "mesh"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.raster.layer.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One layer of a layered raster document: its properties and, by node id, its pixel surfaces. The node id is `layer-<n>`; n is the layer's number and never changes.",
+  "properties": {
+    "advanced": {
+      "$ref": "#/$defs/advanced"
+    },
+    "blend": {
+      "$ref": "#/$defs/blend_mode"
+    },
+    "blend_if": {
+      "$ref": "#/$defs/blend_if"
+    },
+    "clipped": {
+      "description": "True: the layer is drawn only where the nearest unclipped layer beneath it (in the same group) is opaque.",
+      "type": "boolean"
+    },
+    "content": {
+      "description": "What the layer holds. `kind` selects the form.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "description": "A pixel layer.",
+          "properties": {
+            "kind": {
+              "const": "raster",
+              "type": "string"
+            },
+            "pixels": {
+              "description": "The `core.raster.surface` node holding the layer's pixels, in document coordinates.",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "pixels"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A group of layers. Its children are listed in the document node's layer tree.",
+          "properties": {
+            "artboard": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/artboard"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Set when this group is an artboard. Null: a plain group."
+            },
+            "expanded": {
+              "description": "Shown expanded in a layer list. No effect on pixels.",
+              "type": "boolean"
+            },
+            "kind": {
+              "const": "group",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "expanded",
+            "artboard"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "An adjustment layer.",
+          "properties": {
+            "adjustment": {
+              "$ref": "#/$defs/adjustment"
+            },
+            "kind": {
+              "const": "adjustment",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "adjustment"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A fill layer: `fill` over the whole canvas, shaped by the layer's masks.",
+          "properties": {
+            "fill": {
+              "$ref": "#/$defs/fill"
+            },
+            "kind": {
+              "const": "fill",
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "fill"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A text layer.",
+          "properties": {
+            "antialias": {
+              "description": "Glyph anti-aliasing method.",
+              "enum": [
+                "None",
+                "Sharp",
+                "Crisp",
+                "Strong",
+                "Smooth",
+                "Windows",
+                "WindowsLcd"
+              ],
+              "type": "string"
+            },
+            "cache": {
+              "anyOf": [
+                {
+                  "description": "A `core.raster.surface` node.",
+                  "format": "werk-node-ref",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The text rendered to pixels, in document coordinates. Null: not rendered yet."
+            },
+            "color": {
+              "$ref": "#/$defs/color",
+              "description": "Colour of the first run (a summary)."
+            },
+            "font_family": {
+              "description": "Family of the first run (a summary; `runs` decide).",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "kind": {
+              "const": "text",
+              "type": "string"
+            },
+            "orientation": {
+              "description": "Horizontal lines, or vertical columns advancing right to left.",
+              "enum": [
+                "Horizontal",
+                "Vertical"
+              ],
+              "type": "string"
+            },
+            "paragraphs": {
+              "description": "Paragraph runs. Empty: the default paragraph style.",
+              "items": {
+                "additionalProperties": false,
+                "description": "A paragraph style applied to `len` bytes.",
+                "properties": {
+                  "len": {
+                    "description": "Length in UTF-8 bytes, whole paragraphs including the break.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "style": {
+                    "$ref": "#/$defs/paragraph_style"
+                  }
+                },
+                "required": [
+                  "len",
+                  "style"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "runs": {
+              "description": "Character runs covering `text` in order. Empty: one run built from `font_family`, `size_pt` and `color`.",
+              "items": {
+                "additionalProperties": false,
+                "description": "A character style applied to `len` bytes.",
+                "properties": {
+                  "len": {
+                    "description": "Length in UTF-8 BYTES of `text`.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "style": {
+                    "$ref": "#/$defs/char_style"
+                  }
+                },
+                "required": [
+                  "len",
+                  "style"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "shape": {
+              "description": "Point text grows from its anchor; box text wraps inside a rectangle.",
+              "oneOf": [
+                {
+                  "const": "Point",
+                  "description": "Point text.",
+                  "type": "string"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "Box": {
+                      "additionalProperties": false,
+                      "description": "Box text; text-space pixels.",
+                      "properties": {
+                        "height": {
+                          "description": "Height.",
+                          "type": "number"
+                        },
+                        "width": {
+                          "description": "Width.",
+                          "type": "number"
+                        },
+                        "x": {
+                          "description": "Left.",
+                          "type": "number"
+                        },
+                        "y": {
+                          "description": "Top.",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "x",
+                        "y",
+                        "width",
+                        "height"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "Box"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "size_pt": {
+              "description": "Size of the first run in points (a summary).",
+              "type": "number"
+            },
+            "text": {
+              "description": "The text. Paragraphs are separated by U+000D or U+000A.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "transform": {
+              "$ref": "#/$defs/affine",
+              "description": "Maps text space (pixels; origin = the first baseline's start for point text) to document pixels."
+            },
+            "warp": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "description": "Warp applied to the glyph outlines.",
+                  "properties": {
+                    "horizontal": {
+                      "description": "True: horizontal warp axis.",
+                      "type": "boolean"
+                    },
+                    "horizontal_distortion": {
+                      "description": "Percent, -100 to 100.",
+                      "type": "number"
+                    },
+                    "style": {
+                      "description": "Warp shape name: warpNone, warpArc, warpArcLower, warpArcUpper, warpArch, warpBulge, warpShellLower, warpShellUpper, warpFlag, warpWave, warpFish, warpRise, warpFisheye, warpInflate, warpSqueeze, warpTwist.",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "Bend in percent, -100 to 100.",
+                      "type": "number"
+                    },
+                    "vertical_distortion": {
+                      "description": "Percent, -100 to 100.",
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "style",
+                    "value",
+                    "horizontal_distortion",
+                    "vertical_distortion",
+                    "horizontal"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Null: no warp."
+            }
+          },
+          "required": [
+            "kind",
+            "text",
+            "font_family",
+            "size_pt",
+            "color",
+            "transform",
+            "runs",
+            "paragraphs",
+            "shape",
+            "orientation",
+            "antialias",
+            "warp",
+            "cache"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A shape layer: a filled and/or stroked path.",
+          "properties": {
+            "cache": {
+              "anyOf": [
+                {
+                  "description": "A `core.raster.surface` node.",
+                  "format": "werk-node-ref",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The shape rendered to pixels. Null: not rendered yet."
+            },
+            "fill": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/fill"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Null: no fill."
+            },
+            "kind": {
+              "const": "shape",
+              "type": "string"
+            },
+            "live": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/live_shape"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Null: a free-form path."
+            },
+            "path": {
+              "$ref": "#/$defs/path"
+            },
+            "stroke": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/shape_stroke"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Null: no stroke."
+            }
+          },
+          "required": [
+            "kind",
+            "path",
+            "fill",
+            "stroke",
+            "live",
+            "cache"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "description": "A smart object: another file placed in the document and rendered through a transform and a stack of non-destructive filters.",
+          "properties": {
+            "cache": {
+              "anyOf": [
+                {
+                  "description": "A `core.raster.surface` node.",
+                  "format": "werk-node-ref",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The smart object rendered to pixels in document coordinates: what the layer looks like. Null: not rendered yet."
+            },
+            "contents_id": {
+              "description": "Smart objects with the same number are instances of one source: editing the source changes all of them.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "decoded": {
+              "anyOf": [
+                {
+                  "description": "A `core.raster.surface` node.",
+                  "format": "werk-node-ref",
+                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The source file decoded to pixels at its own size, origin (0, 0), before `transform` and filters. Null: the writer could not decode the source."
+            },
+            "filter_mask": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/mask"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Where the filtered result shows over the unfiltered one. Null: everywhere."
+            },
+            "filters_enabled": {
+              "description": "False: the whole filter stack is off.",
+              "type": "boolean"
+            },
+            "kind": {
+              "const": "smart",
+              "type": "string"
+            },
+            "perspective": {
+              "anyOf": [
+                {
+                  "description": "Row-major 3 x 3 projective matrix from source pixels to document pixels.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 9,
+                  "minItems": 9,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A projective placement; it overrides `transform`. Null: affine."
+            },
+            "smart_filters": {
+              "description": "Filters applied in order to the rendered source.",
+              "items": {
+                "additionalProperties": false,
+                "description": "One non-destructive filter.",
+                "properties": {
+                  "blend": {
+                    "$ref": "#/$defs/blend_mode"
+                  },
+                  "command": {
+                    "description": "The id of the PhotoCraft command that implements the filter, e.g. `filter.blur.gaussian`.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  },
+                  "opacity": {
+                    "description": "0.0 to 1.0.",
+                    "type": "number"
+                  },
+                  "params": {
+                    "description": "The command's parameters: a JSON value whose shape the command defines. Opaque to this profile."
+                  },
+                  "visible": {
+                    "description": "False: stored but not applied.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "command",
+                  "params",
+                  "blend",
+                  "opacity",
+                  "visible"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "source": {
+              "description": "Where the placed file is.",
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "description": "The file travels in this package.",
+                  "properties": {
+                    "file_name": {
+                      "description": "The file's name when it was placed (no directory).",
+                      "format": "werk-content-text",
+                      "type": "string"
+                    },
+                    "kind": {
+                      "const": "embedded",
+                      "type": "string"
+                    },
+                    "source": {
+                      "anyOf": [
+                        {
+                          "description": "A `core.raster.source`, `core.raster.source-svg` or `x.photocraft.source.<format>` node (section 3.13 of the profile specification) carrying the file verbatim.",
+                          "format": "werk-node-ref",
+                          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "Null: the file is not in this package."
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "file_name",
+                    "source"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "description": "The application held only a reference to a file outside the document.",
+                  "properties": {
+                    "embedded": {
+                      "anyOf": [
+                        {
+                          "description": "A `core.raster.source`, `core.raster.source-svg` or `x.photocraft.source.<format>` node carrying a copy of the file as it was when the document was saved.",
+                          "format": "werk-node-ref",
+                          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "Null: the file could not be read at save time and is not in this package."
+                    },
+                    "kind": {
+                      "const": "linked",
+                      "type": "string"
+                    },
+                    "origin_note": {
+                      "description": "Free text ABOUT an origin: the path or name by which the application referred to a file outside the document when it was saved. It is a note for a person and is NEVER followed: a reader that wants the file reads the node `embedded` names, and when `embedded` is null the file is not in this package.",
+                      "format": "werk-provenance-note",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "origin_note",
+                    "embedded"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "stack_mode": {
+              "anyOf": [
+                {
+                  "description": "A per-pixel statistic.",
+                  "enum": [
+                    "Entropy",
+                    "Kurtosis",
+                    "Maximum",
+                    "Mean",
+                    "Median",
+                    "Minimum",
+                    "Range",
+                    "Skewness",
+                    "StandardDeviation",
+                    "Summation",
+                    "Variance"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "When set, the source's top-level layers are combined per pixel with this statistic instead of composited. Null: composited."
+            },
+            "transform": {
+              "$ref": "#/$defs/affine",
+              "description": "Maps source pixels to document pixels."
+            },
+            "warp": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/warp"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "A warp applied before `transform`. Null: none."
+            }
+          },
+          "required": [
+            "kind",
+            "contents_id",
+            "source",
+            "transform",
+            "smart_filters",
+            "filters_enabled",
+            "filter_mask",
+            "warp",
+            "stack_mode",
+            "perspective",
+            "cache",
+            "decoded"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "effects": {
+      "$ref": "#/$defs/effects"
+    },
+    "excluded_channels": {
+      "description": "Bit i set: colour channel i of the document's mode is left out of blending (the backdrop's value is kept). 0: every channel blends.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "fill_cache": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "Pixels another application rendered for a fill layer.",
+          "properties": {
+            "fill": {
+              "$ref": "#/$defs/fill",
+              "description": "The fill these pixels were rendered for. The pixels are used only while it equals the layer's fill."
+            },
+            "surface": {
+              "description": "A `core.raster.surface` node, document coordinates.",
+              "format": "werk-node-ref",
+              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "fill",
+            "surface"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Null: none."
+    },
+    "fill_opacity": {
+      "description": "0.0 to 1.0: applies to the content but not to its effects.",
+      "type": "number"
+    },
+    "label": {
+      "$ref": "#/$defs/label"
+    },
+    "link_group": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Layers with the same number move together. Null: not linked."
+    },
+    "locks": {
+      "$ref": "#/$defs/locks"
+    },
+    "mask": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/mask"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The layer's raster mask. Null: none."
+    },
+    "name": {
+      "description": "The layer's name as the user sees it. Any Unicode.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "opacity": {
+      "description": "0.0 transparent to 1.0 opaque: applies to the content and its effects.",
+      "type": "number"
+    },
+    "psd": {
+      "anyOf": [
+        {
+          "description": "The layer's `x.photocraft.psd-blocks` node.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Verbatim PSD data kept for a byte-faithful PSD export. Null: none."
+    },
+    "psd_id": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The layer id a PSD file gave this layer. Null: none."
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "vector_mask": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/vector_mask"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The layer's vector mask, applied together with `mask`. Null: none."
+    },
+    "video": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "A video layer's frames.",
+          "properties": {
+            "fps": {
+              "description": "Frames per second of the footage.",
+              "type": "number"
+            },
+            "frames": {
+              "description": "One surface per frame, frame 0 first. The layer shows frame `timeline.current` of the document.",
+              "items": {
+                "description": "A `core.raster.surface` node.",
+                "format": "werk-node-ref",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "original_frames": {
+              "anyOf": [
+                {
+                  "description": "The untouched footage, same count as `frames`.",
+                  "items": {
+                    "description": "A `core.raster.surface` node.",
+                    "format": "werk-node-ref",
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Null: the layer was created blank."
+            },
+            "show_altered": {
+              "description": "True: the painted frames are shown. False: the original footage.",
+              "type": "boolean"
+            },
+            "source": {
+              "description": "Where the footage came from.",
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "description": "Created blank.",
+                  "properties": {
+                    "kind": {
+                      "const": "blank",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "description": "Loaded from a file outside the document.",
+                  "properties": {
+                    "embedded": {
+                      "anyOf": [
+                        {
+                          "description": "A `core.raster.source`, `core.raster.source-svg` or `x.photocraft.source.<format>` node carrying a copy of the footage file.",
+                          "format": "werk-node-ref",
+                          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "description": "Null: not in this package (the decoded frames are)."
+                    },
+                    "kind": {
+                      "const": "file",
+                      "type": "string"
+                    },
+                    "origin_note": {
+                      "description": "Free text ABOUT an origin: the path or name by which the application referred to a file outside the document when it was saved. It is a note for a person and is NEVER followed: a reader that wants the file reads the node `embedded` names, and when `embedded` is null the file is not in this package.",
+                      "format": "werk-provenance-note",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "origin_note",
+                    "embedded"
+                  ],
+                  "type": "object"
+                }
+              ]
+            }
+          },
+          "required": [
+            "frames",
+            "original_frames",
+            "source",
+            "fps",
+            "show_altered"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Null: not a video layer."
+    },
+    "visible": {
+      "description": "False: the layer is not drawn.",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "visible",
+    "locks",
+    "blend",
+    "opacity",
+    "fill_opacity",
+    "clipped",
+    "mask",
+    "vector_mask",
+    "effects",
+    "label",
+    "content",
+    "psd_id",
+    "psd",
+    "fill_cache",
+    "link_group",
+    "excluded_channels",
+    "blend_if",
+    "advanced",
+    "video"
+  ],
+  "title": "core.raster.layer — werk profile raster-layers/1",
+  "type": "object"
+}

@@ -1,0 +1,1454 @@
+{
+  "$defs": {
+    "color": {
+      "additionalProperties": false,
+      "description": "A colour with alpha, as normalised numbers.",
+      "properties": {
+        "alpha": {
+          "description": "Opacity, 0.0 transparent to 1.0 opaque (straight, not premultiplied).",
+          "type": "number"
+        },
+        "c": {
+          "description": "Up to four colour components in the order `mode` gives; unused ones are 0. Nominal range 0.0 to 1.0; a 32-bit float document may hold values outside it.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "mode": {
+          "$ref": "#/$defs/color_mode"
+        }
+      },
+      "required": [
+        "mode",
+        "c",
+        "alpha"
+      ],
+      "type": "object"
+    },
+    "color_mode": {
+      "description": "A colour model. Rgb, Indexed, Multichannel: components are red, green, blue. Grayscale, Bitmap, Duotone: one component, 0.0 black to 1.0 white. Cmyk: cyan, magenta, yellow, black as INK amounts, 0.0 no ink to 1.0 full ink. Lab: lightness L*/100, then (a* + 128)/255 and (b* + 128)/255.",
+      "enum": [
+        "Bitmap",
+        "Grayscale",
+        "Indexed",
+        "Rgb",
+        "Cmyk",
+        "Lab",
+        "Multichannel",
+        "Duotone"
+      ],
+      "type": "string"
+    },
+    "curve_point": {
+      "additionalProperties": false,
+      "description": "One point of a transfer curve.",
+      "properties": {
+        "input": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "output": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "input",
+        "output"
+      ],
+      "type": "object"
+    },
+    "knot": {
+      "additionalProperties": false,
+      "description": "A Bezier knot.",
+      "properties": {
+        "anchor": {
+          "$ref": "#/$defs/point"
+        },
+        "in_ctrl": {
+          "$ref": "#/$defs/point",
+          "description": "Control point of the segment ARRIVING at this knot."
+        },
+        "out_ctrl": {
+          "$ref": "#/$defs/point",
+          "description": "Control point of the segment LEAVING this knot."
+        },
+        "smooth": {
+          "description": "True: an editor keeps both handles collinear. No effect on the curve itself.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "anchor",
+        "in_ctrl",
+        "out_ctrl",
+        "smooth"
+      ],
+      "type": "object"
+    },
+    "path": {
+      "additionalProperties": false,
+      "description": "A vector path of cubic Bezier subpaths, in document pixels (y down). Segment i of a subpath runs from knots[i].anchor via knots[i].out_ctrl and knots[i+1].in_ctrl to knots[i+1].anchor; a closed subpath adds the segment from the last knot back to the first. Each subpath is filled on its own with `fill_rule` and folded into the result, in order, with its `op`; the first subpath always acts as Combine.",
+      "properties": {
+        "fill_rule": {
+          "description": "Winding rule for filling each subpath.",
+          "enum": [
+            "NonZero",
+            "EvenOdd"
+          ],
+          "type": "string"
+        },
+        "inverted": {
+          "description": "True: the final area is inverted.",
+          "type": "boolean"
+        },
+        "subpaths": {
+          "description": "The subpaths.",
+          "items": {
+            "additionalProperties": false,
+            "description": "One subpath.",
+            "properties": {
+              "closed": {
+                "description": "True: closed.",
+                "type": "boolean"
+              },
+              "knots": {
+                "description": "The knots in order.",
+                "items": {
+                  "$ref": "#/$defs/knot"
+                },
+                "type": "array"
+              },
+              "op": {
+                "description": "How this subpath's area combines with the area so far: union; minus; intersection; exclusive-or; Join = it belongs to the previous subpath's shape and is filled together with it (holes).",
+                "enum": [
+                  "Combine",
+                  "Subtract",
+                  "Intersect",
+                  "Exclude",
+                  "Join"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "closed",
+              "knots",
+              "op"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "subpaths",
+        "fill_rule",
+        "inverted"
+      ],
+      "type": "object"
+    },
+    "point": {
+      "additionalProperties": false,
+      "description": "A position in document pixels: x to the right, y DOWN, origin at the canvas's top-left corner.",
+      "properties": {
+        "x": {
+          "description": "Pixels.",
+          "type": "number"
+        },
+        "y": {
+          "description": "Pixels.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "type": "object"
+    },
+    "rect": {
+      "additionalProperties": false,
+      "description": "A pixel rectangle: left and top inclusive, right and bottom exclusive.",
+      "properties": {
+        "x0": {
+          "description": "Left edge.",
+          "type": "integer"
+        },
+        "x1": {
+          "description": "Right edge (exclusive).",
+          "type": "integer"
+        },
+        "y0": {
+          "description": "Top edge.",
+          "type": "integer"
+        },
+        "y1": {
+          "description": "Bottom edge (exclusive).",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "x0",
+        "y0",
+        "x1",
+        "y1"
+      ],
+      "type": "object"
+    },
+    "tree_entry": {
+      "additionalProperties": false,
+      "description": "One layer of the tree.",
+      "properties": {
+        "children": {
+          "description": "Present exactly when the layer is a group: its children, bottom to top (possibly empty).",
+          "items": {
+            "$ref": "#/$defs/tree_entry"
+          },
+          "type": "array"
+        },
+        "layer": {
+          "description": "The `core.raster.layer` node. Its node id is `layer-<n>` and is the layer's identity for the life of the document.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "layer"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.raster.document.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The structure of a layered raster document: its canvas, its colour, the layer tree, and the node ids of every unit. It carries no unit's content. Coordinates are document pixels: origin at the canvas's top-left corner, x to the right, y down.",
+  "properties": {
+    "app": {
+      "additionalProperties": false,
+      "description": "PhotoCraft's own bookkeeping. Another writer sets `document_id` to 0.",
+      "properties": {
+        "document_id": {
+          "description": "The in-process number of the document in the session that saved it. No meaning to another reader.",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "type": "object"
+    },
+    "channels": {
+      "description": "Saved selections and spot colour channels, in panel order.",
+      "items": {
+        "description": "A `core.raster.channel` node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "clipping_path": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "The clipping path.",
+          "properties": {
+            "flatness": {
+              "description": "Output flatness in device pixels; 0 = the printer's default.",
+              "type": "number"
+            },
+            "name": {
+              "description": "The `name` of one of the saved paths.",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name",
+            "flatness"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Which saved path clips the image on export. Null: none."
+    },
+    "color_mode": {
+      "$ref": "#/$defs/color_mode",
+      "description": "The document's colour model. Layer pixels use Rgb storage when this is Indexed or Multichannel, and Grayscale storage when it is Bitmap or Duotone (each surface states its own format)."
+    },
+    "color_space": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "What the embedded ICC profile declares, read from it when the file was saved.",
+          "properties": {
+            "connection_space": {
+              "description": "The profile connection space.",
+              "enum": [
+                "xyz",
+                "lab"
+              ],
+              "type": "string"
+            },
+            "data_color_space": {
+              "description": "The colour space of device values, lowercase (e.g. \"rgb\", \"cmyk\", \"gray\").",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "description": {
+              "description": "The profile's description tag.",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "icc_version": {
+              "description": "`[major, minor.bugfix byte]`, e.g. [4, 48] for version 4.3.",
+              "items": {
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "profile_class": {
+              "description": "The profile class, lowercase (e.g. \"display\", \"output\", \"input\").",
+              "format": "werk-content-text",
+              "type": "string"
+            },
+            "rgb_to_xyz_d50": {
+              "anyOf": [
+                {
+                  "description": "Row-major 3 x 3 matrix: XYZ(D50) = M * linear RGB.",
+                  "items": {
+                    "description": "One row.",
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  "maxItems": 3,
+                  "minItems": 3,
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "For a matrix RGB profile: the colorant matrix. Null for any other profile."
+            },
+            "transfer": {
+              "anyOf": [
+                {
+                  "description": "Three curves (red, green, blue) or one (gray).",
+                  "items": {
+                    "description": "One tone curve: device value (0.0 to 1.0) to linear light.",
+                    "oneOf": [
+                      {
+                        "additionalProperties": false,
+                        "description": "y = x.",
+                        "properties": {
+                          "kind": {
+                            "const": "identity",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "description": "y = x ^ gamma.",
+                        "properties": {
+                          "gamma": {
+                            "description": "The exponent.",
+                            "type": "number"
+                          },
+                          "kind": {
+                            "const": "gamma",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "gamma"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "description": "An ICC parametricCurveType.",
+                        "properties": {
+                          "function": {
+                            "description": "ICC function type 0 to 4.",
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          "kind": {
+                            "const": "parametric",
+                            "type": "string"
+                          },
+                          "params": {
+                            "description": "The function's parameters in ICC order: g, a, b, c, d, e, f (as many as the type uses).",
+                            "items": {
+                              "type": "number"
+                            },
+                            "type": "array"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "function",
+                          "params"
+                        ],
+                        "type": "object"
+                      },
+                      {
+                        "additionalProperties": false,
+                        "description": "A sampled table; the samples themselves are only in the ICC profile.",
+                        "properties": {
+                          "entries": {
+                            "description": "Number of samples.",
+                            "minimum": 0,
+                            "type": "integer"
+                          },
+                          "gamma_estimate": {
+                            "description": "The exponent of the power curve through the table's midpoint. A summary only.",
+                            "type": "number"
+                          },
+                          "kind": {
+                            "const": "table",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "entries",
+                          "gamma_estimate"
+                        ],
+                        "type": "object"
+                      }
+                    ]
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "For a matrix or gray profile: its tone curves. Null for any other profile."
+            },
+            "white_point_xyz": {
+              "description": "The media white point as CIE XYZ (Y = 1 for white).",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "description",
+            "profile_class",
+            "data_color_space",
+            "connection_space",
+            "icc_version",
+            "white_point_xyz",
+            "rgb_to_xyz_d50",
+            "transfer"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "A numeric summary of the document's colour space. Null: the document has no embedded profile (its colour values are uncalibrated) or the profile could not be parsed."
+    },
+    "color_table": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "An indexed-colour palette.",
+          "properties": {
+            "colors": {
+              "description": "At most 256 entries.",
+              "items": {
+                "description": "sRGB `[r, g, b]`, 0 to 255.",
+                "items": {
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "transparent": {
+              "anyOf": [
+                {
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Index of the entry shown as transparent. Null: none."
+            }
+          },
+          "required": [
+            "colors",
+            "transparent"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The palette while `color_mode` is Indexed. Null otherwise."
+    },
+    "duotone": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "Duotone inks.",
+          "properties": {
+            "inks": {
+              "description": "1 to 4 inks.",
+              "items": {
+                "additionalProperties": false,
+                "description": "One ink.",
+                "properties": {
+                  "color": {
+                    "description": "Display colour of the solid ink, sRGB `[r, g, b]`, 0.0 to 1.0.",
+                    "items": {
+                      "type": "number"
+                    },
+                    "maxItems": 3,
+                    "minItems": 3,
+                    "type": "array"
+                  },
+                  "curve": {
+                    "description": "Ink density curve: input = gray density (0 paper, 1 solid), output = ink density; straight segments between points.",
+                    "items": {
+                      "$ref": "#/$defs/curve_point"
+                    },
+                    "type": "array"
+                  },
+                  "name": {
+                    "description": "Ink name.",
+                    "format": "werk-content-text",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "color",
+                  "curve"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "inks"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The inks while `color_mode` is Duotone. Null otherwise."
+    },
+    "file_encoding": {
+      "additionalProperties": false,
+      "description": "How the document's lossy file was encoded when it was opened, so an export can match it.",
+      "properties": {
+        "jpegQuality": {
+          "description": "JPEG quality, 1 to 100.",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "webpLossless": {
+          "description": "True: lossless WebP.",
+          "type": "boolean"
+        },
+        "webpQuality": {
+          "description": "Lossy WebP quality, 1 to 100.",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "fonts": {
+      "description": "Every font face the document's text layers name, each once, sorted by family then style. This list is how the file accounts for its fonts: a face with status `embedded` has its font file in the package (`node`); a face with status `restricted` or `missing` does not, and the list says so instead of leaving a silent dependency. The rows have the shape the sibling ArtCraft profiles use (`family`, `style`, `status`, `use`, `node`, `faceIndex`).",
+      "items": {
+        "additionalProperties": false,
+        "description": "One font face.",
+        "properties": {
+          "faceIndex": {
+            "description": "With status `embedded`: the index of the face within the font file (0 for a single-face file; the index in the collection's offset table for a `.ttc`). Otherwise 0.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "family": {
+            "description": "Family name as the text runs spell it.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "italic": {
+            "description": "True: the runs ask for an italic face.",
+            "type": "boolean"
+          },
+          "node": {
+            "anyOf": [
+              {
+                "description": "With status `embedded`: the `core.text.font` node holding the font file (a TrueType / OpenType file or collection; format `sfnt`), verbatim.",
+                "format": "werk-node-ref",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null: the font file is NOT in this package (status `restricted` or `missing`)."
+          },
+          "postscript_name": {
+            "anyOf": [
+              {
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "PostScript name of the face, when a run records one."
+          },
+          "status": {
+            "description": "Whether the package carries the font. `embedded`: the font file is in the package and `node` names it. `restricted`: the font's licence forbids passing it on (its OS/2 `fsType` has the Restricted License bit and no less restrictive bit), so it is named only; a reader substitutes a font. `missing`: the writing application did not have the font, so it is named only; a reader substitutes a font. In the last two cases the text layers that use the face still carry their rendered appearance in `cache`.",
+            "enum": [
+              "embedded",
+              "restricted",
+              "missing"
+            ],
+            "type": "string"
+          },
+          "style": {
+            "description": "Face name, e.g. \"Bold Italic\". May be empty.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "use": {
+            "description": "Why the font is listed. `text`: text of the document is set in it.",
+            "enum": [
+              "text"
+            ],
+            "type": "string"
+          },
+          "weight": {
+            "description": "CSS-style weight the runs ask for.",
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "family",
+          "style",
+          "status",
+          "use",
+          "node",
+          "faceIndex",
+          "postscript_name",
+          "weight",
+          "italic"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "global_light": {
+      "additionalProperties": false,
+      "description": "The light every effect with `use_global_light` uses.",
+      "properties": {
+        "altitude": {
+          "description": "Degrees, 0 to 90.",
+          "type": "number"
+        },
+        "angle": {
+          "description": "Degrees, counter-clockwise from 3 o'clock: where the light comes from.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "angle",
+        "altitude"
+      ],
+      "type": "object"
+    },
+    "guides": {
+      "additionalProperties": false,
+      "description": "Ruler guides.",
+      "properties": {
+        "colors": {
+          "description": "Guides with their own colour. Absent: none.",
+          "items": {
+            "additionalProperties": false,
+            "description": "One guide's own colour.",
+            "properties": {
+              "position": {
+                "description": "The guide's position in pixels; it names the guide.",
+                "type": "number"
+              },
+              "rgb": {
+                "description": "sRGB, 0 to 255.",
+                "items": {
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "maxItems": 3,
+                "minItems": 3,
+                "type": "array"
+              },
+              "vertical": {
+                "description": "True: a vertical guide.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "vertical",
+              "position",
+              "rgb"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "horizontal": {
+          "description": "y positions in pixels.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "vertical": {
+          "description": "x positions in pixels.",
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "horizontal",
+        "vertical"
+      ],
+      "type": "object"
+    },
+    "height": {
+      "description": "Canvas height in pixels.",
+      "maximum": 300000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "icc_profile": {
+      "anyOf": [
+        {
+          "description": "The node carrying the ICC profile verbatim: a `core.raster.source` whose `meta.payload_format` is `icc` (section 3.13 of the profile specification).",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Null: no embedded profile."
+    },
+    "last_applied_comp": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The `id` of the comp applied last. Null: the document shows its own state."
+    },
+    "last_document_state": {
+      "anyOf": [
+        {
+          "description": "A `core.raster.comp` node whose `id` is 0.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The layer state saved when a comp was applied over the document's own state. Null: none."
+    },
+    "layer_comps": {
+      "description": "Layer comps, top to bottom as listed.",
+      "items": {
+        "description": "A `core.raster.comp` node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "layers": {
+      "description": "Layers from BOTTOM to TOP: entry 0 is drawn first.",
+      "items": {
+        "$ref": "#/$defs/tree_entry"
+      },
+      "type": "array"
+    },
+    "measurement": {
+      "additionalProperties": false,
+      "description": "Measurement scale, count markers and the ruler line.",
+      "properties": {
+        "active_count_group": {
+          "description": "Index into `count_groups` that new markers go to.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "count_groups": {
+          "description": "Count groups.",
+          "items": {
+            "additionalProperties": false,
+            "description": "One group of count markers.",
+            "properties": {
+              "color": {
+                "$ref": "#/$defs/color"
+              },
+              "label_size": {
+                "description": "Label font size in screen pixels.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "marker_size": {
+                "description": "Marker size in screen pixels.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "name": {
+                "description": "Group name.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "points": {
+                "description": "Markers in click order.",
+                "items": {
+                  "description": "`[x, y]` in document pixels.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "type": "array"
+              },
+              "visible": {
+                "description": "Shown.",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "name",
+              "color",
+              "marker_size",
+              "label_size",
+              "visible",
+              "points"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "ruler": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "description": "The ruler line.",
+              "properties": {
+                "end": {
+                  "description": "`[x, y]`.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "protractor": {
+                  "anyOf": [
+                    {
+                      "description": "`[x, y]`.",
+                      "items": {
+                        "type": "number"
+                      },
+                      "maxItems": 2,
+                      "minItems": 2,
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "End of a second arm from `start`. Null: none."
+                },
+                "start": {
+                  "description": "`[x, y]`.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "start",
+                "end",
+                "protractor"
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null: no ruler line."
+        },
+        "scale": {
+          "additionalProperties": false,
+          "description": "`pixel_length` pixels equal `logical_length` `units`.",
+          "properties": {
+            "logical_length": {
+              "description": "In `units`.",
+              "type": "number"
+            },
+            "pixel_length": {
+              "description": "Pixels.",
+              "type": "number"
+            },
+            "units": {
+              "description": "Unit name, e.g. \"mm\".",
+              "format": "werk-content-text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "pixel_length",
+            "logical_length",
+            "units"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "scale",
+        "count_groups",
+        "active_count_group",
+        "ruler"
+      ],
+      "type": "object"
+    },
+    "metadata": {
+      "anyOf": [
+        {
+          "description": "The `core.raster.metadata` node.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "XMP, text metadata and the EXIF reference. Null: the document has none."
+    },
+    "name": {
+      "description": "The document's title as the user sees it. Any Unicode, possibly empty.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "notes": {
+      "description": "Annotations placed on the canvas.",
+      "items": {
+        "additionalProperties": false,
+        "description": "An annotation.",
+        "properties": {
+          "author": {
+            "description": "Author name.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "color": {
+            "$ref": "#/$defs/color"
+          },
+          "modified": {
+            "description": "Modification date as PDF date text (`D:YYYYMMDDhhmmss...`). Empty: unknown.",
+            "format": "werk-content-text",
+            "type": "string"
+          },
+          "open": {
+            "description": "True: the popup is shown open.",
+            "type": "boolean"
+          },
+          "popup": {
+            "description": "Popup rectangle `[left, top, right, bottom]`, document pixels.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "type": "array"
+          },
+          "position": {
+            "description": "Icon position `[x, y]` (top-left), document pixels.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "text": {
+            "description": "The note's text.",
+            "format": "werk-content-text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "author",
+          "color",
+          "text",
+          "position",
+          "popup",
+          "open",
+          "modified"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "paths": {
+      "description": "Saved paths, top to bottom as listed.",
+      "items": {
+        "description": "A `core.raster.path` node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "patterns": {
+      "description": "Patterns stored with the document.",
+      "items": {
+        "description": "A `core.raster.pattern` node.",
+        "format": "werk-node-ref",
+        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "psd": {
+      "anyOf": [
+        {
+          "description": "The document's `x.photocraft.psd-blocks` node.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Verbatim PSD data kept for a byte-faithful PSD export. Null: none."
+    },
+    "quick_mask": {
+      "anyOf": [
+        {
+          "description": "A `core.raster.channel` node.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The temporary Quick Mask channel while that mode is on. Null: the mode is off."
+    },
+    "quick_mask_unselected": {
+      "description": "True: Quick Mask was entered with nothing selected.",
+      "type": "boolean"
+    },
+    "resolution_dpi": {
+      "description": "Pixels per inch. Converts points to pixels (px = pt * dpi / 72) and gives the print size; it does not scale pixel data.",
+      "type": "number"
+    },
+    "sample_type": {
+      "description": "Bits per channel of new layers: 8-bit unsigned (0 to 255), 16-bit unsigned (0 to 65535) or 32-bit IEEE float (1.0 = white). Each surface states its own.",
+      "enum": [
+        "U8",
+        "U16",
+        "F32"
+      ],
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "selection": {
+      "anyOf": [
+        {
+          "description": "A `core.raster.surface` node with one channel: 0.0 not selected, 1.0 selected.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The active selection. Null: nothing is selected."
+    },
+    "slices": {
+      "additionalProperties": false,
+      "description": "Web slices.",
+      "properties": {
+        "groupName": {
+          "description": "Base name of the slice group.",
+          "format": "werk-content-text",
+          "type": "string"
+        },
+        "list": {
+          "description": "User and layer-based slices in creation order (later ones on top).",
+          "items": {
+            "additionalProperties": false,
+            "description": "One web slice.",
+            "properties": {
+              "alt": {
+                "description": "Alternative text.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "background": {
+                "anyOf": [
+                  {
+                    "description": "`[alpha, red, green, blue]`, 0 to 255.",
+                    "items": {
+                      "maximum": 255,
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Slice background colour. Null: none."
+              },
+              "cellText": {
+                "description": "Text of a no-image cell.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "cellTextIsHtml": {
+                "description": "True: `cellText` is HTML.",
+                "type": "boolean"
+              },
+              "groupId": {
+                "description": "The slice group it belongs to.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "horizontalAlign": {
+                "description": "0 default, 1 left, 2 centre, 3 right.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "id": {
+                "description": "The slice's id, unique in the document.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "kind": {
+                "description": "Exported as an image; as an HTML cell without image; as a nested table.",
+                "enum": [
+                  "image",
+                  "noImage",
+                  "table"
+                ],
+                "type": "string"
+              },
+              "layer": {
+                "anyOf": [
+                  {
+                    "description": "The layer a layer-based slice follows.",
+                    "format": "werk-node-ref",
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Null: none (or see `layerGone`)."
+              },
+              "layerGone": {
+                "description": "The number of a layer that no longer exists and that this slice still remembers. Only present when `layer` is null.",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "message": {
+                "description": "Status-bar message.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "name": {
+                "description": "Slice name. Empty: generated from the document name.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "origin": {
+                "description": "Where the slice comes from: generated; following a layer's bounds; drawn by the user.",
+                "enum": [
+                  "auto",
+                  "layer",
+                  "user"
+                ],
+                "type": "string"
+              },
+              "outsets": {
+                "description": "Layer-based slices: extra margin `[top, left, bottom, right]` in pixels.",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 4,
+                "minItems": 4,
+                "type": "array"
+              },
+              "rect": {
+                "$ref": "#/$defs/rect"
+              },
+              "target": {
+                "description": "HTML target attribute.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "url": {
+                "description": "Link target of the slice. Not followed by any reader.",
+                "format": "werk-content-text",
+                "type": "string"
+              },
+              "verticalAlign": {
+                "description": "0 default, 1 top, 2 middle, 3 bottom.",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "groupId",
+              "origin",
+              "layer",
+              "name",
+              "rect",
+              "kind",
+              "url",
+              "target",
+              "message",
+              "alt",
+              "cellTextIsHtml",
+              "cellText",
+              "horizontalAlign",
+              "verticalAlign",
+              "background",
+              "outsets"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "groupName",
+        "list"
+      ],
+      "type": "object"
+    },
+    "text_styles": {
+      "anyOf": [
+        {
+          "description": "The `core.raster.text-styles` node.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Named character and paragraph styles. Null: none are defined."
+    },
+    "timeline": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "description": "The document's timeline.",
+          "properties": {
+            "current": {
+              "description": "The current frame, 0-based.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "duration": {
+              "description": "Total number of frames, at least 1.",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "fps": {
+              "description": "Frames per second.",
+              "type": "number"
+            },
+            "work_end": {
+              "description": "Work-area end frame (exclusive).",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "work_start": {
+              "description": "Work-area start frame (inclusive).",
+              "minimum": 0,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "fps",
+            "duration",
+            "current",
+            "work_start",
+            "work_end"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Null: the document has no timeline."
+    },
+    "variables": {
+      "anyOf": [
+        {
+          "description": "The `core.raster.variables` node.",
+          "format": "werk-node-ref",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Variables and data sets. Null: none are defined."
+    },
+    "width": {
+      "description": "Canvas width in pixels.",
+      "maximum": 300000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "work_path": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/path"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The unsaved work path. Null: none."
+    }
+  },
+  "required": [
+    "schema_version",
+    "name",
+    "width",
+    "height",
+    "resolution_dpi",
+    "color_mode",
+    "sample_type",
+    "color_space",
+    "icc_profile",
+    "layers",
+    "channels",
+    "quick_mask",
+    "quick_mask_unselected",
+    "selection",
+    "patterns",
+    "paths",
+    "work_path",
+    "clipping_path",
+    "layer_comps",
+    "last_applied_comp",
+    "last_document_state",
+    "text_styles",
+    "variables",
+    "metadata",
+    "guides",
+    "global_light",
+    "color_table",
+    "duotone",
+    "measurement",
+    "notes",
+    "slices",
+    "timeline",
+    "file_encoding",
+    "psd",
+    "fonts",
+    "app"
+  ],
+  "title": "core.raster.document — werk profile raster-layers/1",
+  "type": "object"
+}

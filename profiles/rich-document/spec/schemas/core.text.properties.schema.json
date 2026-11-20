@@ -1,0 +1,131 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://werk.format/spec/schemas/core.text.properties.schema.json",
+ "title": "core.text.properties — document metadata",
+ "description": "The document's properties: title, author, dates, and custom name/value properties. spec/PROFILE-RICH-DOCUMENT.md section 3.",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schema_version",
+  "core",
+  "custom"
+ ],
+ "properties": {
+  "schema_version": {
+   "description": "The revision of this payload schema: the constant 1.",
+   "type": "integer",
+   "const": 1
+  },
+  "core": {
+   "description": "The standard properties: title, subject, author and so on.",
+   "$ref": "#/$defs/CoreProps"
+  },
+  "custom": {
+   "description": "Custom properties, in their stored order.",
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/CustomProp"
+   }
+  }
+ },
+ "$defs": {
+  "CoreProps": {
+   "description": "The standard document properties.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "title": {
+     "description": "The document's title.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "subject": {
+     "description": "The document's subject.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "creator": {
+     "description": "The author's name.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "keywords": {
+     "description": "Keywords, as one text.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "description": {
+     "description": "Comments about the document.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "category": {
+     "description": "Category.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "lastModifiedBy": {
+     "description": "Name of the person who last saved the document.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "created": {
+     "description": "When the document was created, ISO 8601 (`2026-03-01T10:15:00Z`); may be empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "modified": {
+     "description": "When the document was last saved, ISO 8601; may be empty.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "revision": {
+     "description": "The application's save counter: how many times the document has been saved. Informational; it is not a werk revision number.",
+     "default": 0,
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   }
+  },
+  "CustomProp": {
+   "description": "A custom document property: a named value. Other programs (citation managers, document management systems) keep their per-document data here.",
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "name": {
+     "description": "The property's name, unique among the custom properties (compared case-insensitively).",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "kind": {
+     "description": "The value's type: `lpwstr` (text), `i4` (32-bit integer), `r8` (floating-point number), `bool` (`true` / `false`), `filetime` (ISO 8601 date and time), or another variant type name of ISO/IEC 29500-1 section 22.4; `raw` when the value is of a type this profile does not interpret (a vector, a blob): `value` is then empty and `ooxmlSource` names where the original is kept",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "value": {
+     "description": "The value, as text in the form `kind` names.",
+     "default": "",
+     "type": "string",
+     "format": "werk-content-text"
+    },
+    "ooxmlSource": {
+     "description": "Only for `kind` = `raw`: a key of the `fragments` map of the `x.wordcraft.ooxml.embedded` extension node, which holds the value. `value` is then the empty string. A reader that skips extension nodes knows the property's name and that it has a value this profile does not interpret. Absent for every other kind.",
+     "type": "string",
+     "pattern": "^[0-9a-f]{16}$"
+    }
+   }
+  }
+ }
+}

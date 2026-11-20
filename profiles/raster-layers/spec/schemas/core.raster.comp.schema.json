@@ -1,0 +1,1109 @@
+{
+  "$defs": {
+    "blend_mode": {
+      "description": "How a layer or effect is combined with what lies beneath. The formula of every mode is in spec/PROFILE-RASTER-LAYERS.md section 5.2.",
+      "enum": [
+        "PassThrough",
+        "Normal",
+        "Dissolve",
+        "Darken",
+        "Multiply",
+        "ColorBurn",
+        "LinearBurn",
+        "DarkerColor",
+        "Lighten",
+        "Screen",
+        "ColorDodge",
+        "LinearDodge",
+        "LighterColor",
+        "Overlay",
+        "SoftLight",
+        "HardLight",
+        "VividLight",
+        "LinearLight",
+        "PinLight",
+        "HardMix",
+        "Difference",
+        "Exclusion",
+        "Subtract",
+        "Divide",
+        "Hue",
+        "Saturation",
+        "Color",
+        "Luminosity",
+        "Reflect",
+        "Glow",
+        "Negation",
+        "Xor",
+        "PaintNetColorBurn",
+        "PaintNetColorDodge"
+      ],
+      "type": "string"
+    },
+    "color": {
+      "additionalProperties": false,
+      "description": "A colour with alpha, as normalised numbers.",
+      "properties": {
+        "alpha": {
+          "description": "Opacity, 0.0 transparent to 1.0 opaque (straight, not premultiplied).",
+          "type": "number"
+        },
+        "c": {
+          "description": "Up to four colour components in the order `mode` gives; unused ones are 0. Nominal range 0.0 to 1.0; a 32-bit float document may hold values outside it.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        },
+        "mode": {
+          "$ref": "#/$defs/color_mode"
+        }
+      },
+      "required": [
+        "mode",
+        "c",
+        "alpha"
+      ],
+      "type": "object"
+    },
+    "color_mode": {
+      "description": "A colour model. Rgb, Indexed, Multichannel: components are red, green, blue. Grayscale, Bitmap, Duotone: one component, 0.0 black to 1.0 white. Cmyk: cyan, magenta, yellow, black as INK amounts, 0.0 no ink to 1.0 full ink. Lab: lightness L*/100, then (a* + 128)/255 and (b* + 128)/255.",
+      "enum": [
+        "Bitmap",
+        "Grayscale",
+        "Indexed",
+        "Rgb",
+        "Cmyk",
+        "Lab",
+        "Multichannel",
+        "Duotone"
+      ],
+      "type": "string"
+    },
+    "color_stop": {
+      "description": "`[location, colour]`: a number 0.0 to 1.0, then a colour object.",
+      "items": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "$ref": "#/$defs/color"
+          }
+        ]
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "contour": {
+      "description": "A transfer curve applied to an effect's coverage: the string \"Linear\" (identity), or a custom curve.",
+      "oneOf": [
+        {
+          "const": "Linear",
+          "description": "The identity curve.",
+          "type": "string"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Custom": {
+              "additionalProperties": false,
+              "description": "A custom curve through points.",
+              "properties": {
+                "corners": {
+                  "description": "Parallel to `points`: true = the curve bends sharply at that point. Absent or shorter: smooth.",
+                  "items": {
+                    "type": "boolean"
+                  },
+                  "type": "array"
+                },
+                "name": {
+                  "description": "Display name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "points": {
+                  "description": "The curve's points, by increasing input.",
+                  "items": {
+                    "$ref": "#/$defs/curve_point"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "name",
+                "points"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Custom"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "curve_point": {
+      "additionalProperties": false,
+      "description": "One point of a transfer curve.",
+      "properties": {
+        "input": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "output": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "input",
+        "output"
+      ],
+      "type": "object"
+    },
+    "effect": {
+      "description": "One layer effect. Exactly one key names its kind. A layer may hold several of one kind.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "DropShadow": {
+              "$ref": "#/$defs/shadow"
+            }
+          },
+          "required": [
+            "DropShadow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "InnerShadow": {
+              "$ref": "#/$defs/shadow"
+            }
+          },
+          "required": [
+            "InnerShadow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "OuterGlow": {
+              "$ref": "#/$defs/glow"
+            }
+          },
+          "required": [
+            "OuterGlow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "InnerGlow": {
+              "$ref": "#/$defs/glow"
+            }
+          },
+          "required": [
+            "InnerGlow"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Stroke": {
+              "additionalProperties": false,
+              "description": "An outline following the layer's shape.",
+              "properties": {
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "paint": {
+                  "$ref": "#/$defs/fx_paint"
+                },
+                "position": {
+                  "description": "Where the stroke lies relative to the shape's edge.",
+                  "enum": [
+                    "Outside",
+                    "Inside",
+                    "Center"
+                  ],
+                  "type": "string"
+                },
+                "size": {
+                  "description": "Width in pixels.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "common",
+                "size",
+                "position",
+                "paint"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Stroke"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "ColorOverlay": {
+              "additionalProperties": false,
+              "description": "The layer's shape filled with one colour.",
+              "properties": {
+                "color": {
+                  "$ref": "#/$defs/color"
+                },
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                }
+              },
+              "required": [
+                "common",
+                "color"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ColorOverlay"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "GradientOverlay": {
+              "additionalProperties": false,
+              "description": "The layer's shape filled with a gradient.",
+              "properties": {
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "dither": {
+                  "description": "True: one 8-bit level of noise hides banding.",
+                  "type": "boolean"
+                },
+                "gradient": {
+                  "$ref": "#/$defs/gradient"
+                }
+              },
+              "required": [
+                "common",
+                "gradient",
+                "dither"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "GradientOverlay"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "PatternOverlay": {
+              "additionalProperties": false,
+              "description": "The layer's shape filled with a pattern.",
+              "properties": {
+                "angle": {
+                  "description": "Rotation in degrees, counter-clockwise.",
+                  "type": "number"
+                },
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "id": {
+                  "description": "The `id` of a `core.raster.pattern` node's payload. Empty: find the pattern by `name`.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "link": {
+                  "description": "True: the tiling origin follows the layer. False: the canvas origin.",
+                  "type": "boolean"
+                },
+                "name": {
+                  "description": "The pattern's stored name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "phase": {
+                  "description": "`[x, y]` offset of the tiling origin, in pixels.",
+                  "items": {
+                    "type": "number"
+                  },
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "type": "array"
+                },
+                "scale": {
+                  "description": "Scale as a fraction (1.0 = the tile at its own size).",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "common",
+                "name",
+                "id",
+                "scale",
+                "angle",
+                "link",
+                "phase"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "PatternOverlay"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Satin": {
+              "additionalProperties": false,
+              "description": "Interior shading from two offset, blurred copies of the layer's shape.",
+              "properties": {
+                "angle": {
+                  "description": "Degrees, counter-clockwise from 3 o'clock.",
+                  "type": "number"
+                },
+                "anti_alias": {
+                  "description": "True: the contour is anti-aliased.",
+                  "type": "boolean"
+                },
+                "color": {
+                  "$ref": "#/$defs/color"
+                },
+                "common": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "contour": {
+                  "$ref": "#/$defs/contour"
+                },
+                "distance": {
+                  "description": "Offset in pixels.",
+                  "type": "number"
+                },
+                "invert": {
+                  "description": "True: the shading is inverted.",
+                  "type": "boolean"
+                },
+                "size": {
+                  "description": "Blur size in pixels.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "common",
+                "color",
+                "angle",
+                "distance",
+                "size",
+                "contour",
+                "anti_alias",
+                "invert"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Satin"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "BevelEmboss": {
+              "additionalProperties": false,
+              "description": "Highlights and shadows that make the layer's shape look raised or carved.",
+              "properties": {
+                "altitude": {
+                  "description": "Light altitude in degrees, 0 (grazing) to 90 (overhead).",
+                  "type": "number"
+                },
+                "angle": {
+                  "description": "Light direction in degrees, counter-clockwise from 3 o'clock: where the light comes FROM.",
+                  "type": "number"
+                },
+                "contour": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "The Contour element.",
+                      "properties": {
+                        "anti_alias": {
+                          "description": "True: anti-aliased.",
+                          "type": "boolean"
+                        },
+                        "contour": {
+                          "$ref": "#/$defs/contour"
+                        },
+                        "range": {
+                          "description": "0.0 to 1.0: the part of the bevel the contour spans.",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "contour",
+                        "range",
+                        "anti_alias"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Shapes the bevel's height profile. Null: off."
+                },
+                "depth": {
+                  "description": "Depth, 0.0 to 10.0 (1.0 = 100 %).",
+                  "type": "number"
+                },
+                "enabled": {
+                  "description": "False: stored but not drawn.",
+                  "type": "boolean"
+                },
+                "gloss_contour": {
+                  "$ref": "#/$defs/contour"
+                },
+                "highlight": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "highlight_color": {
+                  "$ref": "#/$defs/color"
+                },
+                "shadow": {
+                  "$ref": "#/$defs/fx_common"
+                },
+                "shadow_color": {
+                  "$ref": "#/$defs/color"
+                },
+                "size": {
+                  "description": "Bevel width in pixels.",
+                  "type": "number"
+                },
+                "soften": {
+                  "description": "Blur of the shading in pixels.",
+                  "type": "number"
+                },
+                "style": {
+                  "description": "Which edges are bevelled.",
+                  "enum": [
+                    "OuterBevel",
+                    "InnerBevel",
+                    "Emboss",
+                    "PillowEmboss",
+                    "StrokeEmboss"
+                  ],
+                  "type": "string"
+                },
+                "technique": {
+                  "description": "How the height profile is built.",
+                  "enum": [
+                    "Smooth",
+                    "ChiselHard",
+                    "ChiselSoft"
+                  ],
+                  "type": "string"
+                },
+                "texture": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "description": "The Texture element.",
+                      "properties": {
+                        "depth": {
+                          "description": "-10.0 to 10.0 (1.0 = +100 %); negative carves the pattern in.",
+                          "type": "number"
+                        },
+                        "id": {
+                          "description": "The `id` of a `core.raster.pattern` node's payload.",
+                          "format": "werk-content-text",
+                          "type": "string"
+                        },
+                        "invert": {
+                          "description": "True: the pattern's luminance is inverted.",
+                          "type": "boolean"
+                        },
+                        "link": {
+                          "description": "True: the tiling origin follows the layer.",
+                          "type": "boolean"
+                        },
+                        "name": {
+                          "description": "The pattern's stored name.",
+                          "format": "werk-content-text",
+                          "type": "string"
+                        },
+                        "phase": {
+                          "description": "`[x, y]` offset in pixels.",
+                          "items": {
+                            "type": "number"
+                          },
+                          "maxItems": 2,
+                          "minItems": 2,
+                          "type": "array"
+                        },
+                        "scale": {
+                          "description": "Scale as a fraction (1.0 = 100 %).",
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "id",
+                        "scale",
+                        "depth",
+                        "invert",
+                        "link",
+                        "phase"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "A pattern whose luminance is added to the height. Null: off."
+                },
+                "up": {
+                  "description": "True: raised. False: carved.",
+                  "type": "boolean"
+                },
+                "use_global_light": {
+                  "description": "True: `angle` and `altitude` are ignored and the document's `global_light` is used.",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "enabled",
+                "style",
+                "technique",
+                "depth",
+                "up",
+                "size",
+                "soften",
+                "angle",
+                "altitude",
+                "use_global_light",
+                "gloss_contour",
+                "highlight",
+                "highlight_color",
+                "shadow",
+                "shadow_color",
+                "contour",
+                "texture"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "BevelEmboss"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "effects": {
+      "additionalProperties": false,
+      "description": "A layer's style: its effects, drawn in list order.",
+      "properties": {
+        "enabled": {
+          "description": "False: no effect is drawn, whatever each one's own switch says.",
+          "type": "boolean"
+        },
+        "items": {
+          "description": "The effects.",
+          "items": {
+            "$ref": "#/$defs/effect"
+          },
+          "type": "array"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "description": "`[x, y]` in document pixels.",
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Where linked patterns anchor their tiling. Null: the layer's top-left."
+        }
+      },
+      "required": [
+        "enabled",
+        "items",
+        "reference"
+      ],
+      "type": "object"
+    },
+    "fx_common": {
+      "additionalProperties": false,
+      "description": "What every effect has.",
+      "properties": {
+        "blend": {
+          "$ref": "#/$defs/blend_mode"
+        },
+        "enabled": {
+          "description": "False: stored but not drawn.",
+          "type": "boolean"
+        },
+        "opacity": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "enabled",
+        "blend",
+        "opacity"
+      ],
+      "type": "object"
+    },
+    "fx_paint": {
+      "description": "What a stroke or glow is painted with. Exactly one key.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Color": {
+              "$ref": "#/$defs/color"
+            }
+          },
+          "required": [
+            "Color"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Gradient": {
+              "$ref": "#/$defs/gradient"
+            }
+          },
+          "required": [
+            "Gradient"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "Pattern": {
+              "additionalProperties": false,
+              "description": "A pattern.",
+              "properties": {
+                "id": {
+                  "description": "The `id` of a `core.raster.pattern` node's payload.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "name": {
+                  "description": "Stored name.",
+                  "format": "werk-content-text",
+                  "type": "string"
+                },
+                "scale": {
+                  "description": "Fraction, 1.0 = 100 %.",
+                  "type": "number"
+                }
+              },
+              "required": [
+                "name",
+                "id",
+                "scale"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "Pattern"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "glow": {
+      "additionalProperties": false,
+      "description": "An outer glow (outside the layer's edges) or inner glow (inside them).",
+      "properties": {
+        "anti_alias": {
+          "description": "True: the contour is anti-aliased.",
+          "type": "boolean"
+        },
+        "common": {
+          "$ref": "#/$defs/fx_common"
+        },
+        "contour": {
+          "$ref": "#/$defs/contour"
+        },
+        "jitter": {
+          "description": "0.0 to 1.0: randomisation of a gradient glow.",
+          "type": "number"
+        },
+        "noise": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "paint": {
+          "$ref": "#/$defs/fx_paint"
+        },
+        "range": {
+          "description": "0.0 to 1.0: the part of the glow the contour spans.",
+          "type": "number"
+        },
+        "size": {
+          "description": "Size in pixels.",
+          "type": "number"
+        },
+        "source": {
+          "description": "Inner glow only: glows from the centre or from the edges.",
+          "enum": [
+            "Center",
+            "Edge"
+          ],
+          "type": "string"
+        },
+        "spread": {
+          "description": "Spread (outer) or choke (inner), 0.0 to 1.0.",
+          "type": "number"
+        },
+        "technique": {
+          "description": "How the glow's falloff is computed.",
+          "enum": [
+            "Softer",
+            "Precise"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "common",
+        "paint",
+        "technique",
+        "spread",
+        "size",
+        "contour",
+        "anti_alias",
+        "range",
+        "jitter",
+        "noise",
+        "source"
+      ],
+      "type": "object"
+    },
+    "gradient": {
+      "additionalProperties": false,
+      "description": "A gradient used by a layer effect.",
+      "properties": {
+        "align": {
+          "description": "True: laid out in the layer's bounds. False: in the canvas.",
+          "type": "boolean"
+        },
+        "angle": {
+          "description": "Degrees, counter-clockwise from 3 o'clock.",
+          "type": "number"
+        },
+        "offset": {
+          "description": "`[x, y]` centre offset as fractions of the bounds.",
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "opacity_stops": {
+          "description": "Opacity stops; empty means fully opaque.",
+          "items": {
+            "description": "`[location, opacity]`, both 0.0 to 1.0.",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "reverse": {
+          "description": "True: traversed backwards.",
+          "type": "boolean"
+        },
+        "scale": {
+          "description": "Fraction, 1.0 = 100 %.",
+          "type": "number"
+        },
+        "stops": {
+          "description": "Colour stops, `[location, colour]`.",
+          "items": {
+            "$ref": "#/$defs/color_stop"
+          },
+          "type": "array"
+        },
+        "style": {
+          "$ref": "#/$defs/gradient_style"
+        }
+      },
+      "required": [
+        "stops",
+        "opacity_stops",
+        "style",
+        "angle",
+        "scale",
+        "reverse",
+        "align",
+        "offset"
+      ],
+      "type": "object"
+    },
+    "gradient_style": {
+      "description": "Gradient geometry: along a line, outward from the centre, around the centre, mirrored about the centre line, or as a diamond.",
+      "enum": [
+        "Linear",
+        "Radial",
+        "Angle",
+        "Reflected",
+        "Diamond"
+      ],
+      "type": "string"
+    },
+    "shadow": {
+      "additionalProperties": false,
+      "description": "A drop shadow (behind the layer) or inner shadow (inside its edges).",
+      "properties": {
+        "angle": {
+          "description": "Light direction in degrees, counter-clockwise from 3 o'clock: where the light comes FROM. The shadow falls the opposite way.",
+          "type": "number"
+        },
+        "anti_alias": {
+          "description": "True: the contour is anti-aliased.",
+          "type": "boolean"
+        },
+        "color": {
+          "$ref": "#/$defs/color"
+        },
+        "common": {
+          "$ref": "#/$defs/fx_common"
+        },
+        "contour": {
+          "$ref": "#/$defs/contour"
+        },
+        "distance": {
+          "description": "Offset in pixels.",
+          "type": "number"
+        },
+        "knocks_out": {
+          "description": "Drop shadow only. True: the layer's own shape hides the shadow beneath it.",
+          "type": "boolean"
+        },
+        "noise": {
+          "description": "0.0 to 1.0.",
+          "type": "number"
+        },
+        "size": {
+          "description": "Blur size in pixels.",
+          "type": "number"
+        },
+        "spread": {
+          "description": "Spread (drop shadow) or choke (inner shadow), 0.0 to 1.0: the part of `size` that is solid.",
+          "type": "number"
+        },
+        "use_global_light": {
+          "description": "True: `angle` is ignored and the document's `global_light.angle` is used.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "common",
+        "color",
+        "angle",
+        "use_global_light",
+        "distance",
+        "spread",
+        "size",
+        "contour",
+        "anti_alias",
+        "noise",
+        "knocks_out"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://werk.format/spec/schemas/core.raster.comp.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A layer comp: a recorded state of the layers that can be applied again.",
+  "properties": {
+    "apply_appearance": {
+      "description": "True: applying the comp restores blend mode, opacities and layer style.",
+      "type": "boolean"
+    },
+    "apply_position": {
+      "description": "True: applying the comp restores layer positions.",
+      "type": "boolean"
+    },
+    "apply_visibility": {
+      "description": "True: applying the comp restores layer visibility.",
+      "type": "boolean"
+    },
+    "comment": {
+      "description": "A comment.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "id": {
+      "description": "The comp's id, unique among the document's comps. 0 only for the Last Document State.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "name": {
+      "description": "The comp's name.",
+      "format": "werk-content-text",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's shape. Always 1 in raster-layers/1.",
+      "type": "integer"
+    },
+    "states": {
+      "description": "Per-layer state, in document walk order.",
+      "items": {
+        "additionalProperties": false,
+        "description": "One layer's recorded state. A null value means that aspect was not recorded.",
+        "properties": {
+          "appearance": {
+            "anyOf": [
+              {
+                "additionalProperties": false,
+                "description": "Blend mode, opacities and style.",
+                "properties": {
+                  "blend": {
+                    "$ref": "#/$defs/blend_mode"
+                  },
+                  "effects": {
+                    "$ref": "#/$defs/effects"
+                  },
+                  "fill_opacity": {
+                    "description": "0.0 to 1.0.",
+                    "type": "number"
+                  },
+                  "opacity": {
+                    "description": "0.0 to 1.0.",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "blend",
+                  "opacity",
+                  "fill_opacity",
+                  "effects"
+                ],
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The layer's appearance."
+          },
+          "layer": {
+            "anyOf": [
+              {
+                "description": "The `core.raster.layer` node.",
+                "format": "werk-node-ref",
+                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null: the layer no longer exists (see `layer_gone`)."
+          },
+          "layer_gone": {
+            "description": "The number of a deleted layer this state still remembers. Only present when `layer` is null.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "description": "`[x, y]` of the top-left of the layer's content bounds, document pixels.",
+                "items": {
+                  "type": "integer"
+                },
+                "maxItems": 2,
+                "minItems": 2,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The layer's position."
+          },
+          "visible": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The layer's visibility."
+          }
+        },
+        "required": [
+          "layer",
+          "visible",
+          "position",
+          "appearance"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "name",
+    "comment",
+    "apply_visibility",
+    "apply_position",
+    "apply_appearance",
+    "states"
+  ],
+  "title": "core.raster.comp — werk profile raster-layers/1",
+  "type": "object"
+}

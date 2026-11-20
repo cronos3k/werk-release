@@ -1,0 +1,49 @@
+x.effectcraft.media - what is known about this payload  (no magic, no grammar)
+============================================================================
+
+Applies to: `x.effectcraft.media` (profile `motion-comp/1`) - one medium of a
+project in a FORMAT THIS PACKAGE CARRIES NO DEFINITION OF, byte for byte as it
+was imported.
+
+THIS IS NOT A LAYOUT GRAMMAR, BECAUSE THERE IS NONE TO GIVE. The bytes are
+whatever the imported file was. The package does not say how to decode them,
+and nothing in the package depends on decoding them: a reader that skips this
+node loses the picture or sound of the items that use the medium, and nothing
+else (profile document section 3.11).
+
+What IS known, exactly:
+
+  * The bytes are intact: every file of the node is listed in the manifest
+    with its size and sha256, like every file of the package.
+  * `meta.file_name` is the name the file had when it was imported;
+    `meta.extension` its lower-case extension; `meta.codec` the label the
+    importing program gave the format (`EXR`, `PSD`, `H.264`...);
+    `meta.media_type` a media type guessed from the extension;
+    `meta.media_kind` what the application used it as (`movie`, `audio`,
+    `still`, `image-sequence`, `model`, `file`). These are HINTS about the
+    format, written by the program that embedded the file. They are not a
+    declaration, and a reader must not trust them further than a file
+    extension.
+  * `meta.files` is the number of files. The payload file is the medium's
+    main file (frame 0 of an image sequence, the main file of a 3D model).
+    Files with role `frame` are the further frames of an image sequence, in
+    the manifest's order, which is playing order. Files with role
+    `dependency` are files a 3D model's main file names (buffers, textures,
+    material libraries); each sits under `media/<node id>/` at the relative
+    path the main file names it by.
+  * A file of the node whose manifest entry has a `media_type` beginning with
+    `text/` is UTF-8 text (a glTF JSON beside a binary buffer, a material
+    library): it can be read as text, and its meaning is still not defined
+    here.
+
+Why such a node exists at all: a project uses media in formats whose
+definitions this profile's definition library does not have yet (in this
+build: OpenEXR, Photoshop, PDF, Radiance HDR, Targa, binary glTF, FBX, STL,
+and any format the library does not sniff). Hermeticity (law 1) says the
+bytes travel; self-description (law 2) says a node whose encoding is not
+defined in the package may not claim to be `core.*`. So the bytes travel in
+the extension namespace, where an undefined encoding is allowed, and are
+never dropped. A build whose library defines the format writes a medium it
+embeds as `core.media.source`; a node that already exists stays as it is.
+
+A writer that saves a capsule again KEEPS this node unchanged (law 12).

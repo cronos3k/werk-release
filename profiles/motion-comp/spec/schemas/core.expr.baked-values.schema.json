@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "frame_rate": {
+      "additionalProperties": false,
+      "description": "A frame rate as an exact fraction: num / den frames per second (24000/1001, 25/1...). One frame lasts 254016000000 * den / num ticks.",
+      "properties": {
+        "den": {
+          "description": "Denominator, seconds. Positive.",
+          "type": "integer"
+        },
+        "num": {
+          "description": "Numerator, frames. Positive.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "num",
+        "den"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "The evaluated values of the expression-driven properties of one composition whose values are not numbers (text, paths...), sampled like the numeric ones in the composition's `core.expr.baked` node. Derived (`measured`): the manifest lists the files it was computed from.",
+  "properties": {
+    "comp": {
+      "description": "Id of the composition.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "first_frame": {
+      "description": "Composition frame number of sample 0.",
+      "type": "integer"
+    },
+    "frame_rate": {
+      "$ref": "#/$defs/frame_rate"
+    },
+    "frame_step": {
+      "description": "Composition frames between consecutive samples. At least 1.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "samples": {
+      "description": "Samples per property. Sample i is the value at the start tick of composition frame first_frame + i * frame_step.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": 1,
+      "description": "The revision of this payload's schema. Always 1 in profile motion-comp/1; a reader refuses the node (node scope) when it is anything else."
+    },
+    "tracks": {
+      "description": "One entry per property, in ascending (layer, uid).",
+      "items": {
+        "additionalProperties": false,
+        "description": "The samples of one expression-driven property whose value is not a list of numbers.",
+        "properties": {
+          "kind": {
+            "description": "The kind of the property's value (`Text`, `Path`, `Str`, `Gradient`, `Layer`).",
+            "type": "string"
+          },
+          "layer": {
+            "description": "Id of the layer the property belongs to.",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "runs": {
+            "description": "The samples in order, run-length encoded: the runs' `frames` add up to the node's `samples`.",
+            "items": {
+              "additionalProperties": false,
+              "description": "A run of consecutive samples with one value.",
+              "properties": {
+                "frames": {
+                  "description": "How many consecutive samples have this value. At least 1.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "value": {
+                  "description": "The value, as a property value `{t, v}` (schema `core.motion.layer`, definition `value`).",
+                  "type": "object"
+                }
+              },
+              "required": [
+                "frames",
+                "value"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "uid": {
+            "description": "The property's uid.",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "layer",
+          "uid",
+          "kind",
+          "runs"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    }
+  },
+  "required": [
+    "schema_version",
+    "comp",
+    "frame_rate",
+    "first_frame",
+    "frame_step",
+    "samples",
+    "tracks"
+  ],
+  "title": "core.expr.baked-values",
+  "type": "object"
+}

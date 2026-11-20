@@ -1,0 +1,271 @@
+{
+  "conventions": {
+    "affine_order": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "An affine transform is six numbers [a, b, c, d, e, f]: x' = a*x + c*y + e, y' = b*x + d*y + f.",
+      "scope": "node"
+    },
+    "alignment_bytes": {
+      "governs": [
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Payload sections of envelope binaries start on this boundary.",
+      "scope": "node"
+    },
+    "alpha_mode": {
+      "governs": [
+        "core.vector.image",
+        "core.vector.preview"
+      ],
+      "note": "PNG alpha is straight (not premultiplied).",
+      "scope": "node"
+    },
+    "angle_unit": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "Every angle is in degrees.",
+      "scope": "node"
+    },
+    "color_component_range": {
+      "governs": [
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches",
+        "core.text.styles",
+        "core.vector.document"
+      ],
+      "note": "RGB, CMYK and gray components and every opacity and tint are 0 to 1; Lab is L 0..100, a and b about -128..127 (D50).",
+      "scope": "node"
+    },
+    "color_space_rgb_default": {
+      "governs": [
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches",
+        "core.text.styles",
+        "core.vector.document"
+      ],
+      "note": "RGB values are sRGB unless the structure node's `color_profiles.rgb` names another profile.",
+      "scope": "node"
+    },
+    "curve_representation": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "A path is a list of anchors, each a point p with an incoming handle `in` and an outgoing handle `out`; the segment from anchor A to the next anchor B is the cubic Bezier A.p, A.out, B.in, B.p.",
+      "scope": "node"
+    },
+    "endianness": {
+      "governs": [
+        "core.embedding",
+        "x.*"
+      ],
+      "note": "Every envelope binary is little-endian. MessagePack header integers inside an envelope are big-endian by MessagePack's own definition (spec/layouts/ENVELOPE.layout.txt section 4).",
+      "scope": "node"
+    },
+    "fill_rule_default": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "An absent fill rule is the non-zero winding rule; `EvenOdd` is the even-odd rule.",
+      "scope": "node"
+    },
+    "gray_polarity": {
+      "governs": [
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches",
+        "core.text.styles",
+        "core.vector.document"
+      ],
+      "note": "A gray colour's `k` is ink: 0 is white, 1 is black.",
+      "scope": "node"
+    },
+    "handle_coordinates": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "Handles are absolute positions, not offsets; an absent handle equals its anchor's point.",
+      "scope": "node"
+    },
+    "hash_algorithm": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every files[].sha256, every input_hash, license.sha256, and spec_sha256.",
+      "scope": "container"
+    },
+    "id_case": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every id matches ^[a-z0-9]+(-[a-z0-9]+)*$.",
+      "scope": "container"
+    },
+    "length_unit": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "Every coordinate and length is in points.",
+      "scope": "node"
+    },
+    "number_format": {
+      "governs": [
+        "*"
+      ],
+      "note": "Numbers are the shortest decimal that parses back to the same IEEE 754 value; colour components, opacities and gradient offsets are binary32, everything else binary64.",
+      "scope": "node"
+    },
+    "paint_order": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "Lists of layers, of children and of appearance items paint in order: the first is at the bottom.",
+      "scope": "node"
+    },
+    "pixel_origin": {
+      "governs": [
+        "core.vector.image",
+        "core.vector.preview"
+      ],
+      "note": "Row 0 of an image is its top row; an image object's transform maps pixel (0,0)-(width,height) into the document.",
+      "scope": "node"
+    },
+    "signature_algorithm": {
+      "governs": [],
+      "note": "SIGNATURE.json only. Refusing it is the 'unverified' state, not damage.",
+      "scope": "signature"
+    },
+    "stroke_miter_limit_default": {
+      "governs": [
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches",
+        "core.text.styles",
+        "core.vector.document"
+      ],
+      "note": "An absent miter limit is 10 (the ratio of miter length to stroke width past which a miter join is bevelled).",
+      "scope": "node"
+    },
+    "text_encoding": {
+      "governs": [
+        "*"
+      ],
+      "note": "Every text and JSON payload, INCLUDING MANIFEST.json - which is why the scope is container.",
+      "scope": "container"
+    },
+    "text_tracking_unit": {
+      "governs": [
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.text.styles"
+      ],
+      "note": "Tracking and manual kerning are thousandths of an em.",
+      "scope": "node"
+    },
+    "time_base": {
+      "governs": [
+        "core.vector.document"
+      ],
+      "note": "The metadata's created and modified dates are seconds since 1970-01-01T00:00:00Z.",
+      "scope": "node"
+    },
+    "units_per_inch": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "One unit is 1/72 inch: 72 units = 25.4 mm.",
+      "scope": "node"
+    },
+    "x_axis": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "x grows to the right.",
+      "scope": "node"
+    },
+    "y_axis": {
+      "governs": [
+        "core.vector.document",
+        "core.vector.artboard",
+        "core.vector.layer",
+        "core.vector.symbol",
+        "core.paint.pattern",
+        "core.vector.styles",
+        "core.paint.swatches"
+      ],
+      "note": "y grows DOWNWARD: the top edge of a rectangle is its smaller y.",
+      "scope": "node"
+    }
+  },
+  "note": "The machine-readable convention to node-type map of profile vector-art/1 (SPEC.md section 10.2, ruling S-17). The convention set is a property of the PROFILE, not of the reader (S-25): check these and no others.",
+  "profile": "vector-art/1",
+  "schema_version": 1
+}

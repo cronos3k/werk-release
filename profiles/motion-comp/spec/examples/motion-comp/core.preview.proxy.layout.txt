@@ -1,0 +1,132 @@
+werk preview proxy - layout grammar v1  (magic "WKX2", inside a zlib stream)
+===========================================================================
+
+Applies to: `core.preview.proxy` (profiles `motion-comp/1` and `timeline/1`,
+the same layout in both) - the start of the main composition as a few small
+frames of raw RGB, for showing motion without decoding or rendering anything.
+
+THE PAYLOAD FILE IS A ZLIB STREAM (RFC 1950; `spec/formats/zlib-deflate.md`
+defines it and carries a reference inflater). What it INFLATES to is a werk
+envelope, described here. The node's `meta` gives `inflated_bytes` and
+`inflated_sha256`: inflate, check both, then read the envelope.
+
+Read `spec/layouts/ENVELOPE.layout.txt` FIRST. Everything below is the
+WKX2-specific part.
+
+--------------------------------------------------------------------------
+1. Fixed prefix (of the INFLATED bytes)
+--------------------------------------------------------------------------
+
+  [0 .. 4)    magic  = "WKX2"  = 57 4B 58 32
+  [4 .. 8)    version : u32 LE = 1
+  [8 .. 12)   header_len : u32 LE
+  [12 .. 12+header_len)  MessagePack header (section 2)
+  padding of zero bytes to the next 16-byte boundary
+  the one payload section (section 3)
+
+--------------------------------------------------------------------------
+2. Header keys
+--------------------------------------------------------------------------
+
+  Mandatory envelope keys: "kind" = "core.preview.proxy", "endianness" = "le",
+  "payload_origin", "payload_size", "sections".
+
+  key                 type  meaning
+  ------------------  ----  --------------------------------------------------
+  "comp"              uint  id of the composition the frames show.
+  "width", "height"   uint  size of every frame, pixels.
+  "frames"            uint  F: number of frames, 1..36.
+  "rate_num"          int   the rate the frames PLAY at, frames per second:
+  "rate_den"          int   rate_num / rate_den (the composition's rate
+                            divided by "comp_frame_step").
+  "comp_frame_step"   int   frame i of the proxy is composition frame
+                            i * comp_frame_step.
+  "ticks_per_second"  uint  254016000000.
+  "pixel_format"      str   "rgb8": three bytes per pixel, R G B.
+  "transfer"          str   "srgb": the bytes are in the project's output
+                            encoding (sRGB unless the project names another
+                            output space), the composition over black.
+
+--------------------------------------------------------------------------
+3. Payload section
+--------------------------------------------------------------------------
+
+  name      dtype  shape                  stride  arithmetic that MUST hold
+  --------  -----  ---------------------  ------  ------------------------------
+  "frames"  u8     [F, height, width, 3]  3       size == 3 * F * height * width
+
+  Frame after frame; within a frame row after row from the TOP; within a row
+  pixel after pixel from the left; within a pixel R, G, B.
+
+--------------------------------------------------------------------------
+4. A real file, byte by byte
+--------------------------------------------------------------------------
+
+  `spec/examples/motion-comp/proxy.example.wkx.zlib` is a proxy of two frames
+  of 4 x 2 pixels. Its 307 stored bytes inflate to the 336 bytes below
+  (sha256 f3641c0c93616b82fa2c4df828ab400cc4f0e37a3f34ccc906f36a13e8f7d60d).
+
+  336 bytes, sha256 f3641c0c93616b82fa2c4df828ab400cc4f0e37a3f34ccc906f36a13e8f7d60d
+
+  offset  bytes
+  000000  57 4B 58 32
+          magic "WKX2"
+  000004  01 00 00 00
+          version = 1
+  000008  06 01 00 00
+          header_len = 262
+  00000C  8F A4 63 6F 6D 70 07 AF 63 6F 6D 70 5F 66 72 61
+  00001C  6D 65 5F 73 74 65 70 02 AA 65 6E 64 69 61 6E 6E
+  00002C  65 73 73 A2 6C 65 A6 66 72 61 6D 65 73 02 A6 68
+  00003C  65 69 67 68 74 02 A4 6B 69 6E 64 B2 63 6F 72 65
+  00004C  2E 70 72 65 76 69 65 77 2E 70 72 6F 78 79 AE 70
+  00005C  61 79 6C 6F 61 64 5F 6F 72 69 67 69 6E CD 01 20
+  00006C  AC 70 61 79 6C 6F 61 64 5F 73 69 7A 65 30 AC 70
+  00007C  69 78 65 6C 5F 66 6F 72 6D 61 74 A4 72 67 62 38
+  00008C  A8 72 61 74 65 5F 64 65 6E 02 A8 72 61 74 65 5F
+  00009C  6E 75 6D 19 A8 73 65 63 74 69 6F 6E 73 91 86 A5
+  0000AC  64 74 79 70 65 A2 75 38 A4 6E 61 6D 65 A6 66 72
+  0000BC  61 6D 65 73 A6 6F 66 66 73 65 74 CD 01 20 A5 73
+  0000CC  68 61 70 65 94 02 02 04 03 A4 73 69 7A 65 30 A6
+  0000DC  73 74 72 69 64 65 03 B0 74 69 63 6B 73 5F 70 65
+  0000EC  72 5F 73 65 63 6F 6E 64 CF 00 00 00 3B 24 88 90
+  0000FC  00 A8 74 72 61 6E 73 66 65 72 A4 73 72 67 62 A5
+  00010C  77 69 64 74 68 04
+          the header: a MessagePack map of 15 keys, decoded:
+
+            "comp": 7
+            "comp_frame_step": 2
+            "endianness": "le"
+            "frames": 2
+            "height": 2
+            "kind": "core.preview.proxy"
+            "payload_origin": 288
+            "payload_size": 48
+            "pixel_format": "rgb8"
+            "rate_den": 2
+            "rate_num": 25
+            "sections": [
+              {"dtype": "u8", "name": "frames", "offset": 288, "shape": [2, 2, 4, 3], "size": 48, "stride": 3}
+            ]
+            "ticks_per_second": 254016000000
+            "transfer": "srgb"
+            "width": 4
+
+          14 zero bytes of padding to offset 288 (payload_origin)
+
+  section "frames": offset 288, size 48, dtype u8, shape [2, 2, 4, 3], stride 3
+  000120  00 0A 14 1E 28 32 3C 46 50 5A 64 6E 78 82 8C 96
+  000130  A0 AA B4 BE C8 D2 DC E6 FF F5 EB E1 D7 CD C3 B9
+  000140  AF A5 9B 91 87 7D 73 69 5F 55 4B 41 37 2D 23 19
+          =
+            0  10  20
+            30  40  50
+            60  70  80
+            90  100  110
+            120  130  140
+            150  160  170
+            180  190  200
+            210  220  230
+            ... (48 values in all)
+
+  end of file at offset 336 (payload_origin + payload_size)

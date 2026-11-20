@@ -1,0 +1,78 @@
+{
+  "advanced": {
+    "blendClipped": true,
+    "blendInterior": false,
+    "knockout": "none",
+    "layerMaskHidesEffects": false,
+    "transparencyShapes": true,
+    "vectorMaskHidesEffects": false
+  },
+  "blend": "Normal",
+  "blend_if": {
+    "ranges": []
+  },
+  "clipped": false,
+  "content": {
+    "cache": "layer-5-cache",
+    "contents_id": 6,
+    "decoded": null,
+    "filter_mask": null,
+    "filters_enabled": true,
+    "kind": "smart",
+    "perspective": null,
+    "smart_filters": [
+      {
+        "blend": "Normal",
+        "command": "filter.blur.gaussian",
+        "opacity": 1.0,
+        "params": {
+          "radius": 1.5
+        },
+        "visible": true
+      }
+    ],
+    "source": {
+      "file_name": "logo.png",
+      "kind": "embedded",
+      "source": "smart-6-png"
+    },
+    "stack_mode": null,
+    "transform": {
+      "m": [
+        8.0,
+        0.0,
+        0.0,
+        8.0,
+        300.0,
+        200.0
+      ]
+    },
+    "warp": null
+  },
+  "effects": {
+    "enabled": true,
+    "items": [],
+    "reference": null
+  },
+  "excluded_channels": 0,
+  "fill_cache": null,
+  "fill_opacity": 1.0,
+  "label": "None",
+  "link_group": null,
+  "locks": {
+    "all": false,
+    "artboard": false,
+    "pixels": false,
+    "position": false,
+    "transparency": false
+  },
+  "mask": null,
+  "name": "Logo",
+  "opacity": 1.0,
+  "psd": null,
+  "psd_id": null,
+  "schema_version": 1,
+  "vector_mask": null,
+  "video": null,
+  "visible": true
+}
