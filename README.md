@@ -12,10 +12,12 @@ them), and self-attributed (contains its authorship, cryptographically).
 > A digital artifact should bring all its logic along for a consumer to
 > use, rather than to set up painfully after the fact.
 
-This repository is the first public release candidate: the specification,
+This repository is the first public release: the specification,
 the reference implementation, the single-file readers, the fixtures and their
 builders, every gate harness, and the recorded evidence. It was assembled from
 the author's private lineage; `RELEASE-ASSEMBLY.md` says from what and how.
+
+The measured study behind this release is published open access: **werk: The File That Carries Its Interpreter Through the Ages** (Koch & Puyam, 2026) — DOI [10.5281/zenodo.24451043](https://doi.org/10.5281/zenodo.24451043), CC BY 4.0.
 
 ## What is where
 

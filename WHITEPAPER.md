@@ -4,10 +4,7 @@
 Gregor Hubert Max Koch
 
 *This is the position document: what `werk` is and why it exists. The
-measured experiment behind it is the separate scientific paper,
-[`paper/werk-paper.pdf`](paper/werk-paper.pdf) — every number cited here
-is traced to a recorded gate there and in
-[`paper/NUMBERS.md`](paper/NUMBERS.md).*
+measured study behind it is published open access — **werk: The File That Carries Its Interpreter Through the Ages** (Koch & Puyam, 2026), DOI [10.5281/zenodo.24451043](https://doi.org/10.5281/zenodo.24451043), CC BY 4.0 — and every number cited here is traced to a recorded gate in [`paper/NUMBERS.md`](paper/NUMBERS.md).*
 
 *The format's name is `werk` (German: Werk — a work, an opus); files carry the extension `.werk`. The name is set in typewriter face throughout, to distinguish it from the ordinary German word.*
 
