@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/werk-header.png" alt="werk — The File That Carries Its Interpreter Through the Ages" width="820">
+</p>
+
 # werk
 
 **Self-carrying digital artifacts.** A werk file is hermetic (contains
